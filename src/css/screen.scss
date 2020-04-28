@@ -1,0 +1,45 @@
+@font-face {
+    font-family: 'Rubik';
+    src: url('../fonts/Rubik-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Rubik';
+    src: url('../fonts/Rubik-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Rubik';
+    src: url('../fonts/Rubik-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+@import '_includes/variables';
+@import '_includes/bootstrap-overrides';
+@import '~bootstrap/scss/bootstrap';
+@import '_includes/type';
+@import '_includes/grid';
+@import '_includes/highlight';
+@import '_includes/content';
+@import '_includes/sidebar';
+@import '_includes/pre';
+@import '_includes/integrations';
+@import '_includes/global-header';
+@import '_includes/breadcrumb';
+@import '_includes/alert';
+@import '_includes/steps';
+@import '_includes/platform-specific-content';
+@import '_includes/interactive-content';
+@import '_includes/search';
+@import '_includes/tracking-widget';
+@import '_includes/loader';
+@import '_includes/platform-link';
+@import '_includes/index';
+@import '_includes/api';
+@import '_includes/user-content-ui';
+
