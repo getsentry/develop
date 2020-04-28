@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'gatsby';
+import React from "react";
+import { Link } from "gatsby";
 
 const Sidebar = () => (
   <ul className="list-unstyled" data-sidebar-tree>
@@ -20,41 +20,7 @@ const Sidebar = () => (
           >
             Overview
           </Link>
-          <Link
-            to="/code-review/"
-            className="d-block"
-            activeClassName="active"
-            data-sidebar-link
-          >
-            Code Review
-          </Link>
-          <Link
-            to="/docs/"
-            className="d-block"
-            activeClassName="active"
-            data-sidebar-link
-          >
-            Documentation Guide
-          </Link>
-          <Link
-            to="/translations/"
-            className="d-block"
-            activeClassName="active"
-            data-sidebar-link
-          >
-            Translations
-          </Link>
         </li>
-      </ul>
-    </li>
-    <li className="mb-3" data-sidebar-branch>
-      <div
-        className="sidebar-title d-flex align-items-center mb-0"
-        data-sidebar-link
-      >
-        <h6>Server</h6>
-      </div>
-      <ul className="list-unstyled" data-sidebar-tree>
         <li className="toc-item" data-sidebar-branch>
           <Link
             to="/environment/"
@@ -64,6 +30,48 @@ const Sidebar = () => (
           >
             Development Environment
           </Link>
+        </li>
+        <li className="toc-item" data-sidebar-branch>
+          <Link
+            to="/docs/"
+            className="d-block"
+            activeClassName="active"
+            data-sidebar-link
+          >
+            Documentation Guide
+          </Link>
+        </li>
+        <li className="toc-item" data-sidebar-branch>
+          <Link
+            to="/translations/"
+            className="d-block"
+            activeClassName="active"
+            data-sidebar-link
+          >
+            Translations
+          </Link>
+        </li>
+        <li className="toc-item" data-sidebar-branch>
+          <Link
+            to="/code-review/"
+            className="d-block"
+            activeClassName="active"
+            data-sidebar-link
+          >
+            Code Review
+          </Link>
+        </li>
+      </ul>
+    </li>
+    <li className="mb-3" data-sidebar-branch>
+      <div
+        className="sidebar-title d-flex align-items-center mb-0"
+        data-sidebar-link
+      >
+        <h6>Understand</h6>
+      </div>
+      <ul className="list-unstyled" data-sidebar-tree>
+        <li className="toc-item" data-sidebar-branch>
           <Link
             to="/python-dependencies/"
             className="d-block"
@@ -72,6 +80,8 @@ const Sidebar = () => (
           >
             Python Dependencies
           </Link>
+        </li>
+        <li className="toc-item" data-sidebar-branch>
           <Link
             to="/database-migrations/"
             className="d-block"
@@ -80,6 +90,8 @@ const Sidebar = () => (
           >
             Database Migrations
           </Link>
+        </li>
+        <li className="toc-item" data-sidebar-branch>
           <Link
             to="/serializers/"
             className="d-block"
@@ -87,6 +99,16 @@ const Sidebar = () => (
             data-sidebar-link
           >
             Serializers
+          </Link>
+        </li>
+        <li className="toc-item" data-sidebar-branch>
+          <Link
+            to="/issue-grouping/"
+            className="d-block"
+            activeClassName="active"
+            data-sidebar-link
+          >
+            Issue Grouping
           </Link>
         </li>
       </ul>

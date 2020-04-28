@@ -9,6 +9,8 @@ module.exports = {
     author: "@getsentry",
   },
   plugins: [
+    "gatsby-plugin-sass",
+    "gatsby-plugin-sharp",
     {
       resolve: "gatsby-plugin-mdx",
       options: {
@@ -21,10 +23,15 @@ module.exports = {
               enableCustomId: true,
             },
           },
+          {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 1200,
+            },
+          },
         ],
       },
     },
-    "gatsby-remark-autolink-headers",
     "gatsby-plugin-react-helmet",
     {
       resolve: `gatsby-source-filesystem`,
@@ -47,9 +54,6 @@ module.exports = {
         path: `${__dirname}/src/pages`,
       },
     },
-    "gatsby-plugin-sass",
-    "gatsby-transformer-sharp",
-    "gatsby-plugin-sharp",
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.app/offline
     // 'gatsby-plugin-offline',
