@@ -54,11 +54,12 @@ const Sidebar = () => (
         <h6>Understand</h6>
       </div>
       <ul className="list-unstyled" data-sidebar-tree>
+        <NavLink to="/config/">Configuration</NavLink>
+        <NavLink to="/feature-flags/">Feature Flags</NavLink>
         <NavLink to="/python-dependencies/">Python Dependencies</NavLink>
         <NavLink to="/database-migrations/">Database Migrations</NavLink>
         <NavLink to="/serializers/">Serializers</NavLink>
         <NavLink to="/issue-grouping/">Issue Grouping</NavLink>
-        <NavLink to="/config/">Configuration</NavLink>
       </ul>
     </li>
     <li className="mb-3" data-sidebar-branch>
@@ -73,7 +74,6 @@ const Sidebar = () => (
         <NavLink to="/services/devservices/">
           Service Manager (devservices)
         </NavLink>
-        <NavLink to="/services/feature-flags/">Feature Flags</NavLink>
         <NavLink to="/services/queue/">Asynchronous Workers (celery)</NavLink>
         <NavLink to="/services/nodestore/">Node Storage</NavLink>
         <NavLink to="/services/filestore/">File Storage</NavLink>
