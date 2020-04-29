@@ -46,9 +46,6 @@ const Sidebar = () => (
         <NavLink to="/config/">Configuration</NavLink>
       </ul>
     </li>
-    <li className="mb-3">
-      <hr class="mt-1 mb-1" />
-    </li>
     <li className="mb-3" data-sidebar-branch>
       <div
         className="sidebar-title d-flex align-items-center mb-0"
