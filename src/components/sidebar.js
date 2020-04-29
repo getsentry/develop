@@ -64,6 +64,7 @@ const Sidebar = () => (
         <NavLink to="/services/nodestore/">Node Storage</NavLink>
         <NavLink to="/services/filestore/">File Storage</NavLink>
         <NavLink to="/services/tsdb/">Time Series Storage (tsdb)</NavLink>
+        <NavLink to="/services/buffers/">Write Buffers</NavLink>
         <NavLink to="/services/metrics/">Internal Metrics</NavLink>
         <NavLink to="/services/quotas/">Quotas & Rate Limiter</NavLink>
         <NavLink to="/services/inbound-mail/">Inbound Mail</NavLink>
