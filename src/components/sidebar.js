@@ -3,14 +3,29 @@ import { Link } from "gatsby";
 
 const NavLink = ({ to, children }) => (
   <li className="toc-item" data-sidebar-branch>
-    <Link
-      to={to}
-      className="d-block"
-      activeClassName="active"
-      data-sidebar-link
-    >
-      {children}
-    </Link>
+    {to.indexOf("://") !== -1 ? (
+      <a href={to} className="d-block" data-sidebar-link>
+        {children}
+
+        <span className="icon icon-external-link">
+          <svg viewBox="0 0 24 24">
+            <path
+              fill="currentColor"
+              d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z"
+            />
+          </svg>
+        </span>
+      </a>
+    ) : (
+      <Link
+        to={to}
+        className="d-block"
+        activeClassName="active"
+        data-sidebar-link
+      >
+        {children}
+      </Link>
+    )}
   </li>
 );
 
@@ -68,6 +83,7 @@ const Sidebar = () => (
         <NavLink to="/services/quotas/">Quotas & Rate Limiter</NavLink>
         <NavLink to="/services/inbound-mail/">Inbound Mail</NavLink>
         <NavLink to="/services/digests/">Notifcation Digests</NavLink>
+        <NavLink to="https://getsentry.github.io/relay/">Relay</NavLink>
       </ul>
     </li>
   </ul>

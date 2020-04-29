@@ -7,7 +7,7 @@
   .global-header {
     flex-shrink: 0;
   }
-  
+
   .toc {
     font-size: 0.875rem;
     flex: 1;
@@ -15,16 +15,16 @@
     overflow-x: hidden;
     border-right: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.02);
-  
+
     // &::-webkit-scrollbar {
     //   width: 10px;
     // }
-  
+
     @include media-breakpoint-up(md) {
       display: block;
     }
   }
-  
+
   .toc-item {
     padding-left: 0;
   }
@@ -51,6 +51,13 @@
   text-decoration: none;
   transition: $transition-time ease-out;
 
+  .icon {
+    margin-left: 0.25em;
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
   &:hover {
     opacity: 1;
     text-decoration: none;
