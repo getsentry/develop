@@ -43,6 +43,7 @@ const Sidebar = () => (
         <NavLink to="/database-migrations/">Database Migrations</NavLink>
         <NavLink to="/serializers/">Serializers</NavLink>
         <NavLink to="/issue-grouping/">Issue Grouping</NavLink>
+        <NavLink to="/config/">Configuration</NavLink>
       </ul>
     </li>
     <li className="mb-3">
