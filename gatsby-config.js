@@ -30,6 +30,12 @@ module.exports = {
               maxWidth: 1200,
             },
           },
+          {
+            resolve: "gatsby-remark-prismjs",
+            options: {
+              noInlineHighlight: true,
+            },
+          },
         ],
       },
     },

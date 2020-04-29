@@ -10,6 +10,7 @@ import Header from "./header";
 import Sidebar from "./sidebar";
 import Navbar from "./navbar";
 
+import "prismjs/themes/prism-tomorrow.css";
 import "../css/screen.scss";
 
 const mdxComponents = { Alert, Link };
