@@ -43,8 +43,14 @@
 @import "_includes/api";
 @import "_includes/user-content-ui";
 
+code[class*="language-"] {
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier,
+    monospace;
+}
 pre[class*="language-"] {
   font-size: 0.9em;
   border: 0;
   border-radius: 4px;
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier,
+    monospace;
 }

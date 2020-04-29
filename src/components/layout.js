@@ -37,6 +37,7 @@ const Layout = ({
     site: { siteMetadata },
   },
 }) => {
+  const hasToc = !!mdx.tableOfContents.items;
   return (
     <div className="document-wrapper">
       <SEO title={mdx.frontmatter.title} />
@@ -63,7 +64,11 @@ const Layout = ({
 
           <section className="pt-3 px-3 content-max prose">
             <div className="row">
-              <div className="{% if page.toc %}col-sm-8 col-md-12 col-lg-8 col-xl-9{% else %}col-12{% endif %}">
+              <div
+                className={
+                  hasToc ? "col-sm-8 col-md-12 col-lg-8 col-xl-9" : "col-12"
+                }
+              >
                 <h1 className="mb-3">{mdx.frontmatter.title}</h1>
                 <div id="main">
                   <MDXProvider components={mdxComponents}>
@@ -71,14 +76,16 @@ const Layout = ({
                   </MDXProvider>
                 </div>
               </div>
-              <div className="col-sm-4 col-md-12 col-lg-4 col-xl-3">
-                <div className="doc-toc">
-                  <div className="doc-toc-title">
-                    <h6>On this page</h6>
+              {hasToc && (
+                <div className="col-sm-4 col-md-12 col-lg-4 col-xl-3">
+                  <div className="doc-toc">
+                    <div className="doc-toc-title">
+                      <h6>On this page</h6>
+                    </div>
+                    <TableOfContents toc={mdx.tableOfContents} />
                   </div>
-                  <TableOfContents toc={mdx.tableOfContents} />
                 </div>
-              </div>
+              )}
             </div>
           </section>
         </div>
