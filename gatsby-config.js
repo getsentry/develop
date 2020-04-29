@@ -11,6 +11,7 @@ module.exports = {
   plugins: [
     "gatsby-plugin-sass",
     "gatsby-plugin-sharp",
+    "gatsby-plugin-zeit-now",
     {
       resolve: "gatsby-plugin-mdx",
       options: {
