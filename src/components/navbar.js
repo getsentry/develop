@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
-const Navbar = ({ homeUrl }) => (
+const Navbar = ({ homeUrl, sitePath }) => (
   <div className="navbar navbar-expand-md navbar-light global-header">
     <div className="collapse navbar-collapse content-max" id="navbar-menu">
-      <h6 style={{ fontSize: 18, margin: 0, fontWeight: 300, color: '#666' }}>
-        docs.sentry.io/develop
+      <h6 style={{ fontSize: 18, margin: 0, fontWeight: 300, color: "#666" }}>
+        {sitePath}
       </h6>
       <ul className="navbar-nav ml-auto rounded">
         <li className="nav-item mr-md-1 mr-lg-2" data-hide-when-logged-in>

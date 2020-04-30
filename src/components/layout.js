@@ -59,7 +59,10 @@ const Layout = ({
       <main role="main" className="px-0">
         <div className="flex-grow-1 main-scroll">
           <div className="d-none d-md-block">
-            <Navbar homeUrl={siteMetadata.homeUrl} />
+            <Navbar
+              homeUrl={siteMetadata.homeUrl}
+              sitePath={siteMetadata.sitePath}
+            />
           </div>
 
           <section className="pt-3 px-3 content-max prose">
@@ -102,6 +105,7 @@ export const pageQuery = graphql`
       siteMetadata {
         title
         homeUrl
+        sitePath
       }
     }
     mdx(id: { eq: $id }) {

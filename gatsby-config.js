@@ -5,6 +5,7 @@ module.exports = {
   siteMetadata: {
     title: "Sentry Documentation",
     homeUrl: "https://sentry.io",
+    sitePath: "develop.sentry.dev",
     description: "",
     author: "@getsentry",
   },
