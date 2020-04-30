@@ -22,4 +22,4 @@ Docs live in `docs/` and `pages/`.
 
 ## Deployment
 
-`master` is automatically via Vercel.
+`master` is automatically deployed via Vercel.
