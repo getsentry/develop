@@ -1,8 +1,12 @@
-import PropTypes from 'prop-types';
-import React from 'react';
+import PropTypes from "prop-types";
+import React from "react";
 
 const Alert = ({ title, children, level, deepLink, dismiss }) => (
-  <div className={`alert alert-${level}`} role="alert" id={deepLink}>
+  <div
+    className={`alert ${level && `alert-${level}`}`}
+    role="alert"
+    id={deepLink}
+  >
     {dismiss && (
       <button
         type="button"
@@ -21,15 +25,15 @@ const Alert = ({ title, children, level, deepLink, dismiss }) => (
 Alert.propTypes = {
   title: PropTypes.string,
   level: PropTypes.string,
-  deepLink: PropTypes.bool,
-  dismiss: PropTypes.bool
+  deepLink: PropTypes.string,
+  dismiss: PropTypes.bool,
 };
 
 Alert.defaultProps = {
   title: null,
-  level: '',
-  deepLink: false,
-  dismiss: false
+  level: "",
+  deepLink: null,
+  dismiss: false,
 };
 
 export default Alert;

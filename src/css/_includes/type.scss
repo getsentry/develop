@@ -1,20 +1,20 @@
 @font-face {
-  font-family: 'Rubik';
-  src: asset-url('Rubik-Medium.ttf') format('truetype');
+  font-family: "Rubik";
+  src: asset-url("Rubik-Medium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Rubik';
-  src: asset-url('Rubik-Italic.ttf') format('truetype');
+  font-family: "Rubik";
+  src: asset-url("Rubik-Italic.ttf") format("truetype");
   font-weight: 400;
   font-style: italic;
 }
 
 @font-face {
-  font-family: 'Rubik';
-  src: asset-url('Rubik-Regular.ttf') format('truetype');
+  font-family: "Rubik";
+  src: asset-url("Rubik-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
@@ -81,6 +81,11 @@
 
   dt + dd {
     margin-top: $paragraph-margin-bottom;
+    margin-bottom: $paragraph-margin-bottom;
+  }
+
+  pre {
+    margin-bottom: $paragraph-margin-bottom;
   }
 
   blockquote {
@@ -140,6 +145,6 @@ dd {
   width: 0;
 
   &::after {
-    content: '\2060';
+    content: "\2060";
   }
 }

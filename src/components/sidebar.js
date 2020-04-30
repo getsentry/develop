@@ -40,6 +40,9 @@ const Sidebar = () => (
       </div>
       <ul className="list-unstyled" data-sidebar-tree>
         <NavLink to="/">Overview</NavLink>
+        <NavLink to="https://github.com/getsentry/.github/blob/master/CODE_OF_CONDUCT.md">
+          Code of Conduct
+        </NavLink>
         <NavLink to="/environment/">Development Environment</NavLink>
         <NavLink to="/docs/">Documentation Guide</NavLink>
         <NavLink to="/translations/">Translations</NavLink>
@@ -54,6 +57,7 @@ const Sidebar = () => (
         <h6>Understand</h6>
       </div>
       <ul className="list-unstyled" data-sidebar-tree>
+        <NavLink to="/sentry-vs-getsentry/">sentry vs getsentry</NavLink>
         <NavLink to="/config/">Configuration</NavLink>
         <NavLink to="/feature-flags/">Feature Flags</NavLink>
         <NavLink to="/python-dependencies/">Python Dependencies</NavLink>
@@ -75,13 +79,13 @@ const Sidebar = () => (
           Service Manager (devservices)
         </NavLink>
         <NavLink to="/services/queue/">Asynchronous Workers (celery)</NavLink>
+        <NavLink to="/services/email/">Email</NavLink>
         <NavLink to="/services/nodestore/">Node Storage</NavLink>
         <NavLink to="/services/filestore/">File Storage</NavLink>
         <NavLink to="/services/tsdb/">Time Series Storage (tsdb)</NavLink>
         <NavLink to="/services/buffers/">Write Buffers</NavLink>
         <NavLink to="/services/metrics/">Internal Metrics</NavLink>
         <NavLink to="/services/quotas/">Quotas & Rate Limiter</NavLink>
-        <NavLink to="/services/inbound-mail/">Inbound Mail</NavLink>
         <NavLink to="/services/digests/">Notifcation Digests</NavLink>
         <NavLink to="https://getsentry.github.io/relay/">Relay</NavLink>
       </ul>
