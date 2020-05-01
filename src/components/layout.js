@@ -33,10 +33,11 @@ const TableOfContents = ({ title, toc: { items } }) => {
 
 const Layout = ({
   data: {
-    mdx,
+    file,
     site: { siteMetadata },
   },
 }) => {
+  const mdx = file.childMdx;
   const hasToc = !!mdx.tableOfContents.items;
   return (
     <div className="document-wrapper">
@@ -77,6 +78,18 @@ const Layout = ({
                   <MDXProvider components={mdxComponents}>
                     <MDXRenderer>{mdx.body}</MDXRenderer>
                   </MDXProvider>
+
+                  <p>
+                    <small>
+                      You can{" "}
+                      <a
+                        href={`https://github.com/getsentry/develop/edit/master/src/${file.sourceInstanceName}/${file.relativePath}`}
+                      >
+                        edit this page
+                      </a>{" "}
+                      on GitHub.
+                    </small>
+                  </p>
                 </div>
               </div>
               {hasToc && (
@@ -108,12 +121,15 @@ export const pageQuery = graphql`
         sitePath
       }
     }
-    mdx(id: { eq: $id }) {
-      id
-      body
-      tableOfContents
-      frontmatter {
-        title
+    file(id: { eq: $id }) {
+      relativePath
+      sourceInstanceName
+      childMdx {
+        body
+        tableOfContents
+        frontmatter {
+          title
+        }
       }
     }
   }

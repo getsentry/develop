@@ -15,10 +15,10 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
 exports.createPages = async function({ actions, graphql }) {
   const { data, errors } = await graphql(`
     query {
-      allMdx {
-        edges {
-          node {
-            id
+      allFile {
+        nodes {
+          id
+          childMdx {
             fields {
               slug
             }
@@ -32,11 +32,13 @@ exports.createPages = async function({ actions, graphql }) {
     reporter.panicOnBuild('🚨  ERROR: Loading "createPages" query');
   }
   const component = require.resolve(`./src/components/layout.js`);
-  data.allMdx.edges.forEach(({ node }) => {
-    actions.createPage({
-      path: node.fields.slug,
-      component,
-      context: { id: node.id },
-    });
+  data.allFile.nodes.forEach((node) => {
+    if (node.childMdx) {
+      actions.createPage({
+        path: node.childMdx.fields.slug,
+        component,
+        context: { id: node.id },
+      });
+    }
   });
 };
