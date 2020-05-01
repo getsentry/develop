@@ -63,6 +63,7 @@ const Sidebar = () => (
         <NavLink to="/python-dependencies/">Python Dependencies</NavLink>
         <NavLink to="/database-migrations/">Database Migrations</NavLink>
         <NavLink to="/serializers/">Serializers</NavLink>
+        <NavLink to="/frontend/defaultprops/">Default Prop Typing</NavLink>
       </ul>
     </li>
     <li className="mb-3" data-sidebar-branch>
