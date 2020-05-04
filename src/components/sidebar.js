@@ -44,9 +44,25 @@ const Sidebar = () => (
         <NavLink to="/python-dependencies/">Python Dependencies</NavLink>
         <NavLink to="/database-migrations/">Database Migrations</NavLink>
         <NavLink to="/serializers/">Serializers</NavLink>
-        <NavLink to="/frontend/defaultprops/">Default Prop Typing</NavLink>
       </ul>
     </li>
+    <li className="mb-3" data-frontend-branch>
+      <div
+        className="sidebar-title d-flex align-items-center mb-0"
+        data-sidebar-link
+      >
+        <h6>Frontend</h6>
+      </div>
+
+      <ul className="list-unstyled" data-frontend-tree>
+        <NavLink to="/frontend/">Frontend Handbook</NavLink>
+        <NavLink to="/frontend/defaultprops/">Typing DefaultProps</NavLink>
+        <NavLink to="/frontend/migration-gridemotion/">
+          Migration - grid-emotion
+        </NavLink>
+      </ul>
+    </li>
+
     <li className="mb-3" data-sidebar-branch>
       <div
         className="sidebar-title d-flex align-items-center mb-0"
