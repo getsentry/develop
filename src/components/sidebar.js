@@ -1,24 +1,12 @@
 import React from "react";
-import { Link } from "gatsby";
 
-import ExternalLink from "./externalLink";
+import SmartLink from "./smartLink";
 
 const NavLink = ({ to, children }) => (
   <li className="toc-item" data-sidebar-branch>
-    {to.indexOf("://") !== -1 ? (
-      <ExternalLink href={to} className="d-block" data-sidebar-link>
-        {children}
-      </ExternalLink>
-    ) : (
-      <Link
-        to={to}
-        className="d-block"
-        activeClassName="active"
-        data-sidebar-link
-      >
-        {children}
-      </Link>
-    )}
+    <SmartLink to={to} className="d-block" data-sidebar-link>
+      {children}
+    </SmartLink>
   </li>
 );
 
