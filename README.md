@@ -23,11 +23,32 @@ Install Gatsby:
 npm install -g gatsby-cli
 ```
 
+Copy the example configuration (and update if needed):
+
+```shell
+cp .env.example .env.development
+```
+
 Run the development server:
 
 ```shell
 gatsby develop
 ```
+
+Docs live in `docs/` and `pages/`.
+
+### Testing Search
+
+Search is built with Algolia. At some point may wish to test index changes or other changes to search behavior. To do this you'll need to run `gatsby build` with a special flag to write to your development environment:
+
+```
+GATSBY_ENV=development gatsby build
+```
+
+You will also need to configure the following in your `.env.development`:
+
+- `ALGOLIA_INDEX=1`
+- `ALGOLIA_ADMIN_KEY=[admin write key]`
 
 ## Deployment
 

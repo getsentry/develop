@@ -1,15 +1,17 @@
-const path = require("path");
+// const path = require("path");
+const activeEnv =
+  process.env.GATSBY_ENV || process.env.NODE_ENV || "development";
 
-module.exports = {
-  // pathPrefix: `/develop`,
-  siteMetadata: {
-    title: "Sentry Documentation",
-    homeUrl: "https://sentry.io",
-    sitePath: "develop.sentry.dev",
-    description: "",
-    author: "@getsentry",
-  },
-  plugins: [
+console.log(`Using environment config: '${activeEnv}'`);
+
+require("dotenv").config({
+  path: `.env.${activeEnv}`,
+});
+
+const queries = require("./src/utils/algolia");
+
+const getPlugins = () => {
+  const plugins = [
     "gatsby-plugin-sass",
     "gatsby-plugin-sharp",
     "gatsby-plugin-zeit-now",
@@ -66,5 +68,29 @@ module.exports = {
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.app/offline
     // 'gatsby-plugin-offline',
-  ],
+  ];
+  if (process.env.ALGOLIA_INDEX === "1") {
+    plugins.push({
+      resolve: `gatsby-plugin-algolia`,
+      options: {
+        appId: process.env.GATSBY_ALGOLIA_APP_ID,
+        apiKey: process.env.ALGOLIA_ADMIN_KEY,
+        queries,
+        chunkSize: 10000, // default: 1000
+      },
+    });
+  }
+  return plugins;
+};
+
+module.exports = {
+  // pathPrefix: `/develop`,
+  siteMetadata: {
+    title: "Sentry Documentation",
+    homeUrl: "https://sentry.io",
+    sitePath: "develop.sentry.dev",
+    description: "",
+    author: "@getsentry",
+  },
+  plugins: getPlugins(),
 };
