@@ -88,6 +88,19 @@ const Sidebar = () => (
         className="sidebar-title d-flex align-items-center mb-0"
         data-sidebar-link
       >
+        <h6>Integrations</h6>
+      </div>
+
+      <ul className="list-unstyled" data-sidebar-tree>
+        <NavLink to="/integrations/">Overview</NavLink>
+        <NavLink to="/integrations/github/">GitHub</NavLink>
+      </ul>
+    </li>
+    <li className="mb-3" data-sidebar-branch>
+      <div
+        className="sidebar-title d-flex align-items-center mb-0"
+        data-sidebar-link
+      >
         <h6>Resources</h6>
       </div>
 
