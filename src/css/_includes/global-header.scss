@@ -8,6 +8,9 @@
   width: 100%;
 
   .navbar-brand {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     height: 100%;
     margin-right: 0;
     font-size: 0.5rem;
@@ -17,7 +20,18 @@
     svg {
       display: block;
       height: 100%;
-      width: auto;
+      margin-right: 0.7rem;
+    }
+
+    h6 {
+      line-height: 32px;
+      font-size: 18px;
+      margin: 0;
+      font-weight: 300;
+      color: #666;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
     }
   }
 }

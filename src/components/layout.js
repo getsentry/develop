@@ -43,7 +43,11 @@ const Layout = ({
     <div className="document-wrapper">
       <SEO title={mdx.frontmatter.title} />
       <div className="sidebar">
-        <Header siteTitle={siteMetadata.title} homeUrl={siteMetadata.homeUrl} />
+        <Header
+          siteTitle={siteMetadata.title}
+          homeUrl={siteMetadata.homeUrl}
+          sitePath={siteMetadata.sitePath}
+        />
 
         <div
           className="d-md-flex flex-column align-items-stretch collapse navbar-collapse"
@@ -58,12 +62,9 @@ const Layout = ({
       </div>
 
       <main role="main" className="px-0">
-        <div className="flex-grow-1 main-scroll">
+        <div className="flex-grow-1">
           <div className="d-none d-md-block">
-            <Navbar
-              homeUrl={siteMetadata.homeUrl}
-              sitePath={siteMetadata.sitePath}
-            />
+            <Navbar homeUrl={siteMetadata.homeUrl} />
           </div>
 
           <section className="pt-3 px-3 content-max prose">
