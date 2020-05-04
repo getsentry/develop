@@ -2,21 +2,20 @@ import React from "react";
 import { graphql } from "gatsby";
 import { MDXProvider } from "@mdx-js/react";
 import { MDXRenderer } from "gatsby-plugin-mdx";
-import { Link } from "gatsby";
 
 import Alert from "./alert";
 import SEO from "./seo";
 import Header from "./header";
 import Sidebar from "./sidebar";
 import Navbar from "./navbar";
-import ExternalLink from "./externalLink";
+import SmartLink from "./smartLink";
 
 import "prismjs/themes/prism-tomorrow.css";
 import "../css/screen.scss";
 
-const mdxComponents = { Alert, Link };
+const mdxComponents = { Alert, a: SmartLink, Link: SmartLink };
 
-const TableOfContents = ({ title, toc: { items } }) => {
+const TableOfContents = ({ toc: { items } }) => {
   if (!items) return null;
 
   const recurseyMcRecurseFace = (items) =>
@@ -36,11 +35,11 @@ const GitHubCTA = ({ sourceInstanceName, relativePath }) => (
   <div className="github-cta">
     <small>
       You can{" "}
-      <ExternalLink
-        href={`https://github.com/getsentry/develop/edit/master/src/${sourceInstanceName}/${relativePath}`}
+      <SmartLink
+        to={`https://github.com/getsentry/develop/edit/master/src/${sourceInstanceName}/${relativePath}`}
       >
         edit this page
-      </ExternalLink>{" "}
+      </SmartLink>{" "}
       on GitHub.
     </small>
   </div>
