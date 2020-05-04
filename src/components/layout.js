@@ -3,7 +3,6 @@ import { graphql } from "gatsby";
 import { MDXProvider } from "@mdx-js/react";
 import { MDXRenderer } from "gatsby-plugin-mdx";
 import { Link } from "gatsby";
-import Moment from "react-moment";
 
 import Alert from "./alert";
 import SEO from "./seo";
@@ -33,11 +32,7 @@ const TableOfContents = ({ title, toc: { items } }) => {
   return <ul className="section-nav">{recurseyMcRecurseFace(items)}</ul>;
 };
 
-const GitHubCTA = ({
-  sourceInstanceName,
-  relativePath,
-  gitLog: { gitLogLatestAuthorName, gitLogLatestAuthorEmail, gitLogLatestDate },
-}) => (
+const GitHubCTA = ({ sourceInstanceName, relativePath }) => (
   <div className="github-cta">
     <small>
       You can{" "}
@@ -46,8 +41,7 @@ const GitHubCTA = ({
       >
         edit this page
       </ExternalLink>{" "}
-      on GitHub. It was last updated by <code>{gitLogLatestAuthorName}</code> on{" "}
-      <Moment date={gitLogLatestDate} format="lll" />.
+      on GitHub.
     </small>
   </div>
 );
@@ -104,7 +98,6 @@ const Layout = ({
                   <GitHubCTA
                     sourceInstanceName={file.sourceInstanceName}
                     relativePath={file.relativePath}
-                    gitLog={file.fields}
                   />
                 </div>
               </div>
@@ -140,11 +133,6 @@ export const pageQuery = graphql`
     file(id: { eq: $id }) {
       relativePath
       sourceInstanceName
-      fields {
-        gitLogLatestAuthorName
-        gitLogLatestAuthorEmail
-        gitLogLatestDate
-      }
       childMdx {
         body
         tableOfContents
