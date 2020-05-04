@@ -90,6 +90,27 @@ const Sidebar = () => (
         <NavLink to="https://getsentry.github.io/relay/">Relay</NavLink>
       </ul>
     </li>
+
+    <li className="mb-3" data-sidebar-branch>
+      <div
+        className="sidebar-title d-flex align-items-center mb-0"
+        data-sidebar-link
+      >
+        <h6>SDK Development</h6>
+      </div>
+
+      <ul className="list-unstyled" data-sidebar-tree>
+        <NavLink to="/sdk-dev/overview/">Overview</NavLink>
+        <NavLink to="/sdk-dev/unified-api/">
+        Unified API
+        </NavLink>
+        <NavLink to="/sdk-dev/features/">Expected Features</NavLink>
+        <NavLink to="/sdk-dev/event-payloads/">Event Payloads</NavLink>
+        <NavLink to="/sdk-dev/data-handling/">Data Handling</NavLink>
+        <NavLink to="/sdk-dev/store/">Store Endpoint</NavLink>
+        <NavLink to="/sdk-dev/envelopes/">Envelopes</NavLink>
+      </ul>
+    </li>
     <li className="mb-3" data-sidebar-branch>
       <div
         className="sidebar-title d-flex align-items-center mb-0"
