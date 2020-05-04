@@ -7,7 +7,7 @@ import {
 } from "react-instantsearch-dom";
 import algoliasearch from "algoliasearch/lite";
 
-import Input from "./Input";
+import Input from "./input";
 import * as hitComps from "./hitComps";
 
 const Results = connectStateResults(
