@@ -54,3 +54,21 @@ pre[class*="language-"] {
   font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier,
     monospace;
 }
+
+.github-cta {
+  border: 1px solid var(--gray);
+  background: var(--light);
+  margin-top: 4rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 0.25em;
+}
+
+a .icon {
+  margin-left: 0.25em;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
