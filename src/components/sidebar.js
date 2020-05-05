@@ -81,15 +81,35 @@ const Sidebar = () => (
       </div>
 
       <ul className="list-unstyled" data-sidebar-tree>
-        <NavLink to="/sdk-dev/overview/">Overview</NavLink>
-        <NavLink to="/sdk-dev/unified-api/">
-        Unified API
-        </NavLink>
-        <NavLink to="/sdk-dev/features/">Expected Features</NavLink>
-        <NavLink to="/sdk-dev/event-payloads/">Event Payloads</NavLink>
-        <NavLink to="/sdk-dev/data-handling/">Data Handling</NavLink>
-        <NavLink to="/sdk-dev/store/">Store Endpoint</NavLink>
-        <NavLink to="/sdk-dev/envelopes/">Envelopes</NavLink>
+        <NavLink to="/sdk/overview/">Overview</NavLink>
+        <NavLink to="/sdk/unified-api/">Unified API</NavLink>
+        <NavLink to="/sdk/features/">Expected Features</NavLink>
+        <NavLink to="/sdk/data-handling/">Data Handling</NavLink>
+        <NavLink to="/sdk/store/">Store Endpoint</NavLink>
+        <NavLink to="/sdk/envelopes/">Envelopes</NavLink>
+      </ul>
+    </li>
+    <li className="mb-3" data-sidebar-branch>
+      <div
+        className="sidebar-title d-flex align-items-center mb-0"
+        data-sidebar-link
+      >
+        <h6>Event Payloads</h6>
+      </div>
+
+      <ul className="list-unstyled" data-sidebar-tree>
+        <NavLink to="/sdk/event-payloads/overview/">Event Interface</NavLink>
+        <NavLink to="/sdk/event-payloads/breadcrumbs/">Breadcrumbs Interface</NavLink>
+        <NavLink to="/sdk/event-payloads/contexts/">Contexts Interface</NavLink>
+        <NavLink to="/sdk/event-payloads/debugmeta">Debug Meta Interface</NavLink>
+        <NavLink to="/sdk/event-payloads/exception/">Exception Interface</NavLink>
+        <NavLink to="/sdk/event-payloads/message/">Message Interface</NavLink>
+        <NavLink to="/sdk/event-payloads/request/">Request Interface</NavLink>
+        <NavLink to="/sdk/event-payloads/sdk/">SDK Interface</NavLink>
+        <NavLink to="/sdk/event-payloads/stacktrace/">Stack Trace Interface</NavLink>
+        <NavLink to="/sdk/event-payloads/template/">Template Interface</NavLink>
+        <NavLink to="/sdk/event-payloads/threads/">Threads Interface</NavLink>
+        <NavLink to="/sdk/event-payloads/user/">User Interface</NavLink>
       </ul>
     </li>
     <li className="mb-3" data-sidebar-branch>
