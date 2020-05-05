@@ -33,7 +33,7 @@ exports.createPages = async function({ actions, graphql }) {
   }
   const component = require.resolve(`./src/components/layout.js`);
   data.allFile.nodes.forEach((node) => {
-    if (node.childMdx) {
+    if (node.childMdx && node.childMdx.fields) {
       actions.createPage({
         path: node.childMdx.fields.slug,
         component,
