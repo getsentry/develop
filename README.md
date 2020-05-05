@@ -2,6 +2,14 @@
 
 Welcome to Sentry's Developer documentation!
 
+## Get the Config Ready
+
+Copy the example configuration (and update if needed):
+
+```shell
+cp .env.example .env.development
+```
+
 ## Running it with Yarn and/or Volta
 
 No need to install `gatsby-cli` globally
@@ -21,12 +29,6 @@ Install Gatsby:
 
 ```shell
 npm install -g gatsby-cli
-```
-
-Copy the example configuration (and update if needed):
-
-```shell
-cp .env.example .env.development
 ```
 
 Run the development server:
