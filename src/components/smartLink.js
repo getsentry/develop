@@ -11,6 +11,13 @@ export default ({ to, href, children, ...props }) => {
         {children}
       </ExternalLink>
     );
+  } else if (realTo.indexOf("/") !== 0) {
+    // this handles cases like anchor tags (where Link messes thats up)
+    return (
+      <a href={realTo} {...props}>
+        {children}
+      </a>
+    );
   }
   return (
     <Link to={realTo} activeClassName="active" {...props}>
