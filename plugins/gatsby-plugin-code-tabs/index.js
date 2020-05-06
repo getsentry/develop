@@ -25,6 +25,7 @@ function forcesTabBar(node) {
 }
 
 module.exports = ({ markdownAST }, { className = "code-tabs-wrapper" }) => {
+  let lastParent = null;
   let pendingCode = [];
   let toRemove = [];
 
@@ -76,9 +77,10 @@ module.exports = ({ markdownAST }, { className = "code-tabs-wrapper" }) => {
     markdownAST,
     () => true,
     (node, _index, parent) => {
-      if (node.type !== "code") {
+      if (node.type !== "code" || parent !== lastParent) {
         flushPendingCode();
         pendingCode = [];
+        lastParent = parent;
       }
       if (node.type === "code") {
         pendingCode.push([node, parent]);
