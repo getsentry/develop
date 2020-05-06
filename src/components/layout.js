@@ -11,6 +11,7 @@ import Navbar from "./navbar";
 import SmartLink from "./smartLink";
 import CodeBlock from "./codeBlock";
 import CodeTabs, { CodeContext, makeCodeContextState } from "./codeTabs";
+import Break from "./break";
 
 import "prismjs/themes/prism-tomorrow.css";
 import "../css/screen.scss";
@@ -21,6 +22,7 @@ const mdxComponents = {
   Link: SmartLink,
   CodeBlock,
   CodeTabs,
+  Break,
 };
 
 const TableOfContents = ({ toc: { items } }) => {
