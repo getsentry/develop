@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 
 // human readable versions of names
 const LANGUAGES = {
@@ -39,6 +39,8 @@ function CodeTabs({ children, hideTabBar = false }) {
 
   const [sharedSelection, setSharedSelection] = useContext(CodeContext);
   const [localSelection, setLocalSelection] = useState(null);
+  const [lastScrollOffset, setLastScrollOffset] = useState(null);
+  const tabBarRef = useRef(null);
 
   const possibleChoices = children.map((x) => {
     const { title, language } = x.props;
@@ -65,6 +67,15 @@ function CodeTabs({ children, hideTabBar = false }) {
 
   let code = null;
 
+  useEffect(() => {
+    if (lastScrollOffset !== null) {
+      const diff =
+        tabBarRef.current.getBoundingClientRect().y - lastScrollOffset;
+      window.scroll(window.scrollX, window.scrollY + diff);
+      setLastScrollOffset(null);
+    }
+  });
+
   const names = possibleChoices.map((choice, idx) => {
     const isSelected = choice === finalSelection;
     if (isSelected) {
@@ -75,6 +86,7 @@ function CodeTabs({ children, hideTabBar = false }) {
       <button
         className={isSelected ? "active" : ""}
         onClick={() => {
+          setLastScrollOffset(tabBarRef.current.getBoundingClientRect().y);
           setSharedSelection(choice);
           setLocalSelection(choice);
         }}
@@ -86,9 +98,9 @@ function CodeTabs({ children, hideTabBar = false }) {
   });
 
   return (
-    <div className="code-tabs">
-      {!hideTabBar && <div class="tab-bar">{names}</div>}
-      <div class="tab-content">{code}</div>
+    <div className="code-tabs" ref={tabBarRef}>
+      {!hideTabBar && <div className="tab-bar">{names}</div>}
+      <div className="tab-content">{code}</div>
     </div>
   );
 }
