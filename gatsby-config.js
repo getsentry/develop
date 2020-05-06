@@ -35,6 +35,12 @@ const getPlugins = () => {
             },
           },
           {
+            resolve: require.resolve("./plugins/gatsby-plugin-code-tabs"),
+            options: {
+              githubRepo: "getsentry/develop"
+            }
+          },
+          {
             resolve: "gatsby-remark-prismjs",
             options: {
               noInlineHighlight: true,
