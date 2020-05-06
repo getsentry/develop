@@ -24,7 +24,18 @@ export function makeCodeContextState() {
 function CodeTabs({ children, hideTabBar = false }) {
   if (!Array.isArray(children)) {
     children = [children];
+  } else {
+    children = [...children];
   }
+
+  children.sort((a, b) => {
+    function makeKey({ language, title }) {
+      return `${language || "_"}-${title || ""}`;
+    }
+    return makeKey(a.props).localeCompare(makeKey(b.props), ["en"], {
+      sensitivity: "base",
+    });
+  });
 
   const [sharedSelection, setSharedSelection] = useContext(CodeContext);
   const [localSelection, setLocalSelection] = useState(null);

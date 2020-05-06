@@ -24,11 +24,6 @@ function forcesTabBar(node) {
   return meta && !!meta.match(/\{forceTabBar\}/);
 }
 
-function isFoldWithLast(node) {
-  const meta = getFullMeta(node);
-  return meta && !!meta.match(/\{foldWithLast\}/);
-}
-
 module.exports = ({ markdownAST }, { className = "code-tabs-wrapper" }) => {
   let pendingCode = [];
   let toRemove = [];
@@ -77,13 +72,19 @@ module.exports = ({ markdownAST }, { className = "code-tabs-wrapper" }) => {
     toRemove = toRemove.concat(pendingCode.splice(1));
   }
 
-  visit(markdownAST, "code", (node, _index, parent) => {
-    if (!isFoldWithLast(node)) {
-      flushPendingCode();
-      pendingCode = [];
+  visit(
+    markdownAST,
+    () => true,
+    (node, _index, parent) => {
+      if (node.type !== "code") {
+        flushPendingCode();
+        pendingCode = [];
+      }
+      if (node.type === "code") {
+        pendingCode.push([node, parent]);
+      }
     }
-    pendingCode.push([node, parent]);
-  });
+  );
 
   flushPendingCode();
 
