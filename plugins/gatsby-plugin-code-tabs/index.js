@@ -9,13 +9,13 @@ function getFullMeta(node) {
 
 function getFilename(node) {
   const meta = getFullMeta(node);
-  const match = (meta || "").match(/\{filename:([^\}]+)\}/);
+  const match = (meta || "").match(/\{filename:\s*([^\}]+)\}/);
   return (match && match[1]) || "";
 }
 
 function getTabTitle(node) {
   const meta = getFullMeta(node);
-  const match = (meta || "").match(/\{tabTitle:([^\}]+)\}/);
+  const match = (meta || "").match(/\{tabTitle:\s*([^\}]+)\}/);
   return (match && match[1]) || "";
 }
 
@@ -37,19 +37,24 @@ module.exports = ({ markdownAST }, { className = "code-tabs-wrapper" }) => {
     const hideTabBar =
       pendingCode.length === 1 && !forcesTabBar(pendingCode[0][0]);
     const rootNode = pendingCode[0][0];
-    const children = pendingCode.flatMap(([node]) => [
-      {
-        type: "jsx",
-        value: `<CodeBlock language="${node.lang || ""}" title="${getTabTitle(
-          node
-        )}" filename="${getFilename(node)}">`,
-      },
-      Object.assign({}, node),
-      {
-        type: "jsx",
-        value: "</CodeBlock>",
-      },
-    ]);
+    const children = pendingCode.reduce(
+      (arr, [node]) =>
+        arr.concat([
+          {
+            type: "jsx",
+            value: `<CodeBlock language="${node.lang ||
+              ""}" title="${getTabTitle(node)}" filename="${getFilename(
+              node
+            )}">`,
+          },
+          Object.assign({}, node),
+          {
+            type: "jsx",
+            value: "</CodeBlock>",
+          },
+        ]),
+      []
+    );
 
     rootNode.type = "element";
     rootNode.data = {
