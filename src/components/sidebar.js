@@ -1,14 +1,30 @@
+import { withPrefix } from "gatsby";
 import React from "react";
+import { useLocation } from "@reach/router";
 
 import SmartLink from "./smartLink";
 
-const NavLink = ({ to, children }) => (
-  <li className="toc-item" data-sidebar-branch>
-    <SmartLink to={to} className="d-block" data-sidebar-link>
-      {children}
-    </SmartLink>
-  </li>
-);
+const NavLink = ({ to, title, children }) => {
+  const location = useLocation();
+
+  let className = "toc-item";
+  if (location && location.pathname.indexOf(withPrefix(to)) === 0) {
+    className += " toc-active";
+  }
+
+  return (
+    <li className={className} data-sidebar-branch>
+      <SmartLink to={to} className="d-block" data-sidebar-link>
+        {title || children}
+      </SmartLink>
+      {title && (
+        <ul className="list-unstyled" data-sidebar-tree>
+          {children}
+        </ul>
+      )}
+    </li>
+  );
+};
 
 const Sidebar = () => (
   <ul className="list-unstyled" data-sidebar-tree>
@@ -103,37 +119,31 @@ const Sidebar = () => (
         <NavLink to="/sdk/data-handling/">Data Handling</NavLink>
         <NavLink to="/sdk/store/">Store Endpoint</NavLink>
         <NavLink to="/sdk/envelopes/">Envelopes</NavLink>
-      </ul>
-    </li>
-    <li className="mb-3" data-sidebar-branch>
-      <div
-        className="sidebar-title d-flex align-items-center mb-0"
-        data-sidebar-link
-      >
-        <h6>Event Payloads</h6>
-      </div>
-
-      <ul className="list-unstyled" data-sidebar-tree>
-        <NavLink to="/sdk/event-payloads/">Event Interface</NavLink>
-        <NavLink to="/sdk/event-payloads/breadcrumbs/">
-          Breadcrumbs Interface
+        <NavLink to="/sdk/event-payloads/" title="Event Payloads">
+          <NavLink to="/sdk/event-payloads/breadcrumbs/">
+            Breadcrumbs Interface
+          </NavLink>
+          <NavLink to="/sdk/event-payloads/contexts/">
+            Contexts Interface
+          </NavLink>
+          <NavLink to="/sdk/event-payloads/debugmeta">
+            Debug Meta Interface
+          </NavLink>
+          <NavLink to="/sdk/event-payloads/exception/">
+            Exception Interface
+          </NavLink>
+          <NavLink to="/sdk/event-payloads/message/">Message Interface</NavLink>
+          <NavLink to="/sdk/event-payloads/request/">Request Interface</NavLink>
+          <NavLink to="/sdk/event-payloads/sdk/">SDK Interface</NavLink>
+          <NavLink to="/sdk/event-payloads/stacktrace/">
+            Stack Trace Interface
+          </NavLink>
+          <NavLink to="/sdk/event-payloads/template/">
+            Template Interface
+          </NavLink>
+          <NavLink to="/sdk/event-payloads/threads/">Threads Interface</NavLink>
+          <NavLink to="/sdk/event-payloads/user/">User Interface</NavLink>
         </NavLink>
-        <NavLink to="/sdk/event-payloads/contexts/">Contexts Interface</NavLink>
-        <NavLink to="/sdk/event-payloads/debugmeta">
-          Debug Meta Interface
-        </NavLink>
-        <NavLink to="/sdk/event-payloads/exception/">
-          Exception Interface
-        </NavLink>
-        <NavLink to="/sdk/event-payloads/message/">Message Interface</NavLink>
-        <NavLink to="/sdk/event-payloads/request/">Request Interface</NavLink>
-        <NavLink to="/sdk/event-payloads/sdk/">SDK Interface</NavLink>
-        <NavLink to="/sdk/event-payloads/stacktrace/">
-          Stack Trace Interface
-        </NavLink>
-        <NavLink to="/sdk/event-payloads/template/">Template Interface</NavLink>
-        <NavLink to="/sdk/event-payloads/threads/">Threads Interface</NavLink>
-        <NavLink to="/sdk/event-payloads/user/">User Interface</NavLink>
       </ul>
     </li>
     <li className="mb-3" data-sidebar-branch>
