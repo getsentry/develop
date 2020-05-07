@@ -114,7 +114,7 @@ const Sidebar = () => (
       </div>
 
       <ul className="list-unstyled" data-sidebar-tree>
-        <NavLink to="/sdk/event-payloads/overview/">Event Interface</NavLink>
+        <NavLink to="/sdk/event-payloads/">Event Interface</NavLink>
         <NavLink to="/sdk/event-payloads/breadcrumbs/">
           Breadcrumbs Interface
         </NavLink>
