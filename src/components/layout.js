@@ -9,11 +9,21 @@ import Header from "./header";
 import Sidebar from "./sidebar";
 import Navbar from "./navbar";
 import SmartLink from "./smartLink";
+import CodeBlock from "./codeBlock";
+import CodeTabs, { CodeContext, makeCodeContextState } from "./codeTabs";
+import Break from "./break";
 
 import "prismjs/themes/prism-tomorrow.css";
 import "../css/screen.scss";
 
-const mdxComponents = { Alert, a: SmartLink, Link: SmartLink };
+const mdxComponents = {
+  Alert,
+  a: SmartLink,
+  Link: SmartLink,
+  CodeBlock,
+  CodeTabs,
+  Break,
+};
 
 const TableOfContents = ({ toc: { items } }) => {
   if (!items) return null;
@@ -90,9 +100,11 @@ const Layout = ({
               >
                 <h1 className="mb-3">{mdx.frontmatter.title}</h1>
                 <div id="main">
-                  <MDXProvider components={mdxComponents}>
-                    <MDXRenderer>{mdx.body}</MDXRenderer>
-                  </MDXProvider>
+                  <CodeContext.Provider value={makeCodeContextState()}>
+                    <MDXProvider components={mdxComponents}>
+                      <MDXRenderer>{mdx.body}</MDXRenderer>
+                    </MDXProvider>
+                  </CodeContext.Provider>
 
                   <GitHubCTA
                     sourceInstanceName={file.sourceInstanceName}

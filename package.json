@@ -44,11 +44,18 @@
     "test": "GATSBY_ENV=test gatsby build"
   },
   "devDependencies": {
+    "babel-jest": "^26.0.1",
+    "babel-preset-gatsby": "^0.4.1",
+    "babel-preset-gatsby-package": "^0.4.1",
     "gh-pages": "^2.2.0",
-    "prettier": "^1.18.2"
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^26.0.1",
+    "jest-environment-jsdom-fourteen": "^1.0.1",
+    "prettier": "^1.18.2",
+    "react-test-renderer": "^16.13.1"
   },
   "volta": {
-    "node": "10.13.0",
+    "node": "10.14.2",
     "yarn": "1.16.0"
   }
 }
