@@ -115,14 +115,22 @@ const Sidebar = () => (
 
       <ul className="list-unstyled" data-sidebar-tree>
         <NavLink to="/sdk/event-payloads/overview/">Event Interface</NavLink>
-        <NavLink to="/sdk/event-payloads/breadcrumbs/">Breadcrumbs Interface</NavLink>
+        <NavLink to="/sdk/event-payloads/breadcrumbs/">
+          Breadcrumbs Interface
+        </NavLink>
         <NavLink to="/sdk/event-payloads/contexts/">Contexts Interface</NavLink>
-        <NavLink to="/sdk/event-payloads/debugmeta">Debug Meta Interface</NavLink>
-        <NavLink to="/sdk/event-payloads/exception/">Exception Interface</NavLink>
+        <NavLink to="/sdk/event-payloads/debugmeta">
+          Debug Meta Interface
+        </NavLink>
+        <NavLink to="/sdk/event-payloads/exception/">
+          Exception Interface
+        </NavLink>
         <NavLink to="/sdk/event-payloads/message/">Message Interface</NavLink>
         <NavLink to="/sdk/event-payloads/request/">Request Interface</NavLink>
         <NavLink to="/sdk/event-payloads/sdk/">SDK Interface</NavLink>
-        <NavLink to="/sdk/event-payloads/stacktrace/">Stack Trace Interface</NavLink>
+        <NavLink to="/sdk/event-payloads/stacktrace/">
+          Stack Trace Interface
+        </NavLink>
         <NavLink to="/sdk/event-payloads/template/">Template Interface</NavLink>
         <NavLink to="/sdk/event-payloads/threads/">Threads Interface</NavLink>
         <NavLink to="/sdk/event-payloads/user/">User Interface</NavLink>
@@ -154,6 +162,18 @@ const Sidebar = () => (
         <NavLink to="https://github.com/getsentry/onpremise">
           Self-Hosting Sentry
         </NavLink>
+      </ul>
+    </li>
+    <li className="mb-3" data-sidebar-branch>
+      <div
+        className="sidebar-title d-flex align-items-center mb-0"
+        data-sidebar-link
+      >
+        <h6>Meta Documentation</h6>
+      </div>
+
+      <ul className="list-unstyled" data-sidebar-tree>
+        <NavLink to="/docs-components/">Documentation Components</NavLink>
       </ul>
     </li>
   </ul>
