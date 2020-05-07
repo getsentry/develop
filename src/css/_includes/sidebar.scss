@@ -40,6 +40,14 @@
   font-size: 0.8rem;
 }
 
+[data-sidebar-branch] [data-sidebar-branch] > [data-sidebar-tree] {
+  display: none;
+}
+
+[data-sidebar-branch].toc-active > [data-sidebar-tree] {
+  display: block;
+}
+
 [data-sidebar-link] {
   position: relative;
   line-height: 1.5;
