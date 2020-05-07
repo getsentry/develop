@@ -19,6 +19,7 @@
     "gatsby-plugin-sharp": "^2.6.0",
     "gatsby-plugin-zeit-now": "^0.3.0",
     "gatsby-remark-autolink-headers": "^2.3.0",
+    "gatsby-remark-copy-linked-files": "^2.3.2",
     "gatsby-remark-images": "^3.3.0",
     "gatsby-remark-prismjs": "^3.5.0",
     "gatsby-source-filesystem": "^2.1.8",

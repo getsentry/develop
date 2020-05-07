@@ -21,6 +21,9 @@ const getPlugins = () => {
         remarkPlugins: [require("remark-deflist")],
         gatsbyRemarkPlugins: [
           {
+            resolve: `gatsby-remark-copy-linked-files`
+          },
+          {
             resolve: `gatsby-remark-autolink-headers`,
             options: {
               className: "anchor",
@@ -32,6 +35,7 @@ const getPlugins = () => {
             resolve: `gatsby-remark-images`,
             options: {
               maxWidth: 1200,
+              linkImagesToOriginal: false
             },
           },
           {
