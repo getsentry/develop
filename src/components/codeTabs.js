@@ -17,7 +17,7 @@ const LANGUAGES = {
 
 export const CodeContext = React.createContext(null);
 
-export function makeCodeContextState() {
+export function useCodeContextState() {
   return useState(null);
 }
 
@@ -101,7 +101,7 @@ function CodeTabs({ children, hideTabBar = false }) {
       window.scroll(window.scrollX, window.scrollY + diff);
       setLastScrollOffset(null);
     }
-  });
+  }, [lastScrollOffset]);
 
   const names = possibleChoices.map((choice, idx) => {
     const isSelected = choice === finalSelection;
