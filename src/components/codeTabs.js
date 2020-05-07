@@ -37,11 +37,19 @@ function CodeTabs({ children, hideTabBar = false }) {
     });
   });
 
+  // the idea here is that we have two selection states.  The shared selection
+  // always wins unless what is in the shared selection does not exist on the
+  // individual code block.  In that case the local selection overrides.  The
+  // final selection is what is then rendered.
+
   const [sharedSelection, setSharedSelection] = useContext(CodeContext);
   const [localSelection, setLocalSelection] = useState(null);
   const [lastScrollOffset, setLastScrollOffset] = useState(null);
   const tabBarRef = useRef(null);
 
+  // The title is what we use for sorting and also for remembering the
+  // selection.  If there is no title fall back to the title cased language
+  // name (or override from `LANGUAGES`).
   const possibleChoices = children.map((x) => {
     const { title, language } = x.props;
     return (
@@ -61,12 +69,19 @@ function CodeTabs({ children, hideTabBar = false }) {
   const finalSelection =
     sharedSelectionChoice || localSelectionChoice || possibleChoices[0];
 
+  // Whenever local selection and the final selection are not in sync, the local
+  // selection is updated from the final one.  This means that when the shared
+  // selection moves to something that is unsupported by the block it stays on
+  // its last selection.
   if (localSelection !== finalSelection) {
     setLocalSelection(finalSelection);
   }
 
   let code = null;
 
+  // When the selection switches we scroll so that the box that was toggled
+  // stays scrolled like it was before.  This is because boxes above the changed
+  // box might also toggle and change height.
   useEffect(() => {
     if (lastScrollOffset !== null) {
       const diff =
@@ -86,6 +101,7 @@ function CodeTabs({ children, hideTabBar = false }) {
       <button
         className={isSelected ? "active" : ""}
         onClick={() => {
+          // see useEffect above.
           setLastScrollOffset(tabBarRef.current.getBoundingClientRect().y);
           setSharedSelection(choice);
           setLocalSelection(choice);
