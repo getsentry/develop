@@ -50,7 +50,7 @@ function CodeTabs({ children, hideTabBar = false }) {
   // The title is what we use for sorting and also for remembering the
   // selection.  If there is no title fall back to the title cased language
   // name (or override from `LANGUAGES`).
-  const possibleChoices = children.map((x) => {
+  let possibleChoices = children.map((x) => {
     const { title, language } = x.props;
     return (
       title ||
@@ -58,6 +58,18 @@ function CodeTabs({ children, hideTabBar = false }) {
       (language ? language[0].toUpperCase() + language.substr(1) : "Text")
     );
   });
+
+  // disambiguate duplicates by enumerating them.
+  const tabTitleSeen = {};
+  possibleChoices = possibleChoices.reduce((arr, tabTitle) => {
+    if (possibleChoices.filter((x) => x === tabTitle).length > 1) {
+      const num = (tabTitleSeen[tabTitle] = (tabTitleSeen[tabTitle] || 0) + 1);
+      arr.push(`${tabTitle} ${num}`);
+    } else {
+      arr.push(tabTitle);
+    }
+    return arr;
+  }, []);
 
   const sharedSelectionChoice = sharedSelection
     ? possibleChoices.find((x) => x === sharedSelection)
