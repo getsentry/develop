@@ -27,16 +27,42 @@
       position: absolute;
       right: 0;
       margin: 0;
-      padding: 0 6px;
+      bottom: 0;
+      padding: 0 6px 0 8px;
+      line-height: 1.5;
       background: $flame8;
       font-size: 0.85rem;
-      border-bottom-left-radius: 3px;
+      border-top-left-radius: 3px;
+    }
+
+    .copy,
+    .copied {
+      position: absolute;
+      right: 3px;
+      top: 2px;
+      margin: 0;
+      padding: 0 6px;
+      border-radius: 2px;
+      font-size: 0.85rem;
+      background: $desatPurple3;
+      border: none;
+      color: white;
+    }
+
+    .copy {
+      display: none;
     }
 
     pre {
       margin: 0;
       padding: 5px 10px;
       border-radius: 0;
+    }
+  }
+
+  &:hover {
+    .copy {
+      display: block;
     }
   }
 }
