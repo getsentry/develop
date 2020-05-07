@@ -10,7 +10,7 @@ import Sidebar from "./sidebar";
 import Navbar from "./navbar";
 import SmartLink from "./smartLink";
 import CodeBlock from "./codeBlock";
-import CodeTabs, { CodeContext, makeCodeContextState } from "./codeTabs";
+import CodeTabs, { CodeContext, useCodeContextState } from "./codeTabs";
 import Break from "./break";
 
 import "prismjs/themes/prism-tomorrow.css";
@@ -100,7 +100,7 @@ const Layout = ({
               >
                 <h1 className="mb-3">{mdx.frontmatter.title}</h1>
                 <div id="main">
-                  <CodeContext.Provider value={makeCodeContextState()}>
+                  <CodeContext.Provider value={useCodeContextState()}>
                     <MDXProvider components={mdxComponents}>
                       <MDXRenderer>{mdx.body}</MDXRenderer>
                     </MDXProvider>
