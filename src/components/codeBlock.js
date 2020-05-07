@@ -1,15 +1,30 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
+import copy from "copy-to-clipboard";
 
-class CodeBlock extends React.Component {
-  render() {
-    return (
-      <div className="code-block">
-        {this.props.filename && <p class="filename">{this.props.filename}</p>}
-        {this.props.children}
-      </div>
-    );
+function CodeBlock({ filename, children }) {
+  const [showCopied, setShowCopied] = useState(false);
+  const codeRef = useRef(null);
+
+  function copyCode() {
+    copy(codeRef.current.innerText);
+    setShowCopied(true);
+    setTimeout(() => setShowCopied(false), 1200);
   }
+
+  return (
+    <div className="code-block">
+      {filename && <p class="filename">{filename}</p>}
+      {showCopied ? (
+        <button className="copied">Copied!</button>
+      ) : (
+        <button className="copy" onClick={() => copyCode()}>
+          Copy
+        </button>
+      )}
+      <div ref={codeRef}>{children}</div>
+    </div>
+  );
 }
 
 CodeBlock.propTypes = {
