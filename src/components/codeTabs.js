@@ -17,8 +17,27 @@ const LANGUAGES = {
 
 export const CodeContext = React.createContext(null);
 
-export function useCodeContextState() {
-  return useState(null);
+// only fetch them once
+let cachedCodeKeywords = null;
+
+export function useCodeContextState(fetcher) {
+  let [codeKeywords, setCodeKeywords] = useState(null);
+  if (codeKeywords === null) {
+    if (cachedCodeKeywords) {
+      setCodeKeywords(cachedCodeKeywords);
+      codeKeywords = cachedCodeKeywords;
+    } else {
+      fetcher().then((config) => {
+        cachedCodeKeywords = config;
+        setCodeKeywords(config);
+      });
+    }
+  }
+  return {
+    codeKeywords,
+    sharedCodeSelection: useState(null),
+    sharedKeywordSelection: useState({}),
+  };
 }
 
 function CodeTabs({ children, hideTabBar = false }) {
@@ -42,7 +61,8 @@ function CodeTabs({ children, hideTabBar = false }) {
   // individual code block.  In that case the local selection overrides.  The
   // final selection is what is then rendered.
 
-  const [sharedSelection, setSharedSelection] = useContext(CodeContext);
+  const codeContext = useContext(CodeContext);
+  const [sharedSelection, setSharedSelection] = codeContext.sharedCodeSelection;
   const [localSelection, setLocalSelection] = useState(null);
   const [lastScrollOffset, setLastScrollOffset] = useState(null);
   const tabBarRef = useRef(null);
