@@ -26,13 +26,18 @@ export function useCodeContextState(fetcher) {
     if (cachedCodeKeywords) {
       setCodeKeywords(cachedCodeKeywords);
       codeKeywords = cachedCodeKeywords;
-    } else {
+    }
+  }
+
+  useEffect(() => {
+    if (cachedCodeKeywords === null) {
       fetcher().then((config) => {
         cachedCodeKeywords = config;
         setCodeKeywords(config);
       });
     }
-  }
+  });
+
   return {
     codeKeywords,
     sharedCodeSelection: useState(null),
