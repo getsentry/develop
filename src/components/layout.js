@@ -71,6 +71,7 @@ function fetchCodeKeywords() {
 
     const xhr = new XMLHttpRequest();
     xhr.open("GET", "https://sentry.io/docs/api/user/");
+    xhr.withCredentials = true;
     xhr.responseType = "json";
     xhr.onerror = () => {
       transformResults([]);
@@ -79,7 +80,7 @@ function fetchCodeKeywords() {
       const { projects } = xhr.response;
       transformResults(projects);
     };
-    xhr.send();
+    xhr.send(null);
   });
 }
 
