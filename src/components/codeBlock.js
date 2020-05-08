@@ -97,15 +97,17 @@ function Selector({ keyword, group, ...props }) {
     <span className="keyword-selector-wrapper" {...props}>
       <span
         ref={spanRef}
-        role="link"
+        role="button"
         tabIndex={0}
         className={`keyword-selector ${isOpen ? " open" : ""}`}
         title={currentSelection && currentSelection.title}
         onClick={() => {
           setIsOpen(!isOpen);
         }}
-        onKeyDown={() => {
-          setIsOpen(!isOpen);
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            setIsOpen(!isOpen);
+          }
         }}
       >
         {currentSelection[keyword]}

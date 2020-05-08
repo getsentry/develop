@@ -42,10 +42,8 @@ const TableOfContents = ({ toc: { items } }) => {
 };
 
 function fetchCodeKeywords() {
-  return fetch("https://sentry.io/docs/api/user/")
-    .catch(() => false)
-    .then((result) => (!result ? { projects: [] } : result.json()))
-    .then(({ projects }) => {
+  return new Promise((resolve) => {
+    function transformResults(projects) {
       if (projects.length === 0) {
         projects.push({
           publicKey: "e24732883e6fcdad45fd27341e61f8899227bb39",
@@ -58,7 +56,7 @@ function fetchCodeKeywords() {
           projectSlug: "example-project",
         });
       }
-      return {
+      resolve({
         PROJECT: projects.map((project) => {
           return {
             DSN: project.dsnPublic,
@@ -68,8 +66,21 @@ function fetchCodeKeywords() {
             title: `${project.organizationName} / ${project.projectSlug}`,
           };
         }),
-      };
-    });
+      });
+    }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://sentry.io/docs/api/user/");
+    xhr.responseType = "json";
+    xhr.onerror = () => {
+      transformResults([]);
+    };
+    xhr.onload = () => {
+      const { projects } = xhr.response;
+      transformResults(projects);
+    };
+    xhr.send();
+  });
 }
 
 const GitHubCTA = ({ sourceInstanceName, relativePath }) => (
