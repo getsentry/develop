@@ -22,11 +22,9 @@ let cachedCodeKeywords = null;
 
 export function useCodeContextState(fetcher) {
   let [codeKeywords, setCodeKeywords] = useState(null);
-  if (codeKeywords === null) {
-    if (cachedCodeKeywords) {
-      setCodeKeywords(cachedCodeKeywords);
-      codeKeywords = cachedCodeKeywords;
-    }
+  if (codeKeywords === null && cachedCodeKeywords !== null) {
+    setCodeKeywords(cachedCodeKeywords);
+    codeKeywords = cachedCodeKeywords;
   }
 
   useEffect(() => {
