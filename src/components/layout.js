@@ -41,6 +41,37 @@ const TableOfContents = ({ toc: { items } }) => {
   return <ul className="section-nav">{recurseyMcRecurseFace(items)}</ul>;
 };
 
+function fetchCodeKeywords() {
+  return fetch("https://sentry.io/docs/api/user/")
+    .catch(() => false)
+    .then((result) => (!result ? { projects: [] } : result.json()))
+    .then(({ projects }) => {
+      if (projects.length === 0) {
+        projects.push({
+          publicKey: "e24732883e6fcdad45fd27341e61f8899227bb39",
+          dsnPublic:
+            "https://e24732883e6fcdad45fd27341e61f8899227bb39@o42.ingest.sentry.io/42",
+          id: 42,
+          organizationName: "Example Org",
+          organizationId: 43,
+          organizationSlug: "example-org",
+          projectSlug: "example-project",
+        });
+      }
+      return {
+        PROJECT: projects.map((project) => {
+          return {
+            DSN: project.dsnPublic,
+            ID: project.id,
+            SLUG: project.projectSlug,
+            ORG_SLUG: project.organizationSlug,
+            title: `${project.organizationName} / ${project.projectSlug}`,
+          };
+        }),
+      };
+    });
+}
+
 const GitHubCTA = ({ sourceInstanceName, relativePath }) => (
   <div className="github-cta">
     <small>
@@ -100,7 +131,9 @@ const Layout = ({
               >
                 <h1 className="mb-3">{mdx.frontmatter.title}</h1>
                 <div id="main">
-                  <CodeContext.Provider value={useCodeContextState()}>
+                  <CodeContext.Provider
+                    value={useCodeContextState(fetchCodeKeywords)}
+                  >
                     <MDXProvider components={mdxComponents}>
                       <MDXRenderer>{mdx.body}</MDXRenderer>
                     </MDXProvider>

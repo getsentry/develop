@@ -21,7 +21,7 @@ const getPlugins = () => {
         remarkPlugins: [require("remark-deflist")],
         gatsbyRemarkPlugins: [
           {
-            resolve: `gatsby-remark-copy-linked-files`
+            resolve: `gatsby-remark-copy-linked-files`,
           },
           {
             resolve: `gatsby-remark-autolink-headers`,
@@ -35,14 +35,11 @@ const getPlugins = () => {
             resolve: `gatsby-remark-images`,
             options: {
               maxWidth: 1200,
-              linkImagesToOriginal: false
+              linkImagesToOriginal: false,
             },
           },
           {
             resolve: require.resolve("./plugins/gatsby-plugin-code-tabs"),
-            options: {
-              githubRepo: "getsentry/develop"
-            }
           },
           {
             resolve: "gatsby-remark-prismjs",
