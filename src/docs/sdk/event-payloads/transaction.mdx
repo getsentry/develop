@@ -24,41 +24,25 @@ Transactions are generally very similar to [Events](/sdk/event-payloads/) and th
 share the most properties. Transactions will be enriched with data from the [Span](/sdk/event-payloads/span).
 We are only going to list here whats important for a Transaction.
 
-import Type from "./properties/type.mdx"
+import "./properties/type.mdx"
 
-<Type />
+import "./properties/start_timestamp.mdx"
 
-import StartTimestamp from "./properties/start_timestamp.mdx"
-
-<StartTimestamp />
-
-import Timestamp from "./properties/timestamp.mdx"
-
-<Timestamp />
+import "./properties/timestamp.mdx"
 
 ### contexts.trace
 
 At Transaction has to have a specifc `contexts.trace` entry that contains data from the [Span](/sdk/event-payloads/span).
 
-import SpanId from "./properties/span_id.mdx"
+import "./properties/span_id.mdx"
 
-<SpanId />
+import "./properties/parent_span_id.mdx"
 
-import ParentSpanId from "./properties/parent_span_id.mdx"
+import "./properties/trace_id.mdx"
 
-<ParentSpanId />
+import "./properties/op.mdx"
 
-import TraceId from "./properties/trace_id.mdx"
-
-<TraceId />
-
-import Op from "./properties/op.mdx"
-
-<Op />
-
-import Description from "./properties/description.mdx"
-
-<Description />
+import "./properties/description.mdx"
 
 ## Examples
 
@@ -75,7 +59,5 @@ import Description from "./properties/description.mdx"
 }
 ```
 
-import Spans from "./properties/spans.mdx"
-
-<Spans />
+import "./properties/spans.mdx"
 
