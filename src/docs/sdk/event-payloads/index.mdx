@@ -33,16 +33,9 @@ time when it occurred.
 
 The following attributes are required for all events.
 
-`event_id`
+import EventID from "./properties/event_id.mdx"
 
-: Hexadecimal string representing a uuid4 value. The length is exactly 32
-  characters. Dashes are not allowed.
-
-  ```json
-  {
-    "event_id": "fc6d8c0c43fc4630ad850ee518f1b9d0"
-  }
-  ```
+<EventID />
 
 `timestamp`
 
@@ -56,6 +49,8 @@ The following attributes are required for all events.
     "timestamp": "2011-05-02T17:41:36Z"
   }
   ```
+  
+or: 
 
   ```json
   {

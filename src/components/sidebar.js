@@ -4,13 +4,14 @@ import { useLocation } from "@reach/router";
 
 import SmartLink from "./smartLink";
 
-const NavLink = ({ to, title, children }) => {
+const NavLink = ({ to, title, children, ...props }) => {
   const location = useLocation();
-
+  
   let className = "toc-item";
   if (location && location.pathname.indexOf(withPrefix(to)) === 0) {
     className += " toc-active";
   }
+  className += (props.className ? ' ' + props.className : '');
 
   return (
     <li className={className} data-sidebar-branch>
