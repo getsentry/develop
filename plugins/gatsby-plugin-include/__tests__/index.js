@@ -1,84 +1,32 @@
 const Remark = require("remark");
 const toString = require("mdast-util-to-string");
 const visit = require("unist-util-visit");
+const remarkMdx = require("remark-mdx");
 
 const plugin = require("../");
 
-const remark = new Remark().data("settings", {
-  commonmark: true,
-  footnotes: true,
-  pedantic: true,
-});
+const remark = new Remark()
+  .data("settings", {
+    commonmark: true,
+    footnotes: true,
+    pedantic: true,
+  })
+  .use(remarkMdx);
 
-describe("gatsby-plugin-code-tabs", () => {
-  it("folds two code blocks", () => {
+describe("gatsby-plugin-include", () => {
+  it("resolves one import", () => {
     const markdownAST = remark.parse(`
-~~~python
-print "Hello World!"
-~~~
-
-~~~javascript
-console.log("Hello World!");
-~~~
+import "./foo.mdx";
 `);
     const transformed = plugin({ markdownAST }, {});
     expect(transformed).toMatchSnapshot();
   });
 
-  it("does not fold code blocks split by a paragraph", () => {
+  it("resolves two imports", () => {
     const markdownAST = remark.parse(`
-~~~python
-print "Hello World!"
-~~~
+import "./foo.mdx";
 
-some text here:
-
-~~~javascript
-console.log("Hello World!");
-~~~
-`);
-    const transformed = plugin({ markdownAST }, {});
-    expect(transformed).toMatchSnapshot();
-  });
-
-  it("does not fold code blocks on different levels", () => {
-    const markdownAST = remark.parse(`
-1. a list here
-   ~~~plain
-   inside list
-   ~~~
-
-~~~plain
-outside list
-~~~
-`);
-    const transformed = plugin({ markdownAST }, {});
-    expect(transformed).toMatchSnapshot();
-  });
-
-  it("supports tab titles", () => {
-    const markdownAST = remark.parse(`
-~~~plain {tabTitle: Hello}
-first
-~~~
-
-~~~plain {tabTitle: Goodbye}
-second
-~~~
-`);
-    const transformed = plugin({ markdownAST }, {});
-    expect(transformed).toMatchSnapshot();
-  });
-
-  it("supports filenames", () => {
-    const markdownAST = remark.parse(`
-~~~plain {tabTitle: Hello} {filename: hello.txt}
-first
-~~~
-
-~~~plain {tabTitle: Goodbye} {filename: goodbye.txt}
-second
-~~~
+import "./bar.mdx";
 `);
     const transformed = plugin({ markdownAST }, {});
     expect(transformed).toMatchSnapshot();
