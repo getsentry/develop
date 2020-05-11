@@ -15,97 +15,49 @@ useful when it includes at least a `op` and `description`.
 
 ## Attributes
 
-`span_id`: 
+import SpanId from "./properties/span_id.mdx"
 
-: _Required_. A string with a length of 16 characters. This should be the first 16 characters of a UUID4 id. (without dashes)
+<SpanId />
 
-Example: `99659d76b7cdae94`
+import ParentSpanId from "./properties/parent_span_id.mdx"
 
-`parent_span_id`: 
+<ParentSpanId />
 
-: _Optional_. If this Span should be rendered as a child of another Span, set this property to the id of the parent.
+import TraceId from "./properties/trace_id.mdx"
 
-Example: `b0e6f15b45c36b12`
+<TraceId />
 
-`trace_id`: 
+import Transaction from "./properties/transaction.mdx"
 
-: _Required_. Determines to wich `trace` the Span belonges to.
+<Transaction />
 
-Example: `1e57b752bc6e4544bbaa246cd1d05dee`
+import Sampled from "./properties/sampled.mdx"
 
-`transaction`: 
+<Sampled />
 
-: _Optional/Required_. Set the `transaction` to give your tree of spans a dedicated name.
+import Op from "./properties/op.mdx"
 
-Example: `/users/detail/:id`
+<Op />
 
-`sampled`:
+import Description from "./properties/description.mdx"
 
-: _Required_. Determines if the the Span should be send, if `!== true` it will be sampled and therefore not sent.
+<Description />
 
-`op`:
+import StartTimestamp from "./properties/start_timestamp.mdx"
 
-: _Recommended_. Short code identifying the type of operation the span is measuring.
-If no set we fallback to `default` on the Server.
+<StartTimestamp />
 
-Examples: `sql.query`, `react`, `http`, `http.get`
+import Timestamp from "./properties/timestamp.mdx"
 
-`description`:
+<Timestamp />
 
-: _Optional_. longer description of the Span's operation, often specific to that instance.
+import Status from "./properties/status.mdx"
 
-Examples: `SELECT * FROM users WHERE last_active < DATE_SUB(CURRENT_DATE, INTERVAL 1 YEAR)`, `<OrgContext />`
+<Status />
 
-`start_timestamp`:
+import Tags from "./properties/tags.mdx"
 
-: _Required_. A timestamp representing when the measuring started. The
-  format is either a string as defined in [RFC
-  3339](https://tools.ietf.org/html/rfc3339) or a numeric (integer or float)
-  value representing the number of seconds that have elapsed since the [Unix
-  epoch](https://en.wikipedia.org/wiki/Unix_time).  
-
-`timestamp`:
-
-: _Required_. A timestamp representing when the measuring finished. The
-  format is either a string as defined in [RFC
-  3339](https://tools.ietf.org/html/rfc3339) or a numeric (integer or float)
-  value representing the number of seconds that have elapsed since the [Unix
-  epoch](https://en.wikipedia.org/wiki/Unix_time).
-
-`status`:
-
-: _Optional_. Describing the `status` of the Span. We use this property to determine if the [Transaction](./transaction)
-ended in an error or not.
-
-State|Description|HTTP status code equivalent
----|---|---
-`ok`|Not an error, returned on success|200 and 2XX HTTP statuses
-`cancelled`|The operation was cancelled, typically by the caller|499
-`unknown`|An unknown error raised by APIs that don't return enough error information|500
-`invalid_argument`|The client specified an invalid argument|400
-`deadline_exceeded`|The deadline expired before the operation could succeed|504
-`not_found`|Content was not found or request was denied for an entire class of users|404
-`already_exists`|The entity attempted to be created already exists|409
-`permission_denied`|The caller doesn't have permission to execute the specified operation|403
-`resource_exhausted`|The resource has been exhausted e.g. per-user quota exhausted, file system out of space|429
-`failed_precondition`|The client shouldn't retry until the system state has been explicitly handled|400
-`aborted`|The operation was aborted|409
-`out_of_range`|The operation was attempted past the valid range e.g. seeking past the end of a file|400
-`unimplemented`|The operation is not implemented or is not supported/enabled for this operation|501
-`internal`|Some invariants expected by the underlying system have been broken. This code is reserved for serious errors|500
-`unavailable`|The service is currently available e.g. as a transient condition|503
-`data_loss`|Unrecoverable data loss or corruption|500
-`unauthenticated`|The requester doesn't have valid authentication credentials for the operation|401
-
-`tags`:
-
-: _Optional_. A map or list of tags for this Span. Each tag must be less than 200 characters.
-
-```json
-"tags": {
-    "context": "production"
-}
-```
+<Tags />
 
 `data`:
 
