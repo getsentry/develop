@@ -73,6 +73,19 @@ front-end application and the entire backend stack. We use acceptance tests for 
 
 Acceptance tests can be found in `tests/acceptance` and run locally with `pytest`.
 
+### Running acceptance tests
+
+```shell
+# Run a single acceptance test.
+pytest tests/acceptance/test_organization_group_index.py -k test_with_onboarding
+
+# Run the browser with a head so you can watch it.
+pytest tests/acceptance/test_organization_group_index.py --no-headless=true -k test_with_onboarding
+
+# Open each snapshot in preview
+SENTRY_SCREENSHOT=open pytest tests/acceptance/test_organization_group_index.py -k test_with_onboarding
+```
+
 ### Locating Elements
 
 Because we use emotion our classnames are generally not useful to browser automation. Instead
