@@ -60,6 +60,7 @@ const Sidebar = () => (
         <NavLink to="/python-dependencies/">Python Dependencies</NavLink>
         <NavLink to="/database-migrations/">Database Migrations</NavLink>
         <NavLink to="/serializers/">Serializers</NavLink>
+        <NavLink to="/testing/">Testing Tips</NavLink>
       </ul>
     </li>
     <li className="mb-3" data-frontend-branch>
