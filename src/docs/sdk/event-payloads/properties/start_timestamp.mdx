@@ -4,7 +4,8 @@
   format is either a string as defined in [RFC
   3339](https://tools.ietf.org/html/rfc3339) or a numeric (integer or float)
   value representing the number of seconds that have elapsed since the [Unix
-  epoch](https://en.wikipedia.org/wiki/Unix_time).  
+  epoch](https://en.wikipedia.org/wiki/Unix_time). Important to note is that the `start_timestamp`
+  must be before the `timestamp` otherwise we will discard the Span as invalid.
 
   ```json
   {
