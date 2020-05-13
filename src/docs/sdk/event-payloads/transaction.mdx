@@ -19,13 +19,13 @@ So technically a Transaction is just a Span. A Transaction must also have a `con
 properties that will be covered in the next section.
 
 Transactions is an [Events](/sdk/event-payloads/) which will be enriched with data from the [Span](/sdk/event-payloads/span).
-We are only going to list here whats important for a Transaction.
+We are only going to list here what is important for a Transaction.
 
 import "./properties/type.mdx"
 
 import "./properties/start_timestamp.mdx"
 
-import "./properties/timestamp.mdx"
+import "./properties/transaction_timestamp.mdx"
 
 ### contexts.trace
 
@@ -50,7 +50,9 @@ import "./properties/description.mdx"
             "op": "navigation",
             "description": "User clicked on <Link />",
             "trace_id": "743ad8bbfdd84e99bc38b4729e2864de",
-            "span_id": "a0cfbde2bdff3adc"
+            "span_id": "a0cfbde2bdff3adc",
+            "status": "ok",
+            "parent_span_id": "99659d76b7cdae94"
         }
     }
 }
