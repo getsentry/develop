@@ -126,6 +126,14 @@ percy snapshot.
 Our Jest suite covers providing functional and unit testing for frontend components. We favour writing functional tests
 that interact with components and observe outcomes (navigation, API calls) over checking prop passing and state mutations.
 
+```shell
+# Run jest in interactive mode
+yarn test
+
+# Run a single test
+yarn test tests/js/spec/views/issueList/overview.spec.js
+```
+
 ### API Fixtures
 
 Because our Jest tests run without an API we have a variety of fixture builders available to help generate
