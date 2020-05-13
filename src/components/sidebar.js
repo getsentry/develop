@@ -121,7 +121,7 @@ const Sidebar = () => (
         <NavLink to="/sdk/store/">Store Endpoint</NavLink>
         <NavLink to="/sdk/envelopes/">Envelopes</NavLink>
         <NavLink to="/sdk/event-payloads/" title="Event Payloads">
-          <NavLink to="/sdk/event-payloads/transaction/">Transaction Interface</NavLink>
+          <NavLink to="/sdk/event-payloads/transaction/">Transaction Type</NavLink>
           <NavLink to="/sdk/event-payloads/span/">Span Interface</NavLink>
           <NavLink to="/sdk/event-payloads/breadcrumbs/">
             Breadcrumbs Interface
