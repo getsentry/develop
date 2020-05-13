@@ -7,7 +7,7 @@ State|Description|HTTP status code equivalent
 ---|---|---
 `ok`|Not an error, returned on success|200 and 2XX HTTP statuses
 `cancelled`|The operation was cancelled, typically by the caller|499
-`unknown`|An unknown error raised by APIs that don't return enough error information|500
+`unknown` or `unknown_error` |An unknown error raised by APIs that don't return enough error information|500
 `invalid_argument`|The client specified an invalid argument|400
 `deadline_exceeded`|The deadline expired before the operation could succeed|504
 `not_found`|Content was not found or request was denied for an entire class of users|404
