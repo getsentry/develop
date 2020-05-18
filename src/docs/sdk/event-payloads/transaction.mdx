@@ -18,7 +18,7 @@ tracing with our SDKs you usually create a Span tree, the root node and therefor
 So technically a Transaction is just a Span. A Transaction must also have a `contexts.trace` (which contains some data of the [Span](/sdk/event-payloads/span)) and some other
 properties that will be covered in the next section.
 
-Transactions is an [Events](/sdk/event-payloads/) which will be enriched with data from the [Span](/sdk/event-payloads/span).
+Transactions are [Events](/sdk/event-payloads/) enriched with [Span](/sdk/event-payloads/span) data.
 We are only going to list here what is important for a Transaction.
 
 import "./properties/type.mdx"

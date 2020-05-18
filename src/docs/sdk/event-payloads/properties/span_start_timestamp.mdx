@@ -4,12 +4,12 @@
   format is either a string as defined in [RFC
   3339](https://tools.ietf.org/html/rfc3339) or a numeric (integer or float)
   value representing the number of seconds that have elapsed since the [Unix
-  epoch](https://en.wikipedia.org/wiki/Unix_time). Important to note is that the `start_timestamp`
-  must be before the `timestamp` otherwise we will discard the Span as invalid.
+  epoch](https://en.wikipedia.org/wiki/Unix_time). The `start_timestamp` value must be greater or
+  equal the `timestamp` value, otherwise the Span is discarded as invalid.
 
   ```json
   {
-    "start_timestamp": "2011-05-02T17:41:36Z"
+    "start_timestamp": "2011-05-02T17:41:36.242Z"
   }
   ```
 
@@ -17,6 +17,6 @@ or:
 
   ```json
   {
-    "start_timestamp": 1304358096.0
+    "start_timestamp": 1304358096.242
   }
   ```
