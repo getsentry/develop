@@ -18,7 +18,7 @@ State|Description|HTTP status code equivalent
 `aborted`|The operation was aborted|409
 `out_of_range`|The operation was attempted past the valid range e.g. seeking past the end of a file|400
 `unimplemented`|The operation is not implemented or is not supported/enabled for this operation|501
-`internal`|Some invariants expected by the underlying system have been broken. This code is reserved for serious errors|500
+`internal_error`|Some invariants expected by the underlying system have been broken. This code is reserved for serious errors|500
 `unavailable`|The service is currently available e.g. as a transient condition|503
 `data_loss`|Unrecoverable data loss or corruption|500
 `unauthenticated`|The requester doesn't have valid authentication credentials for the operation|401
