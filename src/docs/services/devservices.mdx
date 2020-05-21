@@ -43,15 +43,22 @@ docker exec -it sentry_postgres psql -U postgres
 
 ## Removing container state
 
-Should you really bamboozle your containers or volumes, you can use docker to remove them. As
-an example lets say we've managed to corrupt our postgres database while working on a migration,
-and we want to start over:
+Should you really bamboozle your containers or volumes, you can use `devservices rm` to start over.
 
 ```shell
 # First ensure you containers are off
 sentry devservices down
 
-# Find the postgres container. Note the container id in the first column
+# Remove all containers and attached volumes
+sentry devservices rm
+```
+
+If only a single container needs to be cleaned up you should use docker
+directly.  As an example lets say we've managed to corrupt our postgres
+database while working on a migration, and we want to start over:
+
+```shell
+# Find the postgres container. Note the container id in the first column of the docker output.
 docker ps -a | grep postgres
 
 # Remove the postgres container
