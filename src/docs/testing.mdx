@@ -59,12 +59,16 @@ pytest tests/sentry/api/endpoints/test_organization_*.py
 pytest tests/sentry/api/endpoints/test_organization_group_index.py
 
 # Run a single test
-pytest tests/sentry/api/endpoints/test_organization_group_index.py
 pytest tests/snuba/api/endpoints/test_organization_events_distribution.py::OrganizationEventsDistributionEndpointTest::test_this_thing
 
 # Run all tests in a file that match a substring
 pytest tests/snuba/api/endpoints/test_organization_events_distribution.py -k method_name
 ```
+
+Some frequently used options for pytest are:
+
+* `-k` Filter test methods/classes by a substring.
+* `-s` Don't capture stdout when running tests.
 
 Refer to the [pytest](http://doc.pytest.org/en/latest/usage.html) docs for more usage options.
 
@@ -96,7 +100,7 @@ This will help you simulate success and failure scenarios with relative ease.
 
 ### Inspecting SQL queries in tests
 
-Add the following to `/conftest.py`. 
+Add the following to `conftest.py` in the project root:
 
 ```python
 import itertools
