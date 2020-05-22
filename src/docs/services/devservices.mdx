@@ -46,15 +46,15 @@ docker exec -it sentry_postgres psql -U postgres
 Should you really bamboozle your containers or volumes, you can use `devservices rm` to start over.
 
 ```shell
-# Remove all containers and attached volumes
+# Remove all data (containers, volumes, and networks) associated with ALL services
 sentry devservices rm
 ```
 
-As an example lets say we've managed to corrupt our postgres
+As an example, let's say we've managed to corrupt our postgres
 database while working on a migration, and you want to reset
 your postgres data you can do:
 
 ```shell
-# Remove a single container/volume
+# Remove all data (containers, volumes, and networks) associated with a single service
 sentry devservices rm postgres
 ```
