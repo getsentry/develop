@@ -244,21 +244,7 @@ pip uninstall sentry-auth-github sentry-auth-saml2
 **Problem:**
 
 ```shell
-00:51:27 server  | Python auto-reloader enabled
-00:51:27 server  |   File "/Users/dfuller/code/sentry/src/sentry/wsgi.py", line 11, in <module>
-00:51:27 server  |     from django.conf import settings
-00:51:27 server  |   File "/Users/dfuller/code/sentry/.venv/lib/python2.7/site-packages/django/conf/__init__.py", line 14, in <module>
-00:51:27 server  |     from django.core.exceptions import ImproperlyConfigured
-00:51:27 server  |   File "/Users/dfuller/code/sentry/.venv/lib/python2.7/site-packages/django/core/exceptions.py", line 5, in <module>
-00:51:27 server  |     from django.utils.encoding import force_text
-00:51:27 server  |   File "/Users/dfuller/code/sentry/.venv/lib/python2.7/site-packages/django/utils/encoding.py", line 10, in <module>
-00:51:27 server  |     from django.utils.functional import Promise
-00:51:27 server  |   File "/Users/dfuller/code/sentry/.venv/lib/python2.7/site-packages/django/utils/functional.py", line 1, in <module>
-00:51:27 server  |     import copy
-00:51:27 server  |   File "/Users/dfuller/.pyenv/versions/2.7.16/lib/python2.7/copy.py", line 52, in <module>
-00:51:27 server  |     import weakref
-00:51:27 server  |   File "/Users/dfuller/.pyenv/versions/2.7.16/lib/python2.7/weakref.py", line 14, in <module>
-00:51:27 server  |     from _weakref import (
+--- snip ---
 00:51:27 server  | ImportError: cannot import name _remove_dead_weakref
 00:51:27 server  | unable to load app 0 (mountpoint='') (callable not found or import error)
 ```
