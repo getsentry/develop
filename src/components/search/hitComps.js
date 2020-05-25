@@ -7,7 +7,7 @@ export const PageHit = (clickHandler) => ({ hit }) => {
     <Link to={hit.fields.slug} onClick={clickHandler}>
       <h6 className="mb-1">
         <Highlight attribute="title" hit={hit} tagName="mark" />
-        {hit.catgories && (
+        {hit.categories && (
           <React.Fragment>
             {hit.categories.map((category) => (
               <span className="badge badge-secondary">{category}</span>
