@@ -6,12 +6,12 @@ import SmartLink from "./smartLink";
 
 const NavLink = ({ to, title, children, ...props }) => {
   const location = useLocation();
-  
+
   let className = "toc-item";
   if (location && location.pathname.indexOf(withPrefix(to)) === 0) {
     className += " toc-active";
   }
-  className += (props.className ? ' ' + props.className : '');
+  className += props.className ? " " + props.className : "";
 
   return (
     <li className={className} data-sidebar-branch>
@@ -122,7 +122,9 @@ const Sidebar = () => (
         <NavLink to="/sdk/store/">Store Endpoint</NavLink>
         <NavLink to="/sdk/envelopes/">Envelopes</NavLink>
         <NavLink to="/sdk/event-payloads/" title="Event Payloads">
-          <NavLink to="/sdk/event-payloads/transaction/">Transaction Type</NavLink>
+          <NavLink to="/sdk/event-payloads/transaction/">
+            Transaction Type
+          </NavLink>
           <NavLink to="/sdk/event-payloads/span/">Span Interface</NavLink>
           <NavLink to="/sdk/event-payloads/breadcrumbs/">
             Breadcrumbs Interface
@@ -148,6 +150,7 @@ const Sidebar = () => (
           <NavLink to="/sdk/event-payloads/threads/">Threads Interface</NavLink>
           <NavLink to="/sdk/event-payloads/user/">User Interface</NavLink>
         </NavLink>
+        <NavLink to="/sdk/sessions/">Sessions</NavLink>
       </ul>
     </li>
     <li className="mb-3" data-sidebar-branch>
