@@ -23,7 +23,7 @@ Docs live in `docs/` and `pages/`.
 
 https://www.gatsbyjs.org/docs/
 
-### Alternativly
+### Alternatively
 
 Install Gatsby:
 

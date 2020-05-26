@@ -101,7 +101,7 @@ const Sidebar = () => (
         <NavLink to="/services/buffers/">Write Buffers</NavLink>
         <NavLink to="/services/metrics/">Internal Metrics</NavLink>
         <NavLink to="/services/quotas/">Quotas & Rate Limiter</NavLink>
-        <NavLink to="/services/digests/">Notifcation Digests</NavLink>
+        <NavLink to="/services/digests/">Notification Digests</NavLink>
         <NavLink to="https://getsentry.github.io/relay/">Relay</NavLink>
       </ul>
     </li>
