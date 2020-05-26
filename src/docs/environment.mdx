@@ -180,16 +180,6 @@ If you would like to be able to run `devserver` outside of your root checkout, y
 
 ---
 
-**Problem:**  "out of memory" issues after running the sentry or getsentry devserver, or during webpacking.
-
-**Solution:**
-
-```bash
-export NODE_OPTIONS="--max-old-space-size=4096"
-```
-
----
-
 **Problem:** `Module not found: Error: Can't resolve 'integration-docs-platforms'`
 
 **Solution:**
@@ -219,24 +209,6 @@ RetryException: Could not successfully execute <functools.partial object at 0x10
 
 ```bash
 brew cask upgrade chromedriver
-```
-
----
-
-**Problem:**
-
-```shell
-Traceback (most recent call last):
-  ...
-django.core.exceptions.ImproperlyConfigured:
-Application labels aren't unique, duplicates: okta
-make: *** [develop] Error 1
-```
-
-**Solution:**
-
-```jsx
-pip uninstall sentry-auth-github sentry-auth-saml2
 ```
 
 ---
