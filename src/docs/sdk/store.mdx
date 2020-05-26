@@ -50,11 +50,11 @@ Content-Type: application/json
 
 ## Request Compression
 
-In addition to <Link to="/sdk/overview">`content-encoding` supported by all
-ingestion endpoints</Link>, this endpoint accepts zlib compressed JSON in a
-base64 wrapper which is detected regardless of the header. This allows you to
-send compressed events in very restrictive environments. Do not set a
-`content-encoding` header in this case.
+In addition to <Link to="/sdk/overview#request-compression">`content-encoding`
+supported by all ingestion endpoints</Link>, this endpoint accepts zlib
+compressed JSON in a base64 wrapper which is detected regardless of the header.
+This allows you to send compressed events in very restrictive environments. Do
+not set a `content-encoding` header in this case.
 
 In pseudo code, this maps to:
 
