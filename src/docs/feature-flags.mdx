@@ -26,7 +26,7 @@ Features can be scoped by organization, and projects. If you're not confident
 you want a project feature, create an organization level one. In this example
 we'll build a feature called `test-feature` scoped at the *organization* level.
 
-## Add your feature to server.py**
+## Add your feature to server.py
 
 Server.py (`/src/sentry/conf/server.py`) contains many of the default settings
 in the application. Here you will add your feature, and decide what default
@@ -44,7 +44,7 @@ SENTRY_FEATURES = {
 }
 ```
 
-## Add your feature to the FeatureManager**
+## Add your feature to the FeatureManager
 
 The `FeatureManager` handles the application features. We add all the features
 to the `FeatureManager`, including the type of feature we want to add to the
@@ -56,7 +56,7 @@ In our case, it is
 default_manager.add('organizations:test-feature', OrganizationFeature)
 ```
 
-## Add it to the Organization Model Serializer**
+## Add it to the Organization Model Serializer
 
 The Organization model serializer
 (`src/sentry/api/serializers/models/organization.py`) builds a list
@@ -118,7 +118,7 @@ a organization/project
 ```jsx
 import Feature from 'app/components/acl/feature';
 
-<Feature features={['scope:my-feature-flag']}>
+<Feature features={['test-feature']}>
   <MyComponentToFlag/>
 </Feature>
 ```
@@ -134,7 +134,7 @@ way:
 const {organization} = this.props;
 
 // Method 2
-organization.features.includes('my-org-feature-flag') // evals to True/False
+organization.features.includes('test-feature') // evals to True/False
 ```
 
 # Enabling features in development
