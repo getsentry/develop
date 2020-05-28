@@ -24,7 +24,7 @@ Datadog will require you to install the `datadog` package into your Sentry envir
 $ pip install datadog
 ```
 
-<Break/>
+In your `sentry.conf.py`:
 
 ```python
 SENTRY_METRICS_BACKEND = 'sentry.metrics.datadog.DatadogMetricsBackend'
@@ -47,7 +47,7 @@ You must also install the `datadog` Python package into your Sentry environment:
 $ pip install datadog
 ```
 
-</Break>
+In your `sentry.conf.py`:
 
 ```python
 SENTRY_METRICS_BACKEND = 'sentry.metrics.dogstatsd.DogStatsdMetricsBackend'
