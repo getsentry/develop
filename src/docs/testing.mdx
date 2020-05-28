@@ -106,7 +106,7 @@ This will help you simulate success and failure scenarios with relative ease.
 
 When writing tests related to ingesting events we have to operate within the
 constraint of events cannot be older than 30 days. Because all events must
-be recent, we cannot use traditional time freezin strategies to get consistent
+be recent, we cannot use traditional time freezing strategies to get consistent
 data in tests. Instead of choosing arbitrary points in time we work backwards
 from the present, and have a few helper functions to do so:
 
