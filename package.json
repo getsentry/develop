@@ -30,6 +30,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-feather": "^2.0.8",
     "react-helmet": "^5.2.1",
     "react-instantsearch-dom": "^6.4.0",
     "remark-deflist": "^0.2.1"
