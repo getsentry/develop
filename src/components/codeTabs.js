@@ -12,7 +12,7 @@ const LANGUAGES = {
   csharp: "C#",
   es6: "JavaScript (ES6)",
   yml: "YAML",
-  yaml: "YAML",
+  yaml: "YAML"
 };
 
 export const CodeContext = React.createContext(null);
@@ -29,7 +29,7 @@ export function useCodeContextState(fetcher) {
 
   useEffect(() => {
     if (cachedCodeKeywords === null) {
-      fetcher().then((config) => {
+      fetcher().then(config => {
         cachedCodeKeywords = config;
         setCodeKeywords(config);
       });
@@ -39,11 +39,11 @@ export function useCodeContextState(fetcher) {
   return {
     codeKeywords,
     sharedCodeSelection: useState(null),
-    sharedKeywordSelection: useState({}),
+    sharedKeywordSelection: useState({})
   };
 }
 
-function CodeTabs({ children, hideTabBar = false }) {
+function CodeTabs({ children }) {
   if (!Array.isArray(children)) {
     children = [children];
   } else {
@@ -55,7 +55,7 @@ function CodeTabs({ children, hideTabBar = false }) {
       return `${language || "_"}-${title || ""}`;
     }
     return makeKey(a.props).localeCompare(makeKey(b.props), ["en"], {
-      sensitivity: "base",
+      sensitivity: "base"
     });
   });
 
@@ -73,7 +73,7 @@ function CodeTabs({ children, hideTabBar = false }) {
   // The title is what we use for sorting and also for remembering the
   // selection.  If there is no title fall back to the title cased language
   // name (or override from `LANGUAGES`).
-  let possibleChoices = children.map((x) => {
+  let possibleChoices = children.map(x => {
     const { title, language } = x.props;
     return (
       title ||
@@ -85,7 +85,7 @@ function CodeTabs({ children, hideTabBar = false }) {
   // disambiguate duplicates by enumerating them.
   const tabTitleSeen = {};
   possibleChoices = possibleChoices.reduce((arr, tabTitle) => {
-    if (possibleChoices.filter((x) => x === tabTitle).length > 1) {
+    if (possibleChoices.filter(x => x === tabTitle).length > 1) {
       const num = (tabTitleSeen[tabTitle] = (tabTitleSeen[tabTitle] || 0) + 1);
       arr.push(`${tabTitle} ${num}`);
     } else {
@@ -95,10 +95,10 @@ function CodeTabs({ children, hideTabBar = false }) {
   }, []);
 
   const sharedSelectionChoice = sharedSelection
-    ? possibleChoices.find((x) => x === sharedSelection)
+    ? possibleChoices.find(x => x === sharedSelection)
     : null;
   const localSelectionChoice = localSelection
-    ? possibleChoices.find((x) => x === localSelection)
+    ? possibleChoices.find(x => x === localSelection)
     : null;
 
   const finalSelection =
@@ -134,7 +134,8 @@ function CodeTabs({ children, hideTabBar = false }) {
 
     return (
       <button
-        className={isSelected ? "active" : ""}
+        className={`${isSelected && "active"} ${possibleChoices.length === 1 &&
+          "only-choice"}`}
         onClick={() => {
           // see useEffect above.
           setLastScrollOffset(tabBarRef.current.getBoundingClientRect().y);
@@ -150,7 +151,7 @@ function CodeTabs({ children, hideTabBar = false }) {
 
   return (
     <div className="code-tabs" ref={tabBarRef}>
-      {!hideTabBar && <div className="tab-bar">{names}</div>}
+      <div className="tab-bar">{names}</div>
       <div className="tab-content">{code}</div>
     </div>
   );

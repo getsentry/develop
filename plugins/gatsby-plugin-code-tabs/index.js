@@ -19,11 +19,6 @@ function getTabTitle(node) {
   return (match && match[1]) || "";
 }
 
-function forcesTabBar(node) {
-  const meta = getFullMeta(node);
-  return meta && !!meta.match(/\{forceTabBar\}/);
-}
-
 module.exports = ({ markdownAST }, { className = "code-tabs-wrapper" }) => {
   let lastParent = null;
   let pendingCode = [];
@@ -34,8 +29,6 @@ module.exports = ({ markdownAST }, { className = "code-tabs-wrapper" }) => {
       return;
     }
 
-    const hideTabBar =
-      pendingCode.length === 1 && !forcesTabBar(pendingCode[0][0]);
     const rootNode = pendingCode[0][0];
     const children = pendingCode.reduce(
       (arr, [node]) =>
@@ -45,13 +38,13 @@ module.exports = ({ markdownAST }, { className = "code-tabs-wrapper" }) => {
             value: `<CodeBlock language="${node.lang ||
               ""}" title="${getTabTitle(node)}" filename="${getFilename(
               node
-            )}">`,
+            )}">`
           },
           Object.assign({}, node),
           {
             type: "jsx",
-            value: "</CodeBlock>",
-          },
+            value: "</CodeBlock>"
+          }
         ]),
       []
     );
@@ -60,19 +53,19 @@ module.exports = ({ markdownAST }, { className = "code-tabs-wrapper" }) => {
     rootNode.data = {
       hName: "div",
       hProperties: {
-        className,
-      },
+        className
+      }
     };
     rootNode.children = [
       {
         type: "jsx",
-        value: `<CodeTabs hideTabBar={${hideTabBar}}>`,
+        value: `<CodeTabs>`
       },
       ...children,
       {
         type: "jsx",
-        value: "</CodeTabs>",
-      },
+        value: "</CodeTabs>"
+      }
     ];
 
     toRemove = toRemove.concat(pendingCode.splice(1));
@@ -96,7 +89,7 @@ module.exports = ({ markdownAST }, { className = "code-tabs-wrapper" }) => {
   flushPendingCode();
 
   toRemove.forEach(([node, parent], index) => {
-    parent.children = parent.children.filter((n) => n !== node);
+    parent.children = parent.children.filter(n => n !== node);
   });
 
   return markdownAST;

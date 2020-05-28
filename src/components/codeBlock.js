@@ -2,6 +2,7 @@ import React, { useState, useRef, useContext } from "react";
 import PropTypes from "prop-types";
 import copy from "copy-to-clipboard";
 import { MDXProvider } from "@mdx-js/react";
+import { Clipboard } from "react-feather";
 import { useOnClickOutside, useRefWithCallback } from "../utils";
 import { CodeContext } from "./codeTabs";
 
@@ -31,7 +32,7 @@ function makeKeywordsClickable(children) {
         Selector({
           group: match[1],
           keyword: match[2],
-          key: lastIndex,
+          key: lastIndex
         })
       );
       lastIndex = KEYWORDS_REGEX.lastIndex;
@@ -51,10 +52,10 @@ function Selector({ keyword, group, ...props }) {
   const codeContext = useContext(CodeContext);
   const [
     sharedSelection,
-    setSharedSelection,
+    setSharedSelection
   ] = codeContext.sharedKeywordSelection;
   const spanRef = useRef();
-  const [menuRef, setMenuRef] = useRefWithCallback((menuNode) => {
+  const [menuRef, setMenuRef] = useRefWithCallback(menuNode => {
     if (menuNode) {
       for (const node of menuNode.childNodes) {
         if (node.getAttribute("data-active") === "1") {
@@ -104,7 +105,7 @@ function Selector({ keyword, group, ...props }) {
         onClick={() => {
           setIsOpen(!isOpen);
         }}
-        onKeyDown={(e) => {
+        onKeyDown={e => {
           if (e.key === "Enter") {
             setIsOpen(!isOpen);
           }
@@ -174,19 +175,20 @@ function CodeBlock({ filename, children }) {
 
   return (
     <div className="code-block">
-      {filename && <p className="filename">{filename}</p>}
-      {showCopied ? (
-        <button className="copied">Copied!</button>
-      ) : (
+      <div className="code-actions">
+        <code className="filename">{filename}</code>
         <button className="copy" onClick={() => copyCode()}>
-          Copy
+          <Clipboard size={16} />
         </button>
-      )}
+      </div>
+      <div className="copied" style={{ opacity: showCopied ? 1 : 0 }}>
+        Copied
+      </div>
       <div ref={codeRef}>
         <MDXProvider
           components={{
             code: CodeWrapper,
-            span: SpanWrapper,
+            span: SpanWrapper
           }}
         >
           {children}
@@ -199,7 +201,7 @@ function CodeBlock({ filename, children }) {
 CodeBlock.propTypes = {
   language: PropTypes.string,
   filename: PropTypes.string,
-  title: PropTypes.string,
+  title: PropTypes.string
 };
 
 export default CodeBlock;
