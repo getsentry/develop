@@ -56,4 +56,4 @@ or
     - The `Transport` should deal with wrapping a `Transaction` in an `Envelope` internally
 - A `Transaction` should **not** go through `beforeSend` (but `EventProcessors` are fine for now, since they are considered internal)
     - The distinctive feature of a `Transaction` is `type: "transaction"`
-    - **Motivation**: If we ever want to move to individual Span ingestion, we can't users rely on using this for Transaction. Since Tracing is still considered beta, we are ok "breaking" this for now if users relied on that.
+    - **Motivation**: If we ever want to move to individual Span ingestion, we can't users rely on using this for Transaction.
