@@ -21,8 +21,8 @@ or
     - Internally this creates a `Transaction` and returns the instance
     - Users need to interact with the instance and keep track of it themselves
     - Internally we can use the `Scope` to hold on to a reference of the current `Transaction` if needed
-- Introduce the new type `Span` → [https://develop.sentry.dev/sdk/event-payloads/span/](https://develop.sentry.dev/sdk/event-payloads/span/)
-- Introduce new type `Transaction` which inherits from `Span`
+- Introduce the new type [Span](/sdk/event-payloads/span/)
+- Introduce new type [Transaction](/sdk/event-payloads/transaction/) which inherits from `Span`
 - `Span` Interface
     - When a `Span` is created, set the `startTimestamp` to the current time
     - `SpanContext` is the attribute collection for a `Span` (Can be an implementation detail)
@@ -56,5 +56,4 @@ or
     - The `Transport` should deal with wrapping a `Transaction` in an `Envelope` internally
 - A `Transaction` should **not** go through `beforeSend` (but `EventProcessors` are fine for now, since they are considered internal)
     - The distinctive feature of a `Transaction` is `type: "transaction"`
-    - Also, a few other properties see → Link to develop docs
-    - **Motivation**: This shouldn't have been there in the first place. If we ever want to move to individual Span ingestion, we can't users rely on using this for Transaction. Since Tracing is still considered beta, we are ok "breaking" this for now if users relied on that.
+    - **Motivation**: If we ever want to move to individual Span ingestion, we can't users rely on using this for Transaction. Since Tracing is still considered beta, we are ok "breaking" this for now if users relied on that.
