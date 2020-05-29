@@ -19,7 +19,7 @@ or
     - Default makes AM an opt-in feature
 - Introduce `Sentry.startTransaction`
     - Internally this creates a `Transaction` and returns the instance
-    - Users need to interaction with the instance and keep track of it themselves
+    - Users need to interact with the instance and keep track of it themselves
     - Internally we can use the `Scope` to hold on the a reference of it if needed
 - Introduce the new type `Span` → [https://develop.sentry.dev/sdk/event-payloads/span/](https://develop.sentry.dev/sdk/event-payloads/span/)
 - Introduce new type `Transaction` which inherits from `Span`
