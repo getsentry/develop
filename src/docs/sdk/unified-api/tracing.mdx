@@ -32,13 +32,13 @@ or
     - `Transaction` has additionally a `setName` method the set the name of the transaction
     - `Transaction` receives a `TransactionContext` on creation (new property vs. `SpanContext` is `name`)
     - Since a `Transaction` inherits a `Span` it has all functions available and can be interacted with like it was a `Span`
+- `Hub` → Introduce a method called `startTransaction`
+    - Creates a new `Transaction` instance
+    - This method deals with sampling, and therefore it should take the `tracesSampleRate` option into account:
+        - Depending on the outcome, the sample decision should be stored in the `Transaction`'s `sampled` property and again forwarded to its children
 - `Hub` → Introduce a method called `startSpan`
     - Creates a new `Span` instance
     - If there is already a `Span` on the current `Scope`, the created `Span` should be its child
-    - This method deals with sampling, and therefore it should take the `tracesSampleRate` option into account:
-        - If it's a child `Span`, we inherit the decision from the parent
-        - If it's a root span, we need to roll the dice here
-        - Depending on the outcome, the sample decision should be stored in the `Span`'s `sampled` property and again forwarded to its children
 - `Hub` → Introduce a method called `traceHeaders`
     - This function returns a header (string) `sentry-trace`
     - The value should be the trace header string of the `Span` that is currently on the `Scope`
@@ -50,7 +50,7 @@ or
 - `Transaction.finish()`
     - `super.finish()` (call finish on Span)
     - Send it to Sentry only if `sampled == true`
-    - A `Transaction` needs to be wrapped in an `Envelope` and sent to the [Envelope Endpoint](https://develop.sentry.dev/sdk/envelopes/)
+    - A `Transaction` needs to be wrapped in an `Envelope` and sent to the [Envelope Endpoint](/sdk/envelopes/)
     - The `Transport` should use the same internal queue for `Transactions` / `Events`
     - The `Transport` should implement category-based rate limiting →
     - The `Transport` should deal with wrapping a `Transaction` in an `Envelope` internally
