@@ -20,11 +20,11 @@ or
 - Introduce `Sentry.startTransaction`
     - Internally this creates a `Transaction` and returns the instance
     - Users need to interact with the instance and keep track of it themselves
-    - Internally we can use the `Scope` to hold on the a reference of it if needed
+    - Internally we can use the `Scope` to hold on to a reference of the current `Transaction` if needed
 - Introduce the new type `Span` → [https://develop.sentry.dev/sdk/event-payloads/span/](https://develop.sentry.dev/sdk/event-payloads/span/)
 - Introduce new type `Transaction` which inherits from `Span`
 - `Span` Interface
-    - When a `Span` is created, set the `startSimestamp` to the current time
+    - When a `Span` is created, set the `startTimestamp` to the current time
     - `SpanContext` is the attribute collection for a `Span` (Can be an implementation detail)
     - The relation between parent - child is captured in the property `parentSpanId`
 - `Transaction` Interface
@@ -43,14 +43,14 @@ or
     - This function returns a header (string) `sentry-trace`
     - The value should be the trace header string of the `Span` that is currently on the `Scope`
 - `Scope` Introduce `setSpan`
-    - This can be used internally to pass a `Span` / `Transaction` around so integration can attach children to it
-    - The `transaction` property on the `Scope` (legacy) should overwrite the name of the `Transaction` if we send one. With that we give the user the option to change the name downstream if they don't have access to the instance of the `Transaction` directly.
+    - This can be used internally to pass a `Span` / `Transaction` around so that integrations can attach children to it
+    - Setting the `transaction` property on the `Scope` (legacy) should overwrite the name of the `Transaction` stored in the `Scope`, if there is one. With that we give users the option to change the transaction name even if they don't have access to the instance of the `Transaction` directly.
 - `Span.finish()`
     - Just set `endTimestamp` to the current time (in payload `timestamp`)
 - `Transaction.finish()`
     - `super.finish()` (call finish on Span)
-    - Send it to Sentry only if `sampled != true`
-    - `Transaction` needs to be wrapped in an `Envelope` and send through the [Envelope Endpoint](https://develop.sentry.dev/sdk/envelopes/)
+    - Send it to Sentry only if `sampled == true`
+    - A `Transaction` needs to be wrapped in an `Envelope` and sent to the [Envelope Endpoint](https://develop.sentry.dev/sdk/envelopes/)
     - The `Transport` should use the same internal queue for `Transactions` / `Events`
     - The `Transport` should implement category-based rate limiting →
     - The `Transport` should deal with wrapping a `Transaction` in an `Envelope` internally
