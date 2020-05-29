@@ -116,7 +116,11 @@ const Sidebar = () => (
 
       <ul className="list-unstyled" data-sidebar-tree>
         <NavLink to="/sdk/overview/">Overview</NavLink>
-        <NavLink to="/sdk/unified-api/">Unified API</NavLink>
+        <NavLink to="/sdk/unified-api/" title="Unified API">
+          <NavLink to="/sdk/unified-api/tracing">
+          Guideline for AM support
+          </NavLink>
+        </NavLink>
         <NavLink to="/sdk/features/">Expected Features</NavLink>
         <NavLink to="/sdk/data-handling/">Data Handling</NavLink>
         <NavLink to="/sdk/store/">Store Endpoint</NavLink>
