@@ -5,9 +5,13 @@ exports.onClientEntry = function(_, pluginParams) {
     const TracingIntegration = require("@sentry/apm").Integrations.Tracing;
     Sentry.init({
       environment: process.env.NODE_ENV || "development",
+      release: process.env.GITHUB_SHA || process.env.VERCEL_GITHUB_COMMIT_SHA,
       tracesSampleRate: 1,
       ...pluginParams,
-      integrations: [new TracingIntegration()],
+      integrations: [
+        new TracingIntegration(),
+        ...(pluginParams.integrations || []),
+      ],
     });
     window.Sentry = Sentry;
   });
