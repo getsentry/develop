@@ -45,6 +45,14 @@ const getPlugins = () => {
             resolve: require.resolve("./plugins/gatsby-plugin-include"),
           },
           {
+            resolve: require.resolve("./plugins/gatsby-plugin-sentry"),
+            options: {
+              dsn:
+                process.env.SENTRY_DSN ||
+                "https://f107f3f0deb544289e4e056922e5e5a4@o1.ingest.sentry.io/5266138",
+            },
+          },
+          {
             resolve: "gatsby-remark-prismjs",
             options: {
               noInlineHighlight: true,
