@@ -74,6 +74,7 @@ const Sidebar = () => (
 
       <ul className="list-unstyled" data-frontend-tree>
         <NavLink to="/frontend/">Frontend Handbook</NavLink>
+        <NavLink to="/frontend/storybook/">Storybook Styleguide</NavLink>
         <NavLink to="/frontend/defaultprops/">Typing DefaultProps</NavLink>
         <NavLink to="/frontend/migration-gridemotion/">
           Migration - grid-emotion
@@ -118,7 +119,7 @@ const Sidebar = () => (
         <NavLink to="/sdk/overview/">Overview</NavLink>
         <NavLink to="/sdk/unified-api/" title="Unified API">
           <NavLink to="/sdk/unified-api/tracing">
-          Guideline for AM support
+            Guideline for AM support
           </NavLink>
         </NavLink>
         <NavLink to="/sdk/features/">Expected Features</NavLink>
