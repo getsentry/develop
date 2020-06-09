@@ -90,13 +90,11 @@ from the operating system or runtime APIs, as well as mechanism-specific values.
 : Arbitrary extra data that might help the user understand the error thrown by
   this mechanism.
 
-{% capture __alert_content -%}
-The `type` attribute is required to send any exception mechanism attribute, even
-if the SDK cannot determine the specific mechanism. In this case, set the `type`
-to `generic`. See below for an example.
-{%- endcapture -%}
-
-{%- include components/alert.html title="Note" content=__alert_content level="warning"%}
+<Alert title="Note" level="warning">
+The <code>type</code> attribute is required to send any exception mechanism attribute, even
+if the SDK cannot determine the specific mechanism. In this case, set the <code>type</code>
+to <code>generic</code>. See below for an example.
+</Alert>
 
 ### Meta information
 
