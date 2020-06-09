@@ -193,31 +193,18 @@ git clone git@github.com:getsentry/getsentry.git
 ```
 
 It's necessary to keep getsentry in an adjacent directory (it's expected by
-`install-develop-requirements` in the getsentry Makefile). For example, if you
+`install-py-dev` in the getsentry Makefile). For example, if you
 did a `ls ~/code` you'd see something like:
 
 ```bash
 sentry/   getsentry/
 ```
 
-Next, create a virtualenv for `getsentry`, and install its dependencies:
+Next, run `make develop` and follow any additional instructions that come up.
+Once you've completed installation you can create start the development server
+with
 
 ```bash
-# Create and source a virtualenv
-
-python -m virtualenv .venv
-source .venv/bin/activate
-
-# Install dependencies
-# Note that you can safely ignore any warnings from pip
-# about "you'll have version ... which is incompatible"
-# Regarding google cloud dependencies.
-
-make develop
-
-# Initialize and bootstrap the database
-make reset-db
-
 # Run the development server
 getsentry devserver --workers
 ```
@@ -244,34 +231,6 @@ environment name. For example, local development is found in
 For sentry, the settings file is installed at `~/.sentry/sentry.conf.py`
 (outside both repos). If you're investigating, or want to explore, discrepancies
 between the two files, those two files are a good place to start looking.
-
-If you're in your getsentry virtualenv, do a `pip freeze | grep sentry\@` and
-you'll see something like this:
-
-```jsx
--e git+https://github.com/getsentry/getsentry@876f242ed01944764333bbbc1c6c501a4680997d#egg=getsentry
--e git+https://github.com/getsentry/sentry@9927a88152f17c5c9fa1657e9fc6e43a1accb73b#egg=sentry
-```
-
-The `-e` means editable install, which means if you make any changes to
-getsentry or sentry in your local filesystem, those changes would be reflected
-in tests or devserver.
-
-If you look in getsentry's `Makefile`, the `install-py-dev` target
-expects your sentry to be located at `../sentry` and installs it in editable
-mode.
-
-I'm unsure if pip has a way to show the filesystem path of editably installed
-packages, but notice the hash after sentry. If you go into your sentry directory
-and `git rev-parse HEAD`, you'll see that the hashes match. Change branches or
-add a new commit in sentry, and you'll see it reflected here.
-
-Oh, you can do `pip list | grep "sentry "` and you'll see something like:
-
-```bash
-getsentry                 0.0.0       /Users/joshua.li/dev/sentry/getsentry
-sentry                    10.1.0.dev0 /Users/joshua.li/dev/sentry/sentry/src
-```
 
 ## Troubleshooting
 
