@@ -41,7 +41,6 @@ const Sidebar = () => (
         <NavLink to="https://github.com/getsentry/.github/blob/master/CODE_OF_CONDUCT.md">
           Code of Conduct
         </NavLink>
-        <NavLink to="/environment/">Development Environment</NavLink>
         <NavLink to="/docs/">Documentation Guide</NavLink>
         <NavLink to="/translations/">Translations</NavLink>
         <NavLink to="/code-review/">Code Review</NavLink>
@@ -52,16 +51,28 @@ const Sidebar = () => (
         className="sidebar-title d-flex align-items-center mb-0"
         data-sidebar-link
       >
-        <h6>Understand</h6>
+        <h6>Development</h6>
+      </div>
+      <ul className="list-unstyled" data-sidebar-tree>
+        <NavLink to="/environment/">Development Environment</NavLink>
+        <NavLink to="/continuous-integration/">Continuous Integration</NavLink>
+        <NavLink to="/python-dependencies/">Python Dependencies</NavLink>
+        <NavLink to="/database-migrations/">Database Migrations</NavLink>
+        <NavLink to="/testing/">Testing Tips</NavLink>
+      </ul>
+    </li>
+    <li className="mb-3" data-sidebar-branch>
+      <div
+        className="sidebar-title d-flex align-items-center mb-0"
+        data-sidebar-link
+      >
+        <h6>Application</h6>
       </div>
       <ul className="list-unstyled" data-sidebar-tree>
         <NavLink to="/sentry-vs-getsentry/">sentry vs getsentry</NavLink>
         <NavLink to="/config/">Configuration</NavLink>
         <NavLink to="/feature-flags/">Feature Flags</NavLink>
-        <NavLink to="/python-dependencies/">Python Dependencies</NavLink>
-        <NavLink to="/database-migrations/">Database Migrations</NavLink>
         <NavLink to="/serializers/">Serializers</NavLink>
-        <NavLink to="/testing/">Testing Tips</NavLink>
       </ul>
     </li>
     <li className="mb-3" data-frontend-branch>
@@ -118,7 +129,7 @@ const Sidebar = () => (
         <NavLink to="/sdk/overview/">Overview</NavLink>
         <NavLink to="/sdk/unified-api/" title="Unified API">
           <NavLink to="/sdk/unified-api/tracing">
-          Guideline for AM support
+            Guideline for AM support
           </NavLink>
         </NavLink>
         <NavLink to="/sdk/features/">Expected Features</NavLink>
