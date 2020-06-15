@@ -7,9 +7,9 @@ backgrounds and we try to avoid language that has been identified as hurtful
 or insensitive.  This applies not only to the documentation but also to the
 product itself and internal APIs.
 
-What constitues as inclusive language will always be an evolving topic and
+What constitutes as inclusive language will always be an evolving topic and
 because Sentry is a product with history it's likely that we will always carry
-something in the code base that is hard to get rid of.
+something in the codebase that is hard to get rid of.
 
 As such this document largely determines what should be done for new code, but
 not necessarily for existing code.
@@ -17,17 +17,17 @@ not necessarily for existing code.
 ## Phased Out Terms
 
 We have identified some terms that we no longer want to use going forward but
-that might still exist in parts of the code base.
+that might still exist in parts of the codebase.
 
 master/slave:
 
-: Generally the terms to be used in the context of databases should be
+: Generally, the terms to be used in the context of databases should be
   "primary"/"secondary" or "primary"/"replica".
 
 whitelist/blacklist:
 
 : Generally should not be used.  We try to avoid the word "list" now in general
-  and try to be more descriptive in the UI.  For instance the use of
+  and try to be more descriptive in the UI.  For instance, the use of
   "ip blacklist" has been changed to "ip filters" as part of the filter product.
   If you need a generic term "allowlist" and "denylist" or "blocklist" are
   good substitutions.
@@ -35,7 +35,7 @@ whitelist/blacklist:
 whitelisted/blacklisted:
 
 : Try to avoid generic verbs here and better describe directly what it is
-  you're trying to do.  For instance we changed "whitelisted environment
+  you're trying to do.  For instance, we changed "whitelisted environment
   variables" to "safe environment variables".
 
 
@@ -57,7 +57,7 @@ on new repositories.  The term "master" in isolation is acceptable in general
 however the history of the branch name in git comes from bitkeeper where this
 terminology referred to master and slave repositories.  At present changing the
 default branch on existing repositories has negative consequences for users
-that have already clonsed the repositories so these should not be changed.
+that have already cloned the repositories so these should not be changed.
 
 To reconfigure git to use a different default repo for `git init` a template
 can be configured.  Put the following into your `~/.gitconfig`:
