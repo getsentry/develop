@@ -42,6 +42,7 @@ const Sidebar = () => (
           Code of Conduct
         </NavLink>
         <NavLink to="/docs/">Documentation Guide</NavLink>
+        <NavLink to="/inclusion/">Inclusive Language</NavLink>
         <NavLink to="/translations/">Translations</NavLink>
         <NavLink to="/code-review/">Code Review</NavLink>
       </ul>
