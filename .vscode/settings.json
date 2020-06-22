@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "*.js": "javascriptreact"
-    }
+    },
+    "python.formatting.provider": "black"
 }
