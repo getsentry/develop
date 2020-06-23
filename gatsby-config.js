@@ -13,12 +13,13 @@ const queries = require("./src/utils/algolia");
 const getPlugins = () => {
   const plugins = [
     {
-      resolve: "./plugins/gatsby-plugin-sentry",
+      resolve: "@sentry/gatsby",
       options: {
         dsn:
           process.env.SENTRY_DSN ||
           "https://f107f3f0deb544289e4e056922e5e5a4@o1.ingest.sentry.io/5266138",
         release: process.env.GITHUB_SHA || process.env.VERCEL_GITHUB_COMMIT_SHA,
+        tracesSampleRate: activeEnv === "development" ? 0 : 0.25,
       },
     },
     "gatsby-plugin-sass",
