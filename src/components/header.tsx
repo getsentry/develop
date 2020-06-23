@@ -1,7 +1,11 @@
-import PropTypes from "prop-types";
 import React from "react";
 
-const Header = ({ homeUrl, sitePath }) => (
+interface Props {
+  homeUrl: string;
+  sitePath: string;
+}
+
+const Header = ({ homeUrl, sitePath }: Props) => (
   <div className="navbar navbar-expand-md navbar-light bg-white global-header">
     <a
       href={`${homeUrl}/welcome/`}
@@ -35,11 +39,6 @@ const Header = ({ homeUrl, sitePath }) => (
     </button>
   </div>
 );
-
-Header.propTypes = {
-  siteTitle: PropTypes.string,
-  homeUrl: PropTypes.string,
-};
 
 Header.defaultProps = {
   siteTitle: "",

@@ -1,6 +1,10 @@
 import React from "react";
 
-export default ({ children, ...props }) => (
+interface Props {
+  children: any;
+}
+
+export default ({ children, ...props }: Props) => (
   <a {...props}>
     {children}
 
