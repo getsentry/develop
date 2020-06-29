@@ -59,6 +59,9 @@ const getPlugins = () => {
               noInlineHighlight: true,
             },
           },
+          {
+            resolve: `gatsby-remark-check-links`,
+          },
         ],
       },
     },
