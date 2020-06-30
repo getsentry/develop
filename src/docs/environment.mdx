@@ -201,16 +201,17 @@ sentry/   getsentry/
 ```
 
 Next, run `make bootstrap` and `make develop` and follow any additional instructions that come up.
-Once you've completed installation you can create start the development server
-with
+
+If all went well, then you can start the development server:
 
 ```bash
 getsentry devserver --workers
 ```
 
-Once you've booted the server you'll access the development environment
-via [http://dev.getsentry.net:8000](http://dev.getsentry.net:8000/), which will
-allow you to use the appropriate subdomains (app and www).
+Note that you **cannot** have both sentry and getsentry devserver running at the same time.
+
+After the server warms up for a little while, you should be able to access it
+at [http://dev.getsentry.net:8000](http://dev.getsentry.net:8000/).
 
 You can set your local instance's org to use a business plan by running the
 following in getsentry:
