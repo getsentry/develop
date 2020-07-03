@@ -45,6 +45,7 @@
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
+    "init": "cp .env.example .env.development && yarn install",
     "prestart": "gatsby clean",
     "start": "npm run develop",
     "format": "prettier --write \"src/**/*.js\"",
