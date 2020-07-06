@@ -70,6 +70,7 @@ const Sidebar = () => (
         <h6>Application</h6>
       </div>
       <ul className="list-unstyled" data-sidebar-tree>
+        <NavLink to="/architecture/">Architecture</NavLink>
         <NavLink to="/sentry-vs-getsentry/">sentry vs getsentry</NavLink>
         <NavLink to="/config/">Configuration</NavLink>
         <NavLink to="/feature-flags/">Feature Flags</NavLink>
