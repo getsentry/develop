@@ -26,12 +26,14 @@
     "gatsby-remark-check-links": "^2.1.0",
     "gatsby-remark-copy-linked-files": "^2.3.2",
     "gatsby-remark-images": "^3.3.1",
+    "gatsby-remark-mermaid": "^2.0.0",
     "gatsby-remark-prismjs": "^3.5.1",
     "gatsby-source-filesystem": "^2.3.1",
     "gatsby-transformer-remark": "^2.8.7",
     "node-sass": "^4.14.1",
     "prismjs": "^1.20.0",
     "prop-types": "^15.7.2",
+    "puppeteer": "^5.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-feather": "^2.0.8",
@@ -62,7 +64,7 @@
     "react-test-renderer": "^16.13.1"
   },
   "volta": {
-    "node": "10.16.3",
+    "node": "10.18.1",
     "yarn": "1.16.0"
   }
 }
