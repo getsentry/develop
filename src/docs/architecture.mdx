@@ -7,7 +7,7 @@ title: Architecture
 ```mermaid
 graph TD
 app[Your Application] --> |SDK| lb{{Load Balancer}}
-lb --> |"ingest.sentry.example.com"| relay
+lb --> |"sentry.example.com/api/\d+/store/"| relay
 lb --> |"sentry.example.com/api/\d+/store/"| sentry_web["Sentry (web)"]
 relay --> kafka
 relay --> redis
