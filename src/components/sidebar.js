@@ -183,6 +183,8 @@ const Sidebar = () => (
         <NavLink to="/integrations/">Overview</NavLink>
         <NavLink to="/integrations/github/">GitHub</NavLink>
         <NavLink to="/integrations/slack/">Slack</NavLink>
+        <NavLink to="/integrations/vercel/">Vercel</NavLink>
+
       </ul>
     </li>
     <li className="mb-3" data-sidebar-branch>
