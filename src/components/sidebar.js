@@ -182,6 +182,7 @@ const Sidebar = () => (
       <ul className="list-unstyled" data-sidebar-tree>
         <NavLink to="/integrations/">Overview</NavLink>
         <NavLink to="/integrations/github/">GitHub</NavLink>
+        <NavLink to="/integrations/slack/">Slack</NavLink>
       </ul>
     </li>
     <li className="mb-3" data-sidebar-branch>

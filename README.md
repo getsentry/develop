@@ -2,6 +2,15 @@
 
 Welcome to Sentry's Developer documentation!
 
+## Quickstart
+
+Simply run 
+
+```shell
+ yarn run init
+ yarn run develop
+```
+
 ## Get the Config Ready
 
 Copy the example configuration (and update if needed):
