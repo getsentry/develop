@@ -71,6 +71,15 @@ If you've deployed something bad, you'll need to do the following:
 - Deploy the fix, and verify that the issue has indeed been fixed.
 - Inform #team-engineering that it is safe to deploy getsentry again.
 
+## Docker images
+
+We use Google Cloud Build to build our Docker containers. Every push to master additionally gets build and uploaded to Docker Hub:
+
+* `getsentry/sentry:commit_sha` as image to pull from a commit in `getsentry/sentry` master
+* `us.gcr.io/sentryio/sentry:commit_sha` as image to pull from a commit in any other branch
+
+This is particuarly useful to know when working with [onpremise](https://github.com/getsentry/onpremise), where those values can be passed in as `SENTRY_IMAGE`.
+
 ## Troubleshooting CI
 
 You might also be interested in <Link to="/environment/#troubleshooting">troubleshooting the dev environment</Link>.
@@ -83,7 +92,7 @@ You might also be interested in <Link to="/environment/#troubleshooting">trouble
 
 **Solution:**
 
-Purge the travis cache. How? See the FAQ.
+Purge the travis cache. How? See above.
 
 ---
 
