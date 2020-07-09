@@ -8,7 +8,7 @@ Simply run
 
 ```shell
  yarn run init
- yarn gatsby develop
+ yarn run develop
 ```
 
 ## Get the Config Ready

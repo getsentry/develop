@@ -21,12 +21,13 @@ Declared in <code>config.yml</code>.
 <markdown>
 Copy your Client ID, Client Secret, and Verification Token.
 
-Set slack.legacy-app to False if you made your bot Post June 2020, due to slack api changes
+Set `slack.legacy-app` to `False` if you made your bot Post June 2020, due to slack api changes
 
+If `slack.legacy-app` is `True` please use `slack.verification-token` instead of `slack.signing-secret`
 ```yaml
 slack.client-id: <'client id'>
 slack.client-secret: <client secret>
-slack.verification-token: <verification token>
+slack.signing-secret: <verification token>
 slack.legacy-app: <boolean>
 ```
 
