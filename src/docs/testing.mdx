@@ -38,10 +38,14 @@ managing services.
 For python tests we use [pytest](https://docs.pytest.org/en/latest/) and testing tools
 provided by Django. On top of this foundation we've added a few base test cases (in `sentry.testutils.cases`).
 
-Endpoint integration tests is where the bulk of our test suite is focused. These tests help us ensure that
+Endpoint integration tests based on `APITestCase` is where the bulk of our test suite is focused. These tests help us ensure that
 the APIs our customers, integrations and front-end application continue to work in expected ways. You should
 endeavour to include tests that cover the various user roles, and cross organization/team access scenarios,
 as well as invalid data scenarios as those are often overlooked when manually testing.
+
+* **Use `unittest.TestCase` if you do not need access to the database.** Those tests will set up and teardown very quickly.
+* Use `sentry.testutils.TestCase` or `sentry.testutils.TransactionTestCase` for database access. Those are subtypes of the respectively named Django test classes.
+* There are also a couple of domain-specific test classes, most importantly `sentry.testutils.APITestCase`.
 
 ### Running pytest
 
