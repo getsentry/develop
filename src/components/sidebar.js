@@ -55,7 +55,8 @@ const Sidebar = () => (
         <h6>Development</h6>
       </div>
       <ul className="list-unstyled" data-sidebar-tree>
-        <NavLink to="/environment/">Development Environment</NavLink>
+        <NavLink to="/environment/">Environment</NavLink>
+        <NavLink to="/workflow/">Workflow</NavLink>
         <NavLink to="/continuous-integration/">Continuous Integration</NavLink>
         <NavLink to="/python-dependencies/">Python Dependencies</NavLink>
         <NavLink to="/database-migrations/">Database Migrations</NavLink>
