@@ -4,7 +4,7 @@ on:
     types: [update-license]
   schedule:
     # This is the typical CalVer release time
-    - cron:  '0 18 15 * *'
+    - cron:  '0 17 15 * *'
 
 jobs:
   build:
