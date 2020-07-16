@@ -118,6 +118,7 @@ const Sidebar = () => (
         <NavLink to="/services/quotas/">Quotas & Rate Limiter</NavLink>
         <NavLink to="/services/digests/">Notification Digests</NavLink>
         <NavLink to="https://getsentry.github.io/relay/">Relay</NavLink>
+        <NavLink to="https://github.com/getsentry/snuba">Snuba</NavLink>
       </ul>
     </li>
 
