@@ -111,7 +111,7 @@ const getPlugins = () => {
 module.exports = {
   // pathPrefix: `/develop`,
   siteMetadata: {
-    title: "Sentry Documentation",
+    title: "Sentry Developer Documentation",
     homeUrl: "https://sentry.io",
     sitePath: "develop.sentry.dev",
     description: "",
