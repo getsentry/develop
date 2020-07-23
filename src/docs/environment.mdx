@@ -126,6 +126,28 @@ The `bootstrap` command does a few things you'll want to know about:
 
 Once this command has finished you'll have Sentry installed in development mode with all its required dependencies.
 
+## direnv
+
+We use [direnv](https://github.com/direnv/direnv) to automate configuration and constraints. It automatically sets some helpful environment variables for you, activates your virtual environment, and does some simple state checking to guide you towards the expected development environment.
+
+You need to install it, and add the following snippet to the end of your startup script:
+
+```bash {filename: ~/.bashrc}
+eval "$(direnv hook bash)"
+```
+
+```bash {filename: ~/.zshrc} {tabTitle: Zsh}
+eval "$(direnv hook zsh)"
+```
+
+And after doing that, reload your shell:
+
+```bash
+exec "$SHELL"
+```
+
+Any time the `.envrc` configuration changes (including the first time) you will be prompted to run `direnv allow` before any of the configuration will run. This is for security purposes and you are encouraged to inspect the changes before running this command.
+
 ## Running the Development Server
 
 <Alert title="Tip!" level="info">
@@ -149,28 +171,6 @@ If you would like to be able to run `devserver` outside of your root checkout, y
   <em>and</em> port are required in order for DNS and some pages urls to be
   displayed correctly.
 </Alert>
-
-## direnv
-
-We use [direnv](https://github.com/direnv/direnv) to automate configuration and constraints. It automatically sets some helpful environment variables for you, activates your virtual environment, and does some simple state checking to guide you towards the expected development environment.
-
-You need to install it, and add the following snippet to the end of your startup script:
-
-```bash {filename: ~/.bashrc}
-eval "$(direnv hook bash)"
-```
-
-```bash {filename: ~/.zshrc} {tabTitle: Zsh}
-eval "$(direnv hook zsh)"
-```
-
-And after doing that, reload your shell:
-
-```bash
-exec "$SHELL"
-```
-
-Any time the `.envrc` configuration changes (including the first time) you will be prompted to run `direnv allow` before any of the configuration will run. This is for security purposes and you are encouraged to inspect the changes before running this command.
 
 ## Setting up Getsentry
 
