@@ -116,7 +116,7 @@ Volta intercepts this and automatically downloads and installs the node version 
 
 ## Bootstrap Services
 
-Source your Python environment again (`source .venv/bin/activate`), then run `make bootstrap`. This will take a long time, as it bootstraps not only Sentry and its dependencies, but starts up related services, and runs database migrations.
+Source your virtual environment again (`source .venv/bin/activate`), then run `make bootstrap`. This will take a long time, as it bootstraps not only Sentry and its dependencies, but starts up related services, and runs database migrations.
 
 The `bootstrap` command does a few things you'll want to know about:
 
@@ -128,9 +128,9 @@ Once this command has finished you'll have Sentry installed in development mode 
 
 ## direnv
 
-We use [direnv](https://github.com/direnv/direnv) to automate configuration and constraints. It automatically sets some helpful environment variables for you, activates your virtual environment, and does some simple state checking to guide you towards the expected development environment.
+[direnv](https://github.com/direnv/direnv) _automatically activates your virtual environment_, sets some helpful environment variables for you, and performs some simple checks to make sure your environment is as expected (and tries its best to guide you if it isn't).
 
-You need to install it, and add the following snippet to the end of your startup script:
+First, you should be done bootstrapping. Then, run `brew install direnv` and add the following snippet to the end of your startup script:
 
 ```bash {filename: ~/.bashrc}
 eval "$(direnv hook bash)"
