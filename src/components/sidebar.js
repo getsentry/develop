@@ -56,6 +56,7 @@ const Sidebar = () => (
       </div>
       <ul className="list-unstyled" data-sidebar-tree>
         <NavLink to="/environment/">Environment</NavLink>
+        <NavLink to="/environment/pycharm/">Configuring PyCharm</NavLink>
         <NavLink to="/workflow/">Workflow</NavLink>
         <NavLink to="/continuous-integration/">Continuous Integration</NavLink>
         <NavLink to="/python-dependencies/">Python Dependencies</NavLink>
