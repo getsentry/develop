@@ -1,7 +1,7 @@
 import React from "react"
 import remark from 'remark';
 import html from 'remark-html';
-import { quicktype, InputData, JSONSchemaInput, JSONSchemaStore } from "quicktype/dist/quicktype-core";
+import { quicktype, InputData, JSONSchemaInput, JSONSchemaStore } from "@untitaker/quicktype-core-with-markdown";
 
 const mdProcessor = remark()
   .use(html);
