@@ -6,8 +6,7 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => 
   let content;
   let parsedContent;
   try {
-    const rawData = readFileSync('./src/relay/relay-general/tests/snapshots/test_fixtures__event_schema.snap', {encoding: "utf8"});
-    content = rawData.split("\n").slice(4).join("\n");
+    const content = readFileSync('./src/data-schemas/relay/event.schema.json', {encoding: "utf8"});
     parsedContent = JSON.parse(content);
   } catch (e) {
     content = null;
