@@ -3,14 +3,13 @@ const { quicktype, InputData, JSONSchemaInput, JSONSchemaStore } = require("@unt
 
 exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => {
   const { createNode } = actions;
+
   let content;
-  let parsedContent;
   try {
-    const content = readFileSync('./src/data-schemas/relay/event.schema.json', {encoding: "utf8"});
-    parsedContent = JSON.parse(content);
+    content = readFileSync('./src/data-schemas/relay/event.schema.json', {encoding: "utf8"});
   } catch (e) {
-    content = null;
-    parsedContent = null;
+    console.warn(`Failed to read Relay event schema: ${e}`);
+    return;
   }
 
   createNode({
@@ -23,7 +22,7 @@ exports.sourceNodes = async ({ actions, createNodeId, createContentDigest }) => 
       type: `JsonSchema`,
       mediaType: 'application/schema+json',
       content,
-      contentDigest: createContentDigest(parsedContent),
+      contentDigest: createContentDigest(content),
     },
   });
 };
@@ -47,7 +46,7 @@ function quicktypeJSONSchema(targetLanguage, typeName, jsonSchemaString) {
 exports.onCreateNode = async ({ actions, createNodeId, node, createContentDigest }) => {
   const { createNode, createParentChildLink } = actions;
 
-  if (node.internal.mediaType !== `application/schema+json`) {
+  if (node.internal.mediaType !== `application/schema+json` || node.internal.type !== `JsonSchema`) {
     return;
   }
 
