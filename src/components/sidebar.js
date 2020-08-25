@@ -200,7 +200,7 @@ const Sidebar = () => (
 
       <ul className="list-unstyled" data-sidebar-tree>
         <NavLink to="https://docs.sentry.io">User Documentation</NavLink>
-        <NavLink to="https://github.com/getsentry/onpremise">
+        <NavLink to="https://github.com/getsentry/onpremise/releases/latest">
           Self-Hosting Sentry
         </NavLink>
       </ul>
