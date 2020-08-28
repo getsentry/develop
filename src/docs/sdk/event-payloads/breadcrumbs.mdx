@@ -6,13 +6,37 @@ Sentry uses _breadcrumbs_ to create a trail of events that happened prior to an 
 
 This page provides technical information about a breadcrumb structure. You can read an overview of manual breadcrumb recording and customization on our [Breadcrumbs](https://docs.sentry.io/enriching-error-data/breadcrumbs/) sentry docs page.
 
-At Sentry an event payload contains a property called `entries` that is an array of objects. Each object contains two properties `type` and `data`. The property `type` being a string and the property `data` being an object containing the property `values`. The `values` property is of type array.
+An event may contain one or more `breadcrumbs` properties. The entries are ordered from oldest to newest. Consequently, the last entry in the list should be the last entry before the event occurred.
 
-When the `type` of an entry is of type “breadcrumbs”, the `data.values` array may contain one more objects with following properties:
+The following example illustrates the breadcrumbs part of the event payload and omits other attributes for simplicity.
 
-`event_id` (optional)
+```json
+{
+  "breadcrumbs": {
+    "values": [
+      {
+        "timestamp": "2016-04-20T20:55:53.845Z",
+        "message": "Something happened",
+        "category": "log",
+        "data": {
+          "foo": "bar",
+          "blub": "blah"
+        }
+      },
+      {
+        "timestamp": "2016-04-20T20:55:53.847Z",
+        "type": "navigation",
+        "data": {
+          "from": "/login",
+          "to": "/dashboard"
+        }
+      }
+    ]
+  }
+}
+```
 
-Hexadecimal string representing a uuid4 value. The length is exactly 32 characters. Dashes are not allowed. Has to be lowercase.
+A breadcrumb object contains the property `values`, which is an array of objects with the following properties:
 
 `type` (optional)
 
@@ -28,11 +52,15 @@ Internally we render some crumb’s color and icon based on the provided categor
 
 `message` (optional)
 
-A string describing the event rendered as text with all whitespace preserved. Often used as a drop-in for a traditional log message.
+Human readable message for the breadcrumb.
+
+If a message is provided, it is rendered as text with all whitespace preserved.
 
 `data` (optional)
 
-A key-value mapping of metadata around the event. This is often used instead of the message, but may be used in addition. Sentry.io will display all the data sent.
+Arbitrary data associated with this breadcrumb.
+
+Contains a dictionary whose contents depend on the breadcrumb type. Additional parameters that are unsupported by the type are rendered as a key/value table.
 
 `level` (optional)
 
@@ -56,10 +84,9 @@ Describes a generic breadcrumb. This is typically a log message or user-generate
   "type": "default",
   "category": "started",
   "data": undefined,
-  "event_id": "null",
   "level": "info",
   "message": "this is a message",
-  "timestamp": "2020-08-28T07:19:20.926196Z"
+  "timestamp": 1596814007.035
 }
 ```
 
@@ -67,45 +94,16 @@ Describes a generic breadcrumb. This is typically a log message or user-generate
 
 This is typically a log message. The `data` part is entirely undefined and as such, completely rendered as a key/value table.
 
-_Internally we convert events with the category `console` to the type `debug`._
+_Internally we display breadcrumbs of type `default` that contain category `console` as a breadcrumb of type `debug`._
 
 ```json
 {
   "type": "debug",
   "category": "started",
   "data": null,
-  "event_id": null,
   "level": "info",
   "message": "this is a message",
-  "timestamp": "2020-08-28T07:29:37Z"
-}
-```
-
-### `exception`
-
-The occurrence of an expection.
-
-_Internally, we don't get the exception data from the breadcrumb entry, but from the exception entry._
-
-```json
-{
-  "entries": [
-    { "type": "exception", "data": {...} },
-    { "type": "breadcrumbs", "data": {...} }]
-}
-```
-
-The `data` object of an expection will always contain the `mechanism` property describing if the expection was handled or not.
-
-```json
-{
-  "mechanism": { "type": "generic", "handled": true },
-  "module": null,
-  "rawStacktrace": null,
-  "stacktrace": null,
-  "threadId": null,
-  "type": "TypeError",
-  "value": "Failed to fetch"
+  "timestamp": 1596814007.035
 }
 ```
 
@@ -117,11 +115,9 @@ An error that occurred prior to the exception.
 {
   "type": "error",
   "category": "error",
-  "data": null,
-  "event_id": null,
   "level": "error",
   "message": "this is a message",
-  "timestamp": "2020-08-28T07:30:37Z"
+  "timestamp": 1596814007.035
 }
 ```
 
@@ -129,7 +125,7 @@ An error that occurred prior to the exception.
 
 A navigation event can be a URL change in a web application, or a UI transition in a mobile or desktop application, etc.
 
-_Internally we convert categories with the string `navigation` to the type `navigation`._
+_Internally we display breadcrumbs of type `default` that contain category `navigation` as a breadcrumb of type `navigation`._
 
 Its `data` property has the following sub-properties:
 
@@ -144,6 +140,7 @@ A string representing the new application state / location.
 ```json
 {
   "type": "navigation",
+  "category": "navigation",
   "timestamp": "2016-04-20T20:55:53.845Z",
   "data": {
     "from": "/login",
@@ -177,6 +174,7 @@ A text that describes the status code.
 ```json
 {
   "type": "http",
+  "category": "xhr",
   "data": {
     "url": "http://example.com/api/1.0/users",
     "method": "GET",
@@ -195,11 +193,9 @@ An information that could help you identify the root cause of the issue or who t
 {
   "type": "info",
   "category": "started",
-  "data": null,
-  "event_id": null,
   "level": "info",
   "message": "this is a message",
-  "timestamp": "2020-08-28T07:28:37Z"
+  "timestamp": 1596813998.386
 }
 ```
 
@@ -211,11 +207,9 @@ This represents a query that was made in your application.
 {
   "type": "query",
   "category": "started",
-  "data": null,
-  "event_id": null,
   "level": "info",
   "message": "this is a message",
-  "timestamp": "2020-08-28T07:27:37Z"
+  "timestamp": 1596813998.386
 }
 ```
 
@@ -223,17 +217,15 @@ This represents a query that was made in your application.
 
 Describes a tracing event.
 
-_Internally we convert categories with the dotted strings `sentry.transaction` and `sentry.event` to the type `transaction`._
+_Internally we display breadcrumbs of type `default` that contain categories `sentry.transaction` and `sentry.event` as a breadcrumb of type `transaction`._
 
 ```json
 {
   "type": "default",
   "category": "sentry.transaction",
-  "data": null,
-  "event_id": null,
   "level": "info",
   "message": "this is a message",
-  "timestamp": "2020-08-10T09:24:17.408886Z"
+  "timestamp": 1596813997.646
 }
 ```
 
@@ -241,17 +233,15 @@ _Internally we convert categories with the dotted strings `sentry.transaction` a
 
 A user interaction with your app's UI.
 
-_Internally we convert categories with the dotted string `ui.*` to the type `ui`._
+_Internally, we display breadcrumbs of type `default` that contain category `ui.*` as a breadcrumb of type `ui`._
 
 ```json
 {
   "type": "default",
   "category": "ui.click",
-  "data": null,
-  "event_id": null,
+  "message": "div.css-bsbdc4-TextOverflow.e1kpcezi0",
   "level": "info",
-  "message": "div.css-1bgr1m3-NavSection.eqosaaj0 > a.css-17jlceh-StyledNavItem.e1o2rm130",
-  "timestamp": "2020-08-10T09:26:16.709631Z"
+  "timestamp": 1598613151.875368
 }
 ```
 
@@ -259,47 +249,12 @@ _Internally we convert categories with the dotted string `ui.*` to the type `ui`
 
 A user interaction with your app's UI.
 
-This type is very similar to the type `ui` described above. The difference is that we do not convert it's category internally, but we use it's type.
-
 ```json
 {
   "type": "user",
-  "category": "category",
-  "data": null,
-  "event_id": null,
+  "category": "click",
+  "message": "div.css-bsbdc4-TextOverflow.e1kpcezi0",
   "level": "info",
-  "message": "div.css-1bgr1m3-NavSection.eqosaaj0 > a.css-17jlceh-StyledNavItem.e1o2rm130",
-  "timestamp": "2020-08-10T09:23:16.709631Z"
-}
-```
-
-## Examples
-
-The following example illustrates the breadcrumbs part of the <Link to="/sdk/event-payloads/">event
-payload</Link> and omits other properties for simplicity.
-
-```json
-{
-  "breadcrumbs": {
-    "values": [
-      {
-        "timestamp": "2016-04-20T20:55:53.845Z",
-        "message": "Something happened",
-        "category": "log",
-        "data": {
-          "foo": "bar",
-          "blub": "blah"
-        }
-      },
-      {
-        "timestamp": "2016-04-20T20:55:53.847Z",
-        "type": "navigation",
-        "data": {
-          "from": "/login",
-          "to": "/dashboard"
-        }
-      }
-    ]
-  }
+  "timestamp": 1598613151.875368
 }
 ```
