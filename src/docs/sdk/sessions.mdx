@@ -241,7 +241,7 @@ can use. One is very short lived sessions, the other are user attended sessions.
 
 **Short lived sessions** *(server-mode / request-mode)*
 
-These are sessions roughly correspond to a HTTP requests or RPC calls in a
+These sessions roughly correspond to HTTP requests or RPC calls in a
 server setting.
 
 - high in volume, typically one session for each request
@@ -257,7 +257,7 @@ command line application or similar.
 
 - typically just a single session from application start to quit
 - there are usually fewer sessions than events
-- sessions spanning multiple hubs / threads
+- sessions span multiple hubs / threads
 - session duration typically in the minutes, timing information is useful
 
 Both of those cases look similar from the API point of view but different
@@ -277,7 +277,7 @@ When considering the flow of events through the SDK, from the static
 `Client::capture_event(event, scope)` method; depending on the internal
 implementation details of the SDK, it might make sense to attach the session to
 the `Scope`, which would make it possible for the `Client` to bundle an event
-and a session update into a single envelope to be sent to the sentry backend.
+and a session update into a single envelope to be sent to Sentry.
 
 ### Session Updates and when to send Updates upstream
 
@@ -285,7 +285,7 @@ For all SDKs the current session shall be automatically updated whenever data is
 captured at a similar place where `apply_to_scope` is called to increase the
 `error` count, or update the session based on the distinct ID / user ID.
 
-SDKs should generally aim to decrease the number of envelopes send upstream.
+SDKs should generally aim to decrease the number of envelopes sent upstream.
 
 *server-mode* SDKs that track a great number of sessions should consider using
 a periodic session flusher (every 30/60 secs) that assembles envelopes of
