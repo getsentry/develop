@@ -174,7 +174,7 @@ known.
 
 It's crucial that the initial session update sent to the system has `init` set
 to `true`. This is necessary because the server currently does not
-deduplicate the total session count as an optimization.  If the initial
+deduplicate the total session count as an optimization. If the initial
 `init: true` flag is missing, the session might not be ingested correctly by Sentry.
 
 ### Terminal Session States
@@ -216,7 +216,7 @@ the user encountered an error dialog.
 
 Abnormal are sessions of which their fate is unknown.  For desktop applications
 for instance it makes sense to transition a session to abnormal if it was stored
-but the exit of the application was not observed but also did not crash.  For
+but the exit of the application was not observed but also did not crash. For
 instance these are situations where the user forced the app to close via the
 task manager, the machine lost power or other situations. A session can be
 *stored* by persisting it to disk eagerly. This saved file can be detected on
@@ -268,18 +268,17 @@ recommendations apply for SDKs.
 ### Choosing the Session Mode
 
 While it is in theory possible to use both session modes in a single application,
-it is recommended that the SDK defaults to a single mode that is most
+it is recommended that the SDK default to a single mode that is most
 appropriate to the main use-case of the language ecosystem. This is similar to,
 and can be used in the same way as a *global Hub mode* that certain SDKs support.
 
 When the SDK is configured to use *user-mode* sessions, or global Hub mode, a
 single session should be started at the start of the application and should
-persist through the applications runtime. Depending on the SDK internals, this
+persist through the application's runtime. Depending on the SDK internals, this
 single session can be shared among all application threads and thread-local Hubs.
 
 When using *server-mode* sessions, no application-wide session will be started,
-and it is up to integrations or the user to start and end the session for the
-duration of a request.
+and it is up to integrations or the user to start the session when the request is received and end it when a response is returned.
 
 ### Unified API Implications
 
