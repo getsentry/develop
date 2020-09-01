@@ -106,9 +106,8 @@ const Sidebar = () => (
       </div>
 
       <ul className="list-unstyled" data-sidebar-tree>
-        <NavLink to="/services/devservices/">
-          Service Manager (devservices)
-        </NavLink>
+        <NavLink to="/services/devservices/">Service Manager (devservices)</NavLink>
+        <NavLink to="/services/ports/">Assigned ports</NavLink>
         <NavLink to="/services/queue/">Asynchronous Workers (celery)</NavLink>
         <NavLink to="/services/email/">Email</NavLink>
         <NavLink to="/services/nodestore/">Node Storage</NavLink>
