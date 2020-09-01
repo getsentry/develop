@@ -89,6 +89,7 @@ const Sidebar = () => (
       <ul className="list-unstyled" data-sidebar-tree>
         <NavLink to="/onpremise/">Overview</NavLink>
         <NavLink to="/onpremise/releases/">Versioning & Releases</NavLink>
+        <NavLink to="/onpremise/support/">Support</NavLink>
       </ul>
     </li>
     <li className="mb-3" data-frontend-branch>
