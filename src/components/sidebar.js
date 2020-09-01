@@ -78,18 +78,19 @@ const Sidebar = () => (
         <NavLink to="/feature-flags/">Feature Flags</NavLink>
         <NavLink to="/serializers/">Serializers</NavLink>
       </ul>
-      <li className="mb-3" data-sidebar-branch>
-        <div
-          className="sidebar-title d-flex align-items-center mb-0"
-          data-sidebar-link
-        >
-          <h6>Self-Hosting</h6>
-        </div>
-        <ul className="list-unstyled" data-sidebar-tree>
-          <NavLink to="/onpremise/">Overview</NavLink>
-          <NavLink to="/onpremise/releases/">Versioning & Releases</NavLink>
-        </ul>
-      </li>
+    </li>
+    <li className="mb-3" data-sidebar-branch>
+      <div
+        className="sidebar-title d-flex align-items-center mb-0"
+        data-sidebar-link
+      >
+        <h6>Self-Hosting</h6>
+      </div>
+      <ul className="list-unstyled" data-sidebar-tree>
+        <NavLink to="/onpremise/">Overview</NavLink>
+        <NavLink to="/onpremise/releases/">Versioning & Releases</NavLink>
+      </ul>
+    </li>
     <li className="mb-3" data-frontend-branch>
       <div
         className="sidebar-title d-flex align-items-center mb-0"
