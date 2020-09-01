@@ -1,3 +1,5 @@
+const { extrapolate } = require("sentry-global-search");
+
 const pageQuery = `{
     pages: allMdx(
       filter: {
@@ -20,12 +22,28 @@ const pageQuery = `{
   }`;
 
 const flatten = (arr) =>
-  arr.map(({ node: { frontmatter, ...rest } }) => ({
-    ...frontmatter,
-    ...rest,
-  }));
+  arr.map(({ node: { frontmatter, ...rest } }) => {
+    const record = {
+      objectID: rest.objectID,
+      title: frontmatter.title,
+      text: rest.excerpt,
+      url: rest.fields.slug,
 
-const settings = { attributesToSnippet: [`excerpt:20`] };
+      // https://github.com/getsentry/sentry-global-search#sorting-by-path
+      pathSegments: extrapolate(rest.fields.slug, "/").map((x) => `/${x}/`),
+    };
+
+    return {
+      ...frontmatter,
+      ...rest,
+      ...record,
+    };
+  });
+
+const settings = {
+  attributesToSnippet: [`excerpt:20`],
+  attributesForFaceting: ["filterOnly(pathSegments)"],
+};
 
 const indexPrefix = process.env.GATSBY_ALGOLIA_INDEX_PREFIX;
 if (!indexPrefix) {
