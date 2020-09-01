@@ -1,17 +1,17 @@
-import { withPrefix } from "gatsby";
-import React from "react";
-import { useLocation } from "@reach/router";
+import {withPrefix} from 'gatsby';
+import React from 'react';
+import {useLocation} from '@reach/router';
 
-import SmartLink from "./smartLink";
+import SmartLink from './smartLink';
 
-const NavLink = ({ to, title, children, ...props }) => {
+const NavLink = ({to, title, children, ...props}) => {
   const location = useLocation();
 
-  let className = "toc-item";
+  let className = 'toc-item';
   if (location && location.pathname.indexOf(withPrefix(to)) === 0) {
-    className += " toc-active";
+    className += ' toc-active';
   }
-  className += props.className ? " " + props.className : "";
+  className += props.className ? ' ' + props.className : '';
 
   return (
     <li className={className} data-sidebar-branch>
@@ -106,7 +106,9 @@ const Sidebar = () => (
       </div>
 
       <ul className="list-unstyled" data-sidebar-tree>
-        <NavLink to="/services/devservices/">Service Manager (devservices)</NavLink>
+        <NavLink to="/services/devservices/">
+          Service Manager (devservices)
+        </NavLink>
         <NavLink to="/services/ports/">Assigned ports</NavLink>
         <NavLink to="/services/queue/">Asynchronous Workers (celery)</NavLink>
         <NavLink to="/services/email/">Email</NavLink>
@@ -186,7 +188,6 @@ const Sidebar = () => (
         <NavLink to="/integrations/github/">GitHub</NavLink>
         <NavLink to="/integrations/slack/">Slack</NavLink>
         <NavLink to="/integrations/vercel/">Vercel</NavLink>
-
       </ul>
     </li>
     <li className="mb-3" data-sidebar-branch>
@@ -199,9 +200,7 @@ const Sidebar = () => (
 
       <ul className="list-unstyled" data-sidebar-tree>
         <NavLink to="https://docs.sentry.io">User Documentation</NavLink>
-        <NavLink to="https://github.com/getsentry/onpremise/releases/latest">
-          Self-Hosting Sentry
-        </NavLink>
+        <NavLink to="/onpremise/">Self-Hosting Sentry</NavLink>
       </ul>
     </li>
     <li className="mb-3" data-sidebar-branch>
