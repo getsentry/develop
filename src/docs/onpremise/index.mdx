@@ -8,7 +8,7 @@ In addition to making its source code available publicly, Sentry offers and main
 
 Our recommendation is to download the [latest release of the on-premise repository](https://github.com/getsentry/onpremise/releases/latest), and then run `./install.sh` inside this directory. This script will take care of all the things you need to get started, including a base-line configuration, and then will tell you to run `docker-compose up -d` to start Sentry. Sentry binds to port `9000` by default. You should be able to reach the login page at [http://127.0.0.1:9000](http://127.0.0.1:9000/).
 
-# Configuration
+## Configuration
 
 You are very likely to want to change the default configuration for Sentry. Most, if not all, configuration options that you'd like to tweak are in `sentry/config.yml`, which is generated from [`sentry/config.example.yml`](https://github.com/getsentry/onpremise/blob/master/sentry/config.example.yml) at the time of installation. The file itself documents the most common configuration options as code comments, and you can find more about configuring Sentry over at <Link to="/config/">the configuration section of our developer documentation</Link>. You would likely need to change `system.url-prefix` (this is also prompted at the welcome screen, right after the installation) and settings starting with `mail.` even if we ship with a built-in SMTP server for basic stuff. GitHub and Slack integration settings also reside in this file. For more advanced things, you can have a look at [`sentry/sentry.conf.example.py`](https://github.com/getsentry/onpremise/blob/master/sentry/sentry.conf.example.py).
 
