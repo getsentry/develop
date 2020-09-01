@@ -1,6 +1,6 @@
 # On-Premise Basics
 
-In addition to making its source code available publicly, Sentry offers and maintains a minimal set up that works out-of-the-box for simple use cases. This repository also serves as a blueprint for how various Sentry services connect for a complete setup, which is useful for folks willing to maintain larger installations. For the sake of simplicity, we have chosen to use [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/) for this, along with a bash-based install and upgrade script.
+In addition to making its source code available publicly, Sentry offers and maintains a minimal setup that works out-of-the-box for simple use cases. This repository also serves as a blueprint for how various Sentry services connect for a complete setup, which is useful for folks willing to maintain larger installations. For the sake of simplicity, we have chosen to use [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/) for this, along with a bash-based install and upgrade script.
 
 # Getting Started
 
@@ -22,9 +22,9 @@ Sharing your install logs, service logs, and your Sentry version when [reportin
 
 # Productionalizing
 
-We strongly recommend using a dedicated load balancer in front of your Sentry set up bound to a dedicated domain or subdomain. A dedicated load balancer that does SSL/TLS termination that also forwards the client IP address as Docker Compose internal network (as this is [close to impossible to get otherwise)](https://github.com/getsentry/onpremise/issues/554) would give you the best Sentry experience.
+We strongly recommend using a dedicated load balancer in front of your Sentry setup bound to a dedicated domain or subdomain. A dedicated load balancer that does SSL/TLS termination that also forwards the client IP address as Docker Compose internal network (as this is [close to impossible to get otherwise)](https://github.com/getsentry/onpremise/issues/554) would give you the best Sentry experience.
 
-Keep in mind that all this set up uses single-nodes for all services, including Kafka. For larger loads, you'd need a beefy machine with lots of RAM and disk storage. To scale up even further, you are very likely to use clusters with a more complex tool, such as Kubernetes. Due to on-premise installations' very custom nature, we do not offer any recommendations or guidance around scaling up. We do what works for us for our thousands of customers over at [sentry.io](https://sentry.io/) and would love to have you over when you feel your local install's maintenance becomes a burden instead of a joy.
+Keep in mind that all this setup uses single-nodes for all services, including Kafka. For larger loads, you'd need a beefy machine with lots of RAM and disk storage. To scale up even further, you are very likely to use clusters with a more complex tool, such as Kubernetes. Due to on-premise installations' very custom nature, we do not offer any recommendations or guidance around scaling up. We do what works for us for our thousands of customers over at [sentry.io](https://sentry.io/) and would love to have you over when you feel your local install's maintenance becomes a burden instead of a joy.
 
 # Upgrading
 
