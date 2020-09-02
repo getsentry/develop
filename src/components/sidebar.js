@@ -84,12 +84,12 @@ const Sidebar = () => (
         className="sidebar-title d-flex align-items-center mb-0"
         data-sidebar-link
       >
-        <h6>Self-Hosting</h6>
+        <h6>Self-Hosted</h6>
       </div>
       <ul className="list-unstyled" data-sidebar-tree>
-        <NavLink to="/onpremise/">Overview</NavLink>
-        <NavLink to="/onpremise/releases/">Versioning & Releases</NavLink>
-        <NavLink to="/onpremise/support/">Support</NavLink>
+        <NavLink to="/self-hosted/">Overview</NavLink>
+        <NavLink to="/self-hosted/releases/">Versioning & Releases</NavLink>
+        <NavLink to="/self-hosted/support/">Support</NavLink>
       </ul>
     </li>
     <li className="mb-3" data-frontend-branch>
