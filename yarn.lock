@@ -15200,9 +15200,9 @@ sentence-case@^2.1.0:
     no-case "^2.2.0"
     upper-case-first "^1.1.2"
 
-sentry-global-search@getsentry/sentry-global-search#0.0.16:
-  version "0.0.16"
-  resolved "https://codeload.github.com/getsentry/sentry-global-search/tar.gz/ded6a0f78e2ef3cdde0758597a7ad116de8580b4"
+sentry-global-search@getsentry/sentry-global-search#0.0.17:
+  version "0.0.17"
+  resolved "https://codeload.github.com/getsentry/sentry-global-search/tar.gz/5d95a2e9d74f8810be8b0b54a8140646ef5025c8"
   dependencies:
     algoliasearch "^4.3.1"
     dompurify "^2.0.12"
