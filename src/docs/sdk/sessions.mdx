@@ -258,7 +258,7 @@ application run. This is what you would see in a web browser, mobile world,
 command line application or similar.
 
 - typically just a single session from application start to quit
-- there are usually fewer sessions than sentry events
+- there are usually fewer sessions than Sentry events
 - sessions span multiple hubs / threads
 - session duration typically in the minutes, timing information is useful
 
@@ -269,7 +269,7 @@ recommendations apply for SDKs.
 
 While it is in theory possible to use both session modes in a single application,
 it is recommended that the SDK default to a single mode that is most
-appropriate to the main use-case of the language ecosystem. This is similar to,
+appropriate to the main use case of the language ecosystem. This is similar to,
 and can be used in the same way as a _global Hub mode_ that certain SDKs support.
 
 When the SDK is configured to use _user-mode_ sessions, or global Hub mode, a
@@ -278,7 +278,8 @@ persist through the application's runtime. Depending on the SDK internals, this
 single session can be shared among all application threads and thread-local Hubs.
 
 When using _server-mode_ sessions, no application-wide session will be started,
-and it is up to integrations or the user to start the session when the request is received and end it when a response is returned.
+and it is up to integrations or the user to start the session when the request is
+received and end it when a response is returned.
 
 ### Unified API Implications
 
