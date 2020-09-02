@@ -235,5 +235,5 @@ After your feature has been mainlined and is available for all hosted customers:
 If your feature flag doesn't have an 'off' mode, remove it and all related checks.
 Otherwise, disable the feature by default in getsentry in `getsentry/conf/settings/defaults.py`,
 add the necessary conditional in `getsentry/features.py`, and then enable it by default in
-[`server.py`](https://github.com/getsentry/sentry/blob/master/src/sentry/conf/server.py) to enable
+[`conf/server.py`](https://github.com/getsentry/sentry/blob/master/src/sentry/conf/server.py) to enable
 the feature for on-premise users.
