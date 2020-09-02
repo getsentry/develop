@@ -119,9 +119,11 @@ a organization/project
 ```jsx
 import Feature from 'app/components/acl/feature';
 
-<Feature features={['test-feature']}>
-  <MyComponentToFlag />
-</Feature>;
+const toRender = (
+  <Feature features={['test-feature']}>
+    <MyComponentToFlag />
+  </Feature>
+);
 ```
 
 ## Imperative feature flag checks
