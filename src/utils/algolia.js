@@ -25,22 +25,18 @@ const pageQuery = `{
   }`;
 
 const flatten = (arr) =>
-  arr.map(({ node: { frontmatter, ...rest } }) => {
+  arr.map(({ node: { frontmatter, objectID, excerpt, fields } }) => {
     const record = {
-      objectID: rest.objectID,
+      objectID,
       title: frontmatter.title,
-      text: rest.excerpt,
-      url: rest.fields.slug,
+      text: excerpt,
+      url: fields.slug,
 
       // https://github.com/getsentry/sentry-global-search#sorting-by-path
-      pathSegments: extrapolate(rest.fields.slug, "/").map((x) => `/${x}/`),
+      pathSegments: extrapolate(fields.slug, "/").map((x) => `/${x}/`),
     };
 
-    return {
-      ...frontmatter,
-      ...rest,
-      ...record,
-    };
+    return record;
   });
 
 const settings = {
