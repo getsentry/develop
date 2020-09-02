@@ -42,7 +42,7 @@
     "react-helmet": "^5.2.1",
     "react-instantsearch-dom": "^6.4.0",
     "remark-deflist": "^0.2.1",
-    "sentry-global-search": "getsentry/sentry-global-search#0.0.15"
+    "sentry-global-search": "getsentry/sentry-global-search#0.0.16"
   },
   "keywords": [
     "gatsby"
