@@ -119,11 +119,17 @@ a organization/project
 ```jsx
 import Feature from 'app/components/acl/feature';
 
+<<<<<<< HEAD
 const toRender = (
   <Feature features={['test-feature']}>
     <MyComponentToFlag />
   </Feature>
 );
+=======
+<Feature features={['test-feature']}>
+  <MyComponentToFlag />
+</Feature>;
+>>>>>>> master
 ```
 
 ## Imperative feature flag checks
@@ -236,4 +242,4 @@ If your feature flag doesn't have an 'off' mode, remove it and all related check
 Otherwise, disable the feature by default in getsentry in `getsentry/conf/settings/defaults.py`,
 add the necessary conditional in `getsentry/features.py`, and then enable it by default in
 [`conf/server.py`](https://github.com/getsentry/sentry/blob/master/src/sentry/conf/server.py) to enable
-the feature for on-premise users.
+the feature for users of self-hosted Sentry.
