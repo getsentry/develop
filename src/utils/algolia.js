@@ -26,13 +26,13 @@ const pageQuery = `{
 
 const flatten = (arr) =>
   arr.map(({ node: { frontmatter, objectID, excerpt, fields } }) => {
+    // https://github.com/getsentry/sentry-global-search#algolia-record-stategy
     const record = {
       objectID,
       title: frontmatter.title,
+      section: frontmatter.title,
       text: excerpt,
       url: fields.slug,
-
-      // https://github.com/getsentry/sentry-global-search#sorting-by-path
       pathSegments: extrapolate(fields.slug, "/").map((x) => `/${x}/`),
     };
 
