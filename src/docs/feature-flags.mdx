@@ -2,7 +2,7 @@
 title: 'Feature Flags'
 ---
 
-Feature flags are controlled in Sentry at the commit and configuration level. At this time there is no built-in way to modify them in production in real-time.
+Feature flags are controlled in Sentry at the commit and configuration level. At this time, there is no built-in way to modify them in production in real-time.
 
 You can find a list of features available by looking at `sentry/features/__init__.py`. They're declared on the `FeatureManager` like so:
 
@@ -228,12 +228,16 @@ class TestFeatureFeatureHandler(features.FeatureHandler, PercentageRollout):
 3. Work with operations to set and increase the value of your option as
    required.
 
-## After launch
+## After launch (Graduation)
 
 After your feature has been mainlined and is available for all hosted customers:
 
-If your feature flag doesn't have an 'off' mode, remove it and all related checks.
-Otherwise, disable the feature by default in getsentry in `getsentry/conf/settings/defaults.py`,
-add the necessary conditional in `getsentry/features.py`, and then enable it by default in
-[`conf/server.py`](https://github.com/getsentry/sentry/blob/master/src/sentry/conf/server.py) to enable
-the feature for users of self-hosted Sentry.
+- If the feature cannot be disabled, or if no application specific overrides are required, remove the feature flag and all related checks from the Sentry code base. If necessary, also remove references to the feature from the [onpremise](https://github.com/getsentry/onpremise) and getsentry repositories.
+- If the feature flag controls a behavior specific to Sentry SaaS, leave it disabled in Sentry and add appropriate feature handlers in getsentry (see below). In this case, keep in mind that the feature is also disabled during development.
+- If the feature is generally available but is constrained to specific organizations or projects on Sentry SaaS, enable the feature by default in in [`conf/server.py`](https://github.com/getsentry/sentry/blob/master/src/sentry/conf/server.py) and add appropriate feature handlers in getsentry. This ensures that the feature is enabled in development and self-hosted Sentry installations.
+
+To override features in getsentry, follow these steps:
+
+1. Disable the feature in `getsentry/conf/settings/defaults.py` by updating `SENTRY_FEATURES`.
+2. Add a new feature handler class in `getsentry/features.py` that determines availability of the feature based on the organization or actor.
+3. Register the handler at the bottom of `getsentry/features.py`.
