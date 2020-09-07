@@ -1,17 +1,17 @@
-import {withPrefix} from 'gatsby';
-import React from 'react';
-import {useLocation} from '@reach/router';
+import { withPrefix } from "gatsby";
+import React from "react";
+import { useLocation } from "@reach/router";
 
-import SmartLink from './smartLink';
+import SmartLink from "./smartLink";
 
-const NavLink = ({to, title, children, ...props}) => {
+const NavLink = ({ to, title, children, ...props }) => {
   const location = useLocation();
 
-  let className = 'toc-item';
+  let className = "toc-item";
   if (location && location.pathname.indexOf(withPrefix(to)) === 0) {
-    className += ' toc-active';
+    className += " toc-active";
   }
-  className += props.className ? ' ' + props.className : '';
+  className += props.className ? " " + props.className : "";
 
   return (
     <li className={className} data-sidebar-branch>
@@ -77,6 +77,11 @@ const Sidebar = () => (
         <NavLink to="/config/">Configuration</NavLink>
         <NavLink to="/feature-flags/">Feature Flags</NavLink>
         <NavLink to="/serializers/">Serializers</NavLink>
+        <NavLink to="/pii/" title="PII and Data Scrubbing">
+          <NavLink to="/pii/types/">Rule Types</NavLink>
+          <NavLink to="/pii/methods/">Redaction Methods</NavLink>
+          <NavLink to="/pii/selectors/">Selectors</NavLink>
+        </NavLink>
       </ul>
     </li>
     <li className="mb-3" data-sidebar-branch>
