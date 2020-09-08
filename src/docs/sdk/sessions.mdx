@@ -145,6 +145,77 @@ The following fields exist:
 >   agent of the user that caused the session. This data is not persisted but
 >   used for filtering.
 
+## Session Aggregates Payload
+
+<Alert title="Experimental Status" level="info">
+
+The `"sessions"` envelope item is still unfinished and considered experimental.
+It is currently only supported on the `sentry.io` installation and is subject
+to heavy usage-limits.
+
+Currently, the sum of all session counts must not exceed _100_. This limitation
+will be lifted in the future when this feature will become stable.
+
+</Alert>
+
+Especially for _request-mode_ sessions (see below), it is common to have
+thousands of requests, and thus sessions, per second.
+
+Under the assumption that these sessions will be short-lived, and tracking their
+duration is not desired, these sessions can be aggregated together on the
+SDK side, before they are sent to Sentry.
+
+An SDK should aggregate closed sessions and group them by their `started` time
+and `distinct_id`. These groups will be sent as `sessions` envelope item.
+It consists a JSON payload that looks roughly like this:
+
+```json
+{
+  "aggregates": [
+    {
+      "started": "2020-02-07T14:16:00Z",
+      "exited": 123
+    },
+    {
+      "started": "2020-02-07T14:16:00Z",
+      "did": "optional distinct user id",
+      "exited": 12,
+      "errored": 3
+    }
+  ],
+  "attrs": {
+    "release": "release name",
+    "environment": "environment name",
+    "ip_address": "optional user ip address for filtering",
+    "user_agent": "optional user agent for filtering"
+  }
+}
+```
+
+Note that this must be enclosed in an envelope. So the full envelope looks
+something like this:
+
+```json
+{}
+{"type":"sessions"}
+{"aggregates":[...]}
+```
+
+`aggregates`
+
+> An array of aggregates grouped by their `started` timestamp and distinct id (did).
+>
+> - `started`: Timestamp of the group, rounded down to the minute. Must be an ISO string for now.
+> - `did`: (optional) the distinct user id of the group.
+> - `exited`: (optional) the number of sessions with status `"exited"` _without_ any errors.
+> - `abnormal`: (optional) the number of sessions with status `"abnormal"`.
+> - `crashed`: (optional) the number of sessions with status `"crashed"`.
+> - `errored`: (optional) the number of sessions with status `"exited"` that had a non-zero `errors` count.
+
+`attrs` (all but release optional)
+
+> See above
+
 ## Crashes vs Sessions
 
 Sessions and error events are two distinct systems within Sentry. Session
@@ -310,8 +381,8 @@ captured at a similar place where `apply_to_scope` is called to increase the
 SDKs should generally aim to decrease the number of envelopes sent upstream.
 
 _server-mode_ SDKs that track a great number of sessions should consider using
-a periodic session flusher (every 30/60 secs) that assembles envelopes of
-session items and forwards them to the transport as a single request.
+a periodic session flusher (every 60 secs) that pre-aggregates sessions into a
+single `session_aggregates` envelope item.
 
 _user-mode_ SDKs may instead opt into sending session updates along with
 captured events in the same envelope. The final session update that closes the
@@ -320,6 +391,19 @@ session may be batched similar to _server-mode_ sessions.
 In either case, the `init` flag must be set correctly for the _first
 transmission_ of the session, and session metadata such as the distinct ID must
 be immutable after the initial transmission.
+
+### Pre-aggregation of sessions
+
+If an SDK is configured to use _server-mode_ sessions, it should group and
+pre-aggregate session counts before sending them to sentry. Whenever a session
+is being closed (transitions to a terminal state), and it was not previously
+being sent upstream (its `init` flag would be `true`), it is eligible for
+aggregation. The `started` timestamp of the session should be rounded down to
+minutes, and it must be aggregated into the bucket identified by that rounded
+timestamp, and the sessions distinct id (`did`). In the appropriate bucket,
+increase the session count corresponding to the sessions status. Contrary to
+individual session updates, the `"errored"` state is used to mark sessions that
+have the `"exited"` state, and a non-zero `errors` count.
 
 ### Exposed API
 

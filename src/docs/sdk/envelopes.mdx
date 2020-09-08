@@ -378,10 +378,15 @@ file. It is always associated to an event or transaction.
 : *String, optional.* The content type of the attachment payload. Defaults to
   `application/octet-stream`.
 
-### Session
+### Session / Sessions
 
-Item type `"session"`. This Item contains a single session initialization or
-update to an existing session for Release Health.
+Item type `"session"` contains a single session initialization or update to an
+existing session for Release Health.
+
+Item type `"sessions"` contains buckets of pre-aggregated session counts.
+
+See the <Link to="/sdk/sessions/">sessions</Link> documentation for the payload
+details.
 
 **Constraints:**
 
@@ -491,6 +496,7 @@ These limits are subject to future change and defined currently as:
 - *100MB* for each attachment Item
 - *1MB* for event and transaction Items
 - *100 sessions* per Envelope
+- *100 pre-aggregated session buckets* per each `"sessions"` Item
 
 ## External References
 
