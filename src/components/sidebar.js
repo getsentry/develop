@@ -155,7 +155,7 @@ const Sidebar = () => (
         <NavLink to="/sdk/overview/">Overview</NavLink>
         <NavLink to="/sdk/unified-api/" title="Unified API">
           <NavLink to="/sdk/unified-api/tracing">
-            Guideline for AM support
+            Guidelines for Tracing Support
           </NavLink>
         </NavLink>
         <NavLink to="/sdk/features/">Expected Features</NavLink>
