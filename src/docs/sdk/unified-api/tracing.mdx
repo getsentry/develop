@@ -1,5 +1,5 @@
 ---
-title: 'Guidelines for Tracing support'
+title: 'Guidelines for Tracing Support'
 ---
 
 This document covers how SDKs should add support for [Distributed
@@ -14,7 +14,7 @@ Reference implementations:
 (JavaScript)](https://github.com/getsentry/sentry-javascript/tree/master/packages/tracing)
 - [Python SDK](https://github.com/getsentry/sentry-python/blob/master/sentry_sdk/tracing.py)
 
-## SDK configuration
+## SDK Configuration
 
 A new option `tracesSampleRate` must be added to `sentry.init`.
 
@@ -41,7 +41,7 @@ events from their creation until their delivery to Sentry, and only based on
 </markdown>
 </Alert>
 
-## `Event` changes
+## `Event` Changes
 
 As of writing, transactions are implemented as an extension of the `Event`
 model.
@@ -50,7 +50,7 @@ The distinctive feature of a `Transaction` is `type: "transaction"`.
 
 Apart from that, the `Event` gets new fields: `spans`, `contexts.TraceContext`.
 
-## `Span` and `Transaction` types/classes
+## New `Span` and `Transaction` Classes
 
 The [Span](/sdk/event-payloads/span/) class stores each individual span in a
 trace.
@@ -86,7 +86,7 @@ tree as well as the unit of reporting to Sentry.
     - The `Transport` should implement category-based rate limiting →
     - The `Transport` should deal with wrapping a `Transaction` in an `Envelope` internally
 
-## Static API changes
+## Static API Changes
 
 The `Sentry.startTransaction` function should take the same arguments as the
 `Transaction` constructor.
@@ -95,7 +95,7 @@ It creates a `Transaction` bound to the current hub and returns the instance.
 Users interact with the instance for creating child spans and, thus, have to
 keep track of it themselves.
 
-## `Hub` changes
+## `Hub` Changes
 
 - Introduce a method called `traceHeaders`
     - This function returns a header (string) `sentry-trace`
@@ -118,7 +118,7 @@ orphan span (that will not be sent to Sentry on its own).
       should be its child
 -->
 
-## `Scope` changes
+## `Scope` Changes
 
 The `Scope` holds a reference to the current `Span` or `Transaction`.
 
