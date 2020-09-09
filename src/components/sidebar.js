@@ -93,6 +93,7 @@ const Sidebar = () => (
       </div>
       <ul className="list-unstyled" data-sidebar-tree>
         <NavLink to="/self-hosted/">Overview</NavLink>
+        <NavLink to="/self-hosted/sso/">Single Sign-On (SSO)</NavLink>
         <NavLink to="/self-hosted/releases/">Versioning & Releases</NavLink>
         <NavLink to="/self-hosted/email/">Email</NavLink>
         <NavLink to="/self-hosted/support/">Support</NavLink>
