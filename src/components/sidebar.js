@@ -94,7 +94,7 @@ const Sidebar = () => (
       <ul className="list-unstyled" data-sidebar-tree>
         <NavLink to="/self-hosted/">Overview</NavLink>
         <NavLink to="/self-hosted/releases/">Versioning & Releases</NavLink>
-        <NavLink to="/self-hosted/mail/">Mail</NavLink>
+        <NavLink to="/self-hosted/email/">Email</NavLink>
         <NavLink to="/self-hosted/support/">Support</NavLink>
       </ul>
     </li>
