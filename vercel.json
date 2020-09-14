@@ -22,5 +22,8 @@
       ]
     }
   ],
-  "redirects": [{"source": "/onpremise/(.*)", "destination": "/self-hosted/$1"}]
+  "redirects": [
+    {"source": "/onpremise/(.*)", "destination": "/self-hosted/$1"},
+    {"source": "/self-hosted/mail(.*)", "destination": "/self-hosted/email$1"}
+  ]
 }
