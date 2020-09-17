@@ -42,3 +42,17 @@ exports.createPages = async function({ actions, graphql }) {
     }
   });
 };
+
+exports.createSchemaCustomization = ({ actions: { createTypes } }) => {
+  const typeDefs = `
+  type Mdx implements Node {
+    frontmatter: MdxFrontmatter
+  }
+
+  type MdxFrontmatter {
+    keywords: [String]
+  }
+`;
+
+  createTypes(typeDefs);
+};
