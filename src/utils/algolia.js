@@ -14,6 +14,7 @@ const pageQuery = `{
           objectID: id
           frontmatter {
             title
+            keywords
           }
           fields {
               slug
@@ -34,6 +35,7 @@ const flatten = (arr) =>
       text: excerpt,
       url: fields.slug,
       pathSegments: extrapolate(fields.slug, "/").map((x) => `/${x}/`),
+      keywords: frontmatter.keywords || [],
     };
 
     return record;
