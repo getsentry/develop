@@ -13,7 +13,7 @@ import CodeBlock from "./codeBlock";
 import CodeTabs, { CodeContext, useCodeContextState } from "./codeTabs";
 import Break from "./break";
 import JsonSchema from "./jsonschema";
-import GitHubOrgLink from "./githubOrgLink";
+import CreateGitHubAppForm from './createGitHubAppForm';
 
 import "prismjs/themes/prism-tomorrow.css";
 import "../css/screen.scss";
@@ -26,7 +26,7 @@ const mdxComponents = {
   CodeTabs,
   Break,
   JsonSchema,
-  GitHubOrgLink,
+  CreateGitHubAppForm,
 };
 
 const TableOfContents = ({ toc: { items } }) => {
