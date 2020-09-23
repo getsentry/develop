@@ -208,6 +208,7 @@ const Sidebar = () => (
         <NavLink to="/integrations/github/">GitHub</NavLink>
         <NavLink to="/integrations/slack/">Slack</NavLink>
         <NavLink to="/integrations/vercel/">Vercel</NavLink>
+        <NavLink to="/integrations/msteams/">Microsoft Teams</NavLink>
       </ul>
     </li>
     <li className="mb-3" data-sidebar-branch>
