@@ -35,6 +35,18 @@ function SEO({ description, lang, meta, keywords, title }) {
                 content: "website",
               },
               {
+                property: "og:image",
+                content: "/meta.png",
+              },
+              {
+                property: "og:image:width",
+                content: "1200",
+              },
+              {
+                property: "og:image:height",
+                content: "630",
+              },
+              {
                 name: "twitter:card",
                 content: "summary",
               },
@@ -45,6 +57,10 @@ function SEO({ description, lang, meta, keywords, title }) {
               {
                 name: "twitter:title",
                 content: title,
+              },
+              {
+                name: "twitter:image",
+                content: "/meta-avatar.png",
               },
               {
                 name: "twitter:description",
