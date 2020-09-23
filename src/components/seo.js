@@ -2,11 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import Helmet from "react-helmet";
 import { StaticQuery, graphql } from "gatsby";
-import { useLocation } from "@reach/router";
 
 function SEO({ description, lang, meta, keywords, title }) {
-  const { origin } = useLocation();
-
   return (
     <StaticQuery
       query={detailsQuery}
@@ -39,7 +36,7 @@ function SEO({ description, lang, meta, keywords, title }) {
               },
               {
                 property: "og:image",
-                content: `${origin}/meta.png`,
+                content: `https://${data.site.siteMetadata.sitePath}/meta.png`,
               },
               {
                 property: "og:image:width",
@@ -63,7 +60,7 @@ function SEO({ description, lang, meta, keywords, title }) {
               },
               {
                 name: "twitter:image",
-                content: `${origin}/meta-avatar.png`,
+                content: `https://${data.site.siteMetadata.sitePath}/meta-avatar.png`,
               },
               {
                 name: "twitter:description",
@@ -109,6 +106,7 @@ const detailsQuery = graphql`
         title
         description
         author
+        sitePath
       }
     }
   }
