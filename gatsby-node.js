@@ -2,7 +2,11 @@ const { createFilePath } = require("gatsby-source-filesystem");
 
 exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions;
-  if (node.internal.type === "Mdx" && (!node.parent || getNode(node.parent).internal.type !== "JsonSchemaMarkdown")) {
+  if (
+    node.internal.type === "Mdx" &&
+    (!node.parent ||
+      getNode(node.parent).internal.type !== "JsonSchemaMarkdown")
+  ) {
     const value = createFilePath({ node, getNode });
     createNodeField({
       name: "slug",
@@ -32,7 +36,7 @@ exports.createPages = async function({ actions, graphql }) {
     reporter.panicOnBuild('🚨  ERROR: Loading "createPages" query');
   }
   const component = require.resolve(`./src/components/layout.js`);
-  data.allFile.nodes.forEach((node) => {
+  data.allFile.nodes.forEach(node => {
     if (node.childMdx && node.childMdx.fields) {
       actions.createPage({
         path: node.childMdx.fields.slug,
