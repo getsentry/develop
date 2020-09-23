@@ -12,7 +12,7 @@ const LANGUAGES = {
   csharp: "C#",
   es6: "JavaScript (ES6)",
   yml: "YAML",
-  yaml: "YAML"
+  yaml: "YAML",
 };
 
 export const CodeContext = React.createContext(null);
@@ -39,7 +39,7 @@ export function useCodeContextState(fetcher) {
   return {
     codeKeywords,
     sharedCodeSelection: useState(null),
-    sharedKeywordSelection: useState({})
+    sharedKeywordSelection: useState({}),
   };
 }
 
@@ -55,7 +55,7 @@ function CodeTabs({ children }) {
       return `${language || "_"}-${title || ""}`;
     }
     return makeKey(a.props).localeCompare(makeKey(b.props), ["en"], {
-      sensitivity: "base"
+      sensitivity: "base",
     });
   });
 

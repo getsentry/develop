@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import Helmet from 'react-helmet';
-import { StaticQuery, graphql } from 'gatsby';
+import React from "react";
+import PropTypes from "prop-types";
+import Helmet from "react-helmet";
+import { StaticQuery, graphql } from "gatsby";
 
 function SEO({ description, lang, meta, keywords, title }) {
   return (
@@ -13,49 +13,49 @@ function SEO({ description, lang, meta, keywords, title }) {
         return (
           <Helmet
             htmlAttributes={{
-              lang
+              lang,
             }}
             title={title}
             titleTemplate={`%s | ${data.site.siteMetadata.title}`}
             meta={[
               {
-                name: 'description',
-                content: metaDescription
+                name: "description",
+                content: metaDescription,
               },
               {
-                property: 'og:title',
-                content: title
+                property: "og:title",
+                content: title,
               },
               {
-                property: 'og:description',
-                content: metaDescription
+                property: "og:description",
+                content: metaDescription,
               },
               {
-                property: 'og:type',
-                content: 'website'
+                property: "og:type",
+                content: "website",
               },
               {
-                name: 'twitter:card',
-                content: 'summary'
+                name: "twitter:card",
+                content: "summary",
               },
               {
-                name: 'twitter:creator',
-                content: data.site.siteMetadata.author
+                name: "twitter:creator",
+                content: data.site.siteMetadata.author,
               },
               {
-                name: 'twitter:title',
-                content: title
+                name: "twitter:title",
+                content: title,
               },
               {
-                name: 'twitter:description',
-                content: metaDescription
-              }
+                name: "twitter:description",
+                content: metaDescription,
+              },
             ]
               .concat(
                 keywords.length > 0
                   ? {
-                      name: 'keywords',
-                      content: keywords.join(', ')
+                      name: "keywords",
+                      content: keywords.join(", "),
                     }
                   : []
               )
@@ -68,9 +68,9 @@ function SEO({ description, lang, meta, keywords, title }) {
 }
 
 SEO.defaultProps = {
-  lang: 'en',
+  lang: "en",
   meta: [],
-  keywords: []
+  keywords: [],
 };
 
 SEO.propTypes = {
@@ -78,7 +78,7 @@ SEO.propTypes = {
   lang: PropTypes.string,
   meta: PropTypes.array,
   keywords: PropTypes.arrayOf(PropTypes.string),
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
 };
 
 export default SEO;

@@ -30,8 +30,8 @@ const mdxComponents = {
 const TableOfContents = ({ toc: { items } }) => {
   if (!items) return null;
 
-  const recurseyMcRecurseFace = (items) =>
-    items.map((i) => {
+  const recurseyMcRecurseFace = items =>
+    items.map(i => {
       if (!i.title) return recurseyMcRecurseFace(i.items);
       return (
         <li className="toc-entry" key={i.url}>
@@ -44,7 +44,7 @@ const TableOfContents = ({ toc: { items } }) => {
 };
 
 function fetchCodeKeywords() {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     function transformResults(projects) {
       if (projects.length === 0) {
         projects.push({
@@ -59,7 +59,7 @@ function fetchCodeKeywords() {
         });
       }
       resolve({
-        PROJECT: projects.map((project) => {
+        PROJECT: projects.map(project => {
           return {
             DSN: project.dsnPublic,
             ID: project.id,

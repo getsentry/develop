@@ -1,9 +1,9 @@
-import React from "react"
+import React from "react";
 import { MDXProvider } from "@mdx-js/react";
 import { MDXRenderer } from "gatsby-plugin-mdx";
-import { graphql, useStaticQuery } from "gatsby"
+import { graphql, useStaticQuery } from "gatsby";
 
-const JsonSchema = ({id}) => {
+const JsonSchema = ({ id }) => {
   // XXX(markus): No clue if this can be replaced by non-static query
   //
   // This contrived query takes extra care in not referencing allJsonSchema or
@@ -12,18 +12,20 @@ const JsonSchema = ({id}) => {
   // been checked out in which case we can still show a dummy text instead of
   // failing the build.
   const query = useStaticQuery(graphql`
-  {
-    allMdx(filter: {parent: {internal: {type: {eq: "JsonSchemaMarkdown"}}}}) {
-      nodes {
-        body
-        parent {
+    {
+      allMdx(
+        filter: { parent: { internal: { type: { eq: "JsonSchemaMarkdown" } } } }
+      ) {
+        nodes {
+          body
           parent {
-            id
+            parent {
+              id
+            }
           }
         }
       }
     }
-  }
   `);
 
   const mdxNode = query.allMdx.nodes.find(node => node.parent.parent.id === id);
@@ -37,6 +39,6 @@ const JsonSchema = ({id}) => {
       <MDXRenderer>{mdxNode.body}</MDXRenderer>
     </MDXProvider>
   );
-}
+};
 
 export default JsonSchema;
