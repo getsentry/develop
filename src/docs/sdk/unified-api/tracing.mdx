@@ -113,7 +113,7 @@ The sampling section is optional. The format is not `flags` to simplify processi
 ```
 
 Differently than `b3` a simple sampling decision as a value to `sentry-trace` should not be implemented. [There are reasons to always include](https://github.com/apache/incubator-zipkin-b3-propagation/blob/bc937b6854ea30e46b3e85fbf147d8f4de685dd5/README.md#why-send-trace-ids-with-a-reject-sampling-decision) the `trace-id` and `span-id` regardless of sampling having been decided by the caller. And also this will simplify the implementation.
-Besides the [usual reasons to use *defer](https://github.com/apache/incubator-zipkin-b3-propagation/blob/bc937b6854ea30e46b3e85fbf147d8f4de685dd5/README.md#why-defer-a-sampling-decision),* in the case of Sentry, a reason would be if a downstream system captures an error event with Sentry. The decision could be done at that point to *not* sample that trace in order to have tracing data available for the reported crash. 
+Besides the [usual reasons to use *defer](https://github.com/apache/incubator-zipkin-b3-propagation/blob/bc937b6854ea30e46b3e85fbf147d8f4de685dd5/README.md#why-defer-a-sampling-decision),* in the case of Sentry, a reason would be if a downstream system captures an error event with Sentry. The decision could be done at that point to sample that trace in order to have tracing data available for the reported crash. 
 
 `sentry-trace = sampled`
 
