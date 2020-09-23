@@ -134,7 +134,7 @@ module.exports = {
     title: "Sentry Developer Documentation",
     homeUrl: "https://sentry.io",
     sitePath: "develop.sentry.dev",
-    description: "",
+    description: "Documentation for contributing to the Sentry project",
     author: "@getsentry",
   },
   plugins: getPlugins(),

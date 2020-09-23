@@ -55,6 +55,7 @@ exports.createSchemaCustomization = ({ actions: { createTypes } }) => {
 
   type MdxFrontmatter {
     keywords: [String]
+    description: String
   }
 `;
 
