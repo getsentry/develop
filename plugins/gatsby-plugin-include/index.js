@@ -4,7 +4,7 @@ module.exports = ({ markdownAST }, {}) => {
   const imports = {};
   let idx = 0;
 
-  visit(markdownAST, "import", (node) => {
+  visit(markdownAST, "import", node => {
     const match = node.value.match(/^\s*import\s"([^"]*\.mdx)"\s*;?\s*$/);
     let componentName = null;
     if (match) {
