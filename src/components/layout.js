@@ -107,10 +107,11 @@ const Layout = ({
   },
 }) => {
   const mdx = file.childMdx;
+  const description = mdx.frontmatter.description || mdx.excerpt.slice(0, 160);
   const hasToc = !!mdx.tableOfContents.items;
   return (
     <div className="document-wrapper">
-      <SEO title={mdx.frontmatter.title} />
+      <SEO title={mdx.frontmatter.title} description={description} />
       <div className="sidebar">
         <Header
           siteTitle={siteMetadata.title}
@@ -194,8 +195,10 @@ export const pageQuery = graphql`
       childMdx {
         body
         tableOfContents
+        excerpt
         frontmatter {
           title
+          description
         }
       }
     }
