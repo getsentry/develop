@@ -38,13 +38,13 @@ module.exports = ({ markdownAST }, { className = "code-tabs-wrapper" }) => {
             value: `<CodeBlock language="${node.lang ||
               ""}" title="${getTabTitle(node)}" filename="${getFilename(
               node
-            )}">`
+            )}">`,
           },
           Object.assign({}, node),
           {
             type: "jsx",
-            value: "</CodeBlock>"
-          }
+            value: "</CodeBlock>",
+          },
         ]),
       []
     );
@@ -53,19 +53,19 @@ module.exports = ({ markdownAST }, { className = "code-tabs-wrapper" }) => {
     rootNode.data = {
       hName: "div",
       hProperties: {
-        className
-      }
+        className,
+      },
     };
     rootNode.children = [
       {
         type: "jsx",
-        value: `<CodeTabs>`
+        value: `<CodeTabs>`,
       },
       ...children,
       {
         type: "jsx",
-        value: "</CodeTabs>"
-      }
+        value: "</CodeTabs>",
+      },
     ];
 
     toRemove = toRemove.concat(pendingCode.splice(1));

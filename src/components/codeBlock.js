@@ -32,7 +32,7 @@ function makeKeywordsClickable(children) {
         Selector({
           group: match[1],
           keyword: match[2],
-          key: lastIndex
+          key: lastIndex,
         })
       );
       lastIndex = KEYWORDS_REGEX.lastIndex;
@@ -52,7 +52,7 @@ function Selector({ keyword, group, ...props }) {
   const codeContext = useContext(CodeContext);
   const [
     sharedSelection,
-    setSharedSelection
+    setSharedSelection,
   ] = codeContext.sharedKeywordSelection;
   const spanRef = useRef();
   const [menuRef, setMenuRef] = useRefWithCallback(menuNode => {
@@ -188,7 +188,7 @@ function CodeBlock({ filename, children }) {
         <MDXProvider
           components={{
             code: CodeWrapper,
-            span: SpanWrapper
+            span: SpanWrapper,
           }}
         >
           {children}
@@ -201,7 +201,7 @@ function CodeBlock({ filename, children }) {
 CodeBlock.propTypes = {
   language: PropTypes.string,
   filename: PropTypes.string,
-  title: PropTypes.string
+  title: PropTypes.string,
 };
 
 export default CodeBlock;

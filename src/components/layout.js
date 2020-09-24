@@ -32,8 +32,8 @@ const mdxComponents = {
 const TableOfContents = ({ toc: { items } }) => {
   if (!items) return null;
 
-  const recurseyMcRecurseFace = (items) =>
-    items.map((i) => {
+  const recurseyMcRecurseFace = items =>
+    items.map(i => {
       if (!i.title) return recurseyMcRecurseFace(i.items);
       return (
         <li className="toc-entry" key={i.url}>
@@ -46,7 +46,7 @@ const TableOfContents = ({ toc: { items } }) => {
 };
 
 function fetchCodeKeywords() {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     function transformResults(projects) {
       if (projects.length === 0) {
         projects.push({
@@ -61,7 +61,7 @@ function fetchCodeKeywords() {
         });
       }
       resolve({
-        PROJECT: projects.map((project) => {
+        PROJECT: projects.map(project => {
           return {
             DSN: project.dsnPublic,
             ID: project.id,
@@ -109,10 +109,11 @@ const Layout = ({
   },
 }) => {
   const mdx = file.childMdx;
+  const description = mdx.frontmatter.description || mdx.excerpt.slice(0, 160);
   const hasToc = !!mdx.tableOfContents.items;
   return (
     <div className="document-wrapper">
-      <SEO title={mdx.frontmatter.title} />
+      <SEO title={mdx.frontmatter.title} description={description} />
       <div className="sidebar">
         <Header
           siteTitle={siteMetadata.title}
@@ -196,8 +197,10 @@ export const pageQuery = graphql`
       childMdx {
         body
         tableOfContents
+        excerpt
         frontmatter {
           title
+          description
         }
       }
     }

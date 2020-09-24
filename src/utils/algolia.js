@@ -25,7 +25,7 @@ const pageQuery = `{
     }
   }`;
 
-const flatten = (arr) =>
+const flatten = arr =>
   arr.map(({ node: { frontmatter, objectID, excerpt, fields } }) => {
     // https://github.com/getsentry/sentry-global-search#algolia-record-stategy
     const record = {
@@ -34,7 +34,7 @@ const flatten = (arr) =>
       section: frontmatter.title,
       text: excerpt,
       url: fields.slug,
-      pathSegments: extrapolate(fields.slug, "/").map((x) => `/${x}/`),
+      pathSegments: extrapolate(fields.slug, "/").map(x => `/${x}/`),
       keywords: frontmatter.keywords || [],
     };
 
