@@ -53,7 +53,7 @@
     "develop": "gatsby develop",
     "init": "cp .env.example .env.development && yarn install",
     "prestart": "gatsby clean",
-    "start": "npm run develop",
+    "start": "yarn run develop",
     "format": "prettier --ignore-path .gitignore --write \"**/*.js\"",
     "test": "GATSBY_ENV=test gatsby build"
   },
