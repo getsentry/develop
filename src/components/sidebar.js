@@ -153,6 +153,7 @@ const Sidebar = () => (
       </div>
 
       <ul className="list-unstyled" data-sidebar-tree>
+        <NavLink to="/sdk/philosophy/">Philosophy</NavLink>
         <NavLink to="/sdk/overview/">Overview</NavLink>
         <NavLink to="/sdk/unified-api/" title="Unified API">
           <NavLink to="/sdk/unified-api/tracing">
