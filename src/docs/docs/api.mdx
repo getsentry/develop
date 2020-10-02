@@ -4,7 +4,7 @@ title: "Making an API Public"
 
 ## Introduction
 
-In this document, we explain how you make an API public and the considerations you should take into account before you make it public.
+In this document, we explain both how you make an API public and the considerations to take into account before doing so.
 
 ## Definitions
 
@@ -12,7 +12,7 @@ In this document, we explain how you make an API public and the considerations y
 
 A managed client is one that Sentry controls, such as our frontend. In this type of client, we control both which endpoints are used and the attributes used by those endpoints.
 
-### Partially managed client
+### Partially Managed Client
 
 A partially-managed client is one that we only partially control, since we do not control the version of the client that is running for our users; for example, our Sentry CLI. While we control the endpoints the CLI uses, once the CLI is installed and running in a customer's implementation, we don't control the version of the client a user runs.
 
@@ -44,11 +44,11 @@ As an example: [https://docs.sentry.io/api/teams/retrieve-a-team/](https://docs.
 
 Let's say we also return a `nickname` for a team. If what is returned is not documented as a response in our public documentation, that attribute is a private attribute within a public endpoint.
 
-## API versioning
+## API Versioning
 
 Currently, Sentry's API is v0 and is considered to be in draft phase. While we don't expect our public endpoints to change greatly, keep in mind that our API is still under development.
 
-## Making an Endpoint Public
+## Making an endpoint public
 
 When you make an endpoint public, you're committing to always returning at least the set of defined attributes when that endpoint is called. As a result, the attribute(s) **cannot** **be removed** from an endpoint after they are public. Additionally, the type of the attribute **cannot** **be changed** once the attribute is public. The reason the attribute and its type cannot be changed is because both in the wild and managed clients are relying on the public attribute to return what is expected from that endpoint.
 
@@ -72,7 +72,7 @@ We use [Open API Spec 3](https://swagger.io/docs/specification/about/) to write 
 
 Once you make changes to an endpoint and merge the change into Sentry, a Github Action will update the schema in [sentry-api-schema](https://github.com/getsentry/sentry-api-schema) with a build version. To make your changes go live:
 
-1. Get the latest SHA from sentry-api-schema.
+1. Get the latest SHA from [sentry-api-schema](https://github.com/getsentry/sentry-api-schema/commits/main).
 2. Go to sentry-docs and update the SHA ([https://github.com/getsentry/sentry-docs/blob/bf5a9463df40bf6e99685f14451c6e1313898b36/src/gatsby/config.ts#L187](https://github.com/getsentry/sentry-docs/blob/bf5a9463df40bf6e99685f14451c6e1313898b36/src/gatsby/config.ts#L187)).
 
 ### Requesting an API to be public
@@ -95,7 +95,7 @@ Some endpoints have no response schema. This means that while the endpoint is pu
 
 **I have a question and it has not been answered.**
 
-No problem. Ping the Ecosystem Team.
+No problem. Send us an [email](mailto:partners@sentry.io) so we can answer your question.
 
 ## Can customers use private endpoints?
 
