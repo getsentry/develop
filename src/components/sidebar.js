@@ -41,7 +41,9 @@ const Sidebar = () => (
         <NavLink to="https://github.com/getsentry/.github/blob/master/CODE_OF_CONDUCT.md">
           Code of Conduct
         </NavLink>
-        <NavLink to="/docs/">Documentation Guide</NavLink>
+        <NavLink to="/docs/" title="Documentation Guide">
+          <NavLink to="/docs/api/">API Documentation Guide</NavLink>
+        </NavLink>
         <NavLink to="/inclusion/">Inclusive Language</NavLink>
         <NavLink to="/translations/">Translations</NavLink>
         <NavLink to="/code-review/">Code Review</NavLink>
