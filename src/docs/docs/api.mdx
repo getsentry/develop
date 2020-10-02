@@ -1,5 +1,5 @@
 ---
-title: "API Documentation Guide"
+title: "Making an API Public"
 ---
 
 ## Introduction
@@ -42,7 +42,7 @@ As an example: [https://docs.sentry.io/api/teams/retrieve-a-team/](https://docs.
 }
 ```
 
-Let's say we also return a `nickname` for a team. If what is returned is not documented as a response in our public documentation, that return is a private attribute within a public endpoint.
+Let's say we also return a `nickname` for a team. If what is returned is not documented as a response in our public documentation, that attribute is a private attribute within a public endpoint.
 
 ## API versioning
 
@@ -50,7 +50,7 @@ Currently, Sentry's API is v0 and is considered to be in draft phase. While we d
 
 ## Making an Endpoint Public
 
-When you make an endpoint public, you're committing to always returning at least the set of defined attributes when that endpoint is called. As a result, the attribute(s) **cannot** **be removed** from an endpoint after they are public. Additionally, the type of attributed **cannot** **be changed** once the attribute is public. The reason the attribute and its type cannot be changed is because both in the wild and managed clients are relying on the public attribute to return what is expected from that endpoint.
+When you make an endpoint public, you're committing to always returning at least the set of defined attributes when that endpoint is called. As a result, the attribute(s) **cannot** **be removed** from an endpoint after they are public. Additionally, the type of the attribute **cannot** **be changed** once the attribute is public. The reason the attribute and its type cannot be changed is because both in the wild and managed clients are relying on the public attribute to return what is expected from that endpoint.
 
 You **can** add attributes to a public endpoint.
 
