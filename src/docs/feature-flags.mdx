@@ -2,7 +2,7 @@
 title: 'Feature Flags'
 ---
 
-Feature flags are controlled in Sentry at the commit and configuration level. At this time, there is no built-in way to modify them in production in real-time.
+Feature flags are instantiated in Sentry, then configured in production via Flagr
 
 You can find a list of features available by looking at `sentry/features/__init__.py`. They're declared on the `FeatureManager` like so:
 
@@ -159,74 +159,159 @@ Set it to `True` if you'd like the feature to be available and `False` if no
 # Enabling your feature in production
 
 If you want to enable your feature for a subset of production users, you will
-need to update the feature handlers in getsentry.
+need to setup your feature in Flagr.
 
-In `getsentry/features.py` you will find a collection of feature handlers that
-enable various early adopter and billing related features.
+First add your feature to the flagr allowlist: in `getsentry/features.py` you
+will find the Flagr feature handler (`FlagrFeatureHandler`) then add your
+feature to the `allowed_features` property.
 
-## Releasing a feature to a subset of organization
+```python
+allowed_features = set(
+    [
+        ...
+        "organizations:test-feature",
+    ]
+)
+```
 
-You can enable a feature for a specific list of organization slugs by adding
-your feature and the list of organizations to the `FEATURE_EARLY_ADOPTERS`
-dictionary.
+## Building your feature in Flagr
+
+Navigate to the [Flagr UI](https://flagr.getsentry.net/#/) and in the input box
+enter your feature name as the flag's *description*. Next click the arrow on the
+right of the **Create New Flag** button and select **Create Simple Boolean
+Flag**
+
+![img/flagrNewFlag.png](img/flagrNewFlag.png)
+
+You should then see your newly created flag in the list below, click your flag
+and enter your feature name as the flag key, optionally enter notes about your
+flag here, then click **Save Flag**. At this point both your flag key and
+description should be your new feature. It is very important that your flag key
+matches exactly what is in sentry as that is what is used to look your feature
+up.
+
+Each flag is defaulted to disabled, and your feature will not appear until you
+enable it, this is done via the toggle at the top right of the flag page 
+
+![img/flagrDescription.png](img/flagrDescription.png)
+
+In Flagr your feature needs a Variant and at least one Segment.
+
+### Variant
+Variants represents the possible variations of a flag. Because flagr is
+currently only used to toggle features, the only supported variant is `on`, and
+this value is checked without taking casing into account.
+
+### Segment
+Segments represent the portions of our audience that your feature will be
+enabled for. Each segment can have multiple conditions which **all** of which
+must be matched for a feature to be enabled.
+
+### Distribution
+Represents the distribution of variants in a segment, because we'll only have
+one variant this value should always be 100% for each segment.
+
+## Creating a segment constraint
+Here are the properties that are being sent to Flagr as well as the types of
+their values:
+
+| Property                        | Value Types  | Notes                       |
+| :-----------------------------  | :----------- | :-------------------------- |
+| `organization_id`               | `int`        |                             |
+| `organization_slug`             | `string`     |                             |
+| `organization_is-early-adopter` | `bool`       | Users opt in from settings  |
+| `features`                      | `[string]`   | All active features for org |
+| `subscription_is-free`          | `bool`       |                             |
+| `subscription_is-trial-plan`    | `bool`       |                             |
+| `subscription_plan`             | `string`     |                             |
+| `project_slug`                  | `string`     | Only passed for projects    |
+| `project_id`                    | `int`        | Only passed for projects    |
+| `user_id`                       | `int`        |                             |
+| `user_domain`                   | `string`     |                             |
+| `user_is-superuser`             | `bool`       |                             |
+| `user_is-staff`                 | `bool`       |                             |
+| `internal_teams`                | `[string]`   | Only passed for Sentry      |
+
+More properties can be added by updating `get_context` in `FlagrFeatureHandler`
+but be considerate of the performance of additional context. As well properties
+cannot contain periods `.` as this is a special character used by flagr.
+
+Each constraint requires a Property, Operator, and Value. Each segment can
+contain multiple constraints, all of which must be matched. A way to think about
+segments is that each segment is **OR**ed together, and each constraint is
+**AND**ed together
+
+
+Generally operators are straight forward for example `==` means equal. There is
+the exception however of `CONTAINS` and `IN` which only operate on arrays, This
+means that if you want to check that for a substring you want to use the `=~`
+operator.
+
+```json
+property CONTAINS "foo"    =======> {"property": ["foo", "bar"]} -> True
+                                    {"property": "foobar"}       -> False
+
+property IN ["foo", "bar"] =======> {"property": ["foo", "bar"]} -> False
+                                    {"property": "foo"}          -> True
+
+property =~ "foo"          =======> {"property": ["foo", "bar"]} -> False
+                                    {"property": "foobar"}       -> True
+```
+
+Values that are strings must be wrapped in double quotes `""`
+Values that are arrays must be wrapped in square brackets `[]`
+Values that are bools or ints do not need to be wrapped in quotes, for example
+`true` or `1`
+
+New constraints must be saved by clicking **Add Constraint**, existing
+constraints are only updated after clicking the green **Save** button, the
+**Save Segment Settings** button does not include constraints.
+
+## Releasing a feature to a subset of organizations
+
+You can enable a feature for a specific list of organization slugs by setting
+the condition property to `organization_slug`, the operator to `IN`, and the
+value to an array of organizations, using square brackets `[]` for the array, and
+double quotes `"` for each organization.
+
+![img/flagrOrganizationSubset.png](img/flagrOrganizationSubset.png)
+
+## Releasing a feature to a specific team in sentry
+
+You can enable a feature for only a specific team within sentry by setting the
+condition property to `internal_team`, the operator to `CONTAINS` and the value
+to the slug of the team wrapped in double quotes `"`.
+
+![img/flagrTeamSubset.png](img/flagrTeamSubset.png)
+
+## Releasing a feature to Early Adopters
+
+You can enable a feature to organizations that have opted in to be early
+adopters. To do this set the constraint property to
+`organization_is-early-adopter`, the operator to `==` and the value to `true`.
+
+![img/flagrEarlyAdopterSubset.png](img/flagrEarlyAdopterSubset.png)
 
 ## Releasing a feature to organizations with specific plans
 
-Enabling a feature for customers on specific plans will require creating
-a FeatureHandler and updating the plan catalog.
+Enabling a feature for customers on specific plans can be done by creating a
+segment with the property set to `subscription_plan`, the operator to `IN` and
+the value to an array of plans
 
-1. Update the feature list in `getsentry/accounts/plans.py` This list contains
-   the feature name, a customer facing name and a short description of the
-   feature.
-2. Update the relevant plans in `getsentry/accounts/plans.py` . For example if
-   your feature is only available on Business plans, ensure that the plan
-   definition includes the `test-feature` flag in its list of features.
-3. Create a feature handler for our feature.
+![img/flagrPlanSubset.png](img/flagrPlanSubset.png)
 
-```python
-class TestFeatureFeatureHandler(features.FeatureHandler):
-    # Tell FeatureManager which feature this handler is for.
-    features = {"organizations:test-feature"}
-
-    def has(self, feature, actor):
-        org = feature.organization
-
-        try:
-            sub = Subscription.get_for_organization(org)
-        except Subscription.DoesNotExist:
-            return False
-
-        plan_features = active_features(sub)
-        return "test-feature" in plan_features
-```
-
-The `has` method of a feature handler in getsentry should always return
-a boolean. This prevents fall through to the `SENTRY_FEATURES` dictionary.
-
-## Releasing to organizations of a specific plan incrementally
+## Releasing to organizations incrementally
 
 When releasing a large or potentially disruptive feature you may want to enable
 it for a percentage of organizations incrementally. For example, on monday it is
 available to 10% of users, and increasing the percentage of customers by 10%
 each day.
 
-1. Regsiter an integer typed option in sentry. Eg. `test-feature.rollout-rate`
-   . The default value should be `0`.
-2. Create a feature handler that uses the `PercentageRollout` mixin
+When creating your segment set the rollout rate to 0, then on each day that you
+increase it, enter the larger value and click *Save Segment Setting*.
 
-```python
-class TestFeatureFeatureHandler(features.FeatureHandler, PercentageRollout):
-    # Tell FeatureManager which feature this handler is for.
-    features = {"organizations:test-feature"}
-
-    def has(self, feature, actor):
-        org = feature.organization
-    # Other conditions can go here.
-    return self.in_rollout_group(org.id, 'test-feature.rollout-rate')
-```
-
-3. Work with operations to set and increase the value of your option as
-   required.
+*Note:* You should not need to modify the distribution to incrementally release
+your feature.
 
 ## After launch (Graduation)
 
