@@ -33,6 +33,14 @@ Sentry specifies a dedicated endpoint at for ingesting Envelopes:
 POST /api/<project_id>/envelope/
 ```
 
+<Alert title="Rate-Limit" level="info">
+
+In order to allow different rate limits for individual envelope items, 
+a [custom rate limit header was introduced](/rate-limit). SDKs using envelopes 
+are expected to implement support this header.
+
+</Alert>
+
 ## Terminology
 
 - *required*: The implementation may emit an error if this field is missing.
