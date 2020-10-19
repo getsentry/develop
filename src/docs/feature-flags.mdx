@@ -160,6 +160,7 @@ Set it to `True` if you'd like the feature to be available and `False` if no
 In general, you do not need to run flagr in development to test your feature
 flagging. If you do want to run flagr, you'll need to be running
 [getsentry](/sentry-vs-getsentry/):
+
 1. Set the environment variable: `export SENTRY_USE_FLAGR=true`
 2. [Start your devservices](/services/devservices/)
 
@@ -200,8 +201,8 @@ description should be your new feature. It is very important that your flag key
 matches exactly what is in sentry as that is what is used to look your feature
 up.
 
-Each flag is defaulted to disabled, and your feature will not appear until you
-enable it, this is done via the toggle at the top right of the flag page 
+Each flag defaults to disabled, and your feature will not appear until you
+enable it, this is done via the toggle at the top right of the flag page.
 
 ![img/flagrDescription.png](img/flagrDescription.png)
 
@@ -214,7 +215,7 @@ this value is case-insensitive.
 
 ### Segment
 Segments represent the portions of our audience that your feature will be
-enabled for. Each segment can have multiple conditions which **all** of which
+enabled for. Each segment can have multiple conditions **all** of which
 must be matched for a feature to be enabled.
 
 ### Distribution
@@ -223,7 +224,7 @@ one variant this value should always be 100% for each segment.
 
 ## Creating a segment constraint
 Here are the properties that are being sent to Flagr as well as the types of
-their values:
+their values.
 
 Each constraint requires a Property, Operator, and Value. Each segment can
 contain multiple constraints, all of which must be matched. A way to think about
@@ -252,12 +253,12 @@ on the organization or project being passed to `features.has`
 | `internal_teams`                | `[string]`   | Only passed for Sentry      |
 
 More properties can be added by updating `FlagrFeatureHandler.get_context`
-but be considerate of the performance of additional context. As well properties
+but be considerate of the performance of additional context. Properties
 cannot contain periods `.` as this is a special character used by flagr, in
 general use an underscore `_` instead.
 
 ### Operators
-Generally, operators are straightforward, for example, `==` means equal. There
+Operators are generally straightforward, for example, `==` means equal. There
 is the exception however of `CONTAINS` and `IN` which only operate on arrays,
 This means that if you want to check that for a substring you want to use the
 `=~` operator.
@@ -274,9 +275,9 @@ property =~ "foo"          =======> {"property": ["foo", "bar"]} -> False
 ```
 
 ### Values
-Values that are strings must be wrapped in double-quotes `""`
-Values that are arrays must be wrapped in square brackets `[]`
-Values that are bools or ints should not be wrapped in quotes, for example,
+- Values that are strings must be wrapped in double-quotes `""`
+- Values that are arrays must be wrapped in square brackets `[]`
+- Values that are bools or ints should not be wrapped in quotes, for example,
 `true` or `1`
 
 ### Saving
@@ -299,9 +300,9 @@ double quotes `"` for each organization.
 
 ### Releasing a feature to a specific team in sentry
 
-You can enable a feature for only a specific team within sentry by setting the
-condition property to `internal_team`, the operator to `CONTAINS`, and the value
-to the slug of the team wrapped in double quotes `"`.
+You can enable a feature for only a specific team within the Sentry organization
+by setting the condition property to `internal_team`, the operator to
+`CONTAINS`, and the value to the slug of the team wrapped in double quotes `"`.
 
 ![img/flagrTeamSubset.png](img/flagrTeamSubset.png)
 
@@ -329,7 +330,7 @@ available to 10% of users, and increasing the percentage of customers by 10%
 each day.
 
 When creating your segment set the rollout rate to 0, then on each day that you
-increase it, enter the larger value, and click *Save Segment Setting*.
+increase it, enter a larger value, and click *Save Segment Setting*.
 
 *Note:* You should not need to modify the distribution to incrementally release
 your feature.
