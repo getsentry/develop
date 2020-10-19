@@ -104,34 +104,6 @@ the organization and the type of user given. Note that when we give the feature
 to the frontend, we remove the scope prefix, and
 our `'organizations:test-feature'` becomes `'test-feature'`.
 
-If you're checking for more than one feature flag you should use the
-FeatureManager's `batch_has` method instead.
-
-```python
-batch_features = features.batch_has(
-    ['projects:test-feature3', 'projects:test-feature4'],
-    actor=user,
-    projects=[project1, project2],
-    organization=organization,
-]
-```
-
-Which results in a dict like this with the feature type followed by the object
-id
-
-```python
-{
-    'project:1': {
-        'projects:test-feature3': True,
-        'projects:test-feature4': True,
-    },
-    'project:2': {
-        'projects:test-feature3': False,
-        'projects:test-feature4': False,
-    },
-}
-```
-
 ## In JavaScript
 
 There is a difference between using the flag in Sentry and in GetSentry. At this
