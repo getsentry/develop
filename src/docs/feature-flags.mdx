@@ -16,7 +16,7 @@ The feature can be enabled with the following in your `config.py`:
 SENTRY_FEATURES["organizations:onboarding"] = True
 ```
 
-You can modify the state of [feature flags in tests](/testing/#setting-options-and-feature-flags) using a context manger.
+You can modify the state of [feature flags in tests](/testing/#setting-options-and-feature-flags) using a context manager.
 
 # Creating a new Feature Flag
 
@@ -185,7 +185,7 @@ Where `SENTRY_FEATURES` will correspond to the `SENTRY_FEATURES` from `step
 Set it to `True` if you'd like the feature to be available and `False` if not.
 
 ## Flagr in development
-In general you do not need to run flagr in development to test your feature
+In general, you do not need to run flagr in development to test your feature
 flagging. If you do want to run flagr, you'll need to be running
 [getsentry](/sentry-vs-getsentry/):
 1. Set the environment variable: `export SENTRY_USE_FLAGR=true`
@@ -197,9 +197,9 @@ Your local instance of flagr can be found at
 # Enabling your feature in production
 
 If you want to enable your feature for a subset of production users, you will
-need to setup your feature in Flagr.
+need to set up your feature in Flagr.
 
-First add your feature to the flagr allowlist: in `getsentry/features.py` you
+First, add your feature to the flagr allowlist: in `getsentry/features.py` you
 will find the Flagr feature handler (`FlagrFeatureHandler`) then add your
 feature to the `allowed_features` property.
 
@@ -215,7 +215,7 @@ allowed_features = set(
 ## Building your feature in Flagr
 
 Navigate to the [Flagr UI](https://flagr.getsentry.net/#/) and in the input box
-enter your feature name as the flag's *description*. Next click the arrow on the
+enter your feature name as the flag's *description*. Next, click the arrow on the
 right of the **Create New Flag** button and select **Create Simple Boolean
 Flag**
 
@@ -223,7 +223,7 @@ Flag**
 
 You should then see your newly created flag in the list below, click your flag
 and enter your feature name as the flag key, optionally enter notes about your
-flag here, then click **Save Flag**. At this point both your flag key and
+flag here, then click **Save Flag**. At this point, both your flag key and
 description should be your new feature. It is very important that your flag key
 matches exactly what is in sentry as that is what is used to look your feature
 up.
@@ -236,9 +236,9 @@ enable it, this is done via the toggle at the top right of the flag page
 In Flagr your feature needs a Variant and at least one Segment.
 
 ### Variant
-Variants represents the possible variations of a flag. Because flagr is
+Variants represent the possible variations of a flag. Because flagr is
 currently only used to toggle features, the only supported variant is `on`, and
-this value is checked without taking casing into account.
+this value is case-insensitive.
 
 ### Segment
 Segments represent the portions of our audience that your feature will be
@@ -281,13 +281,14 @@ on the organization or project being passed to `features.has`
 
 More properties can be added by updating `FlagrFeatureHandler.get_context`
 but be considerate of the performance of additional context. As well properties
-cannot contain periods `.` as this is a special character used by flagr.
+cannot contain periods `.` as this is a special character used by flagr, in
+general use an underscore `_` instead.
 
 ### Operators
-Generally operators are straight forward, for example `==` means equal. There is
-the exception however of `CONTAINS` and `IN` which only operate on arrays, This
-means that if you want to check that for a substring you want to use the `=~`
-operator.
+Generally, operators are straightforward, for example, `==` means equal. There
+is the exception however of `CONTAINS` and `IN` which only operate on arrays,
+This means that if you want to check that for a substring you want to use the
+`=~` operator.
 
 ```json
 property CONTAINS "foo"    =======> {"property": ["foo", "bar"]} -> True
@@ -301,9 +302,9 @@ property =~ "foo"          =======> {"property": ["foo", "bar"]} -> False
 ```
 
 ### Values
-Values that are strings must be wrapped in double quotes `""`
+Values that are strings must be wrapped in double-quotes `""`
 Values that are arrays must be wrapped in square brackets `[]`
-Values that are bools or ints do not need to be wrapped in quotes, for example
+Values that are bools or ints should not be wrapped in quotes, for example,
 `true` or `1`
 
 ### Saving
@@ -327,7 +328,7 @@ double quotes `"` for each organization.
 ### Releasing a feature to a specific team in sentry
 
 You can enable a feature for only a specific team within sentry by setting the
-condition property to `internal_team`, the operator to `CONTAINS` and the value
+condition property to `internal_team`, the operator to `CONTAINS`, and the value
 to the slug of the team wrapped in double quotes `"`.
 
 ![img/flagrTeamSubset.png](img/flagrTeamSubset.png)
@@ -336,14 +337,14 @@ to the slug of the team wrapped in double quotes `"`.
 
 You can enable a feature to organizations that have opted in to be early
 adopters. To do this set the constraint property to
-`organization_is-early-adopter`, the operator to `==` and the value to `true`.
+`organization_is-early-adopter`, the operator to `==`, and the value to `true`.
 
 ![img/flagrEarlyAdopterSubset.png](img/flagrEarlyAdopterSubset.png)
 
 ### Releasing a feature to organizations with specific plans
 
 Enabling a feature for customers on specific plans can be done by creating a
-segment with the property set to `subscription_plan`, the operator to `IN` and
+segment with the property set to `subscription_plan`, the operator to `IN`, and
 the value to an array of plans
 
 ![img/flagrPlanSubset.png](img/flagrPlanSubset.png)
@@ -351,12 +352,12 @@ the value to an array of plans
 ### Releasing to organizations incrementally
 
 When releasing a large or potentially disruptive feature you may want to enable
-it for a percentage of organizations incrementally. For example, on monday it is
+it for a percentage of organizations incrementally. For example, on Monday it is
 available to 10% of users, and increasing the percentage of customers by 10%
 each day.
 
 When creating your segment set the rollout rate to 0, then on each day that you
-increase it, enter the larger value and click *Save Segment Setting*.
+increase it, enter the larger value, and click *Save Segment Setting*.
 
 *Note:* You should not need to modify the distribution to incrementally release
 your feature.
