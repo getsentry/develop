@@ -26,6 +26,10 @@ exports.createPages = async function({ actions, graphql }) {
             fields {
               slug
             }
+            frontmatter {
+              title
+              sidebar_order
+            }
           }
         }
       }
@@ -38,10 +42,17 @@ exports.createPages = async function({ actions, graphql }) {
   const component = require.resolve(`./src/components/layout.js`);
   data.allFile.nodes.forEach(node => {
     if (node.childMdx && node.childMdx.fields) {
+      const child = node.childMdx;
       actions.createPage({
-        path: node.childMdx.fields.slug,
+        path: child.fields.slug,
         component,
-        context: { id: node.id },
+        context: {
+          id: node.id,
+          title: child.frontmatter.title,
+          sidebar_order: child.frontmatter.sidebar_order,
+          sidebar_title:
+            child.frontmatter.sidebar_title || child.frontmatter.title,
+        },
       });
     }
   });
@@ -54,6 +65,9 @@ exports.createSchemaCustomization = ({ actions: { createTypes } }) => {
   }
 
   type MdxFrontmatter {
+    title: String
+    sidebar_order: Int
+    sidebar_title: String
     keywords: [String]
     description: String
   }

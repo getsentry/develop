@@ -46,9 +46,10 @@
 
 [data-sidebar-branch] [data-sidebar-branch] > [data-sidebar-tree] {
   display: none;
+  margin-bottom: 0;
 }
 
-[data-sidebar-branch].toc-active > [data-sidebar-tree] {
+[data-sidebar-branch].toc-visible > [data-sidebar-tree] {
   display: block;
 }
 
@@ -126,11 +127,16 @@
     width: 100%;
   }
 
+  &.active h6 {
+    color: #fff;
+  }
+
   h6 {
     margin-bottom: 0;
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.2px;
+    color: inherit;
   }
 
   &:hover {
