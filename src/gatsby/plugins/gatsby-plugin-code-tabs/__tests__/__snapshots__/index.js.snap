@@ -47,7 +47,7 @@ Object {
               "children": Array [
                 Object {
                   "type": "jsx",
-                  "value": "<CodeTabs hideTabBar={true}>",
+                  "value": "<CodeTabs>",
                 },
                 Object {
                   "type": "jsx",
@@ -159,7 +159,7 @@ Object {
       "children": Array [
         Object {
           "type": "jsx",
-          "value": "<CodeTabs hideTabBar={true}>",
+          "value": "<CodeTabs>",
         },
         Object {
           "type": "jsx",
@@ -247,7 +247,7 @@ Object {
       "children": Array [
         Object {
           "type": "jsx",
-          "value": "<CodeTabs hideTabBar={true}>",
+          "value": "<CodeTabs>",
         },
         Object {
           "type": "jsx",
@@ -350,7 +350,7 @@ Object {
       "children": Array [
         Object {
           "type": "jsx",
-          "value": "<CodeTabs hideTabBar={true}>",
+          "value": "<CodeTabs>",
         },
         Object {
           "type": "jsx",
@@ -438,7 +438,7 @@ Object {
       "children": Array [
         Object {
           "type": "jsx",
-          "value": "<CodeTabs hideTabBar={false}>",
+          "value": "<CodeTabs>",
         },
         Object {
           "type": "jsx",
@@ -556,7 +556,7 @@ Object {
       "children": Array [
         Object {
           "type": "jsx",
-          "value": "<CodeTabs hideTabBar={false}>",
+          "value": "<CodeTabs>",
         },
         Object {
           "type": "jsx",
@@ -674,7 +674,7 @@ Object {
       "children": Array [
         Object {
           "type": "jsx",
-          "value": "<CodeTabs hideTabBar={false}>",
+          "value": "<CodeTabs>",
         },
         Object {
           "type": "jsx",

@@ -1,9 +1,11 @@
 import React, { useState, useContext, useRef, useEffect } from "react";
+import CodeContext from "./codeContext";
 
 // human readable versions of names
 const LANGUAGES = {
   javascript: "JavaScript",
   typescript: "TypeScript",
+  jsx: "JSX",
   html: "HTML",
   coffee: "CoffeeScript",
   powershell: "PowerShell",
@@ -15,49 +17,16 @@ const LANGUAGES = {
   yaml: "YAML",
 };
 
-export const CodeContext = React.createContext(null);
+type Props = {
+  children: JSX.Element | JSX.Element[];
+};
 
-// only fetch them once
-let cachedCodeKeywords = null;
-
-export function useCodeContextState(fetcher) {
-  let [codeKeywords, setCodeKeywords] = useState(null);
-  if (codeKeywords === null && cachedCodeKeywords !== null) {
-    setCodeKeywords(cachedCodeKeywords);
-    codeKeywords = cachedCodeKeywords;
-  }
-
-  useEffect(() => {
-    if (cachedCodeKeywords === null) {
-      fetcher().then(config => {
-        cachedCodeKeywords = config;
-        setCodeKeywords(config);
-      });
-    }
-  });
-
-  return {
-    codeKeywords,
-    sharedCodeSelection: useState(null),
-    sharedKeywordSelection: useState({}),
-  };
-}
-
-function CodeTabs({ children }) {
+export default ({ children }: Props): JSX.Element => {
   if (!Array.isArray(children)) {
     children = [children];
   } else {
     children = [...children];
   }
-
-  children.sort((a, b) => {
-    function makeKey({ language, title }) {
-      return `${language || "_"}-${title || ""}`;
-    }
-    return makeKey(a.props).localeCompare(makeKey(b.props), ["en"], {
-      sensitivity: "base",
-    });
-  });
 
   // the idea here is that we have two selection states.  The shared selection
   // always wins unless what is in the shared selection does not exist on the
@@ -155,6 +124,4 @@ function CodeTabs({ children }) {
       <div className="tab-content">{code}</div>
     </div>
   );
-}
-
-export default CodeTabs;
+};

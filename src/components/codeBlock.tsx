@@ -1,20 +1,20 @@
 import React, { useState, useRef, useContext } from "react";
-import PropTypes from "prop-types";
 import copy from "copy-to-clipboard";
 import { MDXProvider } from "@mdx-js/react";
 import { Clipboard } from "react-feather";
 import { useOnClickOutside, useRefWithCallback } from "../utils";
-import { CodeContext } from "./codeTabs";
+import CodeContext from "./codeContext";
 
-const KEYWORDS_REGEX = /\b___([A-Z_][A-Z0-9_]*)\.([A-Z_][A-Z0-9_]*)___\b/g;
+const KEYWORDS_REGEX = /\b___(?:([A-Z_][A-Z0-9_]*)\.)?([A-Z_][A-Z0-9_]*)___\b/g;
 
 function makeKeywordsClickable(children) {
   if (!Array.isArray(children)) {
     children = [children];
   }
+
   KEYWORDS_REGEX.lastIndex = 0;
 
-  return children.reduce((arr, child) => {
+  return children.reduce((arr: any[], child) => {
     if (typeof child !== "string") {
       arr.push(child);
       return arr;
@@ -23,14 +23,14 @@ function makeKeywordsClickable(children) {
     let match;
     let lastIndex = 0;
     while ((match = KEYWORDS_REGEX.exec(child)) !== null) {
-      let afterMatch = KEYWORDS_REGEX.lastIndex - match[0].length;
-      let before = child.substring(lastIndex, afterMatch);
+      const afterMatch = KEYWORDS_REGEX.lastIndex - match[0].length;
+      const before = child.substring(lastIndex, afterMatch);
       if (before.length > 0) {
         arr.push(before);
       }
       arr.push(
         Selector({
-          group: match[1],
+          group: match[1] || "PROJECT",
           keyword: match[2],
           key: lastIndex,
         })
@@ -38,7 +38,7 @@ function makeKeywordsClickable(children) {
       lastIndex = KEYWORDS_REGEX.lastIndex;
     }
 
-    let after = child.substr(lastIndex);
+    const after = child.substr(lastIndex);
     if (after.length > 0) {
       arr.push(after);
     }
@@ -54,20 +54,22 @@ function Selector({ keyword, group, ...props }) {
     sharedSelection,
     setSharedSelection,
   ] = codeContext.sharedKeywordSelection;
-  const spanRef = useRef();
-  const [menuRef, setMenuRef] = useRefWithCallback(menuNode => {
-    if (menuNode) {
-      for (const node of menuNode.childNodes) {
-        if (node.getAttribute("data-active") === "1") {
-          node.parentNode.scrollTop =
-            node.offsetTop -
-            node.parentNode.getBoundingClientRect().height / 2 +
-            node.getBoundingClientRect().height / 2;
-          break;
+  const spanRef = useRef<HTMLSpanElement>();
+  const [menuRef, setMenuRef] = useRefWithCallback<HTMLSpanElement>(
+    menuNode => {
+      if (menuNode) {
+        for (const node of menuNode.childNodes as any) {
+          if (node.getAttribute("data-active") === "1") {
+            node.parentNode.scrollTop =
+              node.offsetTop -
+              node.parentNode.getBoundingClientRect().height / 2 +
+              node.getBoundingClientRect().height / 2;
+            break;
+          }
         }
       }
     }
-  });
+  );
 
   useOnClickOutside(menuRef, () => {
     if (isOpen) {
@@ -81,12 +83,14 @@ function Selector({ keyword, group, ...props }) {
   const currentSelection = choices[currentSelectionIdx];
 
   if (!currentSelection) {
-    return null;
+    return keyword;
   }
 
   // this is not super clean but since we can depend on the span
   // rendering before the menu this works.
-  const style = {};
+  const style: {
+    [key: string]: any;
+  } = {};
   if (spanRef.current) {
     const rect = spanRef.current.getBoundingClientRect();
     style.left = spanRef.current.offsetLeft - 10 + "px";
@@ -122,7 +126,7 @@ function Selector({ keyword, group, ...props }) {
                 key={idx}
                 data-active={isActive ? "1" : ""}
                 onClick={() => {
-                  let newSharedSelection = { ...sharedSelection };
+                  const newSharedSelection = { ...sharedSelection };
                   newSharedSelection[group] = idx;
                   setSharedSelection(newSharedSelection);
                   setIsOpen(false);
@@ -139,7 +143,7 @@ function Selector({ keyword, group, ...props }) {
   );
 }
 
-function CodeWrapper(props) {
+function CodeWrapper(props): JSX.Element {
   let { children, class: className, ...rest } = props;
   if (children) {
     children = makeKeywordsClickable(children);
@@ -151,7 +155,7 @@ function CodeWrapper(props) {
   );
 }
 
-function SpanWrapper(props) {
+function SpanWrapper(props): JSX.Element {
   let { children, class: className, ...rest } = props;
   if (children) {
     children = makeKeywordsClickable(children);
@@ -163,12 +167,27 @@ function SpanWrapper(props) {
   );
 }
 
-function CodeBlock({ filename, children }) {
+type Props = {
+  filename?: string;
+  language?: string;
+  title?: string;
+  children: JSX.Element;
+};
+
+export default ({ filename, language, children }: Props): JSX.Element => {
   const [showCopied, setShowCopied] = useState(false);
   const codeRef = useRef(null);
 
   function copyCode() {
-    copy(codeRef.current.innerText);
+    let code = codeRef.current.innerText;
+    // don't copy leading prompt for bash
+    if (language === "bash" || language === "shell") {
+      const match = code.match(/^\$\s*/);
+      if (match) {
+        code = code.substr(match[0].length);
+      }
+    }
+    copy(code);
     setShowCopied(true);
     setTimeout(() => setShowCopied(false), 1200);
   }
@@ -196,12 +215,4 @@ function CodeBlock({ filename, children }) {
       </div>
     </div>
   );
-}
-
-CodeBlock.propTypes = {
-  language: PropTypes.string,
-  filename: PropTypes.string,
-  title: PropTypes.string,
 };
-
-export default CodeBlock;
