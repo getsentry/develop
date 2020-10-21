@@ -9,6 +9,7 @@ import Break from "./break";
 import SmartLink from "./smartLink";
 import CodeBlock from "./codeBlock";
 import CodeTabs from "./codeTabs";
+import ConfigValue from "./configValue";
 import Note from "./note";
 import PageGrid from "./pageGrid";
 import DefinitionList from "./definitionList";
@@ -19,6 +20,7 @@ const mdxComponents = {
   Break,
   CodeBlock,
   CodeTabs,
+  ConfigValue,
   Link: SmartLink,
   Note,
   PageGrid,
