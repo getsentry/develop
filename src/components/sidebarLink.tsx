@@ -4,7 +4,21 @@ import { useLocation } from "@reach/router";
 
 import SmartLink from "./smartLink";
 
-export default ({ to, title, children, collapsed = null, className = "" }) => {
+type Props = {
+  to: string,
+  title?: string,
+  children?: React.ReactNode,
+  className?: string,
+  collapsed?: boolean | null,
+};
+
+export default ({
+  to,
+  title,
+  children,
+  collapsed = null,
+  className = "",
+}: Props): JSX.Element => {
   const location = useLocation();
   const isActive = location && location.pathname.indexOf(withPrefix(to)) === 0;
 
