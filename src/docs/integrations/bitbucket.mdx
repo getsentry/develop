@@ -4,7 +4,9 @@ title: "Bitbucket Integration"
 
 Ensure [developer mode](https://support.atlassian.com/bitbucket-cloud/docs/enable-bitbucket-cloud-development-mode/) is enabled in your Atlassian account.
 
-Start an [ngrok](https://ngrok.com/) tunnel (or equivalent) using the [subdomain option](https://ngrok.com/docs#http-subdomain).
+Start an [ngrok](https://ngrok.com/) tunnel (or equivalent) using the [subdomain option](https://ngrok.com/docs#http-subdomain), for example: 
+
+`./ngrok http -subdomain={YOUR_SUBDOMAIN} 8000`
 
 In Sentry navigate to **Settings > Integrations > Bitbucket**. Click "Add Installation". 
 
