@@ -244,6 +244,7 @@ export default () => {
         </div>
 
         <ul className="list-unstyled" data-sidebar-tree>
+          {/* this list is alphabetized */}
           <SidebarLink to="/integrations/">Overview</SidebarLink>
           <SidebarLink to="/integrations/azuredevops/">Azure DevOps</SidebarLink>
           <SidebarLink to="/integrations/bitbucket/">Bitbucket</SidebarLink>
