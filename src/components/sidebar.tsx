@@ -245,12 +245,13 @@ export default () => {
 
         <ul className="list-unstyled" data-sidebar-tree>
           <SidebarLink to="/integrations/">Overview</SidebarLink>
+          <SidebarLink to="/integrations/azuredevops/">Azure DevOps</SidebarLink>
+          <SidebarLink to="/integrations/bitbucket/">Bitbucket</SidebarLink>
           <SidebarLink to="/integrations/github/">GitHub</SidebarLink>
+          <SidebarLink to="/integrations/gitlab/">GitLab</SidebarLink>
+          <SidebarLink to="/integrations/msteams/">Microsoft Teams</SidebarLink>
           <SidebarLink to="/integrations/slack/">Slack</SidebarLink>
           <SidebarLink to="/integrations/vercel/">Vercel</SidebarLink>
-          <SidebarLink to="/integrations/msteams/">Microsoft Teams</SidebarLink>
-          <SidebarLink to="/integrations/gitlab/">GitLab</SidebarLink>
-          <SidebarLink to="/integrations/bitbucket/">Bitbucket</SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
