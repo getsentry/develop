@@ -21,8 +21,8 @@ const CreateGitHubAppForm = ({
   // This is to avoid in case multiple instances of this component are used on the page
   const randomCounter = Math.round(Math.random() * MAX_COMPONENTS_ON_PAGE);
 
-  const orgSlugRef = useRef();
-  const urlPrefixRef = useRef();
+  const orgSlugRef = useRef<HTMLInputElement>();
+  const urlPrefixRef = useRef<HTMLInputElement>();
 
   return (
     <table>
@@ -64,7 +64,7 @@ const CreateGitHubAppForm = ({
         </td>
       </tr>
       <tr>
-        <td colSpan="2" align="right">
+        <td colSpan={2} align="right">
           {" "}
           <button
             type="button"

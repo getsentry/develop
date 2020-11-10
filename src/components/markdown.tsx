@@ -13,6 +13,7 @@ import ConfigValue from "./configValue";
 import Note from "./note";
 import PageGrid from "./pageGrid";
 import DefinitionList from "./definitionList";
+import CreateGitHubAppForm from "./createGitHubAppForm";
 
 const mdxComponents = {
   Alert,
@@ -25,6 +26,7 @@ const mdxComponents = {
   Note,
   PageGrid,
   DefinitionList,
+  CreateGitHubAppForm,
 };
 
 export default ({ value }) => {
