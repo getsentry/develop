@@ -1,60 +1,34 @@
 # develop
 
-Welcome to Sentry's Developer documentation!
+Welcome to [Sentry's Developer documentation](https://develop.sentry.dev)!
 
 ## Quickstart
 
-Simply run 
+Simply run the following:
 
 ```shell
  yarn run init
  yarn run develop
 ```
 
-## Get the Config Ready
+Open the docs on your browser at http://localhost:8000/
 
-Copy the example configuration (and update if needed):
+NOTES:
+* `yarn run init` copies `.env.example` to `.env.development`.
+* No need to install `gatsby-cli` globally
+* Docs live in `docs/` and `pages/`.
 
-```shell
-cp .env.example .env.development
-```
+## Making Search Changes
 
-## Running it with Yarn and/or Volta
-
-No need to install `gatsby-cli` globally
-
-```shell
-yarn install
-yarn gatsby develop
-```
-
-Docs live in `docs/` and `pages/`.
-
-https://www.gatsbyjs.org/docs/
-
-### Alternatively
-
-Install Gatsby:
-
-```shell
-npm install -g gatsby-cli
-```
-
-Run the development server:
-
-```shell
-gatsby develop
-```
-
-Docs live in `docs/` and `pages/`.
-
-### Testing Search
-
-Search is built with Algolia. At some point may wish to test index changes or other changes to search behavior. To do this you'll need to run `gatsby build` with a special flag to write to your development environment:
+The search functionality is built with [Algolia](https://www.algolia.com/doc/api-client/getting-started/install/javascript/?language=javascript). If you wish to test index changes or other changes to the searching behavior. To do this you'll need to generate a production build with a special flag to write to your development environment:
 
 ```
-GATSBY_ENV=development gatsby build
+GATSBY_ENV=development yarn gatsby build
 ```
+
+NOTES:
+* Using `GATSBY_ENV=development` allows you to reuse the `.env.development` file
+* The contents will be placed under `public/`
 
 You will also need to configure the following in your `.env.development`:
 
