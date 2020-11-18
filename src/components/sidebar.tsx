@@ -250,6 +250,7 @@ export default () => {
           <SidebarLink to="/integrations/bitbucket/">Bitbucket</SidebarLink>
           <SidebarLink to="/integrations/github/">GitHub</SidebarLink>
           <SidebarLink to="/integrations/gitlab/">GitLab</SidebarLink>
+          <SidebarLink to="/integrations/jira/">Jira</SidebarLink>
           <SidebarLink to="/integrations/msteams/">Microsoft Teams</SidebarLink>
           <SidebarLink to="/integrations/slack/">Slack</SidebarLink>
           <SidebarLink to="/integrations/vercel/">Vercel</SidebarLink>
