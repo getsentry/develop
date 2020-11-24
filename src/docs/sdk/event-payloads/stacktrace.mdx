@@ -109,7 +109,17 @@ The following attributes are primarily used for C-based languages:
 : An optional instruction address for symbolication. This should be a string
 with a hexadecimal number that includes a `0x` prefix. If this is set and a
 known image is defined in the [Debug Meta Interface](/sdk/event-payloads/debugmeta/), then
-symbolication can take place.
+symbolication can take place.  Note that when `in_image` is provided the value
+is considered to be relative within the image, otherwise absolute in the
+unified address space.
+
+`in_image`
+
+: Optionally a reference into the `images` array in the `debug_meta` interface.
+When provided this must be the `debug_id` of the image in question.  This changes
+the addressing mode from absolute in address space to absolute within the target
+image.  This for instance is necessary for WASM processing as WASM does not use
+a unified address space.
 
 `symbol_addr`
 
