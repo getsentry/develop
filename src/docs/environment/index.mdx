@@ -2,11 +2,11 @@
 title: "Environment"
 ---
 
-*NOTE*: There's some documented known issues at the bottom of this page.
-
 This guide steps you through configuring a local development environment for the Sentry server on macOS. If you're using 
 another operating system the instructions are still roughly the same, but we don't maintain any official documentation 
 for anything else for now.
+
+Read about known issues in [the troubleshooting section](#troubleshooting).
 
 ## Clone the Repository
 
@@ -21,18 +21,30 @@ You're going to be working out of this repository for the remainder of the setup
 
 ## System Dependencies
 
-You'll need to first install Xcode CLI tools. (If you try running `git` or `make`, you'll get an xcrun error). Run 
-`xcode-select --install` and follow the instructions.
+### Xcode CLI tools
 
-Once you have Xcode installed, install [Homebrew](http://brew.sh), and then run `brew bundle --verbose` to install
+You'll need to first install Xcode CLI tools. Run this command and follow the instructions:
+
+```shell
+xcode-select --install
+```
+
+### Brew
+
+Once you have Xcode installed, install [Homebrew](http://brew.sh), and then the following command to install
 the various system packages as listed in Sentry's `Brewfile`.
+
+```shell
+brew bundle --verbose
+```
+
+### Docker
 
 One thing that requires manual attention is `docker`, which should have just been installed. Open up Spotlight,
 search for "Docker" and start it. You should soon see the Docker icon in your macOS menubar. Docker will automatically
 run on system restarts, so this should be the only time you do this.
 
-You can verify that Docker is running by running `docker ps` in your terminal. If it doesn't error with something
-like `Error response from daemon: dial unix docker.raw.sock: connect: connection refused`, you're good to continue.
+You can verify that Docker is running by running `docker ps` in your terminal.
 
 ## Build Toolchain
 
@@ -56,11 +68,26 @@ rustup update stable
 
 ## Python
 
+<Alert title="Python 2 notice" level="info">
+
+We've recently switched our development environment to use Python 3 by default. Temporarily you will still be able
+to set things up with Python 2 by running this command (it will be read by the setup scripts)
+
+</Alert>
+
+```
+export SENTRY_PYTHON2=1
+```
+
 We utilize [pyenv](https://github.com/pyenv/pyenv) to install and manage Python versions. It should have already been
 installed earlier when you ran `brew bundle`.
 
-To install the required versions of Python you'll need to run `make setup-pyenv`. This will take a while, since your
+To install the required versions of Python you'll need to run the following command. This will take a while, since your
 computer is actually compiling Python!
+
+```shell
+make setup-pyenv
+```
 
 After this, if you type `which python`, you should see something like `/usr/bin/python`... this means `python` will
 resolve to the system's Python. You'll need to make some manual changes to your shell initialization files, if you
