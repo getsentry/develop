@@ -328,7 +328,8 @@ leading 16 bytes.
 
 : _Optional_: Name or absolute URL to the WASM file containing debug
 information for this image. This value might be required to retrieve debug
-files from certain symbol servers.
+files from certain symbol servers. This should correspond to the externalized
+URL pulled from the `external_debug_info` custom section.
 
 `code_id`
 
@@ -338,7 +339,7 @@ the section contains a UUID (16 bytes).
 
 `code_file`
 
-: _Optional_. The absolute URL to the wasm file. This helps
+: **Required**. The absolute URL to the wasm file. This helps
 to locate the file if it is missing on Sentry.
 
 Example:
