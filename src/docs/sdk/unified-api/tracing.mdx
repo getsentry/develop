@@ -43,6 +43,12 @@ Apart from that, the `Event` gets new fields: `spans`, `contexts.TraceContext`.
 
 ## New `Span` and `Transaction` Classes
 
+In memory, spans build up a conceptual tree of timed operations. We call the whole span tree a transaction. Sometimes we use the term "transaction" to refer to a span tree as a whole tree, sometimes to refer specifically to the root span of the tree.
+
+Over the wire, transactions are serialized to JSON as an augmented `Event`, and sent as envelopes. The different envelope types are for optimizing ingestion (so we can route "transaction events" differently than other events, mostly "error events").
+
+In the Sentry UI, you can use Discover to look at all events regardless of type, and the Issues and Performance sections to dive into errors and transactions, respectively. The [user-facing tracing documentation](https://docs.sentry.io/product/performance/distributed-tracing/#traces-transactions-and-spans) explains more of the concepts on the product level.
+
 The [Span](/sdk/event-payloads/span/) class stores each individual span in a
 trace.
 
@@ -130,6 +136,8 @@ Depending on the platform, other default data may be included. (For example, for
 A transaction's sampling decision should be passed to all of its children, including across service boundaries. This can be accomplished in the `startChild` method for same-service children and using the `senry-trace` header for children in a different service.
 
 ## Header `sentry-trace`
+
+The header is used for trace propagation. SDKs use the header to continue traces from upstream services (incoming HTTP requests), and to propagate tracing information to downstream services (outgoing HTTP requests).
 
 `sentry-trace = traceid-spanid-sampled`
 
