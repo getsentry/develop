@@ -181,6 +181,7 @@ export default () => {
 
         <ul className="list-unstyled" data-sidebar-tree>
           <SidebarLink to="/sdk/philosophy/">Philosophy</SidebarLink>
+          <SidebarLink to="/sdk/basics/">Basics</SidebarLink>
           <SidebarLink to="/sdk/overview/">Overview</SidebarLink>
           <SidebarLink to="/sdk/unified-api/" title="Unified API">
             <SidebarLink to="/sdk/unified-api/tracing">
