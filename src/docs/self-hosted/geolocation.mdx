@@ -1,0 +1,26 @@
+---
+title: 'Self-Hosted Geolocation'
+---
+
+Sentry can use [MaxMind's free GeoLite2 database](https://dev.maxmind.com/geoip/geoip2/geolite2/) to geolocate IP addresses, providing additional context for error events where the end-user's IP address is known, as well as for the session history of users logging into your Sentry installation. Our on-premise offering bundles MaxMind's [`geoipupdate`](https://hub.docker.com/r/maxmindinc/geoipupdate) tool for initially downloading and periodically updating this dataset. To enable this functionality, you should sign up for [a free MaxMind account](https://www.maxmind.com/en/geolite2/signup), and then tell Sentry about your credentials via a [`docker-compose.override.yml`](https://docs.docker.com/compose/extends/#understanding-multiple-compose-files) file, like so:
+
+```yaml
+version: '3.4'
+services:
+  geoipupdate:
+    environment:
+      GEOIPUPDATE_ACCOUNT_ID: 012345
+      GEOIPUPDATE_LICENSE_KEY: foobar
+```
+
+By default, `onpremise` is configured to refresh the GeoLite2 database when the `geoipupdate` service first starts, and weekly thereafter. You can change the update frequency with an additional override:
+
+```yaml
+version: '3.4'
+services:
+  geoipupdate:
+    environment:
+      GEOIPUPDATE_ACCOUNT_ID: 012345
+      GEOIPUPDATE_LICENSE_KEY: foobar
+      GEOIPUPDATE_FREQUENCY: 24 # hours
+```

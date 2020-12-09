@@ -102,11 +102,12 @@ export default () => {
         </div>
         <ul className="list-unstyled" data-sidebar-tree>
           <SidebarLink to="/self-hosted/">Overview</SidebarLink>
+          <SidebarLink to="/self-hosted/email/">Email</SidebarLink>
+          <SidebarLink to="/self-hosted/geolocation/">Geolocation</SidebarLink>
           <SidebarLink to="/self-hosted/sso/">Single Sign-On (SSO)</SidebarLink>
           <SidebarLink to="/self-hosted/releases/">
             Versioning & Releases
           </SidebarLink>
-          <SidebarLink to="/self-hosted/email/">Email</SidebarLink>
           <SidebarLink to="/self-hosted/support/">Support</SidebarLink>
         </ul>
       </li>
