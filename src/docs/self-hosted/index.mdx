@@ -16,7 +16,7 @@ You are very likely to want to change the default configuration for Sentry. Here
 
 1. For more advanced things, you can have a look at [`sentry/sentry.conf.example.py`](https://github.com/getsentry/onpremise/blob/master/sentry/sentry.conf.example.py).
 
-1. You can also use [`docker-compose.override.yml`](https://docs.docker.com/compose/extends/#understanding-multiple-compose-files) to override [our `docker-compose.yml`](https://github.com/getsentry/onpremise/blob/master/docker-compose.yml). This is especially helpful for the few places where we depend on environment variables, such as <Link to="/self-hosted/geolocation/">geolocation</Link>.
+1. There are a few places where we depend on environment variables, such as <Link to="/self-hosted/geolocation/">geolocation</Link>.
 
 <Alert title="Note" level="info">
   Once you change your configuration, you'll need to restart all Sentry services by running <code>docker-compose restart web worker cron sentry-cleanup</code> (or just <code>docker-compose restart</code> to restart everything).
