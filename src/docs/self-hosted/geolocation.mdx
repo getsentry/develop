@@ -2,17 +2,16 @@
 title: 'Self-Hosted Geolocation'
 ---
 
-Sentry can use [MaxMind's free GeoLite2 database](https://dev.maxmind.com/geoip/geoip2/geolite2/) to geolocate IP addresses, providing additional context for error events where the end-user's IP address is known, as well as for the session history of users logging into your Sentry installation. Our self-hosted offering bundles MaxMind's [`geoipupdate`](https://hub.docker.com/r/maxmindinc/geoipupdate) tool for initially downloading and periodically updating this dataset. To enable this functionality, you should [sign up for a free MaxMind account](https://www.maxmind.com/en/geolite2/signup), and then tell Sentry about your credentials via environment variables.
+Sentry can use [MaxMind's free `GeoLite2-City` database](https://dev.maxmind.com/geoip/geoip2/geolite2/) to geolocate IP addresses, providing additional context for error events where the end-user's IP address is known, and for the session history of users logging into your Sentry installation. We bundle MaxMind's [`geoipupdate`](https://hub.docker.com/r/maxmindinc/geoipupdate) tool for this purpose. To enable IP address geolocation, [sign up for a free MaxMind account](https://www.maxmind.com/en/geolite2/signup), and then tell Sentry about your credentials by placing your MaxMind configuration file at `geoip/GeoIP.conf`.
 
-```shell
-export GEOIPUPDATE_ACCOUNT_ID="012345"
-export GEOIPUPDATE_LICENSE_KEY="foobar"
+```
+AccountID 012345
+LicenseKey foobarbazbuz
+EditionIDs GeoLite2-City
 ```
 
-By default, self-hosted instances are configured to refresh the GeoLite2 database when the `geoipupdate` service first starts, and weekly thereafter. You can change the update frequency with an additional override:
+With this configuration file in place, subsequent runs of Sentry's `install.sh` will refresh the IP address geolocation database, and the next time you restart your self-hosted Sentry instance (the `relay` and `web` services, in particular), you should start seeing the latest data. Here's how to confirm that it's working:
 
-```shell
-export GEOIPUPDATE_ACCOUNT_ID="012345"
-export GEOIPUPDATE_LICENSE_KEY="foobar"
-export GEOIPUPDATE_FREQUENCY="24" # hours
-```
+1. For the `relay` service: Dashboards > Errors by Country should have some purple on it.
+
+1. For the `web` service: User Settings > Security > Session History should show country code and region (e.g., "US (CA)") underneath the IP addresses in the table.
