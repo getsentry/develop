@@ -18,7 +18,7 @@ You very likely will want to adjust the default configuration for Sentry. These 
 
 1. There are a few places where we depend on environment variables. The keys are defined in [.env](https://github.com/getsentry/onpremise/blob/master/.env), though if you need to override any of them we expect you to use some other means of setting environment variables dependent on your system.
 
-1. <Link to="/self-hosted/geolocation/">Geolocation</Link> uses a custom configuration file to conform to the underlying technology.
+1. [Geolocation](/self-hosted/geolocation/) uses a custom configuration file to conform to the underlying technology.
 
 <Alert title="Note" level="info">
   Once you change your configuration, you'll need to restart all Sentry services by running <code>docker-compose restart web worker cron sentry-cleanup</code> (or just <code>docker-compose restart</code> to restart everything).
@@ -26,9 +26,9 @@ You very likely will want to adjust the default configuration for Sentry. These 
 
 Here is further information on specific configuration topics:
 
-- <Link to="/self-hosted/email/">Email</Link>
-- <Link to="/self-hosted/geolocation/">Geolocation</Link>
-- <Link to="/self-hosted/sso/">Single Sign-On (SSO)</Link>
+- [Email](/self-hosted/email/)
+- [Geolocation](/self-hosted/geolocation/)
+- [Single Sign-On (SSO)](/self-hosted/sso/)
 
 ## Troubleshooting
 
