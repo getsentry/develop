@@ -247,21 +247,21 @@ segments is that each segment is **OR**ed together, and each constraint is
 Properties are a preset dictionary that get sent to flagr by sentry, these depend
 on the organization or project being passed to `features.has`
 
-| Property                        | Value Types  | Notes/Example config               |
-| :-----------------------------  | :----------- | :--------------------------------- |
-| `organization_id`               | `int`        |                                    |
-| `organization_slug`             | `string`     | [Example](#releasing-a-feature-to-a-subset-of-organizations) |
-| `organization_is-early-adopter` | `bool`       | Users opt in from settings, [example](#releasing-a-feature-to-early-adopters) |
-| `features`                      | `[string]`   | All active features for org        |
-| `subscription_is-free`          | `bool`       |                                    |
-| `subscription_is-trial-plan`    | `bool`       |                                    |
-| `subscription_plan`             | `string`     | [Example](#releasing-a-feature-to-organizations-with-specific-plans) |
-| `project_slug`                  | `string`     | Only passed for projects           |
-| `project_id`                    | `int`        | Only passed for projects           |
-| `user_id`                       | `int`        |                                    |
-| `user_domain`                   | `string`     |                                    |
-| `user_is-superuser`             | `bool`       |                                    |
-| `user_is-staff`                 | `bool`       |                                    |
+| Property                        | Value Types  | Notes/Example config                                                                   |
+| :-----------------------------  | :----------- | :------------------------------------------------------------------------------------- |
+| `organization_id`               | `int`        |                                                                                        |
+| `organization_slug`             | `string`     | [Example](#releasing-a-feature-to-a-subset-of-organizations)                           |
+| `organization_is-early-adopter` | `bool`       | Users opt in from settings, [example](#releasing-a-feature-to-early-adopters)          |
+| `features`                      | `[string]`   | All active features for org                                                            |
+| `subscription_is-free`          | `bool`       |                                                                                        |
+| `subscription_is-trial-plan`    | `bool`       |                                                                                        |
+| `subscription_plan`             | `string`     | [Example](#releasing-a-feature-to-organizations-with-specific-plans)                   |
+| `project_slug`                  | `string`     | Only passed for projects                                                               |
+| `project_id`                    | `int`        | Only passed for projects                                                               |
+| `user_id`                       | `int`        |                                                                                        |
+| `user_domain`                   | `string`     |                                                                                        |
+| `user_is-superuser`             | `bool`       |                                                                                        |
+| `user_is-staff`                 | `bool`       |                                                                                        |
 | `team_slugs`                    | `[string]`   | Use with an organization condition, [example](#releasing-a-feature-to-a-specific-team) |
 
 More properties can be added by updating `FlagrFeatureHandler.get_context`
