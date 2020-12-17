@@ -250,8 +250,8 @@ Fingerprints](https://docs.sentry.io/data-management/event-grouping/).
   declared in the Sentry [EventError] model. If there is no applicable type
   variant, consider [opening an issue] to suggest the addition.
 
-  Apart from types, any attribute is valid. There is a set of conventions for
-  common error attributes:
+  Apart from types, any attribute is valid. There are conventions for the
+  semantics of common error attributes, if they are included:
 
 - `name`: A string declaring the path to the payload field that causes or
   exhibits the error. For example `modules[0].name`.
