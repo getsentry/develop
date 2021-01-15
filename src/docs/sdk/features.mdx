@@ -107,12 +107,19 @@ Envelope item:
  
 ## Attachments
 
-Attachments are files stored alongside an event or transaction. To send an attachment, add it as an [envelope item](/sdk/envelopes/#attachment)
-to the corresponding event or transaction.
+Attachments are files stored alongside an event. To send an attachment, add it as an [envelope item](/sdk/envelopes/#attachment)
+to the corresponding event.
 
 We recommend implementing two types of attachments, one with a path and another with a byte array.
 If the programming language allows it, create one class with multiple constructors to keep things simple and guess the content type
-of the attachment via the filename. Use the implementations of [Java](https://github.com/getsentry/sentry-java/blob/main/sentry/src/main/java/io/sentry/Attachment.java),
+of the attachment via the filename. 
+
+The overload that takes a `path` should consider:
+* The SDK should read the file when an event gets captured and not when the user adds an attachment to the scope.
+* If reading the attachment fails, the SDK should not drop the whole envelope, but just the attachment's envelope item.
+* If the SDK is in debug mode log (`debug=true`) out errors to make debugging easier.
+
+Use the implementations of [Java](https://github.com/getsentry/sentry-java/blob/main/sentry/src/main/java/io/sentry/Attachment.java),
 [Objective-C](https://github.com/getsentry/sentry-cocoa/blob/master/Sources/Sentry/SentryAttachment.m), or
 [Python](https://github.com/getsentry/sentry-python/blob/master/sentry_sdk/attachments.py) as a reference for the API.
 
