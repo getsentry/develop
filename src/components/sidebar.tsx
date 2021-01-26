@@ -184,15 +184,12 @@ export default () => {
           <SidebarLink to="/sdk/philosophy/">Philosophy</SidebarLink>
           <SidebarLink to="/sdk/basics/">Basics</SidebarLink>
           <SidebarLink to="/sdk/overview/">Overview</SidebarLink>
-          <SidebarLink to="/sdk/unified-api/" title="Unified API">
-            <SidebarLink to="/sdk/unified-api/tracing">
-              Guidelines for Tracing Support
-            </SidebarLink>
-          </SidebarLink>
+          <SidebarLink to="/sdk/unified-api/" title="Unified API"></SidebarLink>
           <SidebarLink to="/sdk/features/">Expected Features</SidebarLink>
           <SidebarLink to="/sdk/data-handling/">Data Handling</SidebarLink>
           <SidebarLink to="/sdk/store/">Store Endpoint</SidebarLink>
           <SidebarLink to="/sdk/envelopes/">Envelopes</SidebarLink>
+          <SidebarLink to="/sdk/performance/">Performance</SidebarLink>
           <SidebarLink to="/sdk/event-payloads/" title="Event Payloads">
             <SidebarLink to="/sdk/event-payloads/transaction/">
               Transaction Type
@@ -248,7 +245,9 @@ export default () => {
         <ul className="list-unstyled" data-sidebar-tree>
           {/* this list is alphabetized */}
           <SidebarLink to="/integrations/">Overview</SidebarLink>
-          <SidebarLink to="/integrations/azuredevops/">Azure DevOps</SidebarLink>
+          <SidebarLink to="/integrations/azuredevops/">
+            Azure DevOps
+          </SidebarLink>
           <SidebarLink to="/integrations/bitbucket/">Bitbucket</SidebarLink>
           <SidebarLink to="/integrations/github/">GitHub</SidebarLink>
           <SidebarLink to="/integrations/gitlab/">GitLab</SidebarLink>
