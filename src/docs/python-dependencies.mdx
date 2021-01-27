@@ -21,7 +21,8 @@ So here are the rules we worked with so far:
 In order to avoid ever breaking master, you can:
 
 1. Open PR in getsentry to update requirements
-2. Open PR in sentry with the same branch name, put [`#sync-getsentry`](/workflow/) in the PR's first comment
+2. Open PR in sentry with the same branch name, put [`#sync-getsentry`](/workflow/) in the PR's description
+   - You can also add it in any other comment, however, you will need to push new changes to trigger the bot
 3. Merge both when both PRs are green
 
 Unfortunately, you'll have to revert the SHA changes made by the sync bot before merging, so this process is elaborate and time-consuming, but by far the safest that never breaks master.
