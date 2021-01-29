@@ -1,0 +1,41 @@
+---
+title: "Self-Hosted Backup & Restore"
+---
+
+## Backup via export
+
+If you need a quick way to backup and restore your Sentry instance and you don't need historical event data, you can use the built in `export` and `import` commands. These commands will save and load all project and user data, but will not contain any event data.
+
+```shell
+docker-compose run --rm -T -e SENTRY_LOG_LEVEL=CRITICAL web export > backup.json
+```
+
+If you omit the `-T` or `-e SENTRY_LOG_LEVEL=CRITICAL` parts, your backup file will have logging lines mixed in and you'll have to remove them somehow.
+
+## Restore via import
+
+Once you have a backup via the `export` command, the easiest way to restore it is to placing it under the `sentry` directory in your main `onpremise` repo, next to the config files. This directory automatically gets mounted to `/etc/sentry` so you can run the following to restore your data:
+
+```shell
+docker-compose run --rm -T web import /etc/sentry/backup.json
+```
+
+If you don't see any errors and the process exits with code `0`, congratulations, you have just restored your data.
+
+It is strongly recommended to restore the data on the same version of Sentry on a fresh install (empty database but migrations are run), as otherwise you are very likely to hit errors and even corrupt your database.
+
+## Total backup/restore via Docker volumes
+
+The ideal way to backup and restore Sentry is to backup and restore all Docker volumes used by it. All volumes that hold critical long-term data are already defined as global volumes at install time and are prefixed with `sentry-`:
+
+- `sentry-data`
+- `sentry-postgres`
+- `sentry-redis`
+- `sentry-zookeeper`
+- `sentry-kafka`
+- `sentry-clickhouse`
+- `sentry-symbolicator`
+
+Only backing up and restoring these volumes should bring back all persisted data. If you also need to back up in-flight data, we recommend backing up any project-specific volumes that `docker-compose` automatically creates, typically with the `sentry_onpremise_sentry-` prefix.
+
+Docker documents [how to backup and restore volumes](https://docs.docker.com/storage/volumes/#backup-restore-or-migrate-data-volumes) on their documentation. You may use different methods too as long as the volumes can be read back without issues.
