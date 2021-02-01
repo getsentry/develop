@@ -70,7 +70,7 @@ sentry config generate-secret-key
 
 Sentry logs to two major places — `stdout`, and its internal project. To disable logging to the internal project, add a logger whose only handler is `'console'` and disable propagating upwards.
 
-<Alert title="Note" level="warning">
+<Alert level="warning">
 You will find the CLI flag and the environment variables related to logging below. They override the
 root logger and anything in <code>LOGGING.overridable</code>. Be very careful with these
 in a production system, because the Celery logger can be extremely verbose when set to INFO or DEBUG.
