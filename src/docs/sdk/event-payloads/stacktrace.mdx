@@ -7,16 +7,16 @@ A stack trace contains a list of frames, each with various bits (most optional)
 describing the context of that frame. Frames should be sorted from oldest to
 newest.
 
-<Note><markdown>
+<Alert title="Note" level="info">
+  Stack traces are always part of an exception or a thread. They cannot be
+  declared as a top-level event property. When adding a stack trace to an event,
+  follow this rule of thumb:
 
-Stack traces are always part of an exception or a thread. They cannot be
-declared as a top-level event property. When adding a stack trace to an event,
-follow this rule of thumb:
-
-- If the stack trace is part of an error, exception or crash, add it to the [Exception Interface](/sdk/event-payloads/exception/).
-- Otherwise, add it as a thread in the [Threads Interface](/sdk/event-payloads/threads/).
-
-</markdown></Note>
+  <ul>
+    <li>If the stack trace is part of an error, exception or crash, add it to the <Link to="/sdk/event-payloads/exception/">Exception Interface</Link>.
+    <li>Otherwise, add it as a thread in the <Link to="/sdk/event-payloads/threads/">Threads Interface</Link>.
+  </ul>
+</Alert>
 
 ## Attributes
 
@@ -109,22 +109,22 @@ The following attributes are primarily used for C-based languages:
 : An optional instruction address for symbolication. This should be a string
 with a hexadecimal number that includes a `0x` prefix. If this is set and a
 known image is defined in the [Debug Meta Interface](/sdk/event-payloads/debugmeta/), then
-symbolication can take place.  Note that the `addr_mode` attribute can
+symbolication can take place. Note that the `addr_mode` attribute can
 control the behavior of this address.
 
 `addr_mode`
 
-: Optionally changes the addressing mode.  The default value is the same as `"abs"`
-which means absolute referencing.  This can also be set to `"rel:DEBUG_ID"` or
+: Optionally changes the addressing mode. The default value is the same as `"abs"`
+which means absolute referencing. This can also be set to `"rel:DEBUG_ID"` or
 `"rel:IMAGE_INDEX"` to make addresses relative to an object referenced by debug id
-or index.  This for instance is necessary for WASM processing as WASM does not use
+or index. This for instance is necessary for WASM processing as WASM does not use
 a unified address space.
 
 `symbol_addr`
 
 : An optional address that points to a symbol. We use the instruction
 address for symbolication, but this can be used to calculate an instruction
-offset automatically.  Note that the `addr_mode` attribute can
+offset automatically. Note that the `addr_mode` attribute can
 control the behavior of this address.
 
 `image_addr`
