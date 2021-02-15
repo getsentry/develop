@@ -109,6 +109,9 @@ export default () => {
           <SidebarLink to="/self-hosted/releases/">
             Versioning & Releases
           </SidebarLink>
+          <SidebarLink to="/self-hosted/troubleshooting/">
+            Troubleshooting
+          </SidebarLink>
           <SidebarLink to="/self-hosted/support/">Support</SidebarLink>
         </ul>
       </li>
