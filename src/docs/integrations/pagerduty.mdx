@@ -1,0 +1,41 @@
+---
+title: "PagerDuty Integration"
+---
+
+## Create a PagerDuty app
+1. In PagerDuty, in the top right, click on "Developer mode"
+1. Select "Create New App"
+
+When configuring the app, use the following values:
+
+| Setting                                                                                                | Value                                         |
+| ------------------------------------------------------------------------------------------------------ | --------------------------------------------- |
+| App Name                                                                                               | Sentry                                        |
+| Brief Description                                                                                      | Trigger alerts through Sentry                 |
+| Category                                                                                               | Error tracking                                |
+| Do you intend to publish the app for all PagerDuty users and the app ecosystem?                        | No, I am not interested                                |
+
+## Configure the PagerDuty app
+Once on the integration page in PagerDuty, under Functionality > Events Integration, click on "Add".
+
+When configuring the events integration, use the following values:
+
+| Setting                         | Value                                         |
+| ------------------------------- | --------------------------------------------- |
+| Transform Event Data            | No                                            |
+| Change Events                   | No                                            |
+| Redirect URLs                   | `{YOUR_DOMAIN}/extensions/pagerduty/setup/`   |
+
+At this point, note the *Integration Setup URL*. It should look something like this: `app.pagerduty.com/install/integration?app_id=PV5SD0T&redirect_url={YOUR_DOMAIN}/extensions/pagerduty/setup/&version=2`
+
+Copy the App ID (in this case `PV5SD0T`).
+
+## Enable the integration in Sentry
+
+Add the App ID to your `config.yml` for Sentry:
+
+```yml
+pagerduty.app-id: 'PV5SD0T'
+```
+
+Restart your Sentry instance and follow our [documentation on configuring the PagerDuty integration](https://docs.sentry.io/product/integrations/pagerduty/) to use the integration.
