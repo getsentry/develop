@@ -95,6 +95,6 @@ Set the new run configuration's parameters to a `run` command that launches the 
 
 ![img/PycharmRunConfigEnvVar.png](img/PycharmRunConfigEnvVar.png)
 
-- If your individually-run daemons are not working, you can troubleshoot by debugging `devserver --debug-server` and inserting breakpoints on `src/sentry/runner/commands/devserver.py`. This will let you manually inspect the commands that the `devserver` command running. (Look for the `manager.add_process` call near the bottom.) Try adjusting the parameters in your run configs to match those commands if they don't already.
+- If your individually-run daemons are not working, you can troubleshoot by debugging `devserver --debug-server` and inserting breakpoints on `src/sentry/runner/commands/devserver.py`. This will let you manually inspect the commands that the `devserver` command is running. (Look for the `manager.add_process` call near the bottom.) Try adjusting the parameters in your run configs to match those commands if they don't already.
 
 ![img/DevserverTroubleshooting.png](img/DevserverTroubleshooting.png)
