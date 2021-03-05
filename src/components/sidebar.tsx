@@ -43,6 +43,7 @@ export default () => {
           <SidebarLink to="/inclusion/">Inclusive Language</SidebarLink>
           <SidebarLink to="/translations/">Translations</SidebarLink>
           <SidebarLink to="/code-review/">Code Review</SidebarLink>
+          <SidebarLink to="/processing-tickets/">Processing Issues & PRs</SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
