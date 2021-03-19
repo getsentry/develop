@@ -2,8 +2,9 @@
 title: Using Hooks
 ---
 
-React and the react ecosystem are beginning to expose more functionality via
-'hooks'. Hooks are a convenient way to add state and side-effects to functional
+To help make components easier to re-use and simpler to understand React
+and the react ecosystem have been trending towards functional components and
+hooks. Hooks are a convenient way to add state and side-effects to functional
 components. They also provide a convenient way for libraries to expose behavior.
 
 While we are generally in favour of hooks we have some recommendations about how
@@ -21,10 +22,11 @@ complex APIs or larger bundle sizes.
 
 ### Using React's built-in hooks
 
-The `useState`, `useMemo`, `useContext`, and `useRef` are welcome in any
-functional component. They are generally a good choice in presentational
-components that need a small amount of state. For example, a component with
-a slide out or expandable state.
+The `useState`, `useMemo`, `useCallback`, `useContext`, and `useRef` are welcome
+in any functional component. They are generally a good choice in presentational
+components that need a small amount of state, or access to react primitives like
+references and context. For example, a component with a slide out or expandable
+state.
 
 The `useEffect` hook is more complex and you need to be careful to track your
 dependencies and ensure that subscriptions are cancelled through a cleanup
@@ -37,9 +39,12 @@ pattern, so at this time avoid `useReducer`.
 
 ### Using context
 
-As we plan to move away from Reflux, hooks provide a simpler implementation
-option to share state and behavior. When you need to create new sources of
-shared state, consider using context and `useContext` over reflux.
+As we plan our path away from Reflux, the `useContext` hook provide a simpler
+implementation option to share state and behavior. When you need to create new
+sources of shared state, consider using context and `useContext` over reflux.
+Additionally the [wormhole state management
+pattern](https://swizec.com/blog/wormhole-state-management) can be leveraged to 
+expose shared state and mutation functions.
 
 ### Be aware of the rules and caveats of hooks
 
