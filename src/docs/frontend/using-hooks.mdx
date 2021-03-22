@@ -10,7 +10,7 @@ components. They also provide a convenient way for libraries to expose behavior.
 While we are generally in favour of hooks we have some recommendations about how
 hooks should be used with the Sentry front-end.
 
-### Using Hooks from Libraries
+### Using hooks from libraries
 
 If a library provides hooks you should use them. Often this will be the only way
 to consume a library. For example `dnd-kit` exposes all of its primitives via
@@ -21,7 +21,7 @@ with cleaner, simpler APIs, and smaller bundle sizes over ones with larger more
 complex APIs or larger bundle sizes.
 
 
-### Using React's built-in hooks
+### Using react's built-in hooks
 
 The `useState`, `useMemo`, `useCallback`, `useContext`, and `useRef` are welcome
 in any functional component. They are generally a good choice in presentational
@@ -48,7 +48,7 @@ pattern](https://swizec.com/blog/wormhole-state-management) can be leveraged to
 expose shared state and mutation functions.
 
 
-### Using Custom Hooks
+### Using custom hooks
 
 Custom hooks can be created to share reusable logic in the application. When creating a custom hook, 
 the function name must follow the convention, starting with "use" (`useTheme`, for example) 
@@ -71,7 +71,7 @@ based and will be for a long time. Keep this in mind as you build views. You'll
 need additional wrapper components to access hooks or convert hook state into
 props for your `AsyncComponent`.
 
-### Don't Rewrite for hooks
+### Don't rewrite for hooks
 
 While hooks can be ergonomic in new code we should *avoid* rewriting existing
 code to leverage hooks. Rewriting takes time, exposes us to risk and provides
