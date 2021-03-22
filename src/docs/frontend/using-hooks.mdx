@@ -20,6 +20,7 @@ We don't prefer libraries that use or don't use hooks. Instead favour libraries
 with cleaner, simpler APIs, and smaller bundle sizes over ones with larger more
 complex APIs or larger bundle sizes.
 
+
 ### Using React's built-in hooks
 
 The `useState`, `useMemo`, `useCallback`, `useContext`, and `useRef` are welcome
@@ -45,6 +46,13 @@ sources of shared state, consider using context and `useContext` over reflux.
 Additionally the [wormhole state management
 pattern](https://swizec.com/blog/wormhole-state-management) can be leveraged to 
 expose shared state and mutation functions.
+
+
+### Using Custom Hooks
+
+Custom hooks can be created to share reusable logic in the application. When creating a custom hook, 
+the function name must follow the convention, starting with "use" (`useTheme`, for example) 
+and it's fine to call other hooks inside of custom hooks.
 
 ### Be aware of the rules and caveats of hooks
 
