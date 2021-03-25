@@ -30,7 +30,7 @@ This should be a callback, called when a transaction is started, which will be g
 
 Optionally, the `tracesSampler` callback can also return a boolean to force a sampling decision (with `false` equivalent to `0.0` and `true` equivalent to `1.0`). If returning two different datatypes isn't an option in the implementing language, this possibility can safely be omitted.
 
-Optionally, the `tracesSampler` callback can also return `null` causing SDK to fallback to a sample rate set with `tracesSampleRate` property.
+Optionally, in some SDKs, the `tracesSampler` callback can also return `null` causing it to behave like not having the callback at all. For example using the sample rate set with `tracesSampleRate` property and inheriting the sampling decision of a trace.
 
 See more about how sampling should be performed below.
 
