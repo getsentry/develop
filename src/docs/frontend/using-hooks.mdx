@@ -7,7 +7,7 @@ and the React ecosystem have been trending towards functional components and
 hooks. Hooks are a convenient way to add state and side-effects to functional
 components. They also provide a convenient way for libraries to expose behavior.
 
-While we are generally in favour of hooks, we have some recommendations about how
+While we are generally in favor of hooks, we have some recommendations about how
 hooks should be used with the Sentry front-end.
 
 ### Using hooks from libraries
@@ -16,7 +16,7 @@ If a library provides hooks you should use them. Often this will be the only way
 to consume a library. For example `dnd-kit` exposes all of its primitives via
 hooks and we should use the library the way it was intended to be used.
 
-We don't prefer libraries that use or don't use hooks. Instead favour libraries
+We don't prefer libraries that use or don't use hooks. Instead favor libraries
 with cleaner, simpler APIs, and smaller bundle sizes over ones with larger more
 complex APIs or larger bundle sizes.
 
@@ -26,21 +26,21 @@ complex APIs or larger bundle sizes.
 The `useState`, `useMemo`, `useCallback`, `useContext`, and `useRef` hooks are welcome
 in any functional component. They are generally a good choice in presentational
 components that need a small amount of state, or access to react primitives like
-references and context. For example, a component with a slide out or expandable
+references and context. For example, a component with a slide-out or expandable
 state.
 
 The `useEffect` hook is more complex and you need to be careful to track your
-dependencies and ensure that subscriptions are cancelled through a cleanup
+dependencies and ensure that subscriptions are canceled through a cleanup
 callback. Complex chained applications of `useEffect` should be avoided and
-'controller' components should remain class based at this time.
+'controller' components should remain class-based at this time.
 
-Likewise the `useReducer` hook overlaps with state-management which currently
+Likewise, the `useReducer` hook overlaps with state-management which currently
 has an undecided future. We would like to avoid *yet another* state management
 pattern, so at this time avoid `useReducer`.
 
 ### Using context
 
-As we plan our path away from Reflux, the `useContext` hook provide a simpler
+As we plan our path away from Reflux, the `useContext` hook provides a simpler
 implementation option to share state and behavior. When you need to create new
 sources of shared state, consider using context and `useContext` instead of Reflux.
 Additionally the [wormhole state management
@@ -60,14 +60,13 @@ React hooks have [a few rules](https://reactjs.org/docs/hooks-rules.html). Be
 aware of the rules and limitations that hooks create. We use the ESLint rules to
 prevent most of the hook rules from being trespassed.
 
-Additionally we recommend keeping your usage of the `useEffect` to a minimum.
+Additionally, we recommend keeping your usage of the `useEffect` to a minimum.
 Using multiple `useEffect` callbacks indicates that you have a component that is
 highly stateful and that you should be using a class component instead.
 
-### Our foundations are still class based
+### Our foundations are still class-based
 
-Our foundational view components (`AsyncView` and `AsyncComponent`) are class
-based and will be for a long time. Keep this in mind as you build views. You'll
+Our foundational view components (`AsyncView` and `AsyncComponent`) are class-based and will be for a long time. Keep this in mind as you build views. You'll
 need additional wrapper components to access hooks or convert hook state into
 props for your `AsyncComponent`.
 
@@ -75,7 +74,7 @@ props for your `AsyncComponent`.
 
 While hooks can be ergonomic in new code we should *avoid* rewriting existing
 code to leverage hooks. Rewriting takes time, exposes us to risk and provides
-very little end user value.
+very little end-user value.
 
 If you need to rework a component to consume hooks from a library, then also
 consider converting from a class to a function component.
