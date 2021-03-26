@@ -2,12 +2,12 @@
 title: Using Hooks
 ---
 
-To help make components easier to re-use and simpler to understand React
-and the react ecosystem have been trending towards functional components and
+To help make components easier to re-use and simpler to understand, React
+and the React ecosystem have been trending towards functional components and
 hooks. Hooks are a convenient way to add state and side-effects to functional
 components. They also provide a convenient way for libraries to expose behavior.
 
-While we are generally in favour of hooks we have some recommendations about how
+While we are generally in favour of hooks, we have some recommendations about how
 hooks should be used with the Sentry front-end.
 
 ### Using hooks from libraries
@@ -23,7 +23,7 @@ complex APIs or larger bundle sizes.
 
 ### Using react's built-in hooks
 
-The `useState`, `useMemo`, `useCallback`, `useContext`, and `useRef` are welcome
+The `useState`, `useMemo`, `useCallback`, `useContext`, and `useRef` hooks are welcome
 in any functional component. They are generally a good choice in presentational
 components that need a small amount of state, or access to react primitives like
 references and context. For example, a component with a slide out or expandable
@@ -42,7 +42,7 @@ pattern, so at this time avoid `useReducer`.
 
 As we plan our path away from Reflux, the `useContext` hook provide a simpler
 implementation option to share state and behavior. When you need to create new
-sources of shared state, consider using context and `useContext` over reflux.
+sources of shared state, consider using context and `useContext` instead of Reflux.
 Additionally the [wormhole state management
 pattern](https://swizec.com/blog/wormhole-state-management) can be leveraged to 
 expose shared state and mutation functions.
