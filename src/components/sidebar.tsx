@@ -132,6 +132,9 @@ export default () => {
           <SidebarLink to="/frontend/defaultprops/">
             Typing DefaultProps
           </SidebarLink>
+          <SidebarLink to="/frontend/using-hooks/">
+            Using hooks
+          </SidebarLink>
           <SidebarLink to="/frontend/migration-gridemotion/">
             Migration - grid-emotion
           </SidebarLink>
