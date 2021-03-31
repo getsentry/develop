@@ -70,6 +70,7 @@ export default () => {
             Database Migrations
           </SidebarLink>
           <SidebarLink to="/testing/">Testing Tips</SidebarLink>
+          <SidebarLink to="/analytics/">Analytics</SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
