@@ -2,8 +2,8 @@
 title: "Environment"
 ---
 
-This guide steps you through configuring a local development environment for the Sentry server on macOS. If you're using 
-another operating system the instructions are still roughly the same, but we don't maintain any official documentation 
+This guide steps you through configuring a local development environment for the Sentry server on macOS. If you're using
+another operating system the instructions are still roughly the same, but we don't maintain any official documentation
 for anything else for now.
 
 This documentation is meant for Mac OS and Linux. Windows is currently unsupported.
@@ -23,9 +23,7 @@ You're going to be working out of this repository for the remainder of the setup
 
 ## System Dependencies
 
-### Mac specific
-
-#### Xcode CLI tools
+### Xcode CLI tools (Mac specific)
 
 You'll need to first install Xcode CLI tools. Run this command and follow the instructions:
 
@@ -42,14 +40,16 @@ the various system packages as listed in Sentry's `Brewfile`.
 brew bundle --verbose
 ```
 
-#### Docker
+### Docker (Mac specific)
 
 One thing that requires manual attention is `docker`, which should have just been installed. You
-can this step or follow the manual steps below:
+can run this step for it to be set up for you or you can follow the manual steps below:
 
 ```shell
-make init-docker
+SENTRY_NO_VENV_CHECK=1 ./scripts/do.sh init-docker
 ```
+
+#### Manual steps
 
 Open up Spotlight, search for "Docker" and start it. You should soon see the Docker icon in
 your macOS menubar. Docker will automatically run on system restarts, so this should be the
@@ -145,27 +145,28 @@ startup script:
 ```shell {filename: ~/.bashrc} {tabTitle: Bash}
 export VOLTA_HOME="~/.volta"
 grep --silent "$VOLTA_HOME/bin" <<< $PATH || export PATH="$VOLTA_HOME/bin:$PATH"
-```
+
+````
 
 ```shell {filename: ~/.zshrc} {tabTitle: Zsh}
 export VOLTA_HOME="~/.volta"
 grep --silent "$VOLTA_HOME/bin" <<< $PATH || export PATH="$VOLTA_HOME/bin:$PATH"
-```
+````
 
 ```shell {filename: ~/.config/fish/config.fish} {tabTitle: Fish}
 set -gx VOLTA_HOME "$HOME/.volta"
-set -gx PATH "$VOLTA_HOME/bin" $PATH
-```
+set -gx PATH "$VOLTA_HOME/bin" \$PATH
+
+````
 
 Now, if you try and run `volta`, you should see some help text, meaning volta is installed correctly. To install node,
 simply run:
 
 ```shell
 node -v
-```
+````
 
 Volta intercepts this and automatically downloads and installs the node and yarn versions in sentry's `package.json`.
-
 
 ## Bootstrap Services
 
@@ -177,7 +178,7 @@ The `bootstrap` command does a few things you'll want to know about:
 - `sentry init` creates the baseline Sentry configuration in `~/.sentry/`.
 - `sentry devservices up` spins up required Docker services (such as Postgres and Clickhouse)
 - `sentry upgrade` runs Postgres migrations, and will also prompt you to create a user. You will want to ensure your first
-user is designated as **superuser**.
+  user is designated as **superuser**.
 
 Once this command has finished you'll have Sentry installed in development mode with all its required dependencies.
 
@@ -193,22 +194,24 @@ First, you should be done bootstrapping. Then, run `brew install direnv` and add
 startup script:
 
 ```shell {filename: ~/.bashrc} {tabTitle: Bash}
-eval "$(direnv hook bash)"
-```
+eval "\$(direnv hook bash)"
+
+````
 
 ```shell {filename: ~/.zshrc} {tabTitle: Zsh}
 eval "$(direnv hook zsh)"
-```
+````
 
 ```shell {filename ~/.config/fish/config.fish} {tabTitle: Fish}
 direnv hook fish | source
-```
+
+````
 
 And after doing that, reload your shell:
 
 ```shell
 exec "$SHELL"
-```
+````
 
 Any time the `.envrc` configuration changes (including the first time) you will be prompted to run `direnv allow` before any
 of the configuration will run. This is for security purposes and you are encouraged to inspect the changes before running this command.
@@ -287,6 +290,7 @@ at [http://dev.getsentry.net:8000](http://dev.getsentry.net:8000/).
 
 If you see `DoesNotExist: Subscription matching query does not exist` in your dev server,
 run the following in getsentry:
+
 ```shell
 ./bin/mock-subscription
 ```
@@ -312,7 +316,7 @@ You might also be interested in <Link to="/continuous-integration/#troubleshooti
 
 **Problem:** You see `Error occured while trying to proxy to: dev.getsentry.net:8000/`
 
-**Solution:**  You likely need to upgrade your Python dependencies. Go to the git root directory and run `make install-py-dev`.
+**Solution:** You likely need to upgrade your Python dependencies. Go to the git root directory and run `make install-py-dev`.
 
 ---
 
