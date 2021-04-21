@@ -43,7 +43,9 @@ export default () => {
           <SidebarLink to="/inclusion/">Inclusive Language</SidebarLink>
           <SidebarLink to="/translations/">Translations</SidebarLink>
           <SidebarLink to="/code-review/">Code Review</SidebarLink>
-          <SidebarLink to="/processing-tickets/">Processing Issues & PRs</SidebarLink>
+          <SidebarLink to="/processing-tickets/">
+            Processing Issues & PRs
+          </SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
@@ -133,9 +135,7 @@ export default () => {
           <SidebarLink to="/frontend/defaultprops/">
             Typing DefaultProps
           </SidebarLink>
-          <SidebarLink to="/frontend/using-hooks/">
-            Using hooks
-          </SidebarLink>
+          <SidebarLink to="/frontend/using-hooks/">Using hooks</SidebarLink>
           <SidebarLink to="/frontend/migration-gridemotion/">
             Migration - grid-emotion
           </SidebarLink>
@@ -177,6 +177,9 @@ export default () => {
           </SidebarLink>
           <SidebarLink to="https://github.com/getsentry/snuba">
             Snuba
+          </SidebarLink>
+          <SidebarLink to="/services/chartcuterie/">
+            Chart Rendering (Chartcuterie)
           </SidebarLink>
         </ul>
       </li>
