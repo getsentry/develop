@@ -284,7 +284,9 @@ SDKs are encouraged to distinguish between different ways of ending a session:
 A session is supposed to transition to `crashed` when it encountered an unhandled
 error such as a full application crash. For applications that cannot fully
 crash such as a website, it's acceptable to transition to the crashed state if
-the user encountered an error dialog.
+the user encountered an error dialog. For server environments where we create sessions 
+for every incoming request, `crashed` is basically like status code `500` internal server error.
+So if there is an unhandled error happening during the request, the session should be `crashed`.
 
 Abnormal are sessions of which their fate is unknown. For desktop applications, for instance, it makes sense to transition a session to abnormal if it was stored
 but the exit of the application was not observed but also did not crash. These are situations where the user forced the app to close via the
