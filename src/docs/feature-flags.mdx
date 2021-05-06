@@ -10,7 +10,8 @@ You can find a list of features available by looking at
 `sentry/features/__init__.py`. They're declared on the `FeatureManager` like so:
 
 ```python
-default_manager.add("organizations:onboarding", OrganizationFeature, True)  # NOQA
+# Don't set entity_feature, or set it to False if you don't plan to use Flagr
+default_manager.add("organizations:onboarding", OrganizationFeature, entity_feature=True)
 ```
 
 The feature can be enabled with the following in your `sentry.conf.py`, usually located at `~/.sentry/`:
