@@ -154,3 +154,17 @@ This is mostly useful on mobile clients where connectivity is often not availabl
 ## HTTP Proxy
 
 Ability to use an HTTP proxy. Often easy to implement using the existing HTTP client.  This should be picked up from the system config if possible or explicit config in the client options.
+
+## HTTP Client Integrations
+
+Add breadcrumb for each outgoing HTTP request after the request finishes:
+
+- type: `http`
+- category: `http`
+- data: `url`, `method` (uppercase HTTP method), optionally `requestBodySize` and `responseBodySize` (in bytes)
+
+If the Performance Monitoring is supported by the SDK and enabled in the client application, when the transaction is active, a new `Span` must be created around the HTTP request.
+
+- HTTP request must be enhanced with a [`sentry-trace` HTTP header](/sdk/performance/#header-sentry-trace)
+- span status must match HTTP response status code ([see Span status to HTTP status code mapping](/sdk/event-payloads/span/))
+- when network error occurs, span status must be set to `INTERNAL_SERVER_ERROR`
