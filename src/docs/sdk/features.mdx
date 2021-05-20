@@ -167,4 +167,4 @@ If Performance Monitoring is both supported by the SDK and enabled in the client
 
 - HTTP request must be enhanced with a [`sentry-trace` HTTP header](/sdk/performance/#header-sentry-trace)
 - span status must match HTTP response status code ([see Span status to HTTP status code mapping](/sdk/event-payloads/span/))
-- when network error occurs, span status must be set to `INTERNAL_SERVER_ERROR`
+- when network error occurs, span status must be set to `internal_error`
