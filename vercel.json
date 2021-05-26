@@ -23,8 +23,18 @@
     }
   ],
   "redirects": [
-    {"source": "/sdk/unified-api/tracing/(.*)", "destination": "/sdk/performance/$1"},
-    {"source": "/onpremise/(.*)", "destination": "/self-hosted/$1"},
-    {"source": "/self-hosted/mail(.*)", "destination": "/self-hosted/email$1"}
+    {
+      "source": "/sdk/unified-api/tracing/(.*)",
+      "destination": "/sdk/performance/$1"
+    },
+    { "source": "/onpremise/(.*)", "destination": "/self-hosted/$1" },
+    {
+      "source": "/self-hosted/mail(.*)",
+      "destination": "/self-hosted/email$1"
+    },
+    {
+      "source": "/processing-tickets/?",
+      "destination": "https://open.sentry.io/triage/"
+    }
   ]
 }
