@@ -33,7 +33,7 @@
       "destination": "/self-hosted/email$1"
     },
     {
-      "source": "/processing-tickets/?",
+      "source": "/processing-tickets/:?",
       "destination": "https://open.sentry.io/triage/"
     }
   ]
