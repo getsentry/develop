@@ -51,7 +51,7 @@ if random() < sample_rate:
 
 ## Rate Limiting
 
-Respect Sentry’s HTTP 429 Retry-After header, or, if the SDK supports multiple payload types (e.g. errors and transactions), the X-Sentry-Rate-Limits header. Outgoing SDK requests should be dropped during the backoff period.
+Respect Sentry’s HTTP 429 `Retry-After` header, or, if the SDK supports multiple payload types (e.g. errors and transactions), the `X-Sentry-Rate-Limits` header. Outgoing SDK requests should be dropped during the backoff period.
 
 See <Link to="/sdk/rate-limiting">Rate Limiting</Link> for details.
 
