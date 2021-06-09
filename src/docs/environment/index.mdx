@@ -89,6 +89,17 @@ computer is actually compiling Python!
 make setup-pyenv
 ```
 
+fish users will need to manually set some of the environment variables. This only needs to be done
+once.
+
+```shell {tabTitle: Fish}
+set -Ux PYENV_ROOT $HOME/.pyenv
+# fish >=3.2.0
+fish_add_path $PYENV_ROOT/bin
+# fish <3.2.0
+set -U fish_user_paths $PYENV_ROOT/bin $fish_user_paths
+```
+
 Once that's done, your shell needs to be reloaded. You can either reload it in-place, or close your terminal and start it
 again and cd into sentry. To reload it, run:
 
@@ -105,15 +116,28 @@ exec $SHELL
 ```
 
 After this, if you type `which python`, you should see something like `$HOME/.pyenv/shims/python`
-rather than `/usr/bin/python` this is because the following has been added to your start up script:
+rather than `/usr/bin/python`. This is because the following has been added to your start up script:
 
-```shell
+
+```shell {filename: ~/.bash_profile} {tabTitle: Bash}
+eval "$(pyenv init --path)"
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
-```
+````
 
-Note: If you use Fish, add `source (pyenv init - | psub)` to `~/.config/fish/config.fish`.
+```shell {filename: ~/.zshrc} {tabTitle: Zsh}
+eval "$(pyenv init --path)"
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+````
+
+```shell {filename: ~/.config/fish/config.fish} {tabTitle: Fish}
+# pyenv init
+status is-login; and pyenv init --path | source
+pyenv init - | source
+````
 
 ### Virtual Environment
 
