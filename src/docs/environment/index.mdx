@@ -221,8 +221,17 @@ of the configuration will run. This is for security purposes and you are encoura
 If you want to personalize your environment variables, you can do so by creating a `.env` file. This file is
 ignored by `git`, thus, you will not be able to leak it into one of your PRs.
 
-Two examples of variables that you can place there are `SENTRY_SILENCE_DIRENV_NOTICE` to make `direnv` output less noisy
-and `SENTRY_DEVENV_NO_REPORT=1` to prevent the development environment to report errors to Sentry.
+Some useful variables to set in `.env`:
+
+- `SENTRY_SILENCE_DIRENV_NOTICE`: Make `direnv` output less noisy.
+- `SENTRY_DEVENV_NO_REPORT`: Do not report development environment errors to Sentry.io.
+- `SENTRY_DIRENV_DEBUG`: Print debug messages to stdout.
+
+A good starter `.env`:
+```shell {filename: .env}
+SENTRY_SILENCE_DIRENV_NOTICE=1
+SENTRY_DEVENV_NO_REPORT=1
+````
 
 ## Running the Development Server
 
