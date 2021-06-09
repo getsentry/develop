@@ -213,7 +213,7 @@ And after doing that, reload your shell:
 exec "$SHELL"
 ````
 
-Any time the `.envrc` configuration changes (including the first time) you will be prompted to run `direnv allow` before any
+Any time the `.envrc` configuration changes (including the first load) you will be prompted to run `direnv allow` before any
 of the configuration will run. This is for security purposes and you are encouraged to inspect the changes before running this command.
 
 ### Customize your development environment variables
@@ -308,9 +308,9 @@ You might also be interested in <Link to="/continuous-integration/#troubleshooti
 
 ---
 
-**Problem:** something like `pkg_resources.DistributionNotFound: The 'some_dependency<0.6.0,>=0.5.5' distribution was not found and is required by sentry`
+**Problem:** You see an error that mentions something like `pkg_resources.DistributionNotFound: The 'some_dependency<0.6.0,>=0.5.5' distribution was not found and is required by sentry`
 
-**Solution:** Your virtualenv needs to be updated. run `make install-py-dev`.
+**Solution:** Your virtualenv needs to be updated. Run `make install-py-dev`.
 
 ---
 
@@ -330,9 +330,9 @@ make build-platform-assets
 
 ---
 
-**Problem:** `SessionNotCreatedException: Message: session not created: This version of ChromeDriver only supports Chrome version 76`
+**Problem:** You see `SessionNotCreatedException: Message: session not created: This version of ChromeDriver only supports Chrome version 76`
 
-Also, another symptom indicating you need to upgrade chromedriver:
+Or:
 
 ```shell
 Traceback (most recent call last):
@@ -346,6 +346,8 @@ RetryException: Could not successfully execute <functools.partial object at 0x10
 ```
 
 **Solution:**
+
+ChromeDriver needs to be updated.
 
 ```shell
 brew upgrade --cask chromedriver
@@ -383,9 +385,9 @@ pip install --no-cache-dir uwsgi
 
 ---
 
-**Problem:** `DoesNotExist: Subscription matching query does not exist`
+**Problem:** You see `DoesNotExist: Subscription matching query does not exist`
 
-**Solution:** In getsentry run the following to mock a subscription:
+**Solution:** In getsentry, run the following to mock a subscription:
 
 ```shell
 ./bin/mock-subscription <org_slug>
@@ -393,7 +395,7 @@ pip install --no-cache-dir uwsgi
 
 ---
 
-**Problem:** Something like `Error: No such container: sentry_postgres`
+**Problem:** You see something like `Error: No such container: sentry_postgres`
 
 **Solution:** Review the [bootstrap services](/environment/#bootstrap-services)
 section or spin up Docker services with:
