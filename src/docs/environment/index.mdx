@@ -118,25 +118,18 @@ exec $SHELL
 After this, if you type `which python`, you should see something like `$HOME/.pyenv/shims/python`
 rather than `/usr/bin/python`. This is because the following has been added to your start up script:
 
-
 ```shell {filename: ~/.bash_profile} {tabTitle: Bash}
-eval "$(pyenv init --path)"
-if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init -)"
-fi
+Given that the bash instructions vary greatly based on the user's configuration, it is recommended to visit https://github.com/pyenv/pyenv#installation for instructions on how to set up Bash.
 ````
 
 ```shell {filename: ~/.zshrc} {tabTitle: Zsh}
+# It is assumed that pyenv is installed via Brew, so this is all we need to do.
 eval "$(pyenv init --path)"
-if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init -)"
-fi
 ````
 
 ```shell {filename: ~/.config/fish/config.fish} {tabTitle: Fish}
 # pyenv init
 status is-login; and pyenv init --path | source
-pyenv init - | source
 ````
 
 ### Virtual Environment
@@ -263,19 +256,11 @@ of the configuration will run. This is for security purposes and you are encoura
 ### Customize your development environment variables
 
 If you want to personalize your environment variables, you can do so by creating a `.env` file. This file is
-ignored by `git`, thus, you will not be able to leak it into one of your PRs.
+ignored by `git`, thus, you will not be able to leak it into one of your PRs. 
 
-Some useful variables to set in `.env`:
-
-- `SENTRY_SILENCE_DIRENV_NOTICE`: Make `direnv` output less noisy.
-- `SENTRY_DEVENV_NO_REPORT`: Do not report development environment errors to Sentry.io.
-- `SENTRY_DIRENV_DEBUG`: Print debug messages to stdout.
-
-A good starter `.env`:
-```shell {filename: .env}
-SENTRY_SILENCE_DIRENV_NOTICE=1
-SENTRY_DEVENV_NO_REPORT=1
-````
+One of `bootstrap`'s steps [creates a starter `.env`](https://github.com/getsentry/sentry/blob/master/.env.example) which should 
+contain recommended environment variables and what they do. `make direnv-help` also lists all of the latest supported environment 
+variables.
 
 ## Running the Development Server
 
