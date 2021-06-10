@@ -168,17 +168,9 @@ curl https://get.volta.sh | bash
 The volta installer will tell you to "open a new terminal to start using Volta", but you don't have to! You can just
 reload your shell:
 
-```shell {tabTitle: Bash}
+```shell
 exec "$SHELL"
-```
-
-```shell {tabTitle: Zsh}
-exec "$SHELL"
-```
-
-```shell {tabTitle: Fish}
-exec $SHELL
-```
+````
 
 This works because the volta installer conveniently made changes to your shell installation files for your shell's
 startup script:
