@@ -103,17 +103,9 @@ set -U fish_user_paths $PYENV_ROOT/bin $fish_user_paths
 Once that's done, your shell needs to be reloaded. You can either reload it in-place, or close your terminal and start it
 again and cd into sentry. To reload it, run:
 
-```shell {tabTitle: Bash}
+```shell
 exec "$SHELL"
-```
-
-```shell {tabTitle: Zsh}
-exec "$SHELL"
-```
-
-```shell {tabTitle: Fish}
-exec $SHELL
-```
+````
 
 After this, if you type `which python`, you should see something like `$HOME/.pyenv/shims/python`
 rather than `/usr/bin/python`. This is because the following has been added to your start up script:
