@@ -163,7 +163,7 @@ Add a breadcrumb for each outgoing HTTP request after the request finishes:
 - category: `http`
 - data: `url`, `method` (uppercase HTTP method), optionally `requestBodySize` and `responseBodySize` (in bytes)
 
-If Performance Monitoring is both supported by the SDK and enabled in the client application when the transaction is active a new `Span` must be created around the HTTP request.
+If Performance Monitoring is both supported by the SDK and enabled in the client application when the transaction is active a new `Span` must be created around the HTTP request; The `Span#operation` should be `http.client` and the `Span#description` should follow the convention `$METHOD $url` eg `GET https://sentry.io`.
 
 - HTTP request must be enhanced with a [`sentry-trace` HTTP header](/sdk/performance/#header-sentry-trace)
 - span status must match HTTP response status code ([see Span status to HTTP status code mapping](/sdk/event-payloads/span/))
