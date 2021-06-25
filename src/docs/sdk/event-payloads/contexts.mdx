@@ -160,8 +160,7 @@ The `type` and default key is `"device"`.
 `processor_frequency`
 
 : _Optional_. Processor frequency in MHz. Note that the actual CPU frequency might vary depending on current load and power conditions, 
-  especially on low-powered devices like phones and laptops. On some platforms it's not possible to query the CPU frequency. 
-  Currently such platforms are iOS and WebGL. For example, `2500`.
+  especially on low-powered devices like phones and laptops.
 
 `device_type`
 
@@ -173,9 +172,7 @@ The `type` and default key is `"device"`.
 
 `device_unique_identifier`
 
-: _Optional_. Unique device identifier. Depends on the running platform. For example, `iOS: UIDevice.identifierForVendor (UUID)`,
-  `Android: md5 of ANDROID_ID`, `Windows Store Apps: AdvertisingManager::AdvertisingId (possible fallback to HardwareIdentification::GetPackageSpecificToken().Id)`,
-  `Windows Standalone: hash from the concatenation of strings taken from Computer System Hardware Classes`.
+: _Optional_. Unique device identifier. This value might only be used if `sendDefaultPii` is enabled.
 
 `supports_vibration`
 
