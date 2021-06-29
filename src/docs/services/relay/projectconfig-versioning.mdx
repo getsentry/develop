@@ -8,13 +8,11 @@ Relay fetches project configs from an "upstream". That upstream can either be Se
 
 Your configuration will flow from Sentry to either:
 
-- Relay (freight deployment = `relay`)
+- Internal Relay (freight deployment = `relay`)
 
 - External Relays (customers run those, we practically have no deprecation policy for old versions)
 
-  - At some point we want to serve those requests from Relay, such that only internal Relays can hit Sentry. This would limit complexity.
-
-Likewise *either Sentry or (internal) Relay* can forward your configuration to:
+Internal Relay can forward your configuration to:
 
 - PoP Relays (freight deployment = `relay-pop`)
 
@@ -81,9 +79,9 @@ In case you're developing a new feature, you likely want to add completely new d
 - Make sure your field is either optional or has a default
 - Do not serialize when the field is `None` or default via `serde(skip_serializing_if)`.
 - Use `ErrorBoundary` around the field type for as long as your new feature is pre-GA and can change its definition. This makes sure that if the field definition is malformed, Relay contains the error and continues to parse the rest of the project config.
-- Do not use `usize`.
+- Do not use types with platform specific behavior, such as `usize`.
 
-It can be tempting to use `usize` if for some reason the max value of your field is platform-dependent (i.e. whether the Relay that deserializes currently runs on a 32-bit OS). This *can be* the case if your field is an index into some array/vec. Even in those cases it is barely worth it. Keep in mind that not only the current Relay needs to use that number as array index, but also downstream Relays.
+  It can be tempting to use `usize` if for some reason the max value of your field is platform-dependent (i.e. whether the Relay that deserializes currently runs on a 32-bit OS). This *can be* the case if your field is an index into some array/vec. Even in those cases it is barely worth it. Keep in mind that not only the current Relay needs to use that number as array index, but also downstream Relays.
 
 ## Adding Subfields
 
@@ -110,18 +108,27 @@ Do not rename a field for features that are generally available for external Rel
 
 ## Changing Field Types
 
-This should be generally OK as long as it serializes/deserializes the same, for example you can swap out `String` with `smartstring::String`.
+Assuming your field is emitted for external Relays, **changing a field type is rarely possible** without [renaming the field](#breaking-changes-and-actual-versioning) entirely. Even if you think it's feasible, renaming the field in addition is often a worthwhile additional security dance.
 
-Decreasing integer sizes (`u64` to `u32`) is a breaking change unless you can somehow prove all possible values fit into the new integer type, else it cannot be done without [renaming the field](#breaking-changes-and-actual-versioning). Serde throws an error if the value-to-deserialize does not fit into the integer type.
+Changing field types is only possible if the two types have identical serialization/deserialization behavior.
 
-Increasing integer sizes (`u32` to `u64`) should be fine in most cases. Just keep in mind that when you increase the integer size and deploy internal relays, you push potential overflow errors further to the edge (or customer) where you no longer see them.
+* Changing a string to an integer just like that is not fine. You need to make
+  sure the field continues to serialize as a string, and change Relay to accept
+  both types during deserialization using a custom `Deserialize` impl.
 
-In case your field is emitted for external Relays, **changing a field type is rarely possible** without [renaming the field](#breaking-changes-and-actual-versioning) entirely. Even if you think it's feasible, renaming the field in addition is often a worthwhile additional security dance.
+* Swapping out `String` with `smartstring::String` is fine as they are both
+  JSON strings and can store the exact same set of values.
 
-In case it's not emitted to external relays (not part of `LimitedProjectConfig`), you may be able to at least extend the set of types Relay accepts. For that it's recommended to either:
+* Changing a `u64` to `u32` is generally not fine. Serde will fail to
+  deserialize instead of overflow if the JSON value does not fit into the
+  integer type.
 
-- [Use an untagged enum](https://serde.rs/enum-representations.html#untagged) (this is like `Union[str, int]` in Python)
-- Write a custom `Deserialize` impl for your type to be able to deserialize from older values
+* Changing a `u32` to `u64` can be done but requires careful consideration. For
+  internal Relays it *could work*, but as soon as the type propagates to
+  external Relays, you will fail to deserialize there.
+
+The list is non-exhaustive, but regardless please discuss *any* type changes
+with the ingest team.
 
 ## Deployment & Monitoring
 
@@ -129,10 +136,13 @@ Talk to the ingest team for deploying and monitoring.
 
 ## Breaking changes, and actual versioning
 
-> `myfield_v2_final_final.docx`
-
 We've mostly gone through things that we don't want you to do, as they will cause incidents.
 
 In case you do need to make larger changes to the schema, or you want to do a large amount of smaller changes and feel like guaranteeing backwards compat for all of them is too hard, consider renaming the top-level field `x` to `x_v2`.
 
 This will effectively hide the field from older Relays, so field `x` has to be an optional field in the first place.
+
+For certain protocol changes there is a ["project state
+version"](https://github.com/getsentry/relay/blob/3933cd6ccd59c3270f56853ffbc8678b219e44e6/relay-server/src/actors/project_upstream.rs#L25-L34)
+in Relay that could be bumped. It was used once to implement a larger change to
+the protocol.
