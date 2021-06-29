@@ -169,7 +169,7 @@ export default () => {
           <SidebarLink to="/services/digests/">
             Notification Digests
           </SidebarLink>
-          <SidebarLink to="https://getsentry.github.io/relay/">
+          <SidebarLink to="/services/relay/">
             Relay
           </SidebarLink>
           <SidebarLink to="https://github.com/getsentry/snuba">
