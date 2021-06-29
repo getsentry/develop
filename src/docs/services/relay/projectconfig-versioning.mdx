@@ -108,27 +108,11 @@ Do not rename a field for features that are generally available for external Rel
 
 ## Changing Field Types
 
-Assuming your field is emitted for external Relays, **changing a field type is rarely possible** without [renaming the field](#breaking-changes-and-actual-versioning) entirely. Even if you think it's feasible, renaming the field in addition is often a worthwhile additional security dance.
-
-Changing field types is only possible if the two types have identical serialization/deserialization behavior.
-
-* Changing a string to an integer just like that is not fine. You need to make
-  sure the field continues to serialize as a string, and change Relay to accept
-  both types during deserialization using a custom `Deserialize` impl.
-
-* Swapping out `String` with `smartstring::String` is fine as they are both
-  JSON strings and can store the exact same set of values.
-
-* Changing a `u64` to `u32` is generally not fine. Serde will fail to
-  deserialize instead of overflow if the JSON value does not fit into the
-  integer type.
-
-* Changing a `u32` to `u64` can be done but requires careful consideration. For
-  internal Relays it *could work*, but as soon as the type propagates to
-  external Relays, you will fail to deserialize there.
-
-The list is non-exhaustive, but regardless please discuss *any* type changes
-with the ingest team.
+Assuming your field is emitted for external Relays, **changing a field type is
+rarely possible**. Even for internal Relays, changing types of fields is only
+possible if the two types have identical serialization/deserialization
+behavior. This is rather unlikely and so hard to determine that we require you
+always [rename the field](#breaking-changes-and-actual-versioning) in addition.
 
 ## Deployment & Monitoring
 
