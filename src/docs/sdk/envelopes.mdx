@@ -512,6 +512,8 @@ Envelope header authentication requires **Relay v21.6.0**.
 Earlier versions of Relay do not support Envelope header authentication and respond with HTTP error
 _401 Unauthorized ("missing authorization information")_ to envelope uploads.
 
+SDKs should not rely on Envelope header authentication to retain backward compatibility with older versions of Sentry on-premise unless absolutely required. Instead, stick to HTTP headers or query parameters wherever possible.
+
 </Alert>
 
 ### Size Limits
