@@ -24,7 +24,7 @@ This happens where Kafka and the consumers get out of sync. Possible reasons are
 
 ### Recovery
 
-The "nuclear option" here is removing all Kafka-related volumes and recreating them which _will_ cause data loss. Any data that was pending there will be gone upon deleting these volumes.
+The "nuclear option" here is removing all Kafka-related volumes and recreating them which _will_ cause data loss. Any data that was pending there will be gone upon deleting these volumes. Sometimes this is not sufficient and removing the Zookeeper-related volumes is necessary too which _will_ cause _even more_ data loss. 
 
 The _proper_ solution is as follows ([reported](https://github.com/getsentry/onpremise/issues/478#issuecomment-666254392) by [@rmisyurev](https://github.com/rmisyurev)):
 
