@@ -1,0 +1,159 @@
+# Performance Monitoring SDK API
+
+## Introduction
+
+What follows is a quick story of how Performance Monitoring was added Sentry.
+
+<!-- We may want to include here some introduction of why we added Performance Monitoring to Sentry -->
+
+The focus is on the SDK API, and what was happening in the industry around the same time, notably OpenTelemetry.
+
+Back in 2019, Sentry started experimenting with [adding tracing to SDKs](https://github.com/getsentry/sentry-python/pull/342).
+That work was contemporary to the [merger of OpenCensus and OpenTracing to form OpenTelemetry](https://medium.com/opentracing/a-roadmap-to-convergence-b074e5815289). After settling with an API, performance was then added to the [JavaScript SDK](https://github.com/getsentry/sentry-javascript/pull/2161).
+
+While we had ideas of our own, our API and implementations borrowed inspiration from pre-1.0 versions of OpenTelemetry, when OpenTelemetry was still in its infancy.
+For example, our [list of span statuses](https://github.com/getsentry/relay/blob/55127c75d4eeebf787848a05a12150ee5c59acd9/relay-common/src/constants.rs#L179-L181) openly match those that could be found in the OpenTelemetry spec around the end of 2019.
+
+[Sentry's Performance Monitoring](https://blog.sentry.io/2020/07/14/see-slow-faster-with-performance-monitoring) solution became *Generally Available* in July, 2020.
+[OpenTelemetry's Tracing Specification version 1.0](https://medium.com/opentelemetry/opentelemetry-specification-v1-0-0-tracing-edition-72dd08936978) was released in February, 2021.
+
+Here's a picture to help understand the timeline:
+
+<<<<<<<<<<<https://time.graphics/editor>>>>>>>>>
+
+
+## Initial Implementation
+
+Our initial implementation reused the mechanisms we had in place for error reporting:
+- The [`Event` type](https://develop.sentry.dev/sdk/event-payloads/) was extended with new fields. That meant that instead of designing and implementing a whole new ingestion pipeline, we could save time and quickly start sending "events" to Sentry, this time, instead of errors, a new "transaction" event type.
+- Since we were just sending a new type of event, the SDK transport layer was also reused.
+- And since we were sharing the ingestion pipeline, that meant we were sharing storage and the many parts of the processing that happens to all events.
+
+Our implementation evolved such that there was a clear emphasis on the distiction between Transactions and Spans.
+Part of that was a side effect from reusing `Event`.
+
+Transactions resonated well with customers. Transactions highlight major chunks of work their code is doing. Customers can see and navigate through a list of transactions, while within a transaction the spans give detailed timing for more granular units of work.
+
+But that model has both extra complexities for instrumentation and limited our ingestion model requiring grouping all spans in memory before sending.
+
+In SDKs, transactions are quite different from other spans in that they are embedded in a Sentry event container and follow a different protocol format than spans. Spans themselves can only be contained by a transaction.
+
+
+<!--
+- Billing is per Transaction (just like it used to be per error-event). This means that removing or changing things related to transactions directly affect billing.
+-->
+
+## Notable Changes
+
+Over time, we had to make adjustments in the backend, for example splitting the storage of errors and transactions.
+
+To not break customer setups, we elected to [not send transaction events](https://github.com/getsentry/sentry-python/pull/731) through the `beforeSend` callback. This was for two reasons. First, to make sure that customers with existing `beforeSend` setups did erroneously filter or mutate transactions, and second to prevent users from relying on the API to mutate transaction attributes as this would [break customers when single span ingestion is eventually introduced](https://github.com/getsentry/sentry-javascript/pull/2600#issuecomment-634697123).
+
+To provide an alternative to users, transactions still go through `eventProcessors`, so users could use `Sentry.addGlobalEventProcessors()` to mutate transactions as needed. This has [some caveats](https://github.com/getsentry/sentry-python/pull/731#issuecomment-663046894), mainly around sampling, but was left as event processors are considered a mostly internal API.
+
+Sampling is a critical part of distributed tracing and an important part of Sentry's performance product. When performance was first implemented in the Python and JavaScript SDKs, transactions and spans were sampled based on a given sampling probability. This sampling probability, provided as a `tracesSampleRate` option, was a float that ranged between `0` and `1`. As time went on, user's required more granular sampling controls, especially leveraging scope data to prioritize sampling.
+
+<!-- TODO: Talk more about tracesSampler, and SamplingContext. Add context about head based sampling, dynamic sampling, filtering in the SDK -->
+
+To enable auto-instrumentation for Browser JavaScript, the concept of an `IdleTransaction` was introduced. Unlike a request to a web server or database query, there is no defined end of a pageload. To measure browser pageloads or navigations (in the case of SPAs), we start an [`IdleTransaction`]((https://github.com/getsentry/sentry-javascript/blob/master/packages/tracing/src/idletransaction.ts)) that will automatically finish after it's child spans have finished.
+
+## Identified Issues
+
+- The user experience is centered entirely around the part of a trace that exists below transactions. This means that data cannot exist outside of a transaction even if exists in a trace. This, in turn, means that currently in a lot of situations a trace is missing crucial information that can help debug issues, particularly on the frontend where transactions need to end at one point but execution might continue.
+- SDKs are discouraged to send nested transactions as those inherently imply duplication of spans.
+- The SDK API does not currently permit span collection unless a transaction has been explicitly created first. Continuing a trace requires starting a transaction. This is inconsistent with OpenTelemetry and also means that transactions need to be created which often is not possible yet. This also in turn now means that transaction spans are mutable as the necessary information is often not available until later.
+- The SDK API exposes the transaction object to users cementing in the problem with memory consumption. To modify all data attached one often needs to modify this transaction object. It's not possible for SDKs to only provide access to spans for processing because transactions, when transformed into events for sending to Sentry, assume a shape incompatible with spans including a lot of information (for example, contexts) that is not available to spans.
+
+Other issues:
+
+<!-- these below we want to address some day, and thus whatever changes we make should keep those in mind, but we're not solving these in 2021 Q2 -->
+
+- Tracing implementation with transactions require buffering of all spans in memory. This means recording 100% of spans for server-side applications, even in a simplified form, that supports metric extraction is not feasible due to the overhead caused.
+- The special treatment of transactions is incompatible with OpenTelemetry which means we cannot implement an OpenTelemetry Exporter that can feed data into Sentry (though we have a [Sentry Exporter with a major correctness limitation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/sentryexporter#known-limitations)). Likewise we cannot leverage OpenTelemetry SDKs and instrumentations.
+
+## Next Steps
+
+- More and more customers are aware of OpenTelemetry and are using it in their backends
+- We want to re-align our model with OpenTelemetry
+- We want to eventually support metrics collection on all observable spans
+- De-emphasize transactions on the user-facing API to make it easier to instrument code without having to undestand how the network protocol works
+- Simplify manual instrumentation steps
+- Users will mostly think of only spans
+- Clear migration path for users, minimizing breakage
+- Better context management
+- Evolve network protocol
+- Evolve product to better visualize traces, transactions and spans that happen outside of transactions
+
+Next Steps
+
+- Introduce helper to start spans/transactions + manage scope
+- Introduce span processor
+- Evaluate
+
+- Work on ingestion; can we ingest spans that are not transactions?
+- Work on product to shift focus from transactions into traces and spans outside transactions
+
+
+## Introduction
+
+##
+
+Use Cases / Acceptance Test Scenarios
+
+
+- Nested sentry.trace()
+- How does `sentry.trace` know what the parent SpanID is?
+- How does it work with `async`, Promises, setTimeout, event handlers, etc
+- Do we store the current span in the scope/context?
+
+
+- Keep Mobile in mind
+
+- How do breadcrumbs work?
+- How can we have two modes of breadcrumb recording? One that forks with Hub cloning and provides data isolation with separate scopes, and one that shares data with sibling spans/threads.
+
+  |
+  |- span1
+  |- span2
+    |- span2.a
+    |- span2.b  ERROR
+
+ In mode 1, error in `span2.b` only sees breadcrumbs from the `span2` subtree (think data isolation for multiple requests in a web server).
+ In mode 2, error in `span2.b` will have breadcrumbs from span1 and its children in addition to span2 (think mobile app with multiple threads).
+
+
+More than just breadcrumbs, in mobile we want to have shared state for multiple parts of the SDK, such as current user, tags, contexts, extras, etc.
+
+Sometimes `tags` and other shared global state must be changed in the middle of a program execution, not necessarily in the beginning.
+
+
+
+
+- How to do versioned docs?
+
+
+## Appendix
+
+### IdleTransactions
+
+A `IdleTransaction` keeps track child spans through the concept of activities. Activities are typed as `Set<span_id>`, where an activity is added when a child span is started, and removed when a child span is finished. When an activity is removed, and the `activities` set becomes empty, the `idleTransaction` finishes itself.
+
+The `IdleTransaction` exposes functionality to register [`beforeFinish` callbacks](https://github.com/getsentry/sentry-javascript/blob/master/packages/tracing/src/idletransaction.ts#L159), which runs right before the transaction is sent to Sentry. This has to be done because the `IdleTransaction` finishes at an unknown time, so these callbacks have to be set up ahead of time. The browser tracing integration uses this to add measurements (web vitals) and additional spans based on heuristics (like browser specific resource spans).
+
+In addition, the `IdleTransaction` also trims its end timestamp to match the time of it's last child span end timestamp (as its end timestamp is kind of arbitrary, doesn't have that much value).
+
+Let's talk about some possible gotchas:
+
+1. No child spans are created:
+
+Right now if no child spans are created for an `IdleTransaction`, it will end itself after a configured `IdleTimeout`. This is 1000ms by default, but user-configurable for automatically created pageload/navigation transactions.
+
+ 2. Spans never finish
+
+The `IdleTransaction` sets up a heartbeat counter that will ping itself according to a heartbeat timer. If the heartbeat is pinged 3 times, the `IdleTransaction` will finish all of it's active child spans, mark those span's `SpanStatus` as `Cancelled`, and then finish itself. The heartbeat counter is reset everytime a new child span is started (new activity is created)
+
+3. The polling problem aka: 1 -> 0 -> 1 -> 0
+
+To prevent "polling" child spans from increasing transaction duration, after the `IdleTransaction` hits 0 activities for the first time, we call `transaction.finish()` after a set timeout. This is to prevent a transaction from going on infinitely if a user keeps adding child spans. As a consequence of this though, there might still be unfinished spans on a transaction, even if the transaction is finished. 
+
+Here's an example situation: idle transaction is created -> idle transaction starts child spans (activities) -> idle transaction activities hit 0 (all active spans have finished) -> transaction sets timeout to call `.finish()` -> child spans get added to transaction -> transaction calls `.finish()` -> latter child spans do not get recorded because they have not called `.finish()`.
