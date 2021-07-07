@@ -308,6 +308,16 @@ with one difference: sessions transitioned to `exited` have their session
 duration averaged. This lets Sentry show you the duration of non crashed
 sessions over time.
 
+## Alerts
+<Alert title="WIP" level="info">
+  Session based alerting is currently experimental.
+</Alert>
+
+Trigger an alert when a specified threshold of sessions experience an issue. 
+Create a new [issue alert](https://docs.sentry.io/product/alerts/alert-types/#issue-alerts) and select the "If" condition 
+"An issue affects more than {X} percent of sessions". See more issue alert options in the 
+[Issue Alert Configuration](https://docs.sentry.io/product/alerts/create-alerts/issue-alert-config/) docs.
+
 ## SDK Considerations
 
 Generally speaking, there are two separate modes for health reporting that SDKs
