@@ -10,13 +10,13 @@ Starting with Sentry `21.8.0`, if you need to have Sentry access services which 
 
 The container's logs will have the output from `update-ca-certificates` right at the start if there is a problem with a given certificate.
 
-## Dependencies with bundled roots
+## Dependencies With Bundled Roots
 
 Some dependencies have opted to bundle their own CA roots and ignore the system CA roots. Where known, they have been configured to use the system roots. If something seems to ignore the system roots, make an issue so it can be tracked down and fixed.
 
-### Overridden bundled roots
+### Overridden Bundled Roots
 
 - Python
-  - requests
-  - botocore
-  - grpc
+  - `requests`
+  - `botocore`
+  - `grpc`
