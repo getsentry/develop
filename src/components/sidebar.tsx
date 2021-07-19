@@ -242,6 +242,7 @@ export default () => {
             </SidebarLink>
           </SidebarLink>
           <SidebarLink to="/sdk/sessions/">Sessions</SidebarLink>
+          <SidebarLink to="/sdk/research/performance">Research: Performance Monitoring API</SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
