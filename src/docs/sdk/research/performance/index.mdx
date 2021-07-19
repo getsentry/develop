@@ -24,4 +24,124 @@ In the next section, we’ll discuss some of the shortcomings with the current m
 
 ## Identified Issues
 
+While the reuse of the [Unified SDK architecture](https://develop.sentry.dev/sdk/unified-api/) (hubs, clients, scopes) and the transaction ingestion model have merits, experience revealed some issues that we categorize into two groups.
+
+The first group has to do with scope propagation, in essence the ability to determine what the “current scope” is. This operation is required for both manual instrumentation in user code as well as for automatic instrumentation in SDK integrations.
+
+The second group is for issues related to the wire format used to send transaction data from SDKs to Sentry.
+
+## Scope Propagation
+
+_This issue is tracked by [getsentry/sentry-javascript#3751](https://github.com/getsentry/sentry-javascript/issues/3751)._
+
+The [Unified SDK architecture](https://develop.sentry.dev/sdk/unified-api/) is fundamentally based on the existence of a `hub` per unit of concurrency, each `hub` having a stack of pairs of `client` and `scope`. A `client` holds configuration and is responsible for sending data to Sentry by means of a `transport`, while a `scope` holds contextual data that gets appended to outgoing events, such as tags and breadcrumbs.
+
+Every `hub` knows what the current scope is. It is always the scope on top of the stack. The difficult part is having a `hub` “per unit of concurrency”.
+
+JavaScript, for example, is single-threaded with an event loop and async code execution. There is no standard way to carry contextual data that works across async calls. So for JavaScript browser applications, there is only one global `hub` shared for sync and async code.
+
+A similar situation appears on Mobile SDKs. There is an user expectation that contextual data like tags, what the current user is, breadcrumbs, and other information stored on the `scope` to be available and settable from any thread. Therefore, in those SDKs there is only one global `hub`.
+
+In both cases, everything was relatively fine when the SDK had to deal with reporting errors. With the added responsibility to track transactions and spans, the `scope` became a poor fit to store the current `span`, because it limits the existence of concurrent spans.
+
+For JavaScript, a possible solution is the use of [Zone.js](https://github.com/angular/angular/blob/master/packages/zone.js/README.md), part of the Angular framework. The main challenge is that it increases bundle size and may inadvertendly impact end user apps as it monkey-patches key parts of the JavaScript runtime engine.
+
+The scope propagation problem became specially apparent when we tried to create a simpler API for manual instrumentation. The idea was to expose a `Sentry.trace` function that would implicitly propagate tracing and scope data, and support deep nesting with sync and async code.
+
+As an example, let’s say someone wanted to measure how long searching through a DOM tree took, tracing this operation would look something like this:
+
+```js
+await Sentry.trace(
+  {
+    op: 'dom',
+    description: 'Walk DOM Tree',
+  },
+  async () => await walkDomTree()
+);
+```
+
+Users wouldn’t have to worry about keeping the reference to the correct transaction or span when adding timing data. Users are free to create child spans within the `walkDomTree` function and spans will be ordered in the correct hierarchy.
+
+The implementation of the actual `trace` function is relatively simple (see [a PR which has an example implementation](https://github.com/getsentry/sentry-javascript/pull/3697/files#diff-f5bf6e0cdf7709e5675fcdc3b4ff254dd68f3c9d1a399c8751e0fa1846fa85dbR158)), however, knowing what is the current span in async code and global integrations is a challenge yet to be overcome.
+
+Here are two examples that summarize the problems above:
+
+### 1. Cannot Determine Current Span
+
+Consider some auto-instrumentation code that needs to get a reference to the current `span`, a case in which manual scope propagation is not available.
+
+```js
+// SDK code
+function fetchWrapper(/* ... */) {
+  /*
+    ... some code omitted for simplicity ...
+  */
+  const parent = getCurrentHub().getScope().getSpan(); // <1>
+  const span = parent.startChild({
+    data: { type: 'fetch' },
+    description: `${method} ${url}`,
+    op: 'http.client',
+  });
+  try {
+    // ...
+    // return fetch(...);
+  } finally {
+    span.finish();
+  }
+}
+window.fetch = fetchWrapper;
+
+// User code
+async function f1() {
+  const hub = getCurrentHub();
+  let t = hub.startTransaction({ name: 't1' });
+  hub.getScope().setSpan(t);
+  try {
+    await fetch('https://example.com/f1');
+  } finally {
+    t.finish();
+  }
+}
+async function f2() {
+  const hub = getCurrentHub();
+  let t = hub.startTransaction({ name: 't2' });
+  hub.getScope().setSpan(t);
+  try {
+    await fetch('https://example.com/f2');
+  } finally {
+    t.finish();
+  }
+}
+Promise.all([f1(), f2()]); // run f1 and f2 concurrently
+```
+
+In the example above, several concurrent `fetch` requests trigger the execution of the `fetchWrapper` helper. Line `<1>` must be able to observe a different span depending on the current flow of execution, leading to two span trees as below:
+
+```
+t1
+\
+  |- http.client GET https://example.com/f1
+t2
+\
+  |- http.client GET https://example.com/f2
+```
+
+That means that, when `f1` is running, `parent` must refer to `t1` and, when `f2` is running, `parent` must be `t2`. Unfortunately, all code above is racing to update and read from a single `hub` instance, and thus the observed span trees are not deterministic. For example, the result could incorrectly be:
+
+```
+t1
+t2
+\
+  |- http.client GET https://example.com/f1
+  |- http.client GET https://example.com/f2
+```
+
+As a side-effect of not being able to correctly determine the current span, the present implementation of the `fetch` integration (and others) in [the JavaScript Browser SDK chooses to create flat transactions](https://github.com/getsentry/sentry-javascript/blob/61eda62ed5df5654f93e34a4848fc9ae3fcac0f7/packages/tracing/src/browser/request.ts#L169-L178), where all child spans are direct children of the transaction (instead of having a proper multi-level tree structure).
+
+### 2. Data Propagation on Error
+
+Coming soon.
+
+## Span Ingestion Model
+
 Coming soon.
