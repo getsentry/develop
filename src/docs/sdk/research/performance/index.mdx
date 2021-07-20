@@ -138,9 +138,51 @@ t2
 
 As a side-effect of not being able to correctly determine the current span, the present implementation of the `fetch` integration (and others) in [the JavaScript Browser SDK chooses to create flat transactions](https://github.com/getsentry/sentry-javascript/blob/61eda62ed5df5654f93e34a4848fc9ae3fcac0f7/packages/tracing/src/browser/request.ts#L169-L178), where all child spans are direct children of the transaction (instead of having a proper multi-level tree structure).
 
-### 2. Data Propagation on Error
+### 2. Conflicting Data Propagation Expectations
 
-Coming soon.
+There is a conflict of expectations that appear whenever we add a `trace` function as discussed earlier, or simply try to address scope propagation with Zones.
+
+The fact that the current `span` is stored in the `scope`, along with `tags`, `breadcrumbs` and more, makes data propagation messy as some parts of the `scope` are intended to propagate only into inner functions calls (for example, tags), while others are expected to propagate back into callers (for example, breadcrumbs), specially when there is an error.
+
+Here is one example:
+
+```js
+function a() {
+  trace((span, scope) => {
+    scope.setTag('func', 'a');
+    scope.setTag('id', '123');
+    scope.addBreadcrumb('was in a');
+    try {
+      b();
+    } catch(e) {
+      // How to report the SpanID from the span in b?
+    } finally {
+      captureMessage('hello from a');
+      // tags: {func: 'a', id: '123'}
+      // breadcrumbs: ['was in a', 'was in b']
+    }
+  })
+}
+
+function b() {
+  trace((span, scope) => {
+    const fail = Math.random() > 0.5;
+    scope.setTag('func', 'b');
+    scope.setTag('fail', fail.toString());
+    scope.addBreadcrumb('was in b');
+    captureMessage('hello from b');
+    // tags: {func: 'b', id: '123', fail: ?}
+    // breadcrumbs: ['was in a', 'was in b']
+    if (fail) {
+      throw Error('b failed');
+    }
+  });
+}
+```
+
+In the example above, if an error bubbles up the call stack we want to be able to report in which `span` (by referring to a `SpanID`) the error happened. We want to have breadcrumbs that describe everything that happened, no matter which Zones were executing, and we want a tag set in an inner Zone to override a tag with the same name from a parent Zone, while inherinting all other tags from the parent Zone. Every Zone has their own "current span".
+
+All those different expectations makes it hard to reuse, in an understandable way, the current notion of `scope`, how breadcrumbs are recorded, and how those different concepts interact.
 
 ## Span Ingestion Model
 
