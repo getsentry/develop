@@ -64,7 +64,7 @@ With the `Sentry.trace` function, users wouldn’t have to worry about keeping t
 
 The implementation of the actual `trace` function is relatively simple (see [a PR which has an example implementation](https://github.com/getsentry/sentry-javascript/pull/3697/files#diff-f5bf6e0cdf7709e5675fcdc3b4ff254dd68f3c9d1a399c8751e0fa1846fa85dbR158)), however, knowing what is the current span in async code and global integrations is a challenge yet to be overcome.
 
-Here are two examples that summarize the problems above:
+The following two examples synthesize the scope propagation issues.
 
 ### 1. Cannot Determine Current Span
 
