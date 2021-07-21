@@ -138,6 +138,14 @@ t2
 
 As a side-effect of not being able to correctly determine the current span, the present implementation of the `fetch` integration (and others) in [the JavaScript Browser SDK chooses to create flat transactions](https://github.com/getsentry/sentry-javascript/blob/61eda62ed5df5654f93e34a4848fc9ae3fcac0f7/packages/tracing/src/browser/request.ts#L169-L178), where all child spans are direct children of the transaction (instead of having a proper multi-level tree structure).
 
+Note that other tracing libraries have the same kind of challenge. There are several (at the time open) issues in OpenTelemetry for JavaScript related to determining the parent span and proper context propagation (including async code):
+
+- [Context leak if several TracerProvider instances are used #1932](https://github.com/open-telemetry/opentelemetry-js/issues/1932)
+- [How to created nested spans without passing parents around #1963](https://github.com/open-telemetry/opentelemetry-js/issues/1963)
+- [Nested Child spans are not getting parented correctly #1940](https://github.com/open-telemetry/opentelemetry-js/issues/1940)
+- [OpenTracing shim doesn't change context #2016](https://github.com/open-telemetry/opentelemetry-js/issues/2016)
+- [Http Spans are not linked / does not set parent span #2333](https://github.com/open-telemetry/opentelemetry-js/issues/2333)
+
 ### 2. Conflicting Data Propagation Expectations
 
 There is a conflict of expectations that appear whenever we add a `trace` function as discussed earlier, or simply try to address scope propagation with Zones.
