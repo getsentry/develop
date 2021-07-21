@@ -192,6 +192,38 @@ In the example above, if an error bubbles up the call stack we want to be able t
 
 All those different expectations makes it hard to reuse, in an understandable way, the current notion of `scope`, how breadcrumbs are recorded, and how those different concepts interact.
 
+Finally, it is worth noting that the changes to restructure scope management most likely cannot be done without breaking existing SDK APIs. Existing SDK concepts, like hubs, scopes, breadcrumbs, user, tags, contexts, would all have to be remodeled.
+
 ## Span Ingestion Model
 
-Coming soon.
+Consider a trace depicted by the following span tree:
+
+```
+F
+├─ B*
+│  ├─ B
+│  ├─ B
+│  ├─ B
+│  │  ├─ S*
+│  │  ├─ S*
+│  ├─ B
+│  ├─ B
+│  │  ├─ S*
+│  ├─ B
+│  ├─ B
+│  ├─ B
+│  │  ├─ S*
+
+where
+F: span created on frontend service
+B: span created on backend service
+S: span created on storage service
+```
+
+This trace illustrates 3 services instrumented such that a user clicks a button on a Web page (`F`) and a backend (`B`) performs some work which involves making several queries to a storage service (`S`). Spans that are at the entry point to a given service are marked with a `*` to denote that they are transactions.
+
+Now we can use this example to compare and understand the difference between Sentry's span ingestion model and the model used by OpenTelemetry and other similar tracing systems.
+
+In Sentry's span ingestion model, all spans that belong to a transaction must be sent all together in a single request. That means that all `B` spans must be kept in-memory for the whole duration of the `B*` transaction, including time spent on downstream services (the storage service in the example).
+
+In OpenTelemetry's model, spans are batched together as they are finished and batches are sent as soon as either there is a certain number of spans in the batch or a certain time has passed. In our example, it could mean that the first 3 `B` spans are batched together and sent while the first `S*` transaction is still in progress in the storage service. Subsequently, other `B` spans are batched together and sent as they finish, until eventually the `B*` transaction span is also sent.
