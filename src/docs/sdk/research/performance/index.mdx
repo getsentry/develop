@@ -267,7 +267,7 @@ On one hand, Sentry's ingestion model does not allow for nested transactions. Tr
 
 On the other hand, Sentry as a product requires that transactions exist. Data outside of a transaction is lost.
 
-In practice, SDKs have to way to prevent transactions from becoming nested. The end result is possibly surprising to users, as each transaction starts a new tree. The only way to relate those trees is through the `trace_id`.
+In practice, SDKs have no way of preventing transactions from becoming nested. The end result is possibly surprising to users, as each transaction starts a new tree. The only way to relate those trees is through the `trace_id`.
 
 Sentry's billing model is per event/transaction. That means that a transaction within a transaction generates two billable events.
 
