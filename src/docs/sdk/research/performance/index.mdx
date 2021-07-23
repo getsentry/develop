@@ -300,9 +300,7 @@ The requirement of a transaction is specially challenging on frontends (browser,
 
 In our [example trace](#span-ingestion-model), the first span that originates the trace is due to a button click. If the button click `F*` was instrumented as a regular `span`, most likely no data from the frontend would be captured, but the other `B` and `S` spans would still be captured.
 
-In Sentry's model, if a span is not a transaction and there is no ancestor span that is a transaction, then the span won't be ingested.
-
-This, in turn, means there are many situations where a trace is missing crucial information that can help debug issues, particularly on the frontend where transactions need to end at some point but execution might continue.
+In Sentry's model, if a span is not a transaction and there is no ancestor span that is a transaction, then the span won't be ingested. This, in turn, means there are many situations where a trace is missing crucial information that can help debug issues, particularly on the frontend where transactions need to end at some point but execution might continue.
 
 Automatic and manual instrumentation have a challenge deciding whether to start a span or a transaction, and the decision is particularly difficult considering that poor [scope propagation](#scope-propagation) limits the existence of concurrent transactions.
 
