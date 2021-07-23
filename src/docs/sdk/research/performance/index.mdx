@@ -273,7 +273,7 @@ Sentry's billing model is per event/transaction. That means that a transaction w
 
 In SDKs, a transaction within a transaction causes inner spans to be "swallowed" by the innermost transaction surrounding them. In some situations, automatic instrumentation creating spans will only make them appear in one of the two transactions, but not both, causing apparent gaps in instrumentation.
 
-The product does not know how to deal with nested transactions yet. If they share a `trace_id` they can be visualized in the trace view, but when looking into one transaction it is as if all the others did not exist (either ancestor or descendent transactions).
+The product does not know how to deal with nested transactions yet. If the transactions share a `trace_id` they can be visualized in the trace view. To get to the trace view, one must follow a link from one of the transactions. However, when looking at any one transaction it is as if all the others did not exist (either ancestor or descendent transactions are not represented on screen).
 
 There is also user confusion about what one would expect in the UI for such a situation (pseudocode):
 
