@@ -227,3 +227,127 @@ Now we can use this example to compare and understand the difference between Sen
 In Sentry's span ingestion model, all spans that belong to a transaction must be sent all together in a single request. That means that all `B` spans must be kept in-memory for the whole duration of the `B*` transaction, including time spent on downstream services (the storage service in the example).
 
 In OpenTelemetry's model, spans are batched together as they are finished and batches are sent as soon as either there is a certain number of spans in the batch or a certain time has passed. In our example, it could mean that the first 3 `B` spans are batched together and sent while the first `S*` transaction is still in progress in the storage service. Subsequently, other `B` spans are batched together and sent as they finish, until eventually the `B*` transaction span is also sent.
+
+While transactions are notably useful to group together spans and to explore operations of interest in Sentry, end users and instrumentation developers have an extra cognitive burden to understand and choose between a transaction or a span.
+
+The issues that follow in the next few sections have been identified in the current ingestion model, and are all related to this dichotomy.
+
+### Complex JSON Serialization of Transactions
+
+In OpenTelemetry's model, all [spans follow the same logical format](https://github.com/open-telemetry/opentelemetry-proto/blob/ebef7c999f4dea62b5b033e92a221411c49c0966/opentelemetry/proto/trace/v1/trace.proto#L56-L235). Users and instrumentation libraries can provide more meaning to a span by attaching key-value attributes to any span. The wire protocol uses lists of spans to send data from one system to another.
+
+Sentry's model, unlike OpenTelemetry's, makes a hard distinction between two types of span: transaction spans (often refered to as "transactions") and regular spans.
+
+In memory, transaction spans and regular spans have one distinction: transaction spans have one extra attribute, the transaction `name`.
+
+When serialized as JSON for ingestion, though, the differences are greater. Sentry SDKs must serialize regular spans to JSON in a format that directly resembles the in-memory spans. However, the serialization of a transaction span requires mapping its span attributes to a Sentry `Event` (originally used to report errors, expanded to fit new fields of exclusive use for transactions), while all child spans go as a list embedded in the `Event`.
+
+### Transaction Spans Gain Event Attributes
+
+When transactions are transformed from their in-memory representation to an `Event`, they gain more attributes that are not assignable to regular spans, such as `breadcrumbs`, `extra`, `contexts`, `event_id`, `fingerprint`, `release`, `environment`, `user`, etc.
+
+### Lifecycle Hooks
+
+Sentry SDKs expose a `BeforeSend` hook for error events, which allows users to modify and/or drop events before they are sent to Sentry.
+
+When the new type of event was introduced, `transaction`, it was soon decided that they would not go through the `BeforeSend` hook, for essentially two reasons:
+
+- Prevent user code from relying on the dual form of transactions (sometimes looking like a span, sometimes like an event, see earlier sections above);
+- Avoid existing `BeforeSend` functions that were written with only errors in mind from interfering with transactions, be it mutating them accidentally, dropping them altogether, or some other unexpected side-effect.
+
+However, it was also clear that some form of lifecycle hook was necessary to allow users to do things like updating a transaction name.
+
+We ended up with the middle ground of allowing the mutation/dropping of transaction events through `EventProcessor` (a more general form of `BeforeSend`), which solves problems by giving users immediate access to their data before it goes out of the SDK, but is also the worse of both worlds in that it exposes the transaction duality that was never intended to leak and is more complicated to use than `BeforeSend`.
+
+In OpenTelemetry, spans go through span processors, which are two lifecycle hooks: one when a span is started and one when it is ended.
+
+### Nested Transactions
+
+On one hand, Sentry's ingestion model does not allow for nested transactions. Transactions are meant to mark service transitions.
+
+On the other hand, Sentry as a product requires that transactions exist. Data outside of a transaction is lost.
+
+In practice, SDKs have to way to prevent transactions from becoming nested. The end result is possibly surprising to users, as each transaction starts a new tree. The only way to relate those trees is through the `trace_id`.
+
+Sentry's billing model is per event/transaction. That means that a transaction within a transaction generates two billable events.
+
+In SDKs, a transaction within a transaction causes inner spans to be "swallowed" by the innermost transaction surrounding them. In some situations, automatic instrumentation creating spans will only make them appear in one of the two transactions, but not both, causing apparent gaps in instrumentation.
+
+The product does not know how to deal with nested transactions yet. If they share a `trace_id` they can be visualized in the trace view, but when looking into one transaction it is as if all the others did not exist (either ancestor or descendent transactions).
+
+There is also user confusion about what one would expect in the UI for such a situation (pseudocode):
+
+```python
+# if do_a_database_query returns 10 results, is the user
+#   - seeing 11 transactions in the UI?
+#   - billed for 11 transactions?
+#   - see spans within create_thumbnail in the innermost transaction only?
+with transaction("index-page"):
+    results = do_a_database_query()
+    for result in results:
+        if result["needs_thumbnail"]:
+            with transaction("create-thumbnail", {"resource": result["id"]}):
+                create_thumbnail(result)
+```
+
+### Spans Cannot Exist Outside of a Transaction
+
+Sentry's tracing experience is centered entirely around the part of a trace that exists inside transactions. This means that data cannot exist outside of a transaction even if it exists in a trace.
+
+If the SDK does not have a transaction going, a manual instrumentation by the user with a regular span is entirely lost. This is less of a concern on instrumented web servers, where a transaction is live most of the time, because automatic instrumentation starts and finishes a transaction for every incoming request.
+
+The requirement of a transaction is specially challenging on frontends (browser, mobile, and desktop applications), because in those cases auto-instrumented transactions are less reliable as they typically only last for some time before being automatically finished.
+
+In our [example trace](#span-ingestion-model), the first span that originates the trace is due to a button click. If the button click `F*` was instrumented as a regular `span`, most likely no data from the frontend would be captured, but the other `B` and `S` spans would still be captured.
+
+In Sentry's model, if a span is not a transaction and there is no ancestor span that is a transaction, then the span won't be ingested.
+
+This, in turn, means there are many situations where a trace is missing crucial information that can help debug issues, particularly on the frontend where transactions need to end at some point but execution might continue.
+
+Automatic and manual instrumentation have a challenge deciding whether to start a span or a transaction, and the decision is particularly difficult considering that poor [scope propagation](#scope-propagation) limits the existence of concurrent transactions.
+
+### Missing Web Vital Measurements
+
+Sentry's browser instrumentation collects Web Vital measurements. But, because those measurements are sent along to Sentry using the automatically instrumented transaction as a carrier, measurements that are made available by the browser after the automatic transaction has finished are lost.
+
+This causes transactions to be missing some Web Vitals or to have non-final measurements, for example for the LCP measurement.
+
+### Unreliable Frontend Transaction Duration
+
+Because all data must go in a transaction. Sentry's browser SDK creates a transaction for every page load and every navigation. Those transactions must end at some time.
+
+If the browser tab is closed before the transaction is finished and sent to Sentry, all collected data is lost. Therefore, the SDK needs to balance the risk of losing all data and capturing as much useful data as possible.
+
+Transactions are finished after a certain idle time after the last activity has been observed (for example, outgoing HTTP requests). This means that the duration of the page load / navigation transaction is a rather arbitrary value that can't necessarily be compared or improved, as it doesn't indicate any concrete and undestandable duration.
+
+We counter the limitation by focusing on the LCP Web Vital as the default performance metric for browser, but, as discussed above, the final LCP value might be lost.
+
+### In-memory Buffering Affects Servers
+
+Any system that may operate with several concurrent transactions at one time, which is the case of web servers, will be required to buffer complete span trees in memory.
+
+This means recording 100% of spans and 100% of transactions for many server-side applications, even in a simplified form, is not feasible due to the overhead incurred.
+
+### Lack of Batch Ingestion
+
+When multiple concurrent transactions finish nearly at the same time, SDKs must send as many requests as there are transactions. There is no provision to batching multiple transactions into a single request.
+
+This inneficiency means at least extra bandwidth consumption for frontends (browser, mobile) and extra overhead for backends.
+
+### Compatibility
+
+The special treatment of transactions is incompatible with OpenTelemetry which means we cannot implement an OpenTelemetry Exporter that can feed data into Sentry (though we have a [Sentry Exporter with a major correctness limitation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/sentryexporter#known-limitations)). Likewise we cannot leverage OpenTelemetry SDKs and instrumentations.
+
+## Summary
+
+We have learned a lot with the current tracing implementation at Sentry. This document is an attempt to capture many of the known limitations to serve as basis for future improvement.
+
+Tracing is a complex subject, and taming that complexity is no easy feat.
+
+The first group of issues related to **scope propagation** is a concern exclusive to SDKs and how they are designed. Addressing that will require internal architecture changes to all SDKs, including the redesign of old features like breadcrumbs. Those would be pre-requisites to implementing simple-to-use tracing helpers like a `trace` function that works in any context and captures accurate and reliable performance data.
+
+Note that such changes would almost necessarily mean new major versions of SDKs that break compatibility with existing versions.
+
+The second group of issues related to the **span ingestion model** is a lot more complex as it affects more parts of the product and requires a coordinated effort from multiple teams to change.
+
+Nonetheless, changes to the ingestion model would have an immeasurable impact on the product, as it could reduce the cognitive burden of instrumentation, collect more data, improve efficiency.
