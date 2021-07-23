@@ -1,0 +1,324 @@
+---
+title: "Batch Span Ingestion with Events"
+---
+
+|             |                  |
+| :---------- | :--------------- |
+| **SEP**     | 5496             |
+| **Author**  | Rodolfo Carvalho |
+| **Created** | 2021/07/23       |
+
+## Introduction
+
+**TODO**, see https://develop.sentry.dev/sdk/research/performance/#span-ingestion-model.
+
+This proposal is inspired by the [OpenTelemetry Protocol (OTLP)](https://github.com/open-telemetry/opentelemetry-specification/blob/1072ed4e18e8e1b52c405a5c731c907efe187c21/specification/protocol/otlp.md), in particular the [protobuf definition for trace data](https://github.com/open-telemetry/opentelemetry-proto/blob/ebef7c999f4dea62b5b033e92a221411c49c0966/opentelemetry/proto/trace/v1/trace.proto).
+
+In OpenTelemetry, spans are ingested as a list of one or more spans wrapped by two containers that add metadata:
+
+```
+┌───────────┐
+│Resource   │
+├───────────┤
+│Key: value │
+│...        │
+├───────────┤
+├───────────┴─────────────────┐
+│                             │
+│ ┌─────────────────────────┐ │
+│ │┼───────────────────────┼│ │
+│ ││Instrumentation Library││ │
+│ │┼───────────────────────┼│ │
+│ ││Name: xxx              ││ │
+│ ││Version: xxx           ││ │
+│ ├┴───────────────────────┴┤ │
+│ │                         │ │
+│ │  ┌───────┐              │ │
+│ │  │Span 1 │              │ │
+│ │  ├───────┤              │ │
+│ │  │Span 2 │              │ │
+│ │  ├───────┤              │ │
+│ │  │Span 3 │              │ │
+│ │  ├───────┤              │ │
+│ │  │ ...   │              │ │
+│ │  ├───────┤              │ │
+│ │  │Span N │              │ │
+│ │  ├───────┤              │ │
+│ └──┴───────┴──────────────┘ │
+│             .               │
+│             .               │
+│             .               │
+│                             │
+└─────────────────────────────┘
+```
+
+The outermost container holds [resource](https://github.com/open-telemetry/opentelemetry-specification/blob/49c2f56f3c0468ceb2b69518bcadadd96e0a5a8b/specification/resource/sdk.md#resource-sdk) metadata, an arbitrary list of key-value pairs that relate to the entity producing telemetry data. The outermost container also has one or more "boxes" of instrumentation library spans.
+
+Each instrumentation library "box" has metadata about the [instrumentation library](https://github.com/open-telemetry/opentelemetry-specification/blob/1072ed4e18e8e1b52c405a5c731c907efe187c21/specification/glossary.md#instrumentation-library) (name and version) and, finally, a list of one or more spans.
+
+## Proposed Changes
+
+This proposal proposes a new Sentry Event type, `spans`. This new type conforms to the general specification of a [Sentry Event](https://develop.sentry.dev/sdk/event-payloads/), without any addition to the existing speficified fields nor their semantical meaning.
+
+<!--
+
+Code Review note:
+
+The name of the new type `spans` could be changed to something else.
+I concede that `spans` can be confusing. It would be the only event type that has plural form, and it is rather generic when used in prose or in conversations.
+Anyway, it is a concise word and gets us started.
+
+Other names: `spanbatch`, `tracebatch`, ...
+
+-->
+
+Unlike in the `transaction` event type, the top-level fields are not used to represent a span (the transaction span). In events of type `spans`, all spans are contained in the `event.spans` field, and the other top-level fields are used to convey only general metadata associated with all spans.
+
+```jsonc
+{
+    event_id: "...",      // For debug-only.
+    type: "spans",        // New event type.
+    timestamp: "...",     // Timestamp when the event was assembled.
+    sdk: { ... },         // SDK info, as usual.
+    ...,                  // Other attributes as seen in other events.
+                          // To-be-defined what fields are valid or required for
+                          // the new event type.
+    spans: [              // List of one or more spans.
+        { ... },
+        ...
+    ]
+}
+```
+
+Transaction spans are distinguished from regular spans by **TODO**.
+
+The `Span` serialization does not change from the current format.
+
+Compared to the OpenTelemetry tracing protocol explained in the [introduction](#introduction) above, this proposal flattens instrumentation library and resource metadata into a single place, the top-level event fields. While SDKs that have multiple layers (for example, React Native events may come from and through different SDKs (JS, Java, C++, etc) depending on the layer where an event was created) could benefit from the extra level of indirection, it is out of scope of this proposal to deal with that.
+
+To support the proposed changes, two different implementation directions are proposed, each variant bringing along their own implications.
+
+Note that the variants are not necessarily mutually exclusive, both could co-exist. In fact, they can be seen as additive. A valid approach would be to start with Variant A, and later implement Variant B.
+
+### Variant A: Buffering in Relay
+
+This proposal implementation variant moves the downsides of buffering full transactions from SDKs into Relay.
+
+It is an increased operational risk as it directly affects Relay's memory consumption. The risk is mitigated by, for example, having customers run their own Relay instance that would operate pretty much like an OpenTelemetry Collector. It would be an ingestion point that is specific to an organization, and traffic to Sentry-controlled Relays would only accept full transactions, eliminating the need for buffering.
+
+The diagram below concisely explains the data ingestion flow of this variant implementation:
+
+```
+┌─────────────┐    ┌─────────────────────┐           xxxx   x          ┌──────────┐
+│             │    │                     │       xxxx         xxxxx    │          │
+│ Application │    │ User/Org-controlled │       x                x    │ Sentry   │
+│      +      ├───►│                     ├───►xx     Internet     x───►│          │
+│ Sentry SDK  │    │      Relay          │   xx                  xx    │ Relay(s) │
+│             │    │                     │     xxxxx           xxx     │          │
+└─────────────┘    └─────────────────────┘         xxxxxxxxxxxx        └──────────┘
+ Event types:
+ <error, transaction, spans>      <error, transaction>
+ ────────────────────────────►    ─────────────────────────────────────────►
+ ```
+
+As depicted, the `spans` event type would only exist/be accepted in the first Relay instance. Upstream Relays would not need to perform buffering.
+
+Note that this variant also works if Sentry accepts `spans` events in its front-facing Relay.
+
+Relay could decide to accept or reject span trees that have no transaction as the root. When accepting, it could choose to automatically promote any span tree root to a transaction, given that the data is already ingested and [billing concerns](#billing-impact) have been sorted out.
+
+The advantage of this variant is the reduced number of dependencies that need to change. Relay is the fundamental piece that needs a new feature, and SDKs can gradually start using the feature at their own pace.
+
+The disadvantage, as mentioned earlier, is the required server-side buffering.
+
+### Variant B: New Span Storage Scheme
+
+This proposal implementation variant completely eliminates the need for buffering complete transaction trees anywhere in the system.
+
+The simplified diagram below glosses over details, focusing on explaining that multiple components of the event ingestion pipeline would need to account for the new event type, and eventually both `transaction` and `spans` events would store span data in a new storage layer:
+
+```
+  ┌─────────────┐           xxxx   x          ┌──────────┐
+  │             │       xxxx         xxxxx    │          │
+  │ Application │       x                x    │ Sentry   │
+  │      +      ├───►xx     Internet     x───►│          ├──┐
+  │ Sentry SDK  │   xx                  xx    │ Relay(s) │  │
+  │             │     xxxxx           xxx     │          │  │
+  └─────────────┘         xxxxxxxxxxxx        └──────────┘  │
+   Event types:                                             │
+   <error, transaction, spans>                              │
+   ───────────────────────────────────────────────►         │
+                                                            │
+                                                            │
+                                                            │
+┌───────────────────────────────────────────────────────────┘
+│
+│ ┌──────────────────────────────────────────────────────┐
+└►│ Sentry Event Processing Pipeline                     │
+  │                                                      │
+  │  Event type:                                         │
+  │                              ┌─────────────────────┐ │
+  │  - error ───────────────────►│ Error Storage       │ │
+  │                              └─────────────────────┘ │
+  │  - transaction ──┐each span                          │
+  │                  └──────────►┌─────────────────────┐ │
+  │  - spans ─────┐each span     │ Span Storage (new)  │ │
+  │               └─────────────►└─────────────────────┘ │
+  │                                                      │
+  │                              ┌─────────────────────┐ │
+  │                              │ Transaction Storage │ │
+  │                              │ (read-only)         │ │
+  │                              └─────────────────────┘ │
+  │                                                      │
+  └──────────────────────────────────────────────────────┘
+```
+
+If this variant is implemented, fetching transactions would require parallel queries to two databases, one to the existing Transaction Storage, and one to the new Span Storage. Querying transactions from the Span Storage can be made efficient by indexing transaction IDs. Data backfill/migration would not be necessary, as eventually all new spans would end up in the new storage layer (and Sentry event data has a limited retention period).
+
+The advantage of this variant is that it possibly enables several use cases for the product, by being able to tap into individual span data.
+
+The disadvantage is that several Sentry components would require change. That means a project that requires more coordination across different teams to be successful, and probably more time to implement.
+
+## Product Impact
+
+### Frontend
+
+The proposed ingestion format would make it possible to ingest spans that belong to a trace (because the trace ID is still required), but that do not belong to any transaction (because constructing a tree from parent-child relationships might lead to a tree with zero or more spans marked as transactions).
+
+In a first moment, the Sentry.io frontend could continue to work with no changes if variant A is implemented.
+
+If variant B is implemented, the Sentry.io frontend would need to be changed to stop relying on `event_id` to refer to transactions. Instead, `trace_id` plus `span_id` should be used. That is because, if this proposal is implemented, a transaction can be ingested gradually with multiple events (thus a transaction can be related to multiple `event_id`) and multiple transactions can be ingested with a single event (thus sharing the `event_id`). This requirement can be ignored in variant A because Relay can generate a unique `event_id` for the `transaction` events it creates from incoming `spans` events.
+
+Both variants A and B above lead to a world where the frontend (or anything) can still query the Sentry backend for "give me all transactions from this project".
+
+However, if variant B is implemented, the frontend could, optionally and gradually, build new ways of consuming trace data.
+
+### Relay
+
+Prior to this proposal, Relay expected to see a complete transaction tree in an incoming `transaction` event.
+
+If this proposal is implemented, either Relay needs to buffer spans to reconstruct transactions out of them, and then proceed as if it was ingesting a transaction event (variant A), or Relay more simply forwards a list of spans that are eventually durably stored. The latter would likely be the more efficient long term solution, while the former might be a viable shortcut.
+
+### Snuba / Storage
+
+With variant A, no changes to Snuba or any durable storage is required.
+
+With variant B, a new durable storage solution needs to be designed, implemented and operated. The existing transaction storage becomes read-only. Eventually, the existing transaction storage can be phased out.
+
+### SDKs
+
+SDKs can be gradually updated to adopt the new event type.
+
+There would need to be a few new initialization options exposed to users, similar to [the parameters available to Batching Span Processors in OpenTelemetry](https://github.com/open-telemetry/opentelemetry-specification/blob/7fc28733eb3791ebcc98fed0d858a7961f1e95b2/specification/trace/sdk.md#batching-processor). Namely:
+
+- `maxQueueSize`: the maximum span queue size. After the size is reached, new spans are dropped.
+- `maxBatchSize`: the maximum batch size of every `spans` event. It must be smaller or equal to `maxQueueSize`. When the current batch reaches this size, the SDK creates and sends a `spans` event to Sentry.
+- `scheduledDelayMillis`: the delay interval in milliseconds between two consecutive span batches. If the delay is reached, the existing spans in the current batch are sent to Sentry as a `spans` event, without waiting to complete the full batch size.
+
+To avoid polluting the namespace of the already long list of options, these new options could be grouped together as a `SpanProcessor`/`BatchingSpanProcessor` value initialized with the relevant options.
+
+Whenever the `Span.finish` method is called, the span `end_timestamp` is set and the finished span is sent to the `BatchingSpanProcessor`. The `BatchingSpanProcessor` would then be responsible for recording spans until the size or delay limits are reached, whichever comes first.
+
+Spans in a given batch don't need to belong to the same trace nor to the same transaction. In fact, spans may belong to no transaction. That means SDKs don't need to remember full span trees in-memory.
+
+The `BatchingSpanProcessor` is, then, an abstraction somewhat similar to the existing default asynchronous transport in SDKs. However, the `BatchingSpanProcessor` would still use the existing transport (async, sync, or user-provided) to actually send `spans` events.
+
+With this proposal, the `Transaction.finish` method would be no different than the `Span.finish` method. Therefore, any span can be ingested and the pre-requisite of wrapping spans with transactions is lifted. Automatic and manual instrumentation, then, can become much simpler, as, for most cases, there is no more need to choose between starting a "span" or a "transaction".
+
+Specifically for the JavaScript Browser SDK, we can use the new `spans` event type to delay firing an event with Web Vitals until all Web Vital measurements are final. Also for browser, users will finally be able to instrument arbitrary actions such as button clicks and component rendering and capture spans without worrying if there is an active transaction or not.
+
+### Other Components
+
+If variant B is implemented, any Sentry component that refer to transactions by `event_id` and assume it to be unique must be changed (see discussion for [Frontend impact](#frontend) above). Transactions are, and have always been, uniquely identified by `trace_id` plus `span_id`.
+
+## Billing Impact
+
+Sentry bills users for error and transaction events. Events are generally understood as outgoing requests from customer applications instrumented with a Sentry SDK.
+
+Prior to this proposal, transaction events contained a complete span tree. If this proposal is implemented, an event may contain spans from multiple trees. Therefore, if we keep the above understanding of event, we can reduce costs for users by reducing the number of billable events. However, depending on SDK configuration, a transaction could be split into multiple requests/events, thus increasing costs for users.
+
+Therefore, there are two important considerations that must be made.
+
+First, the welcome cost reduction. Users need to understand that they are billed per outgoing request / event, so they can configure their SDKs appropriately to control costs. That is already the case today, what changes is only the contents of a given request.
+
+As an example, consider a customer with a simple web server that creates a transaction with 4 child spans per incoming request (5 spans total, including the transaction). That is enough instrumentation to get an insight into, say, two database calls and two calls to an external HTTP service per incoming request. The customer configures their Sentry SDK to create batches of 100 spans before sending an event to Sentry. In this case, the customer could ingest 100 ÷ 5 = 20 transactions with a single event. That's a 20x cost reduction.
+
+Now, consider that with the intent of limiting buffering, SDKs, prior to this proposal, have a default limit of 1,000 spans per transaction. It means that, in the example above, a customer could have used batches of 1,000 spans to achieve a whopping 200x cost reduction.
+
+The cost difference can be illustrated.
+
+Without this proposal, SDKs must send 1,000 events to ingest 1,000 transactions -- huge cost:
+
+```
+                                                                                  s
+┌─1,000 events───────────────────────────────────┐           $                   s s
+│                                                │          $$$                 s   s
+│  ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐  │         $$$$$               s     s
+│  │  │ │  │ │  │ │  │ │  │ │  │ │  │ │  │ │  │  │       $$$$$$$$$            ssss    s
+│  └──┘ └──┘ └──┘ └──┘ └──┘ └──┘ └──┘ └──┘ └──┘  │       $$$$$$$$$               sss   s
+│                                                │       $$$$$$$$$           sss   sss  s
+│  ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐  │         $$$$$            ss  s    ss  s
+│  │  │ │  │ │  │ │  │ │  │ │  │ │  │ │  │ │  │  ├──────────$$$────────►      s  s    s   s
+│  └──┘ └──┘ └──┘ └──┘ └──┘ └──┘ └──┘ └──┘ └──┘  │           $             s   s s    s   s
+│                                                │                        ssssss ssssss sss
+│  ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐                 │
+│  │  │ │  │ │  │ │  │ │  │ │  │  ...            │       huge cost
+│  └──┘ └──┘ └──┘ └──┘ └──┘ └──┘                 │                             Sentry
+│                                                │
+│                                                │
+└────────────────────────────────────────────────┘
+```
+
+With this proposal implemented, the same 1,000 transactions (with 4 child spans) can be ingested with only 5 events like this one:
+
+```
+┌─Event──────────────────────────────────────────┐
+│                                                │
+│ event_id: ee6959d9-9761-44c2-b96b-22209e4d8f0c │                                s
+│ [... other attributes ...]                     │                               s s
+│ spans:                                         │                              s   s
+│ ┌────────────────────────────────────────────┐ │                             s     s
+│ │┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼│ │                            ssss    s
+│ │┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼│ │          $                    sss   s
+│ │┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼│ │         $$$               sss   sss  s
+│ │┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼│ │          $               ss  s    ss  s
+│ │┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼───────────┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼│ ├────────────────────►       s  s    s   s
+│ │┼┼┼┼┼┼┼┼┼┼┼┼┼┼│1,000 spans│┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼│ │                         s   s s    s   s
+│ │┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼───────────┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼│ │                        ssssss ssssss sss
+│ │┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼│ │      small cost
+│ │┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼│ │
+│ │┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼│ │                             Sentry
+│ │┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼│ │
+│ │┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼┼│ │
+│ └────────────────────────────────────────────┘ │
+│                                                │
+└────────────────────────────────────────────────┘
+```
+
+In practice, though, because there is both a time/delay to send and a size constraint, the actual savings will be somewhere between the old/current huge cost and the theoretical maximum cost savings.
+
+For actual dollar figures, see [Sentry's Pricing](https://docs.sentry.io/product/accounts/pricing/).
+
+The second consideration, the potential for cost increase, is accompanied by more data in Sentry. Users need to understand that individual spans that were previously silently dropped, now have a chance to make it into Sentry. It is believed that the cost reduction scenarios far outweigh the possibility for extra events increasing cost, meaning a net balance would still be very favorable to Sentry customers.
+
+It is to be decided if we can introduce the changes in this proposal without change to the existing billing plans.
+
+## Rate-limiting Impact
+
+**TODO**
+
+## Unsolved Problems
+
+### General Batch Event Ingestion
+
+While this proposal addresses batch-ingestion of spans reusing the existing event concept and format, it notably doesn't address batch ingestion of other types of data. In other words, batch span ingestion does not mean batch event ingestion.
+
+It is easy to imagine using [Envelopes](https://develop.sentry.dev/sdk/envelopes/) for greater good and allowing for error batches, and why not batches including both errors and spans.
+
+A general batch event ingestion proposal is left for the future. Go steal that idea!
+
+### Span Processors
+
+Generic, user-provided, span processors.
+
+**TODO**

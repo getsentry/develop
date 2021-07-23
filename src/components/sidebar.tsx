@@ -286,6 +286,18 @@ export default () => {
           className="sidebar-title d-flex align-items-center mb-0"
           data-sidebar-link
         >
+          <h6>Sentry Enhancement Proposals</h6>
+        </div>
+
+        <ul className="list-unstyled" data-sidebar-tree>
+          <SidebarLink to="/proposals/">Proposals Index</SidebarLink>
+        </ul>
+      </li>
+      <li className="mb-3" data-sidebar-branch>
+        <div
+          className="sidebar-title d-flex align-items-center mb-0"
+          data-sidebar-link
+        >
           <h6>Resources</h6>
         </div>
 
