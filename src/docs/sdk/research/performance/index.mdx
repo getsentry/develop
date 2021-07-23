@@ -66,7 +66,7 @@ The implementation of the actual `trace` function is relatively simple (see [a P
 
 The following two examples synthesize the scope propagation issues.
 
-### 1. Cannot Determine Current Span
+### Cannot Determine Current Span
 
 Consider some auto-instrumentation code that needs to get a reference to the current `span`, a case in which manual scope propagation is not available.
 
@@ -146,7 +146,7 @@ Note that other tracing libraries have the same kind of challenge. There are sev
 - [OpenTracing shim doesn't change context #2016](https://github.com/open-telemetry/opentelemetry-js/issues/2016)
 - [Http Spans are not linked / does not set parent span #2333](https://github.com/open-telemetry/opentelemetry-js/issues/2333)
 
-### 2. Conflicting Data Propagation Expectations
+### Conflicting Data Propagation Expectations
 
 There is a conflict of expectations that appear whenever we add a `trace` function as discussed earlier, or simply try to address scope propagation with Zones.
 
