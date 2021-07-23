@@ -290,7 +290,7 @@ export default () => {
         </div>
 
         <ul className="list-unstyled" data-sidebar-tree>
-          <SidebarLink to="/proposals/">Proposals Index</SidebarLink>
+          <SidebarLink to="/proposals/">Index</SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
