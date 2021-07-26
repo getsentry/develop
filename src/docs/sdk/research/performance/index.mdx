@@ -68,7 +68,7 @@ The implementation of the actual `trace` function is relatively simple (see [a P
 
 The following two examples synthesize the scope propagation issues.
 
-### Cannot Determine Current Span
+### 1. Cannot Determine Current Span
 
 Consider some auto-instrumentation code that needs to get a reference to the current `span`, a case in which manual scope propagation is not available.
 
@@ -148,9 +148,9 @@ Note that other tracing libraries have the same kind of challenge. There are sev
 - [OpenTracing shim doesn't change context #2016](https://github.com/open-telemetry/opentelemetry-js/issues/2016)
 - [Http Spans are not linked / does not set parent span #2333](https://github.com/open-telemetry/opentelemetry-js/issues/2333)
 
-### Conflicting Data Propagation Expectations
+### 2. Conflicting Data Propagation Expectations
 
-There is a conflict of expectations that appears whenever we add a `trace` function as discussed earlier, or simply try to address scope propagation with Zones.
+There is a conflict of expectations that appear whenever we add a `trace` function as discussed earlier, or simply try to address scope propagation with Zones.
 
 The fact that the current `span` is stored in the `scope`, along with `tags`, `breadcrumbs` and more, makes data propagation messy as some parts of the `scope` are intended to propagate only into inner functions calls (for example, tags), while others are expected to propagate back into callers (for example, breadcrumbs), specially when there is an error.
 
@@ -193,8 +193,6 @@ function b() {
 In the example above, if an error bubbles up the call stack we want to be able to report in which `span` (by referring to a `SpanID`) the error happened. We want to have breadcrumbs that describe everything that happened, no matter which Zones were executing, and we want a tag set in an inner Zone to override a tag with the same name from a parent Zone, while inherinting all other tags from the parent Zone. Every Zone has their own "current span".
 
 All those different expectations makes it hard to reuse, in an understandable way, the current notion of `scope`, how breadcrumbs are recorded, and how those different concepts interact.
-
-Finally, it is worth noting that the changes to restructure scope management most likely cannot be done without breaking existing SDK APIs. Existing SDK concepts - like hubs, scopes, breadcrumbs, user, tags, and contexts - would all have to be remodeled.
 
 ## Span Ingestion Model
 
