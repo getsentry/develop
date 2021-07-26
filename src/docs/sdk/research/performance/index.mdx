@@ -42,7 +42,7 @@ Every `hub` knows what the current scope is. It is always the scope on top of th
 
 JavaScript, for example, is single-threaded with an event loop and async code execution. There is no standard way to carry contextual data that works across async calls. So for JavaScript browser applications, there is only one global `hub` shared for sync and async code.
 
-A similar situation appears on Mobile SDKs. There is an user expectation that contextual data like tags, what the current user is, breadcrumbs, and other information stored on the `scope` be available and settable from any thread. Therefore, in those SDKs there is only one global `hub`.
+A similar situation appears on Mobile SDKs. There is a user expectation that contextual data like tags, what the current user is, breadcrumbs, and other information stored on the `scope` be available and settable from any thread. Therefore, in those SDKs there is only one global `hub`.
 
 In both cases, everything was relatively fine when the SDK had to deal with reporting errors. With the added responsibility to track transactions and spans, the `scope` became a poor fit to store the current `span`, because it limits the existence of concurrent spans.
 
