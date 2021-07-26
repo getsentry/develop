@@ -334,7 +334,9 @@ As a result, when multiple transactions finish at nearly the same time, SDKs are
 
 ### Compatibility
 
-The special treatment of transactions is incompatible with OpenTelemetry which means we cannot implement an OpenTelemetry Exporter that can feed data into Sentry (though we have a [Sentry Exporter with a major correctness limitation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/sentryexporter#known-limitations)). Likewise we cannot leverage OpenTelemetry SDKs and instrumentations.
+The special treatment of transaction spans is incompatible with OpenTelemetry. Users with existing applications instrumented with OpenTelemetry SDKs cannot easily use Sentry to ingest and analyze their data.
+
+Sentry does provide a Sentry Exporter for the OpenTelemetry Collector, but, due to the current ingestion model, [the Sentry Exporter has a major correctness limitation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/sentryexporter#known-limitations).
 
 ## Summary
 
