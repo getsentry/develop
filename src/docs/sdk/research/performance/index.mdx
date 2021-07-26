@@ -240,7 +240,7 @@ Sentry's model, unlike OpenTelemetry's, makes a hard distinction between two typ
 
 In memory, transaction spans and regular spans have one distinction: transaction spans have one extra attribute, the transaction `name`.
 
-When serialized as JSON for ingestion, though, the differences are greater. Sentry SDKs must serialize regular spans to JSON in a format that directly resembles the in-memory spans. However, the serialization of a transaction span requires mapping its span attributes to a Sentry `Event` (originally used to report errors, expanded to fit new fields of exclusive use for transactions), while all child spans go as a list embedded in the `Event`.
+When serialized as JSON, though, the differences are greater. Sentry SDKs serialize regular spans to JSON in a format that directly resembles the in-memory spans. By contrast, the serialization of a transaction span requires mapping its span attributes to a Sentry `Event` (originally used to report errors, expanded with new fields exclusively used for transactions), with all child spans embedded as a list in the `Event`.
 
 ### Transaction Spans Gain Event Attributes
 
