@@ -228,7 +228,7 @@ In Sentry's span ingestion model, all spans that belong to a transaction must be
 
 In OpenTelemetry's model, spans are batched together as they are finished, and batches are sent as soon as either a) there are a certain number of spans in the batch or b) a certain amount of time has passed. In our example, it could mean that the first 3 `B` spans would be batched together and sent while the first `S*` transaction is still in progress in the storage service. Subsequently, other `B` spans would be batched together and sent as they finish, until eventually the `B*` transaction span is also sent.
 
-While transactions are notably useful to group together spans and to explore operations of interest in Sentry, end users and instrumentation developers have an extra cognitive burden to understand and choose between a transaction or a span.
+While transactions are notably useful as a way to group together spans and to explore operations of interest in Sentry, the form in which they currently exist imposes extra cognitive burden. Both SDK maintainers and end users have to understand and choose between a transaction or a span when writing instrumentation code.
 
 The issues that follow in the next few sections have been identified in the current ingestion model, and are all related to this dichotomy.
 
