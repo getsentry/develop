@@ -344,10 +344,8 @@ We have learned a lot through building the current tracing implementation at Sen
 
 Tracing is a complex subject, and taming that complexity is no easy feat.
 
-The first group of issues related to **scope propagation** is a concern exclusive to SDKs and how they are designed. Addressing that will require internal architecture changes to all SDKs, including the redesign of old features like breadcrumbs. Those would be pre-requisites to implementing simple-to-use tracing helpers like a `trace` function that works in any context and captures accurate and reliable performance data.
+Issues in the first group - those related to **scope propagation** - are a concern exclusive to SDKs and how they are designed. Addressing them will require internal architecture changes to all SDKs, including the redesign of old features like breadcrumbs, but making such changes is a prerequisite for implementing simple-to-use tracing helpers like a `trace` function that works in any context and captures accurate and reliable performance data. Note that such changes would almost certainly mean releasing new major versions of SDKs that break compatibility with existing versions.
 
-Note that such changes would almost necessarily mean new major versions of SDKs that break compatibility with existing versions.
-
-The second group of issues related to the **span ingestion model** is a lot more complex as it affects more parts of the product and requires a coordinated effort from multiple teams to change.
+Issues in the second group - those related to the **span ingestion model** - are a lot more complex, as any changes made to solve them would affect more parts of the product and require a coordinated effort from multiple teams.
 
 Nonetheless, making changes to the ingestion model would have an immeasurable, positive impact on the product, as doing so would improve efficiency, allow us to collect more data, and reduce the cognitive burden of instrumentation.
