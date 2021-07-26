@@ -322,15 +322,15 @@ We counter this limitation by focusing on the LCP Web Vital as the default perfo
 
 ### In-memory Buffering Affects Servers
 
-Any system that may operate with several concurrent transactions at one time, which is the case of web servers, will be required to buffer complete span trees in memory.
+As discussed earlier, the current ingestion model requires Sentry SDKs to observe complete span trees in memory. Applications that operate with a constant flow of concurrent transactions will require considerable system resources to collect and process tracing data. Web servers are the typical case that exhibit this problem.
 
-This means recording 100% of spans and 100% of transactions for many server-side applications, even in a simplified form, is not feasible due to the overhead incurred.
+This means that recording 100% of spans and 100% of transactions is not feasible for many server-side applications, because the overhead incurred is just too high.
 
-### Lack of Batch Ingestion
+### Inability to Batch Transactions
 
-When multiple concurrent transactions finish nearly at the same time, SDKs must send as many requests as there are transactions. There is no provision to batching multiple transactions into a single request.
+Sentry's ingestion model does not support ingesting multiple events at once. In particular, SDKs cannot batch multiple transactions into a single request.
 
-This inneficiency means at least extra bandwidth consumption for frontends (browser, mobile) and extra overhead for backends.
+As a result, when multiple transactions finish at nearly the same time, SDKs are required to make a separate request for each transaction. This behavior is at best highly inefficient and at worst a significant and problematic drain on resources such as network bandwidth and CPU cycles.
 
 ### Compatibility
 
