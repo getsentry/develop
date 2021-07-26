@@ -259,13 +259,11 @@ However, it was also clear that some form of lifecycle hook was necessary, to al
 
 We ended up with the middle ground of allowing the mutation/dropping of transaction events through the use of an `EventProcessor` (a more general form of `BeforeSend`). This solves problems by giving users immediate access to their data before it goes out of the SDK, but it also has drawbacks in that it's more complicated to use than `BeforeSend` and also exposes the transaction duality, which was never intended to leak.
 
-By constrast, in OpenTelemetry spans go through span processors, which are two lifecycle hooks: one when a span is started and one when it is ended.
+By contrast, in OpenTelemetry spans go through span processors, which are two lifecycle hooks: one when a span is started and one when it is ended.
 
 ### Nested Transactions
 
-On one hand, Sentry's ingestion model does not allow for nested transactions. Transactions are meant to mark service transitions.
-
-On the other hand, Sentry as a product requires that transactions exist. Data outside of a transaction is lost.
+Sentry's ingestion model was not designed for nested transactions within a service. Transactions were meant to mark service transitions.
 
 In practice, SDKs have no way of preventing transactions from becoming nested. The end result is possibly surprising to users, as each transaction starts a new tree. The only way to relate those trees is through the `trace_id`.
 
