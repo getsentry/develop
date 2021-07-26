@@ -139,7 +139,10 @@ Relay could decide to accept or reject span trees that have no transaction as th
 
 The advantage of this variant is the reduced number of dependencies that need to change. Relay is the fundamental piece that needs a new feature, and SDKs can gradually start using the feature at their own pace.
 
-The disadvantage, as mentioned earlier, is the required server-side buffering.
+There are at least two disadvantages. The first, as mentioned earlier, is the required server-side buffering in Relay. The second is that, regardless of Relay's best efforts to reconstruct transactions in memory, data loss could still occur in multiple ways, for example:
+- Spans dropped when Relay's buffer is full;
+- If spans belonging to a transaction arrive after the transaction span is processed and the transaction event sent upstream, the spans would most likely be dropped;
+- Possibly other scenarios.
 
 ### Variant B: New Span Storage Scheme
 
