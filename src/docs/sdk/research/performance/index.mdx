@@ -244,7 +244,7 @@ When serialized as JSON, though, the differences are greater. Sentry SDKs serial
 
 ### Transaction Spans Gain Event Attributes
 
-When transactions are transformed from their in-memory representation to an `Event`, they gain more attributes that are not assignable to regular spans, such as `breadcrumbs`, `extra`, `contexts`, `event_id`, `fingerprint`, `release`, `environment`, `user`, etc.
+When a transaction is transformed from its in-memory representation to an `Event`, it gains more attributes not assignable to regular spans, such as `breadcrumbs`, `extra`, `contexts`, `event_id`, `fingerprint`, `release`, `environment`, `user`, etc.
 
 ### Lifecycle Hooks
 
