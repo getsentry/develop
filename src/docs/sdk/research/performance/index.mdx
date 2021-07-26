@@ -259,7 +259,7 @@ However, it was also clear that some form of lifecycle hook was necessary, to al
 
 We ended up with the middle ground of allowing the mutation/dropping of transaction events through the use of an `EventProcessor` (a more general form of `BeforeSend`). This solves problems by giving users immediate access to their data before it goes out of the SDK, but it also has drawbacks in that it's more complicated to use than `BeforeSend` and also exposes the transaction duality, which was never intended to leak.
 
-In OpenTelemetry, spans go through span processors, which are two lifecycle hooks: one when a span is started and one when it is ended.
+By constrast, in OpenTelemetry spans go through span processors, which are two lifecycle hooks: one when a span is started and one when it is ended.
 
 ### Nested Transactions
 
