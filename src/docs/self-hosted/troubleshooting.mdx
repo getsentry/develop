@@ -112,6 +112,7 @@ An example script below:
 docker-compose run -T web cleanup --days 7 -m nodestore -l debug
 # This ensures pg-repack exists before running as the container gets recreated on upgrades
 docker-compose run -T postgres bash -c "apt update && apt install -y --no-install-recommends postgresql-9.6-repack && su postgres -c 'pg_repack -E info -t nodestore_node'"
+```
 
 ## Other
 
