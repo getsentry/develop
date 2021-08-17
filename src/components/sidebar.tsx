@@ -103,14 +103,16 @@ export default () => {
         </div>
         <ul className="list-unstyled" data-sidebar-tree>
           <SidebarLink to="/self-hosted/">Overview</SidebarLink>
-          <SidebarLink to="/self-hosted/custom-ca-roots/">Custom CA Roots</SidebarLink>
+          <SidebarLink to="/self-hosted/releases/">
+            Releases & Upgrading
+          </SidebarLink>
+          <SidebarLink to="/self-hosted/backup/">Backup & Restore</SidebarLink>
+          <SidebarLink to="/self-hosted/custom-ca-roots/">
+            Custom CA Roots
+          </SidebarLink>
           <SidebarLink to="/self-hosted/email/">Email</SidebarLink>
           <SidebarLink to="/self-hosted/geolocation/">Geolocation</SidebarLink>
           <SidebarLink to="/self-hosted/sso/">Single Sign-On (SSO)</SidebarLink>
-          <SidebarLink to="/self-hosted/backup/">Backup & Restore</SidebarLink>
-          <SidebarLink to="/self-hosted/releases/">
-            Versioning & Releases
-          </SidebarLink>
           <SidebarLink to="/self-hosted/troubleshooting/">
             Troubleshooting
           </SidebarLink>
@@ -170,9 +172,7 @@ export default () => {
           <SidebarLink to="/services/digests/">
             Notification Digests
           </SidebarLink>
-          <SidebarLink to="/services/relay/">
-            Relay
-          </SidebarLink>
+          <SidebarLink to="/services/relay/">Relay</SidebarLink>
           <SidebarLink to="https://github.com/getsentry/snuba">
             Snuba
           </SidebarLink>
@@ -243,7 +243,9 @@ export default () => {
             </SidebarLink>
           </SidebarLink>
           <SidebarLink to="/sdk/sessions/">Sessions</SidebarLink>
-          <SidebarLink to="/sdk/research/performance">Research: Performance Monitoring API</SidebarLink>
+          <SidebarLink to="/sdk/research/performance">
+            Research: Performance Monitoring API
+          </SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
