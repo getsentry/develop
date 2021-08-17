@@ -4,7 +4,9 @@ title: "API concepts"
 In this document, we will be looking at API concepts that exist and should be followed by endpoints. We also describe why these concepts exist so that developers can use them at their own discretion.
 
 ## Expanding responses
-In general, expose the fewest fields that will still make the API usable in the general scenario. Doing one SQL request per API request is a good rule of thumb. To return information on a bounded relationship, endpoints should rely on the `expand` parameter. To return an unbounded relationship, it should be another endpoint.
+Expanding responses allow us to include relational information on a resource without loading it by default.
+
+In general, endpoints should expose the fewest fields that will make the API usable in the general scenario. Doing one SQL request per API request is a good rule of thumb. To return information on a bounded relationship, endpoints should rely on the `expand` parameter. To return an unbounded relationship, it should be another endpoint.
 
 To take an example, let's talk about the projects list endpoint. A project belongs to an organizations but could be on multiple teams.
 
