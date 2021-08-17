@@ -37,9 +37,7 @@ export default () => {
           <SidebarLink to="https://github.com/getsentry/.github/blob/master/CODE_OF_CONDUCT.md">
             Code of Conduct
           </SidebarLink>
-          <SidebarLink to="/docs/" title="Documentation Guide">
-            <SidebarLink to="/docs/api/">Making an API Public</SidebarLink>
-          </SidebarLink>
+          <SidebarLink to="/docs/">Documentation Guide</SidebarLink>
           <SidebarLink to="/inclusion/">Inclusive Language</SidebarLink>
           <SidebarLink to="/translations/">Translations</SidebarLink>
           <SidebarLink to="/code-review/">Code Review</SidebarLink>
@@ -87,6 +85,11 @@ export default () => {
           <SidebarLink to="/config/">Configuration</SidebarLink>
           <SidebarLink to="/feature-flags/">Feature Flags</SidebarLink>
           <SidebarLink to="/serializers/">Serializers</SidebarLink>
+          <SidebarLink to="/api/" title="API">
+            <Children
+              tree={tree.find(n => n.name === "api").children}
+            />
+          </SidebarLink>
           <SidebarLink to="/pii/" title="PII and Data Scrubbing">
             <SidebarLink to="/pii/types/">Rule Types</SidebarLink>
             <SidebarLink to="/pii/methods/">Redaction Methods</SidebarLink>
