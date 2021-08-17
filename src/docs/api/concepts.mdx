@@ -1,5 +1,5 @@
 ---
-title: "API concepts"
+title: "API Concepts"
 ---
 In this document, we will be looking at API concepts that exist and should be followed by endpoints. We also describe why these concepts exist so that developers can use them at their own discretion.
 
@@ -13,7 +13,7 @@ To take an example, let's talk about the projects list endpoint. A project belon
 By default, here's what the project endpoint should look like
 
 ```json
-GET /api/0/projects/
+GET /api/0/projects/{project_slug}/
 {
   "id": 5,
   "name": "foo",
@@ -24,7 +24,7 @@ GET /api/0/projects/
 To display information about a bounded relationship, a user should be able to use the `expand` parameter. This is generally only true for 1:1 relationships.
 
 ```json
-GET /api/0/projects/?expand=organization
+GET /api/0/projects/{project_slug}/?expand=organization
 {
   "id": 5,
   "name": "foo",
@@ -62,7 +62,7 @@ Similar to expanding responses, an API endpoint can also collapse responses. Whe
 To take an example, let's look at the project list endpoints again. A project gets events and hence, has a `stats` component, which conveys information about how many events were received for the project. Let's say we made the stats part of the endpoint public, along with the rest of the projects list endpoint.
 
 ```json
-GET /api/0/projects/
+GET /api/0/projects/{project_slug}/
 {
   "id": 5,
   "name": "foo",
@@ -85,7 +85,7 @@ GET /api/0/projects/
 The `collapse` parameter can be passed to not return stats information.
 
 ```json
-GET /api/0/projects/?collapse=stats
+GET /api/0/projects/{project_slug}/?collapse=stats
 {
   "id": 5,
   "name": "foo",
