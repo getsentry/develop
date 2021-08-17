@@ -40,7 +40,7 @@ GET /api/0/projects/{project_slug}/?expand=organization
 For unbounded relationships, make a separate query. This allows the query to be paginated and reduces the risk of having an arbitrarily large payload.
 
 ```json
-GET /api/0/projects/foo/teams
+GET /api/0/projects/{project_slug}/teams
 [
   {
     "id": 1,
