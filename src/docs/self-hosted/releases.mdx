@@ -18,15 +18,15 @@ Sentry cuts regular releases for self-hosting to keep it as close to [sentry.io]
 
 ## Upgrading
 
-We encourage everyone to regularly update their Sentry installations to get the best and the most recent Sentry experience. You can read more about our versioning strategy and philosophy over at the <Link to="/self-hosted/releases/">releases page</Link>.
-
-<Alert title="Warning" level="warning">
-  There are certain hard-stops you need to go through when upgrading from earlier versions. See the  <Link to="#hard-stops">hard-stops</Link> section below for a list.
-</Alert>
+We encourage everyone to regularly update their Sentry installations to get the best and the most recent Sentry experience.
 
 To upgrade, all you need to do is download or check out the version of onpremise repository you want, replace your existing folder's contents with that, and then run `./install.sh`. **We may have some updated configuration, especially for new features, so always check the example config files under the [sentry directory](https://github.com/getsentry/onpremise/blob/master/sentry/) and see if you need to update your existing configuration**. We do our best to automate critical configuration updates, but you should always check your configs during upgrades.
 
 Before starting the upgrade, we shut down all the services and then run some data migrations, so expect to have some downtime. There is an *experimental* `--minimize-downtime` option to reduce the downtime during upgrades. Use this at your own risk and see [the pull request it was implemented in](https://github.com/getsentry/onpremise/issues/607) for more information.
+
+<Alert title="Warning" level="warning">
+  There are certain hard-stops you need to go through when upgrading from earlier versions. Please read the <Link to="#hard-stops">hard-stops</Link> section below for a list.
+</Alert>
 
 ### Hard Stops
 
