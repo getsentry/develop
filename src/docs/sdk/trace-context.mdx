@@ -4,7 +4,7 @@ title: "Trace Context"
 
 <Note role="alert">
 
-This feature is under development and is not required for all SDKs supporting Performance Monitoring, yet.
+This feature is under development and is not required for all SDKs supporting Performance Monitoring, yet. Please consider the <Link to="/sdk/performance#header-sentry-trace">Performance Guidelines</Link> as reference documentation. Anything that contradicts it is a mistake (or an out of date detail) in this document.
 
 </Note>
 
@@ -68,27 +68,30 @@ Here's an example of a minimal envelope header containing the trace context (Alt
 
 When propagating trace contexts to other SDKs, Sentry uses the [W3C `tracestate` header](https://www.w3.org/TR/trace-context/#trace-context-http-headers-format). See "Trace Propagation" for more information on how to propagate these headers to other SDKs.
 
-Tracestate headers contain several vendor-specific opaque data. As per HTTP spec, these multiple header values can be given in two ways:
+Tracestate headers contain several vendor-specific opaque data. As per HTTP spec, these multiple header values can be given in two ways, usually supported by HTTP libraries and framework out-of-the-box:
 
-- Joined by comma: `tracestate: sentry=<data>, other=<data>`
+- Joined by comma:
+  ```
+  tracestate: sentry=<data>, other=<data>
+  ```
 - Repetition:
   ```
   tracestate: sentry=<data>
-  tracestate: other=<data>`
+  tracestate: other=<data>
   ```
 
 To create contents of the tracestate header:
 
 1. Serialize the full trace context to JSON, including the trace_id.
 2. Encode the resulting JSON string as UTF-8, if strings are represented differently on the platform.
-3. Encode the UTF-8 string with base64
-4. Strip trailing `=` since this is a reserved character
-5. Prepend with `sentry=`, resulting in `sentry=<base64>`
-6. Join into the header as described above
+3. Encode the UTF-8 string with base64.
+4. Strip trailing padding characters (`=`), since this is a reserved character.
+5. Prepend with `"sentry="`, resulting in `"sentry=<base64>"`.
+6. Join into the header as described above.
 
 <Note>
 
-By stripping trailing `=`, default base64 parsers may detect an incomplete payload. Choose a parsing mode that either allows for missing `=` or allows truncated payloads.
+By stripping trailing padding, default base64 parsers may detect an incomplete payload. Choose a parsing mode that either allows for missing `=` or allows truncated payloads.
 
 </Note>
 
@@ -96,18 +99,18 @@ The following is an example :
 
 ```json
 {
-	"trace_id": "771a43a4192642f0b136d5159a501700",
+  "trace_id": "771a43a4192642f0b136d5159a501700",
   "public_key": "49d0f7386ad645858ae85020e393bef3",
   "release": "1.1.22",
-	"environment": "dev",
+  "environment": "dev",
   "user": {
-	  "segment": "vip",
+    "segment": "vip",
     "id": "7efa4978da177713df088f846f8c484d"
   }
 }
 ```
 
-Would result in
+Would encode as:
 
 ```
 ewogICJ0cmFjZV9pZCI6ICI3NzFhNDNhNDE5MjY0MmYwYjEzNmQ1MTU5YTUwMTcwMCIsCiAgInB1YmxpY19rZXkiOiAiNDlkMGY3Mzg2YWQ2NDU4NThhZTg1MDIwZTM5M2JlZjMiLAogICJyZWxlYXNlIjogIjEuMS4yMiIsCiAgImVudmlyb25tZW50IjogImRldiIsCiAgInVzZXIiOiB7CiAgICAic2VnbWVudCI6ICJ2aXAiLAogICAgImlkIjogIjdlZmE0OTc4ZGExNzc3MTNkZjA4OGY4NDZmOGM0ODRkIgogIH0KfQ
@@ -130,9 +133,7 @@ An SDK supporting this header must:
 
 ### Backgrounds
 
-This is an extension of trace ID propagation covered by [Performance Guidelines](https://develop.sentry.dev/sdk/performance/#header-sentry-trace). Please consider the above spec as reference documentation. Anything that contradicts it is a mistake (or an out of date detail) in this document.
-
-According to the Unified API tracing spec mentioned above, Sentry SDKs add an HTTP header `sentry-trace` to outgoing requests via integrations. Most importantly, this header contains the trace ID, which must match the trace id of the transaction event and also of the trace context below.
+This is an extension of trace ID propagation covered by <Link to="/sdk/performance#header-sentry-trace">Performance Guidelines</Link>. According to the Unified API tracing spec, Sentry SDKs add an HTTP header `sentry-trace` to outgoing requests via integrations. Most importantly, this header contains the trace ID, which must match the trace id of the transaction event and also of the trace context below.
 
 The trace context shall be propagated in an additional `tracestate` header defined in [W3C traceparent header](https://www.w3.org/TR/trace-context/#trace-context-http-headers-format). Note that we must keep compatibility with the W3C spec as opposed to the proprietary `sentry-trace` header. The `tracestate` header also contains vendor-specific opaque data in addition to the contents placed by the Sentry SDK.
 
@@ -151,7 +152,7 @@ The trace context must be retained until the user starts a new trace, at which p
 
 <Note>
 
-It is recommended that SDK's log modifications of attributes that would result in trace context changes (like `user.id`) when the trace context is frozen in order to simplify debugging of common dynamic sampling rules mistakes.
+It is recommended that SDKs log modifications of attributes that would result in trace context changes like `user.id` when the trace context is frozen, in order to simplify debugging of common dynamic sampling pitfalls.
 
 </Note>
 
@@ -167,9 +168,7 @@ As mentioned, we need to encode the JSON trace context using UTF-8 strings. Java
 
 The basic idea is presented in [this](https://attacomsian.com/blog/javascript-base64-encode-decode) article (and in [other](https://stackoverflow.com/questions/30106476/using-javascripts-atob-to-decode-base64-doesnt-properly-decode-utf-8-strings) places).
 
-In short here's the function that converts a context into a base64 string that can be saved in `tracestate`.
-
-In the end we went with a simpler implementation, but the idea is the same.
+In short here's the function that converts a context into a base64 string that can be saved in `tracestate`. In the end we went with a simpler implementation, but the idea is the same:
 
 ```jsx
 // Compact form
