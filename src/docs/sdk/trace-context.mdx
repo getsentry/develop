@@ -1,12 +1,12 @@
 ---
-title: "Trace Context"
+title: "Trace Contexts (Experimental)"
 ---
 
-<Note role="alert">
+<Alert level="warning">
 
-This feature is under development and is not required for all SDKs supporting Performance Monitoring, yet. Please consider the <Link to="/sdk/performance#header-sentry-trace">Performance Guidelines</Link> as reference documentation. Anything that contradicts it is a mistake (or an out of date detail) in this document.
+This feature is under development and not required for all SDKs supporting Performance Monitoring, yet. Please consider the <Link to="/sdk/performance#header-sentry-trace">Performance Guidelines</Link> as reference documentation. Anything that contradicts it is a mistake (or an out of date detail) in this document.
 
-</Note>
+</Alert>
 
 In order to sample traces we need to pass along the call chain a trace id together with the  necessary information for making a sampling decision, the so-called "trace context".
 
@@ -89,11 +89,11 @@ To create contents of the tracestate header:
 5. Prepend with `"sentry="`, resulting in `"sentry=<base64>"`.
 6. Join into the header as described above.
 
-<Note>
+<Alert level="info">
 
 By stripping trailing padding, default base64 parsers may detect an incomplete payload. Choose a parsing mode that either allows for missing `=` or allows truncated payloads.
 
-</Note>
+</Alert>
 
 The following is an example :
 
@@ -150,11 +150,11 @@ We recommend the trace context should be computed on-the-fly the first time it i
 
 The trace context must be retained until the user starts a new trace, at which point a new trace context must be computed by the SDK.
 
-<Note>
+<Alert level="info">
 
 It is recommended that SDKs log modifications of attributes that would result in trace context changes like `user.id` when the trace context is frozen, in order to simplify debugging of common dynamic sampling pitfalls.
 
-</Note>
+</Alert>
 
 ### Incoming Contexts
 
