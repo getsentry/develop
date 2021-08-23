@@ -203,7 +203,9 @@ export default () => {
           <SidebarLink to="/sdk/store/">Store Endpoint</SidebarLink>
           <SidebarLink to="/sdk/envelopes/">Envelopes</SidebarLink>
           <SidebarLink to="/sdk/rate-limiting/">Rate Limiting</SidebarLink>
-          <SidebarLink to="/sdk/performance/">Performance</SidebarLink>
+          <SidebarLink to="/sdk/performance/" title="Performance">
+            <SidebarLink to="/sdk/trace-context/">Trace Contexts</SidebarLink>
+          </SidebarLink>
           <SidebarLink to="/sdk/event-payloads/" title="Event Payloads">
             <SidebarLink to="/sdk/event-payloads/transaction/">
               Transaction Type
