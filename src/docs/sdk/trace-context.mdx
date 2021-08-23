@@ -38,10 +38,10 @@ Regardless of the transport mechanism, the trace context is a JSON object with t
   "trace_id": "771a43a4192642f0b136d5159a501700",
   "public_key": "49d0f7386ad645858ae85020e393bef3",
   "release": "myapp@1.1.2",
-	"environment": "production",
+  "environment": "production",
   "user": {
     "id": "7efa4978da177713df088f846f8c484d",
-		"segment": "vip"
+    "segment": "vip"
   },
   "transaction": "/api/0/project_details",
 }
@@ -188,19 +188,19 @@ function objToB64(obj) {
 
 // Commented
 function objToB64(obj) {
-		// object to JSON string
+    // object to JSON string
     const utf16Json = JSON.stringify(obj)
-		// still utf16 string but with non ASCI escaped as UTF-8 numbers)
-		const encodedUtf8 =encodeURIComponent(utf16Json);
+    // still utf16 string but with non ASCI escaped as UTF-8 numbers)
+    const encodedUtf8 =encodeURIComponent(utf16Json);
 
-		// replace the escaped code points with utf16
-		// in the first 256 code points (the most wierd part)
+    // replace the escaped code points with utf16
+    // in the first 256 code points (the most wierd part)
     const b64 = btoa(endcodedUtf8.replace(/%([0-9A-F]{2})/g,
         function toSolidBytes(match, p1) {
             return String.fromCharCode('0x' + p1);
         }))
 
-		// drop the '=' or '==' padding from base64
+    // drop the '=' or '==' padding from base64
     const len = b64.length
     if (b64[len - 2] === '=')
         return b64.substr(0, len - 2)
