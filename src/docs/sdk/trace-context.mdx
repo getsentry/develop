@@ -179,6 +179,8 @@ It is recommended that SDKs log modifications of attributes that would result in
 
 Same as for intercepting trace IDs from inbound HTTP requests, SDKs should read `tracestate` headers and assume the Sentry trace context, if specified. Such a context is immediately frozen in the *SENT* state and should no longer allow for modifications.
 
+##
+
 ## Platform Specifics
 
 ### Encoding in JavaScript
@@ -245,3 +247,10 @@ function b64ToObj(b64) {
 // b64ToObj("eyJ4IjoiYS3wn5mCLeivu+WGmeaxieWtlyAtIOWtpuS4reaWhyJ9")
 // {"x":"a-🙂-读写汉字 - 学中文"}
 ```
+
+## Base64 with Command Line Utils
+
+The GNU `base64` command line utility comes with a switch to wrap the encoded
+string. This is not compatible with the `tracestate` header and should be
+avoided. If the base64 implementations creates multiple lines, they must be
+joined together.
