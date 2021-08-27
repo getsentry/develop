@@ -37,9 +37,7 @@ export default () => {
           <SidebarLink to="https://github.com/getsentry/.github/blob/master/CODE_OF_CONDUCT.md">
             Code of Conduct
           </SidebarLink>
-          <SidebarLink to="/docs/" title="Documentation Guide">
-            <SidebarLink to="/docs/api/">Making an API Public</SidebarLink>
-          </SidebarLink>
+          <SidebarLink to="/docs/">Documentation Guide</SidebarLink>
           <SidebarLink to="/inclusion/">Inclusive Language</SidebarLink>
           <SidebarLink to="/translations/">Translations</SidebarLink>
           <SidebarLink to="/code-review/">Code Review</SidebarLink>
@@ -69,6 +67,7 @@ export default () => {
             Database Migrations
           </SidebarLink>
           <SidebarLink to="/testing/">Testing Tips</SidebarLink>
+          <SidebarLink to="/analytics/">Analytics</SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
@@ -86,6 +85,11 @@ export default () => {
           <SidebarLink to="/config/">Configuration</SidebarLink>
           <SidebarLink to="/feature-flags/">Feature Flags</SidebarLink>
           <SidebarLink to="/serializers/">Serializers</SidebarLink>
+          <SidebarLink to="/api/" title="API">
+            <Children
+              tree={tree.find(n => n.name === "api").children}
+            />
+          </SidebarLink>
           <SidebarLink to="/pii/" title="PII and Data Scrubbing">
             <SidebarLink to="/pii/types/">Rule Types</SidebarLink>
             <SidebarLink to="/pii/methods/">Redaction Methods</SidebarLink>
@@ -102,12 +106,18 @@ export default () => {
         </div>
         <ul className="list-unstyled" data-sidebar-tree>
           <SidebarLink to="/self-hosted/">Overview</SidebarLink>
+          <SidebarLink to="/self-hosted/releases/">
+            Releases & Upgrading
+          </SidebarLink>
+          <SidebarLink to="/self-hosted/backup/">Backup & Restore</SidebarLink>
+          <SidebarLink to="/self-hosted/custom-ca-roots/">
+            Custom CA Roots
+          </SidebarLink>
           <SidebarLink to="/self-hosted/email/">Email</SidebarLink>
           <SidebarLink to="/self-hosted/geolocation/">Geolocation</SidebarLink>
           <SidebarLink to="/self-hosted/sso/">Single Sign-On (SSO)</SidebarLink>
-          <SidebarLink to="/self-hosted/backup/">Backup & Restore</SidebarLink>
-          <SidebarLink to="/self-hosted/releases/">
-            Versioning & Releases
+          <SidebarLink to="/self-hosted/troubleshooting/">
+            Troubleshooting
           </SidebarLink>
           <SidebarLink to="/self-hosted/support/">Support</SidebarLink>
         </ul>
@@ -128,6 +138,7 @@ export default () => {
           <SidebarLink to="/frontend/defaultprops/">
             Typing DefaultProps
           </SidebarLink>
+          <SidebarLink to="/frontend/using-hooks/">Using hooks</SidebarLink>
           <SidebarLink to="/frontend/migration-gridemotion/">
             Migration - grid-emotion
           </SidebarLink>
@@ -164,11 +175,12 @@ export default () => {
           <SidebarLink to="/services/digests/">
             Notification Digests
           </SidebarLink>
-          <SidebarLink to="https://getsentry.github.io/relay/">
-            Relay
-          </SidebarLink>
+          <SidebarLink to="/services/relay/">Relay</SidebarLink>
           <SidebarLink to="https://github.com/getsentry/snuba">
             Snuba
+          </SidebarLink>
+          <SidebarLink to="/services/chartcuterie/">
+            Chart Rendering (Chartcuterie)
           </SidebarLink>
         </ul>
       </li>
@@ -190,7 +202,10 @@ export default () => {
           <SidebarLink to="/sdk/data-handling/">Data Handling</SidebarLink>
           <SidebarLink to="/sdk/store/">Store Endpoint</SidebarLink>
           <SidebarLink to="/sdk/envelopes/">Envelopes</SidebarLink>
-          <SidebarLink to="/sdk/performance/">Performance</SidebarLink>
+          <SidebarLink to="/sdk/rate-limiting/">Rate Limiting</SidebarLink>
+          <SidebarLink to="/sdk/performance/" title="Performance">
+            <SidebarLink to="/sdk/trace-context/">Trace Contexts</SidebarLink>
+          </SidebarLink>
           <SidebarLink to="/sdk/event-payloads/" title="Event Payloads">
             <SidebarLink to="/sdk/event-payloads/transaction/">
               Transaction Type
@@ -233,6 +248,9 @@ export default () => {
             </SidebarLink>
           </SidebarLink>
           <SidebarLink to="/sdk/sessions/">Sessions</SidebarLink>
+          <SidebarLink to="/sdk/research/performance">
+            Research: Performance Monitoring API
+          </SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
@@ -254,6 +272,7 @@ export default () => {
           <SidebarLink to="/integrations/gitlab/">GitLab</SidebarLink>
           <SidebarLink to="/integrations/jira/">Jira</SidebarLink>
           <SidebarLink to="/integrations/msteams/">Microsoft Teams</SidebarLink>
+          <SidebarLink to="/integrations/pagerduty/">PagerDuty</SidebarLink>
           <SidebarLink to="/integrations/slack/">Slack</SidebarLink>
           <SidebarLink to="/integrations/vercel/">Vercel</SidebarLink>
         </ul>

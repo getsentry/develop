@@ -36,30 +36,13 @@ You can find more about configuring Sentry at [the configuration section of our
 
 Here is further information on specific configuration topics related to self-hosting:
 
+- [Custom CA Roots](/self-hosted/custom-ca-roots/)
 - [Email](/self-hosted/email/)
 - [Geolocation](/self-hosted/geolocation/)
 - [Single Sign-On (SSO)](/self-hosted/sso/)
-
-## Troubleshooting
-
-You can see the logs of each service by running `docker-compose logs <service_name>`. You can use the `-f` flag to "follow" the logs as they come in, and use the `-t` flag for timestamps. If you don't pass any service names, you will get the logs for all running services. See the [reference for the logs command](https://docs.docker.com/compose/reference/logs/) for more info.
-
-If you get stuck, you can always visit our [community forum](https://forum.sentry.io/) to search for existing topics or create a new topic and ask for help. Please keep in mind that we expect the community to help itself, but Sentry employees also try to monitor and answer forum questions when they have time.
-
-Sharing your install logs, service logs, and your Sentry version when [reporting an issue](https://github.com/getsentry/onpremise/issues/new/choose) or asking a question on the forums would save time and effort for both you and people trying to help you.
 
 ## Productionalizing
 
 We strongly recommend using a dedicated load balancer in front of your Sentry setup bound to a dedicated domain or subdomain. A dedicated load balancer that does SSL/TLS termination that also forwards the client IP address as Docker Compose internal network (as this is [close to impossible to get otherwise)](https://github.com/getsentry/onpremise/issues/554) would give you the best Sentry experience.
 
 Keep in mind that all this setup uses single-nodes for all services, including Kafka. For larger loads, you'd need a beefy machine with lots of RAM and disk storage. To scale up even further, you are very likely to use clusters with a more complex tool, such as Kubernetes. Due to self-hosted installations' very custom nature, we do not offer any recommendations or guidance around scaling up. We do what works for us for our thousands of customers over at [sentry.io](https://sentry.io/) and would love to have you over when you feel your local install's maintenance becomes a burden instead of a joy.
-
-## Upgrading
-
-Sentry cuts regular releases for self-hosting to keep it as close to [sentry.io](https://sentry.io) as possible. We encourage everyone to regularly update their Sentry installations to get the best and the most recent Sentry experience. You can read more about our versioning strategy and philosophy over at the <Link to="/self-hosted/releases/">releases page</Link>.
-
-We recommend (and sometimes require) you to upgrade Sentry one version at a time. That means if you are running 20.6.0, instead of going directly to 20.8.0, first go through 20.7.0. Skipping versions would work most of the time, but there will be times that we require you to stop at specific versions to ensure essential data migrations along the way.
-
-To upgrade, all you need to do is download or check out the version of onpremise repository you want, replace your existing folder's contents with that, and then run `./install.sh`. **We may have some updated configuration, especially for new features, so always check the example config files under the [sentry directory](https://github.com/getsentry/onpremise/blob/master/sentry/) and see if you need to update your existing configuration**. We do our best to automate critical configuration updates, but you should always check your configs during upgrades.
-
-Before starting the upgrade, we shut down all the services and then run some data migrations, so expect to have some downtime. There is an *experimental* `--minimize-downtime` option to reduce the downtime during upgrades. Use this at your own risk and see [the pull request it was implemented in](https://github.com/getsentry/onpremise/issues/607) for more information.
