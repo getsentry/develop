@@ -40,16 +40,16 @@ description of `ValueError`.
 
 `thread_id`
 
-: An optional value which refers to a thread in the <Link to="/sdk/event-payloads/threads">Threads Interface</Link>.
+: An optional value which refers to a thread in the <Link to="/sdk/event-payloads/threads/">Threads Interface</Link>.
 
 `mechanism`
 
 : An optional object describing the [mechanism](#exception-mechanism) that
-  created this exception.
+created this exception.
 
 `stacktrace`
 
-: An optional stack trace object corresponding to the <Link to="/sdk/event-payloads/stacktrace">Stack Trace Interface</Link>.
+: An optional stack trace object corresponding to the <Link to="/sdk/event-payloads/stacktrace/">Stack Trace Interface</Link>.
 
 ## Exception Mechanism
 
@@ -63,32 +63,43 @@ from the operating system or runtime APIs, as well as mechanism-specific values.
 `type`
 
 : Required unique identifier of this mechanism determining rendering and
-  processing of the mechanism data.
+processing of the mechanism data.
 
 `description`
 
 : Optional human-readable description of the error mechanism and a possible hint
-  on how to solve this error.
+on how to solve this error.
 
 `help_link`
 
 : Optional fully qualified URL to an online help resource, possibly interpolated
-  with error parameters.
+with error parameters.
 
 `handled`
 
 : Optional flag indicating whether the user has handled the exception
-  (for example, via `try ... catch`).
+(for example, via `try ... catch`).
+
+`synthetic`
+
+: An optional flag indicating that this error is synthetic. Synthetic errors
+are errors that carry little meaning by themselves. This may be because they
+are created at a central place (like a crash handler), and are all
+called the same: `Error`, `Segfault` etc. When the flag is set, Sentry will then
+try to use other information (top in-app frame function) rather than exception
+type and value in the UI for the primary event display. This flag should be set
+for all "segfaults" for instance as every single error group would look very
+similar otherwise.
 
 `meta`
 
 : Optional information from the operating system or runtime on the exception
-  mechanism (see [meta information](#meta-information)).
+mechanism (see [meta information](#meta-information)).
 
 `data`
 
 : Arbitrary extra data that might help the user understand the error thrown by
-  this mechanism.
+this mechanism.
 
 <Alert title="Note" level="warning">
 The <code>type</code> attribute is required to send any exception mechanism attribute, even
@@ -149,6 +160,18 @@ descriptions.
 
 : Optional name of the exception constant in iOS / macOS.
 
+#### `ns_error`
+
+An `NSError` on Apple systems comprising of domain and code.
+
+`code`
+
+: Required numeric error code.
+
+`domain`
+
+: Required domain of the NSError as string.
+
 #### `errno`
 
 Error codes set by Linux system calls and some library functions as specified in
@@ -202,7 +225,7 @@ Chained exceptions:
         "type": "ValueError",
         "value": "chained exception",
         "module": "__builtins__"
-      },
+      }
     ]
   }
 }

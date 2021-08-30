@@ -375,13 +375,15 @@ file. It is always associated to an event or transaction.
 
 `content_type`
 
-: *String, optional.* The content type of the attachment payload. Defaults to
-  `application/octet-stream`.
+: *String, optional.* The content type of the attachment payload. Any [MIME type](https://www.iana.org/assignments/media-types/media-types.xhtml) may be used; the default is `application/octet-stream`.
 
 ### Session
 
-Item type `"session"`. This Item contains a single session initialization or
-update to an existing session for Release Health.
+Item type `"session"` contains a single session initialization or update to an
+existing session for Release Health.
+
+See the <Link to="/sdk/sessions/">sessions</Link> documentation for the payload
+details.
 
 **Constraints:**
 
@@ -400,14 +402,61 @@ update to an existing session for Release Health.
 
 *None*
 
-### UserReport
+### Sessions
 
-Item type `"user_report"`. This Item contains a user report JSON payload.
+Item type `"sessions"` contains buckets of pre-aggregated session counts.
+
+See the <Link to="/sdk/sessions/">sessions</Link> documentation for the payload
+details.
+
+**Constraints:**
+
+- This Item may occur multiple times per Envelope.
+- Ingestion may limit the maximum number of Items per Envelope, see *Ingestion*.
+
+**Envelope Headers:**
+
+`sent_at`
+
+: *String, recommended.* The timestamp when the event was sent from the SDK as
+  [RFC 3339](https://tools.ietf.org/html/rfc3339) string. Used for clock drift
+  correction of the event timestamp. Timezone must be UTC.
+
+**Additional Item Headers:**
+
+*None*
+
+### User Feedback
+
+User Feedback was called User Report in the beginning. Therefore the envelope item type is `"user_report"`. 
+The item contains a user feedback / user report JSON payload:
+```json
+{"event_id":"9ec79c33ec9942ab8353589fcb2e04dc","email":"john@me.com","name":"John Me","comments":"It broke."}\n
+```
+
+**Attributes**
+
+`event_id`
+
+: **UUID String, required.** The identifier of the event or transaction.
+
+
+`email`
+
+: *String, recommended.* The email of the user.
+
+`name`
+
+: *String, recommended.* The name of the user.
+
+`comments`
+
+: *String, recommended.* Comments of the user about what happened. 
 
 **Constraints:**
 
 - This Item may occur once per Envelope.
-- User Reports can be ingested separately from their events. We recommended to
+- User Feedbacks / Reports can be ingested separately from their events. We recommended to
   send them in the same Envelope.
 
 **Envelope Headers:**
@@ -457,6 +506,16 @@ If multiple forms of authentication are given, the endpoint validates that the
 information matches and otherwise rejects the request. If both are missing, the
 Envelope is rejected with status code `403 Forbidden`.
 
+<Alert title="Backward Compatibility" level="info">
+
+Envelope header authentication requires **Relay v21.6.0**.
+Earlier versions of Relay do not support Envelope header authentication and respond with HTTP error
+_401 Unauthorized ("missing authorization information")_ to envelope uploads.
+
+SDKs should not rely on Envelope header authentication to retain backward compatibility with older versions of Sentry on-premise unless absolutely required. Instead, stick to HTTP headers or query parameters wherever possible.
+
+</Alert>
+
 ### Size Limits
 
 Event ingestion imposes limits on the size and number of Items in Envelopes.
@@ -468,6 +527,7 @@ These limits are subject to future change and defined currently as:
 - *100MB* for each attachment Item
 - *1MB* for event and transaction Items
 - *100 sessions* per Envelope
+- *100 pre-aggregated session buckets* per each `"sessions"` Item
 
 ## External References
 

@@ -59,7 +59,7 @@ payload that looks roughly like this:
   "duration": 60,
   "status": "exited",
   "attrs": {
-    "release": "release name",
+    "release": "my-project-name@1.0.0",
     "environment": "environment name",
     "ip_address": "optional user ip address for filtering",
     "user_agent": "optional user agent for filtering"
@@ -78,72 +78,138 @@ something like this:
 
 The following fields exist:
 
-`sid` (optional)
+`sid`
 
-> Session ID (unique and client generated). Clients are allowed to skip it if
-> the initial session state is `exited`.
+: _String, optional_. Session ID (unique and client generated).
+Clients are allowed to skip it if the initial session state is `exited`.
 
-`did` (optional, distinct ID)
+`did`
 
-> The distinct ID. Should be a device or user ID. The system automatically hashes
-> this ID before storing it.
+: _String, optional_. The distinct ID. Should be a device or user ID.
+The system automatically hashes this ID before storing it.
 
-`seq` (optional)
+`seq`
 
-> A logical clock. Defaults to the current UNIX timestamp in milliseconds
-> during ingestion. The value `0` is reserved in the sense that a session with
-> `init` set to `true` will automatically have `seq` forced to `0`.
+: _Number, optional_. A logical clock. Defaults to the current UNIX timestamp
+in milliseconds during ingestion. The value `0` is reserved in the sense that
+a session with `init` set to `true` will automatically have `seq` forced to `0`.
 
-`timestamp` (optional)
+`timestamp`
 
-> The timestamp of when the session change event came in. Must be an ISO string
-> for now. If not sent, the server will assume the current UTC timestamp. In the data
-> model, this is called `received`.
+: _String, optional_. The timestamp of when the session change event came in.
+Must be an ISO DateTime string. If not sent, the server will assume the current
+UTC timestamp. In the data model, this is called `received`.
 
 `started`
 
-> Timestamp when the session started. Must be an ISO string for now.
+: **String, required**. Timestamp when the session started.
+Must be an ISO DateTime string.
 
-`init` (optional, default is `false`)
+`init`
 
-> If this is set to `true` it means that this was the first event of the session.
-> This lets the server optimize the session counts because no deduplication is
-> needed (client is authoritative anyways). Internally when this flag is set
-> `seq` is changed to `0` on processing.
+: _Boolean, optional, default is `false`_.
+If this is set to `true` it means that this was the first event of the session.
+This lets the server optimize the session counts because no deduplication is
+needed (client is authoritative anyways). Internally when this flag is set
+`seq` is changed to `0` on processing.
 
-`duration` (optional)
+`duration`
 
-> An optional field that can transmit the session duration when the event was
-> received. This can be client controlled so, for instance, inactive time can be subtracted (seconds as float).
+: _Number, optional_. An optional field that can transmit the session duration
+when the event was received. This can be client controlled so, for instance,
+inactive time can be subtracted (seconds as float).
 
-`status` (optional, default = `ok`)
+`status`
 
-> The current status of the session. A session can only be in two states
-> effectively: `ok` which means the session is alive or one of the terminal
-> states. When a session is moved away from `ok` it must not be updated anymore.
->
-> - `ok`: session is currently in progress but healthy. This can be the terminal state of a session
-> - `exited`: the session terminated normally
-> - `crashed`: the session terminated in a crash
-> - `abnormal`: the session encountered a non crash related abnormal exit
+: _String, optional, default is `ok`_. The current status of the session.
+A session can only be in two states effectively: `ok` which means the session
+is alive or one of the terminal states. When a session is moved away from `ok`
+it must not be updated anymore.
 
-`errors` (optional, default = 0)
+- `ok`: The session is currently in progress but healthy. This can be the terminal state of a session.
+- `exited`: The session terminated normally.
+- `crashed`: The session terminated in a crash.
+- `abnormal`: The session encountered a non crash related abnormal exit.
 
-> A running counter of errors encountered while this session was ongoing.
-> It's important that this counter is also incremented when a session goes to
-> `crashed`. (eg: the crash itself is always an error as well).
-> Ingest should force `errors` to 1 if not set or 0.
+`errors`
 
-`attrs` (all but release optional)
+: _Number, optional, default is `0`_. A running counter of errors encountered
+while this session was ongoing. It's important that this counter is also
+incremented when a session goes to `crashed`.
+(eg: the crash itself is always an error as well).
+Ingest should force `errors` to 1 if not set or 0.
 
-> - `release`: a sentry release ID (`release`)
-> - `environment`: a sentry environment (`environment`)
-> - `ip_address`: the primary IP address to be considered. This is normally the
->   IP of the user. This data is not persisted but used for filtering. If not
->   set the IP is filled in automatically.
-> - `user_agent`: the user agent to be considered. This is normally the user
->   agent of the user that caused the session. This data is not persisted but
->   used for filtering.
+`attrs`
+
+: **Object, required** _all keys but `release` optional_. An object with the following attributes:
+
+- `release`: The sentry release ID (`release`), suggested format `my-project-name@1.0.0`.
+- `environment`: The sentry environment (`environment`).
+- `ip_address`: The primary IP address to be considered. This is normally the
+  IP of the user. This data is not persisted but used for filtering. If not
+  set the IP is filled in automatically.
+- `user_agent`: The user agent to be considered. This is normally the user
+  agent of the user that caused the session. This data is not persisted but
+  used for filtering.
+
+## Session Aggregates Payload
+
+Especially for _request-mode_ sessions
+(<Link to="#sdk-considerations">see below</Link>), it is common to have
+thousands of requests, and thus sessions, per second.
+
+Under the assumption that these sessions will be short-lived, and tracking their
+duration is not desired, these sessions can be aggregated together on the
+SDK side, before they are sent to Sentry.
+
+An SDK should aggregate closed sessions and group them by their `started` time,
+`distinct_id` and their `attrs`. These groups will be sent as `sessions` envelope item.
+It consists of a JSON payload that looks roughly like this:
+
+```json
+{
+  "aggregates": [
+    {
+      "started": "2020-02-07T14:16:00Z",
+      "exited": 123
+    },
+    {
+      "started": "2020-02-07T14:16:00Z",
+      "did": "optional distinct user id",
+      "exited": 12,
+      "errored": 3
+    }
+  ],
+  "attrs": {
+    "release": "my-project-name@1.0.0",
+    "environment": "development"
+  }
+}
+```
+
+Note that this must be enclosed in an envelope. So the full envelope looks
+something like this:
+
+```json
+{}
+{"type": "sessions"}
+{"aggregates": [...], "attrs": {...}}
+```
+
+`aggregates`
+
+: **Array, required**. An array of aggregates grouped by their `started` timestamp and distinct id (did).
+
+- `started`: **Required**. Timestamp of the group, rounded down to the minute. Must be an ISO DateTime string.
+- `did`: _Optional_. The distinct user id of the group.
+- `exited`: _Optional_. The number of sessions with status `"exited"` _without_ any errors.
+- `abnormal`: _Optional_. The number of sessions with status `"abnormal"`.
+- `crashed`: _Optional_. The number of sessions with status `"crashed"`.
+- `errored`: _Optional_. The number of sessions with status `"exited"` that had a non-zero `errors` count.
+
+`attrs`
+
+: **Object, required**. See above.
 
 ## Crashes vs Sessions
 
@@ -218,7 +284,9 @@ SDKs are encouraged to distinguish between different ways of ending a session:
 A session is supposed to transition to `crashed` when it encountered an unhandled
 error such as a full application crash. For applications that cannot fully
 crash such as a website, it's acceptable to transition to the crashed state if
-the user encountered an error dialog.
+the user encountered an error dialog. For server environments where we create sessions 
+for every incoming request, `crashed` is basically like status code `500` internal server error.
+So if there is an unhandled error happening during the request, the session should be `crashed`.
 
 Abnormal are sessions of which their fate is unknown. For desktop applications, for instance, it makes sense to transition a session to abnormal if it was stored
 but the exit of the application was not observed but also did not crash. These are situations where the user forced the app to close via the
@@ -239,6 +307,15 @@ A session can transition to `exited` which is exactly the same state as `ok`
 with one difference: sessions transitioned to `exited` have their session
 duration averaged. This lets Sentry show you the duration of non crashed
 sessions over time.
+
+## Alerts
+
+Trigger an alert when an issue affects a specified percent of sessions. 
+Create a new [issue alert](https://docs.sentry.io/product/alerts/alert-types/#issue-alerts) and select the "When" condition 
+"An issue affects more than {X} percent of sessions". See more issue alert options in the 
+[Issue Alert Configuration](https://docs.sentry.io/product/alerts/create-alerts/issue-alert-config/) docs.
+
+![Session issue alert](../img/sessionsAlert.png)
 
 ## SDK Considerations
 
@@ -262,6 +339,7 @@ application run. This is what you would see in a web browser, mobile world,
 command line application or similar.
 
 - typically just a single session from application start to quit
+- when applicable, sessions can end once the app is put on the background for over 30 seconds (mobile SDKs)
 - there are usually fewer sessions than Sentry events
 - sessions span multiple hubs / threads
 - session duration typically in the minutes, timing information is useful
@@ -310,8 +388,8 @@ captured at a similar place where `apply_to_scope` is called to increase the
 SDKs should generally aim to decrease the number of envelopes sent upstream.
 
 _server-mode_ SDKs that track a great number of sessions should consider using
-a periodic session flusher (every 30/60 secs) that assembles envelopes of
-session items and forwards them to the transport as a single request.
+a periodic session flusher (every 60 secs) that pre-aggregates sessions into a
+single `session_aggregates` envelope item.
 
 _user-mode_ SDKs may instead opt into sending session updates along with
 captured events in the same envelope. The final session update that closes the
@@ -320,6 +398,22 @@ session may be batched similar to _server-mode_ sessions.
 In either case, the `init` flag must be set correctly for the _first
 transmission_ of the session, and session metadata such as the distinct ID must
 be immutable after the initial transmission.
+
+### Pre-aggregation of Sessions
+
+If an SDK is configured to use _server-mode_ sessions, it should group and
+pre-aggregate session counts before sending them to Sentry. Whenever a session
+is being closed (transitions to a terminal state), and it was not previously
+being sent upstream (its `init` flag would be `true`), it is eligible for
+aggregation, which is performed like so:
+
+- The `started` timestamp of the session should be rounded down to minutes.
+- The session must then be aggregated into the bucket identified by that rounded
+  timestamp, and the sessions distinct id (`did`).
+- In the appropriate bucket, increase the session count corresponding to the
+  sessions status. Contrary to individual session updates, the `"errored"`
+  state is used to mark sessions that have the `"exited"` state, and a non-zero
+  `errors` count.
 
 ### Exposed API
 
@@ -345,3 +439,69 @@ The most basic API exposed is on the hub level and lets you start and stop sessi
 `auto_session_tracking`
 
 > This enables / disables automatic session tracking through integrations.
+
+
+## SDK Implementation Guideline
+
+<Alert title="WIP" level="info">
+  Before jumping into implementing this feature in an SDK, please reach out to the team. https://github.com/getsentry/develop/pull/323
+</Alert>
+
+We track the health of each release of projects in Sentry by sending session payloads from SDKs.
+The session payload provide data such as session duration and the presence or absence of errors/crashes.
+
+SDKs track sessions in one of two modes:
+- Single Session
+- Session Aggregates
+
+Single session is the general case, and is a good fit for (relatively short-lived) applications that are typically involving only a single user. Examples:
+- command-line utility like [`craft`](https://github.com/getsentry/craft); <dfn title="Note: this is just an example, assuming craft was instrumented with a Sentry SDK supporting sessions">every execution of a `craft` subcommand</dfn> report a single session to Sentry
+- user interacting with a mobile app
+- user loading a web site with their favorite browser
+
+Session aggregates are used when sending individual sessions would be undesirable or unpractical. To constrain resource usage (namely memory and network), SDKs keep track of summary information about a batch of sessions that occured in the recent past, never actually having to deal with session objects representing the individual sessions that make up the aggregate. This mode is the choice for applications that run for an arbitrarily long time and handle larger throughputs for potentially multiple users, such as web servers, background job workers, etc. Note that for those types of application, a better definition of session matches the execution of a single HTTP request or task, instead of a single execution of the whole application process.
+
+In either case, SDKs should create and report sessions by default, choosing to report them individually or as aggregates depending on the type of application.
+
+If an SDK can detect that an application is better served by session aggregates, then it must not report an application-wide session. The application-wide session may still be created during SDK initialization but must be aborted and never sent to Sentry. As an example, in the Node.js SDK, we can detect an application is probably a web server if it uses the `requestHandler` integration that is provided.
+
+### Individual Session Functionality
+
+#### Configuration
+
+- On by default for global/static API;
+User should be able to disable sessions if they don't want to track them.
+
+Pre-requisites for reporting sessions and determining Release Health of projects in Sentry, such as release should be automatically detected by the SDK such as by looking up env vars.
+
+(Maybe, needs discussion) if I pre-requisite cannot be detect (for example, no good way to determine release version), then we set some default value so that we can always report sessions by default (depending on discussion, this might not be a change in SDK code, but in Relay, basically removing hard-requirements in the session payload).
+
+#### Lifetime of a Session
+
+Sessions should be enabled by default only for the global hub/client that is initialized by Sentry.init, and disabled by default for any other manually created client.
+A session is started when the SDK is initialized (ideally when the default client is bound to the global hub) and ended when one of these conditions happen:
+The Hub.endSession() method is explicitly called; or
+The program terminates without errors; or
+The program terminates with an unhandled exception; or
+The program terminates with an unhandled promise rejection.
+
+Care must be taken to never attempt to send new session payloads to Sentry for a session that is already ended. For example, if the user manually ends the session with Hub.endSession(), there should not be any new updates to the session when the program terminates.
+
+#### Session Atrributes and Mutability
+
+#### Sending Session to Sentry
+
+Session is sent initially after a certain (initially hard-coded, less config is better) delay (something between 1s to 30s TBD), and then updated with the duration and final status and error count when the program terminates. Note that, as an optimization, short lived programs will not send 2 session requests to Relay, but only the final one with status and duration.
+
+### Session Aggregates Functionality
+
+#### Configuration
+
+Sessions should be enabled by default, a session is started as soon as a request is received by a web server and ends as soon as the response is fully sent back.
+
+#### Lifetime of a Session
+
+Sessions are never tracked nor sent individually, instead they are aggregated and the aggregates are sent every 30s and a final time when the web server is terminating.
+As an implementation hint to the point above, when a "Client" is closed or flushed the associated  "Session Flusher" shall also be flushed and submit the current aggregates the the transport, before the transport is flushed/closed.
+Make sure this works reasonably for Serverless — there we shall not use "request mode" and SessionFlusher because we cannot have any work that happens outside of the request-response flow.
+Provide an easy way to integrate with existing Node frameworks (Express, Next.js, Koa).
