@@ -72,7 +72,7 @@ Tracestate headers contain several vendor-specific opaque data. As per HTTP spec
 
 - Joined by comma:
   ```
-  tracestate: sentry=<data>, other=<data>
+  tracestate: sentry=<data>,other=<data>
   ```
 - Repetition:
   ```
@@ -119,7 +119,7 @@ ewogICJ0cmFjZV9pZCI6ICI3NzFhNDNhNDE5MjY0MmYwYjEzNmQ1MTU5YTUwMTcwMCIsCiAgInB1Ymxp
 Resulting in the header:
 
 ```
-tracestate: other=[omitted],sentry=ewogICJ0cmFjZV9pZCI6ICI3NzFhNDNhNDE5MjY0MmYwYjEzNmQ1MTU5YTUwMTcwMCIsCiAgInB1YmxpY19rZXkiOiAiNDlkMGY3Mzg2YWQ2NDU4NThhZTg1MDIwZTM5M2JlZjMiLAogICJyZWxlYXNlIjogIjEuMS4yMiIsCiAgImVudmlyb25tZW50IjogImRldiIsCiAgInVzZXIiOiB7CiAgICAic2VnbWVudCI6ICJ2aXAiLAogICAgImlkIjogIjdlZmE0OTc4ZGExNzc3MTNkZjA4OGY4NDZmOGM0ODRkIgogIH0KfQ
+tracestate: sentry=ewogICJ0cmFjZV9pZCI6ICI3NzFhNDNhNDE5MjY0MmYwYjEzNmQ1MTU5YTUwMTcwMCIsCiAgInB1YmxpY19rZXkiOiAiNDlkMGY3Mzg2YWQ2NDU4NThhZTg1MDIwZTM5M2JlZjMiLAogICJyZWxlYXNlIjogIjEuMS4yMiIsCiAgImVudmlyb25tZW50IjogImRldiIsCiAgInVzZXIiOiB7CiAgICAic2VnbWVudCI6ICJ2aXAiLAogICAgImlkIjogIjdlZmE0OTc4ZGExNzc3MTNkZjA4OGY4NDZmOGM0ODRkIgogIH0KfQ,other=[omitted]
 ```
 
 ## Implementation Guidelines
