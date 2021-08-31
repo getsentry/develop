@@ -141,6 +141,18 @@ envelope item, the SDK must discard items larger than the `maxAttachmentSize`. E
 useful because attachments could quickly eat up the users' disk space. Furthermore, Relay has a
 [maximum size for attachments](https://docs.sentry.io/product/relay/options/), and we want to reduce unnecessary requests.
 
+## Screenshots
+
+When the user opts-in, if technically possible, take a screenshot of the application and include as an [attachments](#attachments) to the [envelope](/sdk/envelopes/) with the event.
+
+This is a best effort feature that only applies to SDKs with a user interface, such as Mobile and Desktop.
+It's advised to provide this feature through a single option called `attachScreenshot`. That's a preferred way but in platforms such as Flutter, a wrapping widget is required so documentation can point users to that instead of the suggested option name.
+
+The feature is achieved by adding an attachment with:
+
+* File name `screenshot.jpg` or `screenshot.png`
+* Image size, if possible should stay below 2 MB but quality/size could be configurable
+
 ## Before-Send Hook
 
 Hook called with the event (and on some platforms the hint) that allow the user to decide whether an event should be sent or not.  This can also be used to further modify the event.
