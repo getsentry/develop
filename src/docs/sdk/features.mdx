@@ -145,7 +145,8 @@ useful because attachments could quickly eat up the users' disk space. Furthermo
 
 When the user opts-in, if technically possible, take a screenshot of the application and include as an [attachments](#attachments) to the [envelope](/sdk/envelopes/) with the event.
 
-This is a best effort feature that only applies to SDKs with a user interface, such as Mobile and Desktop.
+This feature only applies to SDKs with a user interface, such as Mobile and Desktop. 
+In some environments such as native iOS, taking a screenshot requires the UI thread and in the event of a crash, that might not be available. So inherently this feature will be a best effort.
 It's advised to provide this feature through a single option called `attachScreenshot`. That's a preferred way but in platforms such as Flutter, a wrapping widget is required so documentation can point users to that instead of the suggested option name.
 
 The feature is achieved by adding an attachment with:
