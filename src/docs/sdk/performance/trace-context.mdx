@@ -207,8 +207,11 @@ function objToB64(obj) {
     )
   );
   const len = b64.length;
-  if (b64[len - 2] === "=") return b64.substr(0, len - 2);
-  else if (b64[len - 1] === "=") return b64.substr(0, len - 1);
+  if (b64[len - 2] === "=") {
+    return b64.substr(0, len - 2);
+  } else if (b64[len - 1] === "=") {
+    return b64.substr(0, len - 1);
+  }
   return b64;
 }
 
@@ -229,8 +232,11 @@ function objToB64(obj) {
 
   // drop the '=' or '==' padding from base64
   const len = b64.length;
-  if (b64[len - 2] === "=") return b64.substr(0, len - 2);
-  else if (b64[len - 1] === "=") return b64.substr(0, len - 1);
+  if (b64[len - 2] === "=") {
+    return b64.substr(0, len - 2);
+  } else if (b64[len - 1] === "=") {
+    return b64.substr(0, len - 1);
+  }
   return b64;
 }
 // const test = {"x":"a-🙂-读写汉字 - 学中文"}
