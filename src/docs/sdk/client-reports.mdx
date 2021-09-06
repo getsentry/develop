@@ -94,7 +94,7 @@ reasons in the transport directly and to periodically flush them out as separate
 envelope item or attach it to an already scheduled envelope.  As some SDKs still
 send legacy events instead of envelopes for backwards compatibility with older
 Sentry servers it would be recommended in such cases to send it as separate envelope
-instead.
+instead or attach it to pending session envelopes.
 
 There is no expectation that such bookkeping can work transparently for custom
 transports which is why it's generally acceptable if client reports are optional
