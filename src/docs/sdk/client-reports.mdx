@@ -31,8 +31,16 @@ of a JSON payload that looks roughly like this:
 {
   "timestamp": "2020-02-07T14:16:00Z",
   "discarded_events": [
-    ["queue_overflow", "error", 23],
-    ["queue_overflow", "transaction", 1321]
+    {
+      "reason": "queue_overflow",
+      "category": "error",
+      "quantity": 23
+    },
+    {
+      "reason": "queue_overflow",
+      "category": "transaction",
+      "quantity": 1321
+    }
   ]
 }
 ```
@@ -57,10 +65,10 @@ will assume the current UTC timestamp. In the data model, this is called
 
 `discarded_events`
 
-: _List of outcome tuples_ [`discard_reason`, `data_category`, `quantity`]
+: _List of outcome objects_ {`discard_reason`, `category`, `quantity`}
 
 - `discard_reason`: A string reason that defines why events were lost.
-- `data_category`: The data category for which the discard reason applies.
+- `category`: The data category for which the discard reason applies.
 - `quantity`: The number of events which were lost
 
 The following discard reasons are currently defined:
