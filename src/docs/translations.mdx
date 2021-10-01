@@ -59,3 +59,40 @@ make update-local-locales
 
 This will pull translations from Transifex and use `django compilemessages` to update the local translations. You should then commit the changes and submit a new Pull Request.
 
+
+
+### Troubleshooting
+
+You make encounter some errors when running `make update-local-locales`.
+
+
+```
+LC_MESSAGES/django.po:4790: number of format specifications in 'msgid_plural' and 'msgstr[0]' does not match
+```
+
+This means that we are using `tn()` with an unbalanced set of string placeholders. For example,
+
+```
+tn('one user', '%s users', userCount); // This is bad because the first argument needs to also have %s
+
+// Instead do something like this
+userCount === 1 ? t('one user') : tn('%s users', '%s users', userCount); // Not great as the first arg to `tn()` is always ignored, but at least it will compile
+```
+
+
+Another common error you may see is
+
+```
+LC_MESSAGES/django.po:10824: 'msgstr' is not a valid Python format string, unlike 'msgid'. Reason: The character that terminates the directive number 1 is not a valid conversion specifier.
+```
+
+This generally means there is a literal `%` that the parser is confusing for a string placeholder. For example,
+
+```
+#: static/app/views/dashboardsV2/manage/dashboardList.tsx:120
+#, python-format
+msgid "100% of releases"
+```
+
+This can be resolved by removing `#, python-format` (assuming you don't have any string formatting)
+
