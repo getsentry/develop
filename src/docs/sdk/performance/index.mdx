@@ -32,6 +32,12 @@ Optionally, the `tracesSampler` callback can also return a boolean to force a sa
 
 See more about how sampling should be performed below.
 
+### `maxSpans`
+
+Transactions should have a max number of spans. If new spans are added once the max is reached, the SDK should drop them and ideally use the internal logging to help debugging.
+
+This is to help avoid a transaction that never finishes, ending up on a OOM or just sluggish performance.
+
 ## `Event` Changes
 
 As of writing, transactions are implemented as an extension of the `Event`
@@ -68,6 +74,7 @@ tree as well as the unit of reporting to Sentry.
   - When a `Span` is created, set the `startTimestamp` to the current time
   - `SpanContext` is the attribute collection for a `Span` (Can be an implementation detail). When possible `SpanContext` should be immutable.
   - `Span` should have a method `startChild` which creates a new span with the current span's id as the new span's `parentSpanId` and the current span's `sampled` value copied over to the new span's `sampled` property
+  - The `startChild` method should respect the `maxSpans` configuration, when the max. is reached the SDK should drop them and ideally use the internal logging to help debugging.
   - `Span` should have a method called `toSentryTrace` which returns a string that could be sent as a header called `sentry-trace`.
   - `Span` should have a method called `iterHeaders` (adapt to platform's naming conventions) that returns an iterable or map of header names and values. This is a thin wrapper containing `return {"sentry-trace": toSentryTrace()}` right now. See `continueFromHeaders` as to why this exists and should be preferred when writing integrations.
 
