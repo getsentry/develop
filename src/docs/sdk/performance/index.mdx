@@ -34,7 +34,7 @@ See more about how sampling should be performed below.
 
 ### `maxSpans`
 
-Transactions should have a max number of spans. If new spans are added once the max is reached, the SDK should drop them and ideally use the internal logging to help debugging.
+Transactions should have a max number of spans. If new spans are added once the max is reached, the SDK should drop them and ideally use the internal logging to help debugging, `maxSpans` defaults to 1000.
 
 This is to help avoid a transaction that never finishes, ending up on a OOM or just sluggish performance.
 
