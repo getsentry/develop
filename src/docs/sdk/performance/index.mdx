@@ -34,7 +34,9 @@ See more about how sampling should be performed below.
 
 ### `maxSpans`
 
-Transactions should have a max number of spans. If new spans are added once the max is reached, the SDK should drop them and ideally use the internal logging to help debugging, `maxSpans` defaults to 1000.
+Because transaction payloads have a maximum size enforced on the ingestion side, SDKs should limit the number of spans that are attached to a transaction. This is similar to how breadcrumbs and other arbitrarily sized lists are limited to prevent accidental misuse. If new spans are added once the maximum is reached, the SDK should drop the spans and ideally use the internal logging to help debugging.
+
+The `maxSpans` should be implemented as an internal, non-configurable, constant that defaults to 1000. It may become configurable if there is justification for that in a given platform.
 
 This is to help avoid a transaction that never finishes, ending up on a OOM or just sluggish performance.
 
