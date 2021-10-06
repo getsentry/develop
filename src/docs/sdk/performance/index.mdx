@@ -38,7 +38,7 @@ Because transaction payloads have a maximum size enforced on the ingestion side,
 
 The `maxSpans` should be implemented as an internal, non-configurable, constant that defaults to 1000. It may become configurable if there is justification for that in a given platform.
 
-This is to help avoid a transaction that never finishes, ending up on a OOM or just sluggish performance.
+The `maxSpans` limit may also help avoiding transactions that never finish (in platforms that keep a transaction open for as long as spans are open), preventing OOM errors, and generally avoiding degraded application performance.
 
 ## `Event` Changes
 
