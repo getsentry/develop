@@ -10,38 +10,45 @@ Below is a table containing a list of span operations that are recommended to be
 
 Operations are expected to generally take the form: `CATEGORY.ACTION`, where the categories and actions can have optional identifiers. For example, a redis database operation takes the form `db.redis.set`, where `db` is the category, `redis` is the category identifier, and `set` is the action. Another example is a mobile app rendering it's screen. It would have the operation `ui.load.hot`, where `ui` is the category, `load` is the action, and `hot` is the action identifier.
 
+It's important to keep categories consistent between sdks and integrations as they are used by Sentry in the [Operations Breakdown](https://docs.sentry.io/product/sentry-basics/tracing/event-detail/#operations-breakdown) feature. For example, both `db.init` and `db.query` will be categorized as database operations.
+
 Having both a category and action is recommended. Operations should be lowercased.
+
+# List of Operations
 
 ## Browser
 
-| Op         | Action          | Description                                                                                                |
-| ---------- | --------------- | ---------------------------------------------------------------------------------------------------------- |
-| pageload   |                 | A full page load of a web application                                                                      |
-| navigation |                 | Client-side browser history change in a web application                                                    |
-| resource   |                 |                                                                                                            |
-|            | resource.script |                                                                                                            |
-|            | resource.link   |                                                                                                            |
-|            | resource.css    |                                                                                                            |
-|            | resource.img    |                                                                                                            |
-| browser    |                 | Usage of browser APIs or functionality                                                                     |
-|            | browser.mark    | Usage of [performance.mark() API](https://developer.mozilla.org/en-US/docs/Web/API/Performance/mark)       |
-|            | browser.measure | Usage of [performance.measure() API](https://developer.mozilla.org/en-US/docs/Web/API/Performance/measure) |
-|            | browser.paint   |                                                                                                            |
+| Op         | Usage           | Description                                                                                                         |
+| ---------- | --------------- | ------------------------------------------------------------------------------------------------------------------- |
+| pageload   |                 | A full page load of a web application                                                                               |
+| navigation |                 | Client-side browser history change in a web application                                                             |
+| resource   |                 | Resource as per [Performance Resource Timing](https://w3c.github.io/resource-timing/#sec-performanceresourcetiming) |
+|            | resource.script |                                                                                                                     |
+|            | resource.link   |                                                                                                                     |
+|            | resource.css    |                                                                                                                     |
+|            | resource.img    |                                                                                                                     |
+| browser    |                 | Usage of browser APIs or functionality                                                                              |
+|            | browser.mark    | Usage of [performance.mark() API](https://developer.mozilla.org/en-US/docs/Web/API/Performance/mark)                |
+|            | browser.measure | Usage of [performance.measure() API](https://developer.mozilla.org/en-US/docs/Web/API/Performance/measure)          |
+|            | browser.paint   |                                                                                                                     |
+|            |                 |                                                                                                                     |
 
 ### JS Frameworks
 
-| Op      | Action       | Description                                    |
+| Op      | Usage        | Description                                    |
 | ------- | ------------ | ---------------------------------------------- |
 | react   |              | Spans related to [React](https://reactjs.org/) |
 |         | react.mount  |                                                |
 |         | react.render |                                                |
 | vue     |              |                                                |
+|         | vue.mount    |                                                |
+|         | vue.update   |                                                |
 | angular |              |                                                |
 | ember   |              |                                                |
 
 ## HTTP
 
-| Op   | Action      | Description |
+| Op   | Usage       | Description |
 | ---- | ----------- | ----------- |
 | http |             |             |
 |      | http.client |             |
@@ -49,15 +56,15 @@ Having both a category and action is recommended. Operations should be lowercase
 
 ## Database
 
-| Op  | Action | Description |
-| --- | ------ | ----------- |
-| db  |        |             |
-|     |        |             |
-|     |        |             |
+| Op  | Usage | Description                |
+| --- | ----- | -------------------------- |
+| db  |       | An operation on a database |
+|     |       |                            |
+|     |       |                            |
 
 ## Serverless (FAAS)
 
-| Op  | Action     | Description |
+| Op  | Usage      | Description |
 | --- | ---------- | ----------- |
 | aws |            |             |
 |     | aws.lambda |             |
@@ -65,8 +72,28 @@ Having both a category and action is recommended. Operations should be lowercase
 
 ## Mobile
 
-| Op  | Action    | Description |
-| --- | --------- | ----------- |
-| ui  |           |             |
-|     | ui.load   |             |
-|     | ui.action |             |
+| Op         | Usage     | Description                         |
+| ---------- | --------- | ----------------------------------- |
+| app        |           | Data about the a mobile app         |
+|            | app.start |                                     |
+| ui         |           | An operation on a mobile/desktop UI |
+|            | ui.load   |                                     |
+|            | ui.action |                                     |
+| navigation |           | Navigating to another screen        |
+
+# List of Actions (WIP)
+
+### User Interfaces
+
+1. `init` -> initialize the UI
+2. `load` -> load stuff in?
+    a. `pageload` -> browser specific loading a page
+3. `update` -> update something in the ui
+    a. `navigation` -> navigate to another screen/page without full restart/refresh
+
+
+### Web Servers
+
+# Abhijeet's Notes (WIP)
+
+- `browser.mark` and `browser.measure` operations were previously referred to as `mark` and `measure`. Should we make this change? 
