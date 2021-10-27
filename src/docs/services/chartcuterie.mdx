@@ -54,8 +54,8 @@ This module lives as part of getsentry/sentry, and can be found in
 ### Service initialization
 
 It is possible to configure an optional initialization function `init` that
-runs when the service starts. This function has access to Chartcuterie's
-ECharts namespace and can be used register utilites to it ([`registerMaps`](https://echarts.apache.org/en/api.html#echarts.registerMap),
+runs when the service starts. This function has access to Chartcuterie's global
+echarts object and can be used register utilites to it ([`registerMaps`](https://echarts.apache.org/en/api.html#echarts.registerMap),
 for example).
 
 ### Adding / removing chart types
