@@ -31,7 +31,8 @@ Having both a category and action is recommended. Operations should be lowercase
 |            | browser.paint   |                                                                                                                     |
 | mark       |                 | Usage of [performance.mark() API](https://developer.mozilla.org/en-US/docs/Web/API/Performance/mark)                |
 | measure    |                 | Usage of [performance.measure() API](https://developer.mozilla.org/en-US/docs/Web/API/Performance/measure)          |
-|            |                 |                                                                                                                     |
+| user       |                 |                                                                                                                     |
+| animate    |                 |                                                                                                                     |
 
 ### JS Frameworks
 
@@ -48,20 +49,20 @@ Having both a category and action is recommended. Operations should be lowercase
 
 ## Web Server
 
-| Op       | Usage           | Description |
-| -------- | --------------- | ----------- |
-| http     |                 |             |
-|          | http.client     |             |
-|          | http.server     |             |
-| rpc      |                 |             |
-| grpc     |                 |             |
-| template |                 |             |
-|          | template.init   |             |
-|          | template.parse  |             |
-|          | template.render |             |
-| view     |                 |             |
-|          | view.render     |             |
-| serialize         |      |             |
+| Op        | Usage           | Description |
+| --------- | --------------- | ----------- |
+| http      |                 |             |
+|           | http.client     |             |
+|           | http.server     |             |
+| rpc       |                 |             |
+| grpc      |                 |             |
+| template  |                 |             |
+|           | template.init   |             |
+|           | template.parse  |             |
+|           | template.render |             |
+| view      |                 |             |
+|           | view.render     |             |
+| serialize |                 |             |
 
 ## Web Frameworks
 
@@ -99,7 +100,7 @@ Having both a category and action is recommended. Operations should be lowercase
 
 | Op         | Usage      | Description                         |
 | ---------- | ---------- | ----------------------------------- |
-| app        |            | Data about the a mobile app         |
+| app        |            | Data about the mobile app           |
 |            | app.start  |                                     |
 | ui         |            | An operation on a mobile/desktop UI |
 |            | ui.load    |                                     |
@@ -122,39 +123,3 @@ Having both a category and action is recommended. Operations should be lowercase
 | job    |               |             |
 |        | job.exec      |             |
 | celery |               |             |
-
-## List of Actions
-
-### Mobile/Desktop
-
-1. `app.init`
-
-### User Interfaces
-
-1. `init`: time it takes for UI to initialize
-2. `load`: ui takes some loading action
-   a. `pageload`: browser specific loading a page (both init + load)
-3. `mount`: when a UI component mounts on the screen
-4. `update`: update something in the ui
-   a. `navigation`/`navigate`: navigate to another screen/page without full restart/refresh
-5. `unmount`: when a UI component unmounts off the screen
-
-For ex. `ui.init`.
-
-### Browser
-
-- `browser.mark` and `browser.measure` operations were previously referred to as `mark` and `measure`. Should we make this change?
-
-### Web Servers
-
-1. `server`
-2. `client`
-3. `middleware`
-
-### Messaging/Queues
-
-Match operation names from [OpenTelemetry](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/messaging.md#operation-names).
-
-1. `send`
-2. `recieve`
-3. `process`
