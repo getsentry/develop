@@ -27,7 +27,7 @@ There are a few important points:
 
 - The task name _must_ be declared.
 
-  The task name is how celery identifies messages (requests) and which
+  The task name is how Celery identifies messages (requests) and which
   function and worker needs to handle those messages.  If the tasks
   are not named celery will derive a name from the module and function
   names which makes the name tied to the location of the code and more
@@ -54,11 +54,11 @@ There are a few important points:
   Task arguments are serialised into the message sent across the
   brokers and the workers need to deserialise them again.  Doing this
   with complex types is brittle and should be avoided.  E.g. prefer to
-  pass an ID to the task which can be used to load the data from the
-  database rather than the data itself.
+  pass an ID to the task which can be used to load the data from cache
+  rather than the data itself.
 
-  Similarly to keep the message borkers and workers running
-  efficiently serlialising large values into the message results in
+  Similarly, to keep the message brokers and workers running
+  efficiently serialising large values into the message results in
   large messages, large queues and more (de)serialising overheads so
   should be avoided.
 
