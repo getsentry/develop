@@ -18,38 +18,40 @@ Having both a category and action is recommended. Operations should be lowercase
 
 ## Browser
 
-| Op         | Usage           | Description                                                                                                         |
-| ---------- | --------------- | ------------------------------------------------------------------------------------------------------------------- |
-| pageload   |                 | A full page load of a web application                                                                               |
-| navigation |                 | Client-side browser history change in a web application                                                             |
-| resource   |                 | Resource as per [Performance Resource Timing](https://w3c.github.io/resource-timing/#sec-performanceresourcetiming) |
-|            | resource.script |                                                                                                                     |
-|            | resource.link   |                                                                                                                     |
-|            | resource.css    |                                                                                                                     |
-|            | resource.img    |                                                                                                                     |
-| browser    |                 | Usage of browser APIs or functionality                                                                              |
-|            | browser.paint   |                                                                                                                     |
-| mark       |                 | Usage of [performance.mark() API](https://developer.mozilla.org/en-US/docs/Web/API/Performance/mark)                |
-| measure    |                 | Usage of [performance.measure() API](https://developer.mozilla.org/en-US/docs/Web/API/Performance/measure)          |
-| user       |                 |                                                                                                                     |
-| animate    |                 |                                                                                                                     |
+| Category    | Usage           | Description                                                                                                         |
+| ----------- | --------------- | ------------------------------------------------------------------------------------------------------------------- |
+| pageload    |                 | A full page load of a web application                                                                               |
+| navigation  |                 | Client-side browser history change in a web application                                                             |
+| resource    |                 | Resource as per [Performance Resource Timing](https://w3c.github.io/resource-timing/#sec-performanceresourcetiming) |
+|             | resource.script |                                                                                                                     |
+|             | resource.link   |                                                                                                                     |
+|             | resource.css    |                                                                                                                     |
+|             | resource.img    |                                                                                                                     |
+| browser     |                 | Usage of browser APIs or functionality                                                                              |
+|             | browser.paint   |                                                                                                                     |
+| mark        |                 | Usage of [performance.mark() API](https://developer.mozilla.org/en-US/docs/Web/API/Performance/mark)                |
+| measure     |                 | Usage of [performance.measure() API](https://developer.mozilla.org/en-US/docs/Web/API/Performance/measure)          |
+| interaction |                 | A user interaction                                                                                                  |
+| animate     |                 | An animation                                                                                                        |
+| render      |                 | Time it takes to render an element                                                                                  |
+| element     |                 | Operations related to [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components)                 |
 
 ### JS Frameworks
 
-| Op      | Usage        | Description                                    |
-| ------- | ------------ | ---------------------------------------------- |
-| react   |              | Spans related to [React](https://reactjs.org/) |
-|         | react.mount  |                                                |
-|         | react.render |                                                |
-| vue     |              |                                                |
-|         | vue.mount    |                                                |
-|         | vue.update   |                                                |
-| angular |              |                                                |
-| ember   |              |                                                |
+| Category | Usage        | Description                                      |
+| -------- | ------------ | ------------------------------------------------ |
+| react    |              | Spans related to [React](https://reactjs.org/)   |
+|          | react.mount  |                                                  |
+|          | react.render |                                                  |
+| vue      |              | Spans related to [Vue.js](https://vuejs.org/)    |
+|          | vue.mount    |                                                  |
+|          | vue.update   |                                                  |
+| angular  |              | Spans related to [Angular](https://angular.io/)  |
+| ember    |              | Spans related to [EmberJS](https://emberjs.com/) |
 
 ## Web Server
 
-| Op        | Usage           | Description |
+| Category  | Usage           | Description |
 | --------- | --------------- | ----------- |
 | http      |                 |             |
 |           | http.client     |             |
@@ -60,66 +62,69 @@ Having both a category and action is recommended. Operations should be lowercase
 |           | template.init   |             |
 |           | template.parse  |             |
 |           | template.render |             |
-| view      |                 |             |
+| render    |                 |             |
 |           | view.render     |             |
 | serialize |                 |             |
+| console   |                 |             |
 
 ## Web Frameworks
 
-| Op      | Usage             | Description |
-| ------- | ----------------- | ----------- |
-| django  |                   |             |
-|         | django.middleware |             |
-|         | django.view       |             |
-| express |                   |             |
-| rails   |                   |             |
-| rack    |                   |             |
-| console |                   |             |
+| Category | Usage             | Description |
+| -------- | ----------------- | ----------- |
+| django   |                   |             |
+|          | django.middleware |             |
+|          | django.view       |             |
+| express  |                   |             |
+| rails    |                   |             |
+| rack     |                   |             |
 
 ## Database
 
-| Op  | Usage            | Description                |
-| --- | ---------------- | -------------------------- |
-| db  |                  | An operation on a database |
-|     | db.connection    |                            |
-|     | db.transaction   |                            |
-|     | db.sql.query     |                            |
-|     | db.query         |                            |
-|     | db.query.compile |                            |
+| Category | Usage            | Description                |
+| -------- | ---------------- | -------------------------- |
+| db       |                  | An operation on a database |
+|          | db.connection    |                            |
+|          | db.transaction   |                            |
+|          | db.sql.query     |                            |
+|          | db.query         |                            |
+|          | db.query.compile |                            |
 
 ## Serverless (FAAS)
 
-| Op  | Usage       | Description |
-| --- | ----------- | ----------- |
-| aws |             |             |
-|     | aws.lambda  |             |
-|     | aws.request |             |
-| gcp |             |             |
+| Category | Usage            | Description |
+| -------- | ---------------- | ----------- |
+| faas     |                  |             |
+|          | faas.aws         |             |
+|          | faas.aws.lambda  |             |
+|          | faas.aws.request |             |
+|          | faas.gcp         |             |
 
 ## Mobile
 
-| Op         | Usage      | Description                         |
-| ---------- | ---------- | ----------------------------------- |
-| app        |            | Data about the mobile app           |
-|            | app.start  |                                     |
-| ui         |            | An operation on a mobile/desktop UI |
-|            | ui.load    |                                     |
-|            | ui.action  |                                     |
-| navigation |            | Navigating to another screen        |
-| file       |            | Operations on the file system       |
-|            | file.read  |                                     |
-|            | file.write |                                     |
+| Category   | Usage          | Description                         |
+| ---------- | -------------- | ----------------------------------- |
+| app        |                | Data about the mobile app           |
+|            | app.start      |                                     |
+|            | app.start.warm |                                     |
+|            | app.start.cold |                                     |
+| ui         |                | An operation on a mobile/desktop UI |
+|            | ui.load        |                                     |
+|            | ui.action      |                                     |
+| navigation |                | Navigating to another screen        |
+| file       |                | Operations on the file system       |
+|            | file.read      |                                     |
+|            | file.write     |                                     |
 
 ## Messages/Queues
 
-| Op     | Usage         | Description |
-| ------ | ------------- | ----------- |
-| topic  |               |             |
-|        | topic.send    |             |
-|        | topic.recieve |             |
-|        | topic.process |             |
-| queue  |               |             |
-|        | queue.process |             |
-| job    |               |             |
-|        | job.exec      |             |
-| celery |               |             |
+| Category | Usage         | Description |
+| -------- | ------------- | ----------- |
+| topic    |               |             |
+|          | topic.send    |             |
+|          | topic.recieve |             |
+|          | topic.process |             |
+| queue    |               |             |
+|          | queue.process |             |
+| job      |               |             |
+|          | job.exec      |             |
+| celery   |               |             |
