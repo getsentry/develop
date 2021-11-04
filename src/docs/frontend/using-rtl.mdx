@@ -3,16 +3,16 @@ title: Using React Testing Library
 ---
 
 We are in the process of converting our tests from Enzyme to React Testing Library.
-In this guide, you'll find tips to follow best practices and anticipate common pitfalls.
+In this guide, you'll find tips to follow best practices and avoid common pitfalls.
 
 We have two ESLint rules in place to help with this:
 
 - [eslint-plugin-jest-dom](https://github.com/testing-library/eslint-plugin-jest-dom)
 - [eslint-plugin-testing-library](https://github.com/testing-library/eslint-plugin-testing-library)
 
-We strive to write tests in such a way that closely resembles how our application is used.
+We strive to write tests in a way that closely resembles how our application is used.
 
-So rather than dealing with instances of rendered components, we query the DOM in the same way the user would.
+Rather than dealing with instances of rendered components, we query the DOM in the same way the user would.
 We find form elements by their label text (just like a user would), we find links and buttons from their text (like a user would).
 
 As a part of this goal, we avoid testing implementation details so refactors (changes to implementation but not functionality) don't break the tests.
@@ -23,7 +23,7 @@ We are generally in favor of Use Case Coverage over Code Coverage.
 
 - use `getBy...` as much as possible
 - use `queryBy...` only when checking for non-existence
-- use `await findBy...` only when expecting an element to appear after but the change to the DOM might not happen immediately
+- use `await findBy...` only when expecting an element to appear after a change to the DOM that might not happen immediately
 
 To ensure that the tests resemble how users interact with our code we recommend the following priority for querying:
 
@@ -93,7 +93,7 @@ expect(await screen.findByRole("alert")).toBeInTheDocument();
 ```
 
 Avoid using `waitFor` for waiting on disappearance, use `waitForElementToBeRemoved` instead ([examples](https://github.com/getsentry/sentry/pull/29547)).
-The latter is using MutationObserver which is more efficient than polling the DOM at regular intervals with waitFor.
+The latter uses `MutationObserver` which is more efficient than polling the DOM at regular intervals with waitFor.
 
 ```javascript
 import {
