@@ -72,7 +72,7 @@ expect(screen.queryByRole("button")).not.toBeInTheDocument();
 ```
 
 Avoid using `waitFor` for waiting on appearance, use `findBy...` instead ([examples](https://github.com/getsentry/sentry/pull/29544)).
-These two are basically equivalent, but the `findBy...` is simpler and the error message we get will be better.
+These two are basically equivalent (`findBy...` even uses `waitFor` under the hood), but the `findBy...` is simpler and the error message we get will be better.
 
 ```javascript
 import {
