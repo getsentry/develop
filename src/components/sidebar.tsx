@@ -86,7 +86,7 @@ export default () => {
           <SidebarLink to="/feature-flags/">Feature Flags</SidebarLink>
           <SidebarLink to="/serializers/">Serializers</SidebarLink>
           <SidebarLink to="/api/" title="API">
-            <Children
+          <Children
               tree={tree.find(n => n.name === "api").children}
             />
           </SidebarLink>
@@ -139,6 +139,9 @@ export default () => {
             Typing DefaultProps
           </SidebarLink>
           <SidebarLink to="/frontend/using-hooks/">Using hooks</SidebarLink>
+          <SidebarLink to="/frontend/using-rtl/">
+            Using React Testing Library
+          </SidebarLink>
           <SidebarLink to="/frontend/migration-gridemotion/">
             Migration - grid-emotion
           </SidebarLink>
