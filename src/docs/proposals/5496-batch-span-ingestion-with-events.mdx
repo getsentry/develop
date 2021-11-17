@@ -193,6 +193,12 @@ The disadvantage is that several Sentry components would require change. That me
 
 ## Product Impact
 
+### New Capability for Customers
+
+Customers would be able to use our SDKs to ingest tracing data for use cases that are not supported by the original ingestion model.
+
+For example, customers would be able to ingest database instrumentation spans that finish asynchronously after the request-response cycle of their web server (and corresponding transaction) has finished ([Issue getsentry/sentry-javascript#4165](https://github.com/getsentry/sentry-javascript/issues/4165)).
+
 ### Frontend
 
 The proposed ingestion format would make it possible to ingest spans that belong to a trace (because the trace ID is still required), but that do not belong to any transaction (because constructing a tree from parent-child relationships might lead to a tree with zero or more spans marked as transactions).
