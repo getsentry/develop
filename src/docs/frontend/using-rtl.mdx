@@ -147,8 +147,8 @@ mountWithTheme(<Example />);
 expect(screen.getByText(/hello world/i)).toBeInTheDocument();
 ```
 
-Use `@testing-library/user-event` over `fireEvent` where possible.
-`@testing-library/user-event` is a package that's built on top of `fireEvent`, but it provides several methods that resemble the user interactions more closely.
+Use `userEvent` over `fireEvent` where possible.
+`userEvent` comes from the package`@testing-library/user-event` which is built on top of `fireEvent`, but it provides several methods that resemble the user interactions more closely.
 
 ```javascript
 // ❌
