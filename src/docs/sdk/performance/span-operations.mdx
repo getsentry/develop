@@ -6,13 +6,7 @@ Span operations are a short code identifying the type of operation the span is m
 
 Operations are expected to follow [OpenTelemetry's semantic conventions](https://github.com/open-telemetry/opentelemetry-specification/blob/24de67b3827a4e3ab2515cd8ab62d5bcf837c586/specification/trace/semantic_conventions/README.md) as much as possible.
 
-Below is a table containing a list of span operations that are recommended to be used.
-
-Operations are expected to generally take the form: `CATEGORY.ACTION`, where the categories and actions can have optional identifiers. For example, a redis database operation takes the form `db.query`, where `db` is the category and `query` is the action. Another example is a mobile app rendering it's screen. It would have the operation `ui.load.hot`, where `ui` is the category, `load` is the action, and `hot` is the action identifier.
-
 It's important to keep categories consistent between SDKs and integrations as they are used by Sentry in the [Operations Breakdown](https://docs.sentry.io/product/sentry-basics/tracing/event-detail/#operations-breakdown) feature. For example, both `db.init` and `db.query` will be categorized as database operations (`db`). The default operations breakdown config can be seen [here](https://github.com/getsentry/sentry/blob/809b7fe54c6f06cc1e4c503cf83ded896472a011/src/sentry/projectoptions/defaults.py#L74).
-
-Having both a category and action is recommended. Operations should be lowercased.
 
 # List of Operations
 
