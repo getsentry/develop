@@ -155,6 +155,8 @@ The feature is achieved by adding an attachment with:
 * Image size, if possible should stay below 2 MB but quality/size could be configurable
 * `ContentType: image/jpg` or `ContentType: image/png`
 
+Whenever possible, avoid adding the attachment altogether if taking the screenshot fails. Alternatively, when streaming, it's possible the envelope header was already flushed through before the attempt to take the screenshot happens. In this case, a 0 byte attachment will be included. In that case, Sentry will not show a screenshot preview.
+
 ## Before-Send Hook
 
 Hook called with the event (and on some platforms the hint) that allow the user to decide whether an event should be sent or not.  This can also be used to further modify the event.
