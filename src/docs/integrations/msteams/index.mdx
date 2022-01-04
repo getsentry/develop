@@ -11,22 +11,22 @@ You will need to be a Microsoft Teams Administrator to perform some of the requi
 
 ## Create the Sentry App
 
-1. Visit the [Developer Portal](https://dev.teams.microsoft.com/apps)
-2. Click "Create your first app" or "New App" if you've made one before
-3. Enter "Sentry" as the name
+1. Visit the [Developer Portal](https://dev.teams.microsoft.com/apps).
+2. Click "Create your first app" (or "New App" if you've made one before).
+3. Enter "Sentry" as the name.
 4. Under "Basic Information" use the following values (the rest may be blank):
 
 | Setting                   | Value                       |
-| ------------------------------------------------------- |
-| Short description         | whatever                    |
-| Long description          | whatever but longer         |
+| ------------------------- | --------------------------- |
+| Short description         | enter anything              |
+| Long description          | enter anything              |
 | Developer or company name | Sentry                      |
 | Website                   | https://www.sentry.io       |
 | Privacy policy            | https://sentry.io/privacy/  |
 | Terms of use              | https://www.sentry.io/terms/|
 
 
-5. Hit "Save" at the bottom of the page
+5. Hit "Save" at the bottom of the page.
 6. On the left hand sidebar click "App features" >> "Bot" >> "Create a new bot". You may name this whatever you like.
 7. Enter the bot endpoint address as `{YOUR_DOMAIN}/extensions/msteams/webhook/` and hit save. Take note of your bot ID (shown in the URL).
 8. Go to "Client secrets" and create a secret. Copy the secret as we'll use it later on.
@@ -36,7 +36,7 @@ You will need to be a Microsoft Teams Administrator to perform some of the requi
 
 ## Set up config.yml
 
-Take the values from before and add them to the `config.yml` file as shown below
+Take the values from before and add them to the `config.yml` file as shown below:
 
 ```yml
 # Microsoft Teams #
