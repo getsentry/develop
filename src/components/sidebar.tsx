@@ -40,7 +40,6 @@ export default () => {
           <SidebarLink to="/docs/">Documentation Guide</SidebarLink>
           <SidebarLink to="/inclusion/">Inclusive Language</SidebarLink>
           <SidebarLink to="/translations/">Translations</SidebarLink>
-          <SidebarLink to="/code-review/">Code Review</SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
@@ -51,6 +50,8 @@ export default () => {
           <h6>Development</h6>
         </div>
         <ul className="list-unstyled" data-sidebar-tree>
+          <SidebarLink to="/commit-messages/">Commit Messages</SidebarLink>
+          <SidebarLink to="/code-review/">Code Review</SidebarLink>
           <SidebarLink to="/workflow/">Workflow</SidebarLink>
           <SidebarLink to="/environment/" title="Environment">
             <Children
