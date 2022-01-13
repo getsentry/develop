@@ -83,9 +83,10 @@ You can find the tests here: [https://github.com/getsentry/sentry/tree/master/te
    - Query parameter serializers work very well, try to use them where possible.
 
 6. Specify the request and response serializers
-   - Request serializers, since they use DRF serializers, can generally just be the serializer itself. There is plenty of customization and if needed can be overriden with `inline_serializer` anyways
-   - Since we have our own custom response serializers, we can't simply provide them. For now, we can use `inline_serializer` to define the response schema.
-   - Note that you can instead provide OpenAPI JSON instead of an inline serializer, so you can fall back to this if you are running into issues.
+   - Request serializers, since they use DRF serializers, can generally just be the serializer itself. There is plenty of customization and if needed can be overriden with `inline_serializer`.
+   - For our response serializers, you must type the `serialize` function and you may pass the serializer as a parameter.
+   - If the response is a wrapper or you need more customization, you can use the `inline_sentry_response_serializer` function.
+   - Note that you can instead provide OpenAPI JSON, so you can fall back to this if you are running into issues.
 7. See [here](https://github.com/getsentry/sentry/blob/master/src/sentry/scim/endpoints/members.py) for an example of an endpoint documented using drf-spectacular, and the [drf-spectacular docs here](https://drf-spectacular.readthedocs.io/en/latest/) to learn more.
 
 ** Note that if the endpoint you're modifying already has JSON documentation, you will need to delete the old documentation found in [this file](https://github.com/getsentry/sentry/blob/master/api-docs/openapi.json)**
