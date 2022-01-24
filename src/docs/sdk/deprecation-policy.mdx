@@ -1,0 +1,22 @@
+---
+title: Deprecation Policy
+sidebar_order: 0
+---
+
+Inevitably, there will be times when Sentry should deprecate certain features. This may be due to changes of our own or those of third parties, the removal of certain functionalities, or even the removal of pieces of infrastructure altogether. The following document shall act as a prescribed process and template to help us follow deprecation best practices, so that we maintain a high level of trust with our users, as well as compliance internally.
+
+Making such changes should not be taken lightly, and this policy and template should be thought of as a tool to best protect all stakeholders, while empowering you to deliver improvements with grace. Finally, these changes must be communicated with a long enough timeline that impacted parties have time to make their own changes, and mitigate any potential impacts on their systems and processes.
+
+**Availability vs Support**
+
+When discussing deprecation, it is important to note that there is a clear distinction between *support* and *availability*. When deprecating server side implementations, they will cease to exist in the Sentry SaaS product. However, older versions will still contain the functionality. That is, persons running self-hosted Sentry and client side applications with older versions running deprecated functionality may continue to use them, but it cannot be guaranteed that we will continue to support them with the service level obligations that we do with the latest versions of our products. It is strongly encouraged in most situations to keep all client and server side applications updated with as close to the latest stable versions as possible. We aim to follow best practices on the market, and that means there can be end-of-life support.
+
+**[Breaking Changes](https://en.wikipedia.org/wiki/Deprecation#Software)** 
+
+One of the most important considerations is whether or not a deprecation represents a breaking change. A breaking change is simply any change which will break usage of Sentry (client or server side), even for a subset of users, open source or paid. Typically, these changes require the release of a new major version. Major version bumps should act as a safety measure to prevent many users from automatically upgrading to a version, which could include changes they may not be prepared for.
+
+All of this being considered please refer to these examples and measures to [Avoiding Breaking Changes](https://www.notion.so/Avoiding-Breaking-Changes-93ff761ad830427795e3c6e895e9db2d - TBC). 
+
+**The Template**
+
+The [template](https://www.notion.so/Deprecate-What-6e65ac85535b46b384546fdce5799fe8 - TBC) has been created with the intention to help guide anyone through the process of considering and documenting all relevant points on why and how to propose and follow through with a deprecation. It is not intended to be filled out 100% every time. Some sections may seem redundant in certain scenarios, but remember the document is also for persons who may not have as much context as the person(s) doing the work.
