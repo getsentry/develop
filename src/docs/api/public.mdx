@@ -74,22 +74,25 @@ You can find the tests here: [https://github.com/getsentry/sentry/tree/master/te
 
 **To add documentation for a new endpoint**:
 API Documentation consists of a few items:
-  - URL and query parameters
-  - Request Schema (None if no body)
-  - Response Schema
-  - Examples.
+
+- URL and query parameters
+- Request Schema (None if no body)
+- Response Schema
+- Examples.
  
 Below we'll describe how to document these for an endpoint. You can familiarize yourself with some examples on the API docs website. We'll be making heavy use of `extend_schema` in order to do so.
 
 1. Declare the endpoint public using the `@declare_public` decorator, specifying the methods on the view which should be public.  
 ```
 from sentry.apidocs.decorators import declare_public
+
 @declare_public(methods={"GET"})
 class OrganizationSCIMMemberDetails(...):
 ```
 2. Tag the endpoint view if needed (you can also tag parent classes), this is how the endpoint makes it into a particular sidebar grouping.
 ```
 from drf_spectacular.utils import extend_schema
+
 @extend_schema(tags=["SCIM"])
 class SCIMEndpoint(OrganizationEndpoint)...
 ```
