@@ -38,7 +38,7 @@ Props should be declared above the component.
 type Props = {
   author: object;
   content: string;
-  onEdit: Function;
+  onEdit: (value: string) => void;
 };
 
 function Note(props: Props) {
