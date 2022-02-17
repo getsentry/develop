@@ -91,7 +91,7 @@ from sentry.apidocs.decorators import declare_public
 class OrganizationSCIMMemberDetails(...):
 ```
 
-Tag the endpoint view if needed (A parent class may already be tagged), this is how the endpoint makes it into a particular [sidebar endpoint grouping](https://docs.sentry.io/api/). You can see the current list of tags or add tags [here](https://github.com/getsentry/sentry/blob/master/src/sentry/apidocs/build.py).
+Tag the endpoint view if needed (a parent class may already be tagged), this is how the endpoint makes it into a particular [sidebar endpoint grouping](https://docs.sentry.io/api/). You can see the current list of tags or add tags [here](https://github.com/getsentry/sentry/blob/master/src/sentry/apidocs/build.py).
 
 ```python
 from drf_spectacular.utils import extend_schema
