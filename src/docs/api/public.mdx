@@ -157,10 +157,10 @@ Write a test [here](https://github.com/getsentry/sentry/tree/master/tests/apidoc
 
 **Tips**:
 
-- `make build-api-docs` will simply attempt to build the OpenAPI JSON. The build will fail if there are any warnings.
-- `make test-api-docs` runs all API docs tests. This command also builds the derefed JSON. This runs in CI but can be useful for local development to make sure everything passes.
-- `yarn run build-derefed-docs` builds the derefed JSON. This is useful in the case where you're only running one test locally, making a change to the schema, and then re-running the test. Since the tests run against the derefed version, you'll need to rebuild it.
-  **To see your changes in the docs locally**:
+- `make test-api-docs` builds the OpenAPI JSON and runs all API docs tests.
+- To only build the docs, run `make build-api-docs`. The build will fail if there are any warnings.
+
+**To see your changes in the docs locally**:
 
 In `sentry`:
 
