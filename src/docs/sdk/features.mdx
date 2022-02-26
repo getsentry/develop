@@ -178,6 +178,13 @@ Once the device is back online, the SDK is likely going to empty its disk queue 
 
 If the SDK is being [rate-limited](/sdk/rate-limiting/), which causes the SDK to drop any event that reaches its HTTP transport, cosider stop consuming the disk cache until the `Retry-After` timeout is reached or the app restarts.
 
+#### Example implementations
+
+- [C#](https://github.com/getsentry/sentry-dotnet/blob/main/src/Sentry/Internal/Http/CachingTransport.cs)
+- [Java](https://github.com/getsentry/sentry-java/blob/main/sentry/src/main/java/io/sentry/cache/EnvelopeCache.java)
+- [Objective-C](https://github.com/getsentry/sentry-cocoa/blob/master/Sources/Sentry/SentryHttpTransport.m)
+- [TypeScript](https://github.com/getsentry/sentry-electron/blob/master/src/main/transports/electron-offline-net.ts)
+
 ## HTTP Proxy
 
 Ability to use an HTTP proxy. Often easy to implement using the existing HTTP client.  This should be picked up from the system config if possible or explicit config in the client options.
