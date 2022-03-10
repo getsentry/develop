@@ -267,6 +267,12 @@ If you would like to be able to run `devserver` outside of your root checkout, y
   displayed correctly.
 </Alert>
 
+### A Note on Relay
+
+Some services are not run in all situations, and one of those is <Link to="/services/relay/">Relay</Link>. If you need a more production-like environment
+in development, you can set `SENTRY_USE_RELAY=True` in `~/.sentry/sentry.conf.py`. This will launch relay as part of the
+`devserver` workflow.
+
 ## Setting up Getsentry
 
 <Alert title="Employees Only" level="warning">
