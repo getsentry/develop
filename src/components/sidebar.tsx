@@ -50,14 +50,14 @@ export default () => {
           <h6>Development</h6>
         </div>
         <ul className="list-unstyled" data-sidebar-tree>
-          <SidebarLink to="/commit-messages/">Commit Messages</SidebarLink>
-          <SidebarLink to="/code-review/">Code Review</SidebarLink>
-          <SidebarLink to="/workflow/">Workflow</SidebarLink>
-          <SidebarLink to="/environment/" title="Environment">
+        <SidebarLink to="/environment/" title="Environment">
             <Children
               tree={tree.find(n => n.name === "environment").children}
             />
           </SidebarLink>
+          <SidebarLink to="/commit-messages/">Commit Messages</SidebarLink>
+          <SidebarLink to="/code-review/">Code Review</SidebarLink>
+          <SidebarLink to="/workflow/">Workflow</SidebarLink>
           <SidebarLink to="/continuous-integration/">
             Continuous Integration
           </SidebarLink>
