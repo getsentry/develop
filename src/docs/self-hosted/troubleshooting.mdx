@@ -109,9 +109,9 @@ An example script below:
 
 ```shell
 # Only keep the last 7 days of nodestore data. We heavily use performance monitoring.
-docker-compose run -T web cleanup --days 7 -m nodestore -l debug
+docker-compose run --rm -T web cleanup --days 7 -m nodestore -l debug
 # This ensures pg-repack exists before running as the container gets recreated on upgrades
-docker-compose run -T postgres bash -c "apt update && apt install -y --no-install-recommends postgresql-9.6-repack && su postgres -c 'pg_repack -E info -t nodestore_node'"
+docker-compose run --rm -T postgres bash -c "/usr/local/bin/docker-entrypoint.sh postgres & apt update && apt install -y --no-install-recommends postgresql-9.6-repack && su postgres -c 'pg_repack -E info -t nodestore_node'"
 ```
 
 ## Docker Containers' Healthcheck
