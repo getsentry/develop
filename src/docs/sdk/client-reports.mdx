@@ -98,14 +98,22 @@ need to match the reason codes that relay would emit directly to Sentry.
 
 ## SDK Side Recommendations
 
-SDKs are encouraged to reduce the total amount of needless communciation.  As
-such a recommended approach is to keep track of the counts for the discard
-reasons in the transport directly and to periodically flush them out as separate
-envelope item or attach it to an already scheduled envelope.  As some SDKs still
-send legacy events instead of envelopes for backwards compatibility with older
-Sentry servers it would be recommended in such cases to send it as separate envelope
-instead or attach it to pending session envelopes.
+The client reports feature doesn't expect 100 percent correct numbers, and it is
+acceptable for the SDKs to lose a small number of client reports. The expectation of
+this feature is to give the users an approximation of specific outcomes. Of course,
+the SDKs should ensure not dropping too many reports. It is not required, for example: 
+ - to persist the data when an application crashes.
+ - to move an envelope item with a client report to the next envelope when the cache for envelopes is full. 
 
-There is no expectation that such bookkeeping can work transparently for custom
-transports which is why it's generally acceptable if client reports are optional
-for custom transports.
+SDKs are encouraged to reduce the total amount of needless communication, especially
+on mobile. A recommended approach is to keep track of the discard events in the
+transport directly and attach it to an already scheduled envelope or periodically flush
+them out as separate envelope items.
+For mobile SDKs, the recommendation is to attach the client report to the next envelope
+enqueued for submission instead of periodically flushing them out.
+For SDKs still sending legacy events instead of envelopes for backward compatibility
+with older Sentry servers, the recommendation is to send the client report as a
+separate envelope or attach it to pending session envelopes.
+
+There is no expectation that such bookkeeping can work transparently for custom transports.
+Consequently, it's acceptable if client reports are optional for custom transports.
