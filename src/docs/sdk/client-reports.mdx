@@ -110,7 +110,8 @@ on mobile. A recommended approach is to keep track of the discard events in the
 transport directly and attach it to an already scheduled envelope or periodically flush
 them out as separate envelope items.
 For mobile SDKs, the recommendation is to attach the client report to the next envelope
-enqueued for submission instead of periodically flushing them out.
+enqueued for submission instead of periodically flushing them out. We accept the tradeoff
+that apps rarely sending events will have fewer client reports.
 For SDKs still sending legacy events instead of envelopes for backward compatibility
 with older Sentry servers, the recommendation is to send the client report as a
 separate envelope or attach it to pending session envelopes.
