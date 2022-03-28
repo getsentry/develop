@@ -106,20 +106,24 @@ the SDKs should ensure not dropping too many reports. It is not required, for ex
  - to move an envelope item with a client report to the next envelope when the cache for envelopes is full.
 
 SDKs are encouraged to reduce the total amount of needless communication, especially
-on mobile. A recommended approach is to keep track of the discard events in the
-transport directly and attach it to an already scheduled envelope or periodically flush
-them out as separate envelope items.
-For mobile SDKs, the recommendation is to attach the client report to the next envelope
-enqueued for submission instead of periodically flushing them out. We accept the tradeoff
-that apps rarely sending events will have fewer client reports.
-For SDKs still sending legacy events instead of envelopes for backward compatibility
-with older Sentry servers, the recommendation is to send the client report as a
-separate envelope or attach it to pending session envelopes.
-
-There is no expectation that such bookkeeping can work transparently for custom transports.
-Consequently, it's acceptable if client reports are optional for custom transports.
+on mobile. A recommended approach is to keep track of the discard events in the transport.
+For applications with a low frequency of envelopes to ingest, such as mobile apps or web
+apps, the SDK can attach the discarded events to an already scheduled envelope. We accept
+the tradeoff that apps rarely sending events will have fewer client reports. When the SDK
+schedules envelopes continuously, like on the backend, the SDK can choose to flush the
+discarded events periodically to avoid the overhead of serializing an extra envelope item
+for almost every envelope.
 
 The one who drops an envelope item must record and report it. If the server drops
 an envelope item, for example, with the response 429, the client SDK must not record
 this as the server already does. Still, the SDK must record lost envelope items
 when dropping them itself, for example, caused by an active rate limit.
+
+### Legacy Events
+For SDKs still sending legacy events instead of envelopes for backward compatibility with
+older Sentry servers, the recommendation is to send the client report as a separate
+envelope or attach it to pending session envelopes.
+
+### Custom Transports
+There is no expectation that such bookkeeping can work transparently for custom transports.
+Consequently, it's acceptable if client reports are optional for custom transports.
