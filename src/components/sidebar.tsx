@@ -143,9 +143,6 @@ export default () => {
           <SidebarLink to="/frontend/using-rtl/">
             Using React Testing Library
           </SidebarLink>
-          <SidebarLink to="/frontend/migration-gridemotion/">
-            Migration - grid-emotion
-          </SidebarLink>
         </ul>
       </li>
 

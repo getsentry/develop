@@ -101,9 +101,9 @@ need to match the reason codes that relay would emit directly to Sentry.
 The client reports feature doesn't expect 100 percent correct numbers, and it is
 acceptable for the SDKs to lose a small number of client reports. The expectation of
 this feature is to give the users an approximation of specific outcomes. Of course,
-the SDKs should ensure not dropping too many reports. It is not required, for example: 
+the SDKs should ensure not dropping too many reports. It is not required, for example:
  - to persist the data when an application crashes.
- - to move an envelope item with a client report to the next envelope when the cache for envelopes is full. 
+ - to move an envelope item with a client report to the next envelope when the cache for envelopes is full.
 
 SDKs are encouraged to reduce the total amount of needless communication, especially
 on mobile. A recommended approach is to keep track of the discard events in the
@@ -118,3 +118,8 @@ separate envelope or attach it to pending session envelopes.
 
 There is no expectation that such bookkeeping can work transparently for custom transports.
 Consequently, it's acceptable if client reports are optional for custom transports.
+
+The one who drops an envelope item must record and report it. If the server drops
+an envelope item, for example, with the response 429, the client SDK must not record
+this as the server already does. Still, the SDK must record lost envelope items
+when dropping them itself, for example, caused by an active rate limit.
