@@ -15,7 +15,7 @@ Each *quota_limit* has the form `retry_after:categories:scope:reason_code:...` w
 
 - `retry_after`: Number of seconds (as an integer or a floating point number) until this rate limit expires.
 - `categories`: Semicolon-separated list of [data categories](https://github.com/getsentry/relay/blob/master/relay-common/src/constants.rs#L97-L115). **If empty, this limit applies to all categories**. 
-    While these categories might look similar to the [envelope item types](/sdk/envelopes/#data-model) be aware that they don't map 100% to these.
+    While these categories might look similar to the [envelope item types](/sdk/envelopes/#data-model), they are not identical, and have slight differences.
 - `scope`: The scope that this limit applies to. Can be ignored by SDKs.
 - `reason_code`: A unique identifier for the quota hinting at the rate limiting reason. Can be ignored by SDKs.
 - More parameters can be added in the future, and can be ignored by SDKs (promise of backward compatibility).
