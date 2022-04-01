@@ -74,7 +74,7 @@ will assume the current UTC timestamp. In the data model, this is called
 
 The following discard reasons are currently defined for `discarded_events`:
 
-- `queue_overflow`: a SDK internal queue (eg: transport queue) overflowed
+- `queue_overflow`: an SDK internal queue (eg: transport queue) overflowed
 - `cache_overflow`: an SDK internal cache (eg: offline event cache) overflowed
 - `ratelimit_backoff`: the SDK dropped events because an earlier rate limit
   instructed the SDK to back off.
@@ -82,11 +82,14 @@ The following discard reasons are currently defined for `discarded_events`:
 - `sample_rate`: an event was dropped because of the configured sample rate.
 - `before_send`: an event was dropped in `before_send`
 - `event_processor`: an event was dropped by an event processor
+- `storage_error`: events were dropped due to (de)serialization error (e.g. corrupted offline cache)
 
 Additionally the following discard reasons are reserved but there is no expectation
 that SDKs send these under normal operation:
 
-`rate_limited_events`, `filtered_events`, `filtered_sampling_events`
+- `rate_limited_events`
+- `filtered_events`
+- `filtered_sampling_events`
 
 : _List of outcome objects_ {`reason`, `category`, `quantity`}
 
