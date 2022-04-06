@@ -505,3 +505,7 @@ Sessions are never tracked nor sent individually, instead they are aggregated an
 As an implementation hint to the point above, when a "Client" is closed or flushed the associated  "Session Flusher" shall also be flushed and submit the current aggregates the the transport, before the transport is flushed/closed.
 Make sure this works reasonably for Serverless — there we shall not use "request mode" and SessionFlusher because we cannot have any work that happens outside of the request-response flow.
 Provide an easy way to integrate with existing Node frameworks (Express, Next.js, Koa).
+
+### Session update filtering
+
+Events may be dropped by our filtering mechanisms (sample rate, beforeSend, event processors or ignored exception types). Only events dropped due to sampling should update the session despite being dropped as we assume the event was dropped to save quota but would have been something the developer cares about. Events dropped due to other reasons should not update the session as we assume they are more likely to be dropped because the developer chooses to ignore them.
