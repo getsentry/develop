@@ -208,7 +208,7 @@ confusion about which OS context represents what. So here's some examples:
   the SDK (if at all).
 
   Additionally, the Sentry server will attempt to parse the `User-Agent` header
-  from the event's [./request](Request Interface) and create a _secondary_ OS
+  from the event's [Request Interface](/sdk/event-payloads/request/) and create a _secondary_ OS
   context under the non-default key `"client_os"`.
 
 * In events reported from a JS web frontend, the SDK typically reports no OS
