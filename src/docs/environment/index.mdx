@@ -41,9 +41,12 @@ brew bundle --verbose
 ### Docker (Mac specific)
 
 <Alert title="Note" level="info">
-  It's recommended to increase the Docker memory limit to something higher than the default(2048MB).
+  It's recommended to increase the Docker memory limit to something higher than the default (2048MB).
 </Alert>
 
+On Docker Desktop, you can adjust the memory limits by going to: `Preferences > Resources > Memory`
+
+Or through CLI:
 ```shell
 # quit Docker if its running
 osascript -e 'quit app "Docker"'
