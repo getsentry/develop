@@ -203,7 +203,7 @@ The `type` and default key is `"os"`. However, since contexts can be set
 multiple times under different keys, there has historically been a lot of
 confusion about which OS context represents what. So here's some examples:
 
-* In events reported from a Python/ASPNET/Rails web backend, the OS context
+* In events reported from a Python/ASP.NET/Rails web backend, the OS context
   under the default key `"os"` is the server's operating system, and is set by
   the SDK (if at all).
 
@@ -220,10 +220,10 @@ confusion about which OS context represents what. So here's some examples:
 
 To summarize:
 
-* `"os"` key for the crashing device's OS.
+* `"os"` key for the device generating the event.
 * `"client_os"` key for an adjacent client device's OS (that is _not_ the
-  crashing device) if it's important. The Sentry server sets this as part of
-  User-Agent parsing, but SDKs can set this too.
+  device creating the event) if it's important. The Sentry server sets this as part of
+  User-Agent parsing, but SDKs can set this directly too.
 * If in doubt, just send `"os"`. Any other keys are not searchable in the
   product and will not be visually pronounced using icons, so using something
   like `"server_os"` to clarify what you meant is probably going to
