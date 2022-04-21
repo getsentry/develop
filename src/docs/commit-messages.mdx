@@ -34,8 +34,6 @@ If you’re working locally, it often can be useful to `--amend` a commit, or ut
 
 Each commit message consists of a **header**, a **body**, and an optional **footer**.
 
-The header has a special format that includes a scope and a subject:
-
 ```
 <subject> (<jira-id>)
 <BLANK LINE>
@@ -44,7 +42,7 @@ The header has a special format that includes a scope and a subject:
 <footer>
 ```
 
-The **header** is mandatory and the **scope** of the header is optional. If you have a Jira issue to link to, add the **jira-id** the commit belongs to. This helps to connect changes back to Jira tickets.
+The **header** is mandatory. If you have a Jira issue to link to, add the **jira-id** the commit belongs to. This helps to connect changes back to Jira tickets.
 
 Any line of the commit message should not be longer 100 characters! This allows the message to be easier to read on GitHub as well as in various git tools.
 
