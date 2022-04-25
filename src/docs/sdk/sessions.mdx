@@ -519,3 +519,7 @@ The python SDK shall serve as a reference here. The order for filtering error ev
 2. Apply `before_send`
 5. Update the session if an event made it this far
 6. Apply sampling rate
+
+#### Sending the session update
+
+If the event has been dropped and the session updated, the session update should be sent to the server without the event in case the session changed from healthy to errored or from any state to crashed for user attended sessions.
