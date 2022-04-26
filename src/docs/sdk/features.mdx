@@ -143,7 +143,7 @@ useful because attachments could quickly eat up the users' disk space. Furthermo
 
 ## Screenshots
 
-When the user opts-in, if technically possible, take a screenshot of the application and include as an [attachment](#attachments) to the [envelope](/sdk/envelopes/) with the event.
+When the user opts-in, if technically possible, take a screenshot of the application during a crash or error and include it as an [attachment](#attachments) to the [envelope](/sdk/envelopes/) with the event.
 
 This feature only applies to SDKs with a user interface, such as Mobile and Desktop. 
 In some environments such as native iOS, taking a screenshot requires the UI thread and in the event of a crash, that might not be available. So inherently this feature will be a best effort solution.
