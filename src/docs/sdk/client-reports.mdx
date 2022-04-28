@@ -8,8 +8,6 @@ about themselves to Sentry.  They are currently mainly used to emit outcomes
 for events that were never sent.  Chained relays are also able to emit these
 client reports to inform the next relay in chain about _some_ outcomes.
 
-It is guaranteed that client reports never get rate limited by the server.
-
 Due to a bug in Relay, which discards envelopes containing unknown envelope
 items, the minimum required version of Sentry for client reports is 
 [21.9.0](https://github.com/getsentry/relay/blob/master/CHANGELOG.md#2190).
@@ -131,7 +129,8 @@ an envelope item, for example, with the response 429, the client SDK must not re
 this as the server already does. Still, the SDK must record lost envelope items
 when dropping them itself, for example, caused by an active rate limit. SDKs can put
 a simple optional check for HTTP status codes in place where any code `>= 400` except
-`429` will be recorded as `network_error`.
+`429` will be recorded as `network_error`. It is guaranteed that client reports never
+get rate limited by the server.
 
 ### Configuration
 
