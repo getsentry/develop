@@ -4,7 +4,7 @@ title: "Slack Integration"
 
 ## Create a Slack App
 
-To use Sentry’s new Slack integration you’ll need to create an app in Slack bot app. Navigate to [Your Apps](https://api.slack.com/apps/) and click __Create New App__.
+To use Sentry’s Slack integration you’ll need to create a Slack app. Navigate to [Your Apps](https://api.slack.com/apps/) and click __Create New App__.
 
 ![Create](./create.png)
 
@@ -69,7 +69,7 @@ Add the following scopes to __User Scopes__:
 * `users:read.email`
 
 <Alert level="info">
-You have the option to set Restrict API Token Usage on this page if you want to ensure your Slack is the only one talking to your Sentry instance.
+You have the option to set 'Restrict API Token Usage' on this page if you want to limit use of your app’s OAuth tokens to a list of IP addresses and ranges you provide.
 </Alert>
 
 Navigate to __Event Subscriptions__ and toggle “On”. Here you will enter another Request URL: `{YOUR_DOMAIN}/extensions/slack/event/`
@@ -79,7 +79,7 @@ You’ll see “Verified” when you’ve entered the correct URL.
 ![Events](./events.png)
 
 <Alert level="info">
-When you enter the Request URL, Slack tries to verify it. The request will fail if you didn’t configure the client keys/secret and restart Sentry to ensure those config changes were picked up. If it fails to validate, first make sure your Sentry instance is running and Slack can talk to it (Slack [doesn’t have an IP range](https://twitter.com/slackapi/status/567110311476350976?lang=en))
+When you enter the 'Request URL', Slack tries to verify it. The request will fail if you didn’t configure the client keys/secret and restart Sentry to ensure those config changes were picked up. If it fails to validate, first make sure your Sentry instance is running and Slack can talk to it (Slack <Link to="https://twitter.com/slackapi/status/567110311476350976?lang=en">doesn’t have an IP range</Link>)
 </Alert>
 
 Still on the __Event Subscription__ page, go to __Subscribe to bot events__ and add the following bot user events:
@@ -95,7 +95,7 @@ Lastly, still on that page, go to __App Unfurl Domains__, click __Add Domain__ t
 
 At the bottom of the page, click __Save Changes__.
 
-Navigate to __App Home__, under __Features__. Here is where you can edit your bot display name (this is the name that will be displayed when alerts are triggered).
+Navigate to __App Home__, under __Features__. Here is where you can edit your bot's display name (this is the name that will be displayed when alerts are triggered).
 
 ![Bot](./bot.png)
 
