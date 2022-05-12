@@ -11,21 +11,14 @@ To use Sentry’s new Slack integration you’ll need to create an app in Slack 
 After naming your app and connecting your workspace, navigate to __Basic Information__. Here you’ll find your Client ID, Client Secret, and Verification token that lets your app access the Slack API.
 
 Here’s where you’ll connect your self-hosted Sentry instance to your newly created Slack app.
-<dl>
-    
-<dd>
-<markdown>
-Copy your Client ID, Client Secret, and Signing Secret.
 
-```yaml config.yml
+Copy your Client ID, Client Secret, and Signing Secret and paste them into <code>config.yml</code>. 
+
+```yaml
 slack.client-id: <client id>
 slack.client-secret: <client secret>
 slack.signing-secret: <signing secret>
 ```
-
-</markdown>
-</dd>
-</dl>
 
 After you update the <code>config.yml</code> you need to restart your Sentry server to continue configuring the Slack app.
 
@@ -85,7 +78,9 @@ You’ll see “Verified” when you’ve entered the correct URL.
 
 ![Events](./events.png)
 
-_Note: When you enter the Request URL, Slack tries to verify it. The request will fail if you didn’t configure the client keys/secret and restart Sentry to ensure those config changes were picked up. If it fails to validate, first make sure your Sentry instance is running and Slack can talk to it (Slack [doesn’t have an IP range](https://twitter.com/slackapi/status/567110311476350976?lang=en))_
+<Alert level="info">
+When you enter the Request URL, Slack tries to verify it. The request will fail if you didn’t configure the client keys/secret and restart Sentry to ensure those config changes were picked up. If it fails to validate, first make sure your Sentry instance is running and Slack can talk to it (Slack [doesn’t have an IP range](https://twitter.com/slackapi/status/567110311476350976?lang=en))
+</Alert>
 
 Still on the __Event Subscription__ page, go to __Subscribe to bot events__ and add the following bot user events:
 
