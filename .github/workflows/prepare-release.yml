@@ -12,9 +12,9 @@ on:
     # This is when we release the self-hosted repo
     - cron: "0 18 15 * *"
 jobs:
-  release:
+  prepare-release:
     runs-on: ubuntu-latest
-    name: "Release a new version"
+    name: "Prepare a new release"
     steps:
       - uses: actions/checkout@v2
         with:
