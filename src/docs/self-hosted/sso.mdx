@@ -96,19 +96,19 @@ GITHUB_REQUIRE_VERIFIED_EMAIL = True  # Optional but recommended
 In [`sentry/config.yaml`](https://github.com/getsentry/self-hosted/blob/master/sentry/config.example.yml)
 
 ```yaml
-# github-app.id: <App ID>
-# github-app.name: '<GitHub App name>'
-# github-app.webhook-secret: '<Webhook secret>' # Use only if configured in GitHub
-# github-app.client-id: '<Client ID>'
-# github-app.client-secret: '<Client secret>'
-# github-app.private-key: |
-#   -----BEGIN RSA PRIVATE KEY-----
-#   privatekeyprivatekeyprivatekeyprivatekey
-#   privatekeyprivatekeyprivatekeyprivatekey
-#   privatekeyprivatekeyprivatekeyprivatekey
-#   privatekeyprivatekeyprivatekeyprivatekey
-#   privatekeyprivatekeyprivatekeyprivatekey
-#   -----END RSA PRIVATE KEY-----
+github-app.id: <App ID>
+github-app.name: '<GitHub App name>'
+github-app.webhook-secret: '<Webhook secret>' # Use only if configured in GitHub
+github-app.client-id: '<Client ID>'
+github-app.client-secret: '<Client secret>'
+github-app.private-key: |
+  -----BEGIN RSA PRIVATE KEY-----
+  privatekeyprivatekeyprivatekeyprivatekey
+  privatekeyprivatekeyprivatekeyprivatekey
+  privatekeyprivatekeyprivatekeyprivatekey
+  privatekeyprivatekeyprivatekeyprivatekey
+  privatekeyprivatekeyprivatekeyprivatekey
+  -----END RSA PRIVATE KEY-----
 ```
 
 This will also enable the [GitHub Integration](/integrations/github/) for your instance.
