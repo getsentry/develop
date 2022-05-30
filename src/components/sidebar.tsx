@@ -251,6 +251,9 @@ export default () => {
           </SidebarLink>
           <SidebarLink to="/sdk/sessions/">Sessions</SidebarLink>
           <SidebarLink to="/sdk/client-reports/">Client Reports</SidebarLink>
+          <SidebarLink to="/sdk/serverless/" title="Serverless SDKs">
+            <SidebarLink to="/sdk/serverless/aws-lambda">AWS Lambda</SidebarLink>   
+          </SidebarLink>
           <SidebarLink to="/sdk/research/performance">
             Research: Performance Monitoring API
           </SidebarLink>
