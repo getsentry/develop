@@ -86,6 +86,7 @@ export default () => {
           <SidebarLink to="/config/">Configuration</SidebarLink>
           <SidebarLink to="/feature-flags/">Feature Flags</SidebarLink>
           <SidebarLink to="/serializers/">Serializers</SidebarLink>
+          <SidebarLink to="/grouping/">Grouping</SidebarLink>
           <SidebarLink to="/api/" title="API">
           <Children
               tree={tree.find(n => n.name === "api").children}
