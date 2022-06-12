@@ -251,6 +251,7 @@ export default () => {
           </SidebarLink>
           <SidebarLink to="/sdk/sessions/">Sessions</SidebarLink>
           <SidebarLink to="/sdk/client-reports/">Client Reports</SidebarLink>
+          <SidebarLink to="/sdk/signal-handlers/">Signal Handlers</SidebarLink>
           <SidebarLink to="/sdk/research/performance">
             Research: Performance Monitoring API
           </SidebarLink>
