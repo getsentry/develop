@@ -86,6 +86,7 @@ export default () => {
           <SidebarLink to="/config/">Configuration</SidebarLink>
           <SidebarLink to="/feature-flags/">Feature Flags</SidebarLink>
           <SidebarLink to="/serializers/">Serializers</SidebarLink>
+          <SidebarLink to="/grouping/">Grouping</SidebarLink>
           <SidebarLink to="/api/" title="API">
           <Children
               tree={tree.find(n => n.name === "api").children}
@@ -254,6 +255,7 @@ export default () => {
           <SidebarLink to="/sdk/serverless/" title="Serverless SDKs">
             <SidebarLink to="/sdk/serverless/aws-lambda">AWS Lambda</SidebarLink>   
           </SidebarLink>
+          <SidebarLink to="/sdk/signal-handlers/">Signal Handlers</SidebarLink>
           <SidebarLink to="/sdk/research/performance">
             Research: Performance Monitoring API
           </SidebarLink>
