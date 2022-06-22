@@ -110,10 +110,44 @@ When a transaction is reported to Sentry, the Dynamic Sampling Context must be m
 
 ## Unified Propagation Mechanism
 
-Todo:
+SDKs should follow these steps for any incoming and outgoing requests (in python pseudo-code for illustrative purposes):
 
-- incoming request algorithm
-- outgoing request algorithm
+```python
+def collect_dynamic_sampling_context():
+  # Placeholder function that collects as many values for Dynamic Sampling Context
+  # as possible and returns a dict
+
+def on_incoming_request(request):
+  if has_header(request, "sentry-trace") and (not has_header(request, "baggage") or not has_sentry_value_in_baggage_header(request)):
+    # Request comes from an old SDK which doesn't support Dynamic Sampling Context yet
+    # --> we don't propagate baggage for this trace
+    transaction.baggage_locked = true
+    transaction.baggage = {}
+  elif has_header(request, "baggage") and has_sentry_value_in_baggage_header(request):
+    transaction.baggage_locked = true
+    transaction.baggage = baggage_header_to_dict(request.headers.baggage)
+
+def on_outgoing_request(request):
+  if not transaction.baggage_locked:
+    transaction.baggage_locked = true
+    if not transaction.baggage:
+      transaction.baggage = {}
+    transaction.baggage = merge_dicts(collect_dynamic_sampling_context(), transaction.baggage)
+
+  if has_header(request, "baggage"):
+    outgoing_baggage_dict = baggage_header_to_dict(request.headers.baggage)
+    merged_baggage_dict = merge_dicts(outgoing_baggage_dict, transaction.baggage)
+    merged_baggage_header = dict_to_baggage_header(merged_baggage_dict)
+    set_header(request, "baggage", merged_baggage_header)
+  else:
+    baggage_header = dict_to_baggage_header(transaction.baggage)
+    set_header(request, "baggage", baggage_header)
+```
+
+While there is no strict necessity for the `transaction.baggage_locked` flag yet, there is a future use case where we need it:
+We might want users to be able to set Dynamic Sampling Context values themselves.
+The flag becomes relevant after the first propagation, where Dynamic Sampling Context becomes immutable.
+When users attempt to set DSC afterwards, our SDKs should make this operation a noop.
 
 ## Considerations
 
