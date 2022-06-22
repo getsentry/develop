@@ -42,7 +42,7 @@ This involves:
 
 1. Collecting the information that makes up the DSC **xor** extracting the DSC from incoming requests.
 2. Propagating DSC to downstream SDKs.
-3. Sending the DSC to Sentry via an envelope.
+3. Sending the DSC to Sentry via the `trace` envelope header.
 
 Because there are quite a few things to keep in mind for DSC propagation and to avoid every SDK running into the same problems, we defined a [unified propagation mechanism](#unified-propagation-mechanism) (step-by-step instructions) that all SDK implementations should be able to follow.
 
@@ -75,7 +75,7 @@ See the [Payloads section](#payloads) for a complete list of key-value pairs tha
 
 ## Payloads
 
-Dynamic Sampling Context is propagated via a baggage header and sent to Sentry via <Link to="/sdk/envelopes/#transaction">transaction envelope headers</Link>.
+Dynamic Sampling Context is propagated via a baggage header and sent to Sentry via the `trace` envelope header.
 
 ### Baggage-Header
 
@@ -97,10 +97,10 @@ Additionally, we chose `[name]` to be written in "snake case" without any unders
 
 ### Envelope Header
 
-Dynamic Sampling Context is transferred to Sentry through the <Link to="/sdk/envelopes/#transaction">transaction envelope headers</Link>, keyed by `trace`.
-It corresponds directly to the definition of <Link to="/sdk/performance/trace-context/#trace-context">Trace Context</Link>.
+Dynamic Sampling Context is transferred to Sentry through the `trace` envelope header.
+The value of this header corresponds directly to the definition of <Link to="/sdk/performance/trace-context/#trace-context">Trace Context</Link>.
 
-When a transaction is reported to Sentry, the Dynamic Sampling Context must be mapped to Trace Context in the following way:
+When a transaction is reported to Sentry, the Dynamic Sampling Context must be mapped to the `trace` envelope header in the following way:
 
 - `sentry-release` ➝ `release`
 - `sentry-environment` ➝ `environment`
