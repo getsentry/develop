@@ -16,7 +16,7 @@ This has quite a few drawbacks for users of Sentry SDKs:
 - Changing the sampling rate involved either redeploying applications (which is problematic in case of applications that are not updated automatically, i.e., mobile apps or physically distributed software) or building complex systems to dynamically fetch a sampling rate.
 - Sampling only happened based on a factor of randomness.
   Employing sampling rules, for example, based on event parameters, is currently very complex.
-  While writing rules for singular **transactions** is possible, enforcing them on an entire **trace** is infeasable.
+  While writing rules for singular **transactions** is possible, enforcing them on entire **traces** is infeasable.
 
 The solution for these problems is **Dynamic Sampling**.
 Dynamic Sampling allows users to configure **sampling rules** directly in the Sentry interface. Important: Sampling rules may also be applied to **entire traces**.
