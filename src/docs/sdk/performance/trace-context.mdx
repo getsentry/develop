@@ -22,6 +22,7 @@ Regardless of the transport mechanism, the trace context is a JSON object with t
 
 - `trace_id` (string, required) - UUID V4 encoded as a hexadecimal sequence with no dashes (e.g. `771a43a4192642f0b136d5159a501700`) that is a sequence of 32 hexadecimal digits. This must match the trace id of the submitted transaction item.
 - `public_key` (string, required) - Public key from the DSN used by the SDK. It allows Sentry to sample traces spanning multiple projects, by resolving the same set of rules based on the starting project.
+- `sample_rate` (number, optional) - The sample rate as defined by the user on the SDK where the trace originated.
 - `release` (string, optional) - The release name as specified in client options, usually: `package@x.y.z+build`. _This should match the `release` attribute of the transaction event payload_.\*
 - `environment` - The environment name as specified in client options, for example `staging`. _This should match the `environment` attribute of the transaction event payload_.\*
 - `user` (object, optional) - A subset of the scope's user context containing the following fields:
