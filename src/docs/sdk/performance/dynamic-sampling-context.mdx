@@ -10,7 +10,7 @@ Anything that sounds fishy probably is.
 
 </Alert>
 
-Until now, traces sampling was only done through a `traces_sample_rate` option in the SDKs.
+Until now, traces sampling was only done through the <Link to="/sdk/performance/#tracessamplerate">`tracesSampleRate`</Link> or <Link to="/sdk/performance/#tracessampler">`tracesSampler`</Link> options in the SDKs.
 This has quite a few drawbacks for users of Sentry SDKs:
 
 - Changing the sampling rate involved either redeploying applications (which is problematic in case of applications that are not updated automatically, i.e., mobile apps or physically distributed software) or building complex systems to dynamically fetch a sampling rate.
