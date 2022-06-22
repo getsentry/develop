@@ -29,8 +29,11 @@ Implementing Dynamic Sampling comes with challenges, especially on the ingestion
 For Dynamic Sampling, we want to make sampling decisions for entire traces.
 However, to keep ingestion speedy, Relay only looks at singular transactions in isolation (as opposed to looking at whole traces).
 This means that we need the exact same decision basis for all transactions belonging to a trace.
-In other words, all transactions of a trace need to hold all of the information to make a sampling decision, and that information needs to be the same across all transactions of the trace.
+In other words, all transactions of a trace need to hold all of the information to make a sampling decision, and that **information needs to be the same across all transactions of the trace**.
 We call the information we base sampling decisions on **"Dynamic Sampling Context"** or **"DSC"**.
+As a mental model:
+The head transaction in a trace determines the Dynamic Sampling Context for all following transactions in that trace.
+No information can be changed, added or deleted after the first propagation.
 
 ### SDKs
 
