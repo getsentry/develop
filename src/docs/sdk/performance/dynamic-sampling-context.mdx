@@ -89,7 +89,7 @@ While all of these values are optional, SDKs should make their best effort to ad
 - `sentry-samplerate` - Sample rate as defined by the user in the SDK options
 
 SDKs must set all of the keys in the form of "`sentry-[name]`".
-The delimiter "`sentry-`" acts to identify key-value pairs set by Sentry SDKs.
+The prefix "`sentry-`" acts to identify key-value pairs set by Sentry SDKs.
 Additionally, we chose `[name]` to be written in "snake case" without any underscore ( `_` ) characters. This naming convention is the most language agnostic.
 
 ### Envelope Header
