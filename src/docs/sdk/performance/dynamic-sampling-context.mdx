@@ -120,6 +120,10 @@ def collect_dynamic_sampling_context():
   # Placeholder function that collects as many values for Dynamic Sampling Context
   # as possible and returns a dict
 
+def has_sentry_value_in_baggage_header(request):
+  # Placeholder function that returns true when there is at least one key-value pair in the baggage
+  # header of `request`, where the key starts with "sentry-", otherwise it returns false.
+
 def on_incoming_request(request):
   if has_header(request, "sentry-trace") and (not has_header(request, "baggage") or not has_sentry_value_in_baggage_header(request)):
     # Request comes from an old SDK which doesn't support Dynamic Sampling Context yet
