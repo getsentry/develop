@@ -137,6 +137,9 @@ export default () => {
           <SidebarLink to="/frontend/storybook/">
             Storybook Styleguide
           </SidebarLink>
+          <SidebarLink to="/frontend/development-server/">
+            Development Server
+          </SidebarLink>
           <SidebarLink to="/frontend/defaultprops/">
             Typing DefaultProps
           </SidebarLink>
