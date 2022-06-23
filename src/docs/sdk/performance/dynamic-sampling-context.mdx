@@ -160,8 +160,11 @@ When users attempt to set DSC afterwards, our SDKs should make this operation a 
 
 ## Considerations
 
-Todo:
+TODO - Add some sort of Q&A section on the following questions, after evaluating if they still need to be answered:
 
-- Why baggage and not trace context https://www.w3.org/TR/trace-context/?
 - Why must baggage be immutable before the second transaction has been started?
+- What are the consequences and impacts of the immutability of baggeg on Dynamic Sampling UX?
 - Why can't we just make the decision for the whole trace in Relay after the trace is complete?
+- What is sample rate smoothing and how does it use `sample_rate` from the Dynamic Sampling Context?
+- What are the differences between Dynamic Sampling on traces vs. transactions?
+- Why did we choose baggage as propagation mechanism and not trace context https://www.w3.org/TR/trace-context/?
