@@ -206,7 +206,6 @@ export default () => {
           <SidebarLink to="/sdk/envelopes/">Envelopes</SidebarLink>
           <SidebarLink to="/sdk/rate-limiting/">Rate Limiting</SidebarLink>
           <SidebarLink to="/sdk/performance/" title="Performance">
-            <SidebarLink to="/sdk/performance/trace-context/">Trace Contexts</SidebarLink>
             <SidebarLink to="/sdk/performance/span-operations/">Span Operations</SidebarLink>
             <SidebarLink to="/sdk/performance/dynamic-sampling-context/">Dynamic Sampling Context</SidebarLink>
           </SidebarLink>
