@@ -31,9 +31,12 @@ However, to keep ingestion speedy, Relay only looks at singular transactions in 
 This means that we need the exact same decision basis for all transactions belonging to a trace.
 In other words, all transactions of a trace need to hold all of the information to make a sampling decision, and that **information needs to be the same across all transactions of the trace**.
 We call the information we base sampling decisions on **"Dynamic Sampling Context"** or **"DSC"**.
+
 As a mental model:
 The head transaction in a trace determines the Dynamic Sampling Context for all following transactions in that trace.
 No information can be changed, added or deleted after the first propagation.
+Dynamic Sampling Context is bound to only one particular trace, and all the transactions that are part of this trace.
+Multiple different traces can and should have different Dynamic Sampling Contexts.
 
 ### SDKs
 
@@ -72,6 +75,29 @@ baggage: other-vendor-value-1=foo;bar;baz, sentry-trace_id=771a43a4192642f0b136d
 ```
 
 See the [Payloads section](#payloads) for a complete list of key-value pairs that SDKs should propagate.
+
+## Freezing Dynamic Sampling Context
+
+As mentioned above, in order to be able to make sampling decisions for entire traces, Dynamic Sampling Context must be the same across all transactions of a trace.
+
+**What does this mean for SDKs?**
+
+When starting a new trace, SDKs are no longer allowed to alter the DSC for that trace as soon as this DSC leaves the boundaries of the SDK for the first time.
+The DSC is then considered "frozen".
+DSC leaves SDKs in two situations:
+
+- When an outgoing request with a `baggage` header, containing the DSC, is made.
+- When a transaction envelope containing the DSC is sent to Sentry
+
+When an SDK receives an HTTP request that was "instrumented" or "traced" by a Sentry SDK, the receiving SDK should consider the incoming DSC as instantly frozen.
+Any values on the DSC should be propagated "as is" - this includes values like "environment" or "release".
+
+SDKs should recognize incoming requests as "instrumented" or "traced" when at least one of the following applies:
+
+- The incoming request has a `sentry-trace` header
+- The incoming request has a `baggage` header containing one or more keys starting with "`sentry-`"
+
+After the DSC of a particular trace has been frozen, API calls like `set_user` or `set_transaction` should have no effect on the DSC.
 
 ## Payloads
 
@@ -132,33 +158,33 @@ def has_sentry_value_in_baggage_header(request):
   # header of `request`, for which the key starts with "sentry-". Otherwise, it returns False.
 
 def on_incoming_request(request):
-  if has_header(request, "sentry-trace") and (not has_header(request, "baggage") or not has_sentry_value_in_baggage_header(request)):
+  if request.has_header("sentry-trace") and (not request.has_header("baggage") or not has_sentry_value_in_baggage_header(request)):
     # Request comes from an old SDK which doesn't support Dynamic Sampling Context yet
     # --> we don't propagate baggage for this trace
-    transaction.baggage_locked = True
-    transaction.baggage = {}
-  elif has_header(request, "baggage") and has_sentry_value_in_baggage_header(request):
-    transaction.baggage_locked = True
-    transaction.baggage = baggage_header_to_dict(request.headers.baggage)
+    current_transaction.dynamic_sampling_context_frozen = True
+  elif request.has_header("baggage") and has_sentry_value_in_baggage_header(request):
+    current_transaction.dynamic_sampling_context_frozen = True
+    current_transaction.dynamic_sampling_context = baggage_header_to_dict(request.headers.baggage)
 
 def on_outgoing_request(request):
-  if not transaction.baggage_locked:
-    transaction.baggage_locked = True
-    if not transaction.baggage:
-      transaction.baggage = {}
-    transaction.baggage = merge_dicts(collect_dynamic_sampling_context(), transaction.baggage)
+  if not current_transaction.dynamic_sampling_context_frozen:
+    current_transaction.dynamic_sampling_context_frozen = True
+    current_transaction.dynamic_sampling_context = merge_dicts(collect_dynamic_sampling_context(), current_transaction.dynamic_sampling_context)
 
-  if has_header(request, "baggage"):
+  if not current_transaction.dynamic_sampling_context:
+    # Make sure there is at least an empty DSC set on transaction
+    # This is independent of whether it is locked or not
+    current_transaction.dynamic_sampling_context = {}
+
+  if request.has_header("baggage"):
     outgoing_baggage_dict = baggage_header_to_dict(request.headers.baggage)
-    merged_baggage_dict = merge_dicts(outgoing_baggage_dict, transaction.baggage)
-    merged_baggage_header = dict_to_baggage_header(merged_baggage_dict)
-    set_header(request, "baggage", merged_baggage_header)
+    merged_baggage_dict = merge_dicts(outgoing_baggage_dict, current_transaction.dynamic_sampling_context)
+    request.set_header("baggage", dict_to_baggage_header(merged_baggage_dict))
   else:
-    baggage_header = dict_to_baggage_header(transaction.baggage)
-    set_header(request, "baggage", baggage_header)
+    request.set_header("baggage", dict_to_baggage_header(current_transaction.dynamic_sampling_context))
 ```
 
-While there is no strict necessity for the `transaction.baggage_locked` flag yet, there is a future use case where we need it:
+While there is no strict necessity for the `current_transaction.dynamic_sampling_context_frozen` flag yet, there is a future use case where we need it:
 We might want users to be able to set Dynamic Sampling Context values themselves.
 The flag becomes relevant after the first propagation, where Dynamic Sampling Context becomes immutable.
 When users attempt to set DSC afterwards, our SDKs should make this operation a noop.
