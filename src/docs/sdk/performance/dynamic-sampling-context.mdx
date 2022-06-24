@@ -197,9 +197,9 @@ These are not blockers to the adoption of the spec, but instead are here as cont
 ### The Temporal Problem
 
 Unlike `environment` or `release`, which should always be known to an SDK at initialization time, `user_id`, `user_segment`, and `transaction` (name) are only known after SDK initialization time.
-This means that if a trace is propogated from a running transaction _BEFORE_ the user/transaction attributes are set, you'll get a portion of transactions in a trace that have different Dynamic Sampling Context than other portions, leading to dynamic sampling not working as expected for users.
+This means that if a trace is propagated from a running transaction _BEFORE_ the user/transaction attributes are set, you'll get a portion of transactions in a trace that have different Dynamic Sampling Context than other portions, leading to dynamic sampling not working as expected for users.
 
-Let's say we want to dynamically sample my browser application based on the `user_id`.
+Let's say we want to dynamically sample a browser application based on the `user_id`.
 In a typical single page application (SPA), the user information has to be requested from some backend service before it can be set with `Sentry.setUser` on the frontend.
 
 Here's an example of that flow:
@@ -211,9 +211,9 @@ Here's an example of that flow:
   - user service pings database service (propogates sentry-trace/baggage to database service)
   - database service continues trace by automatically creating sampling transaction
 - Page gets data from user service, calls `Sentry.setUser` and sets `user_id`
-- Page makes HTTP requests to service A, service B, and service C (propogates sentry-trace/baggage to user service)
-  - traces propogated to service A, service B, and service C, so 3 child transactions
-- Page finishes loading, finishing pageload transaction, which is sent to Sentry
+- Page makes HTTP requests to service A, service B, and service C (propogates sentry-trace/baggage to services A, B and C)
+  - DSC is propogated with baggage to service A, service B, and service C, so 3 child transactions
+- Page finishes loading, finishing `pageload` transaction, which is sent to Sentry
 
 In this case, the baggage that is propogated to the user service and the downstream database service _does not_ have the `user_id` value in it, because it was not yet set on the browser SDK.
 Therefore, when Relay tries to dynamically sample the user services and database services transactions based on `user_id`, it will not be able to.
