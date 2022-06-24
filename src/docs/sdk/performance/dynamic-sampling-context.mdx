@@ -32,6 +32,8 @@ This means that we need the exact same decision basis for all transactions belon
 In other words, all transactions of a trace need to hold all of the information to make a sampling decision, and that **information needs to be the same across all transactions of the trace**.
 We call the information we base sampling decisions on **"Dynamic Sampling Context"** or **"DSC"**.
 
++Currently, we can dynamically sample in two ways. First, we can do dynamic sampling on single transactions. For this process, Relay looks at the incoming event payload to make decisions. Second, we can do dynamic sampling across an entire trace. For this process, Relay relies on a **Dynamic Sampling Context**.
+
 As a mental model:
 The head transaction in a trace determines the Dynamic Sampling Context for all following transactions in that trace.
 No information can be changed, added or deleted after the first propagation.
@@ -197,7 +199,7 @@ These are not blockers to the adoption of the spec, but instead are here as cont
 ### The Temporal Problem
 
 Unlike `environment` or `release`, which should always be known to an SDK at initialization time, `user_id`, `user_segment`, and `transaction` (name) are only known after SDK initialization time.
-This means that if a trace is propagated from a running transaction _BEFORE_ the user/transaction attributes are set, you'll get a portion of transactions in a trace that have different Dynamic Sampling Context than other portions, leading to dynamic sampling not working as expected for users.
+This means that if a trace is propagated from a running transaction _BEFORE_ the user/transaction attributes are set, you'll get a portion of transactions in a trace that have different Dynamic Sampling Context than other portions, leading to _dynamic sampling across a trace_ not working as expected for users.
 
 Let's say we want to dynamically sample a browser application based on the `user_id`.
 In a typical single page application (SPA), the user information has to be requested from some backend service before it can be set with `Sentry.setUser` on the frontend.
@@ -217,7 +219,7 @@ Here's an example of that flow:
 
 In this case, the baggage that is propogated to the user service and the downstream database service _does not_ have the `user_id` value in it, because it was not yet set on the browser SDK.
 Therefore, when Relay tries to dynamically sample the user services and database services transactions based on `user_id`, it will not be able to.
-It will _ONLY_ be able to dynamically sample the pageload transaction, as well as the transactions from service A, service B, and service C with a rule based on `user_id`.
+In addition, since the DSC is frozen after it's been sent, the DSC sent to service A, service B, and service C will not have `user_id` on it either. This means it also will not be dynamically sampled properly if there is a trace-wide DS rule on `user_id`.
 
 This problem exists for both `user_id` and `user_segment`, and it is because since we don't have the user information on some platforms/frameworks right as we initialize the SDK.
 
