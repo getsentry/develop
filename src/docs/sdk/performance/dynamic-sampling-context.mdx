@@ -106,6 +106,10 @@ After the DSC of a particular trace has been frozen, API calls like `set_user` o
 Dynamic Sampling Context is sent to Sentry via the `trace` envelope header and is propagated to downstream SDKs via a baggage header.
 
 All of the values in the payloads below are required (non-optional) in a sense, that when they are known to an SDK at the time a transaction envelope is sent to Sentry, or at the time a baggage header is propagated, they must also be included in said envelope or baggage.
+
+The **only exception** is the `user_id` field.
+To avoid sensitive data being leaked to third parties, `user_id` should only be included, if the <Link to="/sdk/data-handling/#sensitive-data">`send-default-pii`</Link> option was enabled in the init options.
+
 In any case, `trace_id`, `public_key`, and `sample_rate` should always be known to an SDK, so these values are strictly required.
 
 ### Envelope Header
@@ -118,7 +122,7 @@ The value of this envelope header is a JSON object with the following fields:
 - `sample_rate` (string) - The sample rate as defined by the user on the SDK. This string should always be a number between (and including) 0 and 1 in basic float notation (`0.04242`) - no funky business like exponents or anything similar. If a `tracesSampler` callback was used for the sampling decision, its result should be used for `sample_rate` instead of the `tracesSampleRate` from `SentryOptions`. In case `tracesSampler` returns `True` it should be sent as `1.0`, `False` should be sent as `0.0`.
 - `release` (string) - The release name as specified in client options`.
 - `environment` (string) - The environment name as specified in client options.
-- `user_id` (string) - User ID as set by the user with <Link to="/sdk/unified-api/#scope">`scope.set_user`</Link>.
+- `user_id` (string) - User ID as set by the user with <Link to="/sdk/unified-api/#scope">`scope.set_user`</Link>. **Only included, if `send-default-pii` is enabled**
 - `user_segment` (string) - User segment as set by the user with <Link to="/sdk/unified-api/#scope">`scope.set_user`</Link>.
 - `transaction` (string) - The transaction name set on the scope.
 
@@ -133,7 +137,7 @@ SDKs may use the following keys to set entries on `baggage` HTTP headers:
 - `sentry-sample_rate`
 - `sentry-release`
 - `sentry-environment`
-- `sentry-user_id`
+- `sentry-user_id` - **Only included, if `send-default-pii` is enabled**
 - `sentry-user_segment`
 - `sentry-transaction`
 
