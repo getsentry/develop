@@ -20,7 +20,6 @@ from the transaction name, or replace the entire name with a placeholder.
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
 | `custom`            | User-defined name, see [`setTransactionName()`](https://docs.sentry.io/platforms/javascript/enriching-events/transaction-name/) | `my_transaction`                                       |
 | `url`               | Raw URL, potentially containing identifiers.                                                                                    | `/auth/login/john123/`<br />`GET /auth/login/john123/` |
-| `url-fallback`      | The SDK is configured to send a `route`, but has to fall back to a raw URL for this particular transaction.                     |
 | `route`             | Parametrized URL / route                                                                                                        | `/auth/login/:userId/`<br />`GET /auth/login/{user}/`  |
 | `view`              | Name of the view handling the request.                                                                                          | `UserListView`                                         |
 | `component`         | Named after a software component, such as a function or class name.                                                             | `AuthLogin.login`<br /> `LoginActivity.login_button`   |
