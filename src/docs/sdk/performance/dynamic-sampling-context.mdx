@@ -108,7 +108,10 @@ Dynamic Sampling Context is sent to Sentry via the `trace` envelope header and i
 All of the values in the payloads below are required (non-optional) in a sense, that when they are known to an SDK at the time a transaction envelope is sent to Sentry, or at the time a baggage header is propagated, they must also be included in said envelope or baggage.
 
 The **only exception** is the `user_id` field.
-To avoid sensitive data being leaked to third parties, `user_id` should only be included, if the <Link to="/sdk/data-handling/#sensitive-data">`send-default-pii`</Link> option was enabled in the init options.
+To avoid sensitive data being leaked to third parties, `user_id` should only be added to the DSC, if the <Link to="/sdk/data-handling/#sensitive-data">`send-default-pii`</Link> option was enabled in the SDK's init options.
+Note that this only applies for the head-of-trace SDK that populates the DSC content.
+In case downstream SDKs receive a `user_id` in incoming DSC, they should continue to propagate it. The rationale behind this is
+that incoming DSC [must be frozen](#freezing-dynamic-sampling-context) and users must make DS rules based on the head SDK's DSC data anyway.
 
 In any case, `trace_id`, `public_key`, and `sample_rate` should always be known to an SDK, so these values are strictly required.
 
