@@ -1,28 +1,28 @@
 `transaction_info`
 
-: _Required_. Additional information about the name of the transaction.
+: _Recommended_. Additional information about the name of the transaction.
 
 ```json
 {
   "transaction_info": {
-    "source": "raw-url"
+    "source": "url"
   }
 }
 ```
 
 `transaction_info.source`
 
-: _Required_. Contains information about how the name of the transaction was determined.
+: _Recommended_. Contains information about how the name of the transaction was determined.
 This will be used by the server to decide whether or not to scrub identifiers
 from the transaction name, or replace the entire name with a placeholder.
 
-| Source             | Description                                                                                                                     | <div style="width:220px">Examples</div>                |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `custom`           | User-defined name, see [`setTransactionName()`](https://docs.sentry.io/platforms/javascript/enriching-events/transaction-name/) | `my_transaction`                                       |
-| `url`              | Raw URL, potentially containing identifiers.                                                                                    | `/auth/login/john123/`<br />`GET /auth/login/john123/` |
-| `raw-url-fallback` | The SDK is configured to send a `route`, but has to fall back to a raw URL for this particular transaction.                     |
-| `route`            | Parametrized URL / route                                                                                                        | `/auth/login/:userId/`<br />`GET /auth/login/{user}/`  |
-| `view`             | Name of the view handling the request.                                                                                          | `UserListView`                                         |
-| `unknown`          | This is the default value set by Relay for legacy SDKs.                                                                         |                                                        |
-| `component`        | Named after a software component, such as a function or class name.                                                             | `AuthLogin.login`<br /> `LoginActivity.login_button`   |
-| `task`             | Name of a background task (e.g. a Celery task)                                                                                  | `sentry.tasks.do_something`                            |
+| Source              | Description                                                                                                                     | <div style="width:220px">Examples</div>                |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `custom`            | User-defined name, see [`setTransactionName()`](https://docs.sentry.io/platforms/javascript/enriching-events/transaction-name/) | `my_transaction`                                       |
+| `url`               | Raw URL, potentially containing identifiers.                                                                                    | `/auth/login/john123/`<br />`GET /auth/login/john123/` |
+| `url-fallback`      | The SDK is configured to send a `route`, but has to fall back to a raw URL for this particular transaction.                     |
+| `route`             | Parametrized URL / route                                                                                                        | `/auth/login/:userId/`<br />`GET /auth/login/{user}/`  |
+| `view`              | Name of the view handling the request.                                                                                          | `UserListView`                                         |
+| `component`         | Named after a software component, such as a function or class name.                                                             | `AuthLogin.login`<br /> `LoginActivity.login_button`   |
+| `task`              | Name of a background task (e.g. a Celery task)                                                                                  | `sentry.tasks.do_something`                            |
+| `unknown` (default) | This is the default value set by Relay for legacy SDKs.                                                                         |                                                        |
