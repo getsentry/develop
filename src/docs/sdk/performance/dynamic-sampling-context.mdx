@@ -107,7 +107,7 @@ Dynamic Sampling Context is sent to Sentry via the `trace` envelope header and i
 
 All of the values in the payloads below are required (non-optional) in a sense, that when they are known to an SDK at the time a transaction envelope is sent to Sentry, or at the time a baggage header is propagated, they must also be included in said envelope or baggage.
 
-<!-- Comment on why the following section is commented out: Without `transaction` and `user_id` in the DSC there aren't any PII concerns, we might readd them in the future though.  -->
+<!-- Comment on why the following section is commented out: Without `transaction` and `user_id` in the DSC there aren't any PII concerns, we might want to use them in the future though.  -->
 <!-- ### Handling Sensitive Data and PII
 
 <Alert level="info">
