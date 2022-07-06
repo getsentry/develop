@@ -127,7 +127,7 @@ Note that this only applies for the head-of-trace SDK that populates the DSC con
 In case downstream SDKs receive a `user_id` in incoming DSC, they should continue to propagate it.
 The rationale behind this is that incoming DSC [must be frozen](#freezing-dynamic-sampling-context) and users must make DS rules based on the head SDK's DSC data anyway. -->
 
-#### Strictly required values
+### Strictly required values
 
 In any case, `trace_id`, `public_key`, and `sample_rate` should always be known to an SDK, so these values are strictly required.
 
