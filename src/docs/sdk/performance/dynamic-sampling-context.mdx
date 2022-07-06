@@ -107,26 +107,6 @@ Dynamic Sampling Context is sent to Sentry via the `trace` envelope header and i
 
 All of the values in the payloads below are required (non-optional) in a sense, that when they are known to an SDK at the time a transaction envelope is sent to Sentry, or at the time a baggage header is propagated, they must also be included in said envelope or baggage.
 
-<!-- Comment on why the following section is commented out: Without `transaction` and `user_id` in the DSC there aren't any PII concerns, we might want to use them in the future though.  -->
-<!-- ### Handling Sensitive Data and PII
-
-<Alert level="info">
-
-The currently specified solution is subject to change and will be revisited, once all SDKs implemented a mechanism of controlling where DSC and tracing data should be propagated to.
-This mechanism is still up for discussion and implementation but it will be similar to the `tracingOrigins` property that is already used in some SDKs right now.
-In the meantime, the solution below should be adopted from all SDKs to handle PII concerns.
-
-</Alert>
-
-It should be noted that DSC holds potentially sensitive data, such as PII, which needs to be handled carefully.
-
-Therefore, the **only exception** to the rule that all available DSC values must be collected at DSC
-population time, is the `user_id` field.
-To avoid this sensitive information being leaked to third parties, `user_id` and `transaction` should only be added to the DSC, if the <Link to="/sdk/data-handling/#sensitive-data">`send_default_pii`</Link> option was enabled in the SDK's init options.
-Note that this only applies for the head-of-trace SDK that populates the DSC content.
-In case downstream SDKs receive a `user_id` in incoming DSC, they should continue to propagate it.
-The rationale behind this is that incoming DSC [must be frozen](#freezing-dynamic-sampling-context) and users must make DS rules based on the head SDK's DSC data anyway. -->
-
 ### Strictly required values
 
 In any case, `trace_id`, `public_key`, and `sample_rate` should always be known to an SDK, so these values are strictly required.
