@@ -145,7 +145,7 @@ The value of this envelope header is a JSON object with the following fields:
 - `release` (string) - The release name as specified in client options`.
 - `environment` (string) - The environment name as specified in client options.
 - `user_segment` (string) - User segment as set by the user with <Link to="/sdk/unified-api/#scope">`scope.set_user`</Link>.
-- `transaction` (string, **only inclue iff name has [good quality](#note-on-low-quality-transaction-names)**) - The transaction name set on the scope.
+- `transaction` (string, **only include if name has [good quality](#note-on-low-quality-transaction-names)**) - The transaction name set on the scope.
 
 It's important to note that at the moment, only `release`, `environment`, `user_segment` and `transaction` are used by the product for dynamic sampling functionality.
 The rest of the context attributes, `trace_id`, `public_key`, and `sample_rate`, are used by Relay for internal decisions (like transaction sample rate smoothing).
