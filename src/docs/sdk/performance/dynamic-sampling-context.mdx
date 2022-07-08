@@ -111,7 +111,7 @@ All of the values in the payload schemas below are required (non-optional) in a 
 
 ### Note on "low-quality" transaction names:
 
-UX wise for the Dynamic Sampling product, we depend on tansaction names (i.e. the `transaction` parameter of the DSC) to have a "good quality".
+UX wise for the Dynamic Sampling product, we depend on transaction names (i.e. the `transaction` parameter of the DSC) to have "good quality".
 **Good quality transaction names** are descriptive, have proper grouping on Sentry, have low cardinality, and do not contain PII.
 
 **For that reason: If and only if a transaction name has good quality, it should be included in the DSC. Otherwise, it cannot be included!**
