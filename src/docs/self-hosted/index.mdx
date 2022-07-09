@@ -30,6 +30,24 @@ Environment="NO_PROXY=127.0.0.0/8"
 
 From there you can run `./install.sh` like usual.
 
+By default Sentry sends anonymous usage statistics to the Sentry team. It helps to improve the product. To make this feature work it's required to allow Docker containers to access the Internet. To add your proxy environment variables into Sentry's Docker containers, create `~/.docker/config.json` with these contents:
+
+```json
+{
+ "proxies":
+ {
+   "default":
+   {
+     "httpProxy": "http://proxy:3128",
+     "httpsProxy": "http://proxy:3128",
+     "noProxy": "relay,web,sentry,127.0.0.0/8"
+   }
+ }
+}
+```
+
+You can disable this feature by adding `SENTRY_BEACON = False` into `sentry.conf.py` file.
+
 ## Configuration
 
 You very likely will want to adjust the default configuration for Sentry. These facilities are available for that purpose:
