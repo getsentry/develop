@@ -60,6 +60,33 @@ Always commit the changes to `migrations_lockfile.txt` with your migration.
 
 There are some things we need to be careful about when running migrations.
 
+### Testing
+
+Database migrations are risky operations that can lead to irreversible data loss or corruption. This is especially true for [data migrations](https://docs.djangoproject.com/en/4.0/topics/migrations/#data-migrations).
+For this reason, every migration should have a corresponding integration test.
+
+To test your migration, derive a test case from `TestMigrations` and add it to `tests/sentry/migrations`.
+For example:
+
+```python
+class MyMigrationTest(TestMigrations):
+    migrate_from = "0123_previous_migration"
+    migrate_to = "0124_my_new_migration"
+
+    def setup_before_migration(self, apps):
+        # Create your db state here
+        Project = apps.get_model("sentry", "Project")
+        self.project = Project.objects.create(organization_id=self.organization.id, name="my_project")
+
+    def test(self):
+        # Test state after migration
+        self.project.refresh_from_db()
+        assert self.project.name == "MyProject"
+
+```
+
+To run the test locally, set environment variable `MIGRATIONS_TEST_MIGRATE=1`.
+
 ### Filters
 
 If a (data) migration involves large tables, or columns that aren't indexed it is better to iterate over the entire table instead of using a filter.
