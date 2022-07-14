@@ -87,6 +87,13 @@ class MyMigrationTest(TestMigrations):
 
 To run the test locally, set environment variable `MIGRATIONS_TEST_MIGRATE=1`.
 
+#### Notes
+
+- There is a [known issue](https://github.com/getsentry/sentry/blob/e4627f093de4718e054ba9c6b002ff0b9a5b6033/tests/sentry/migrations/test_0295_backfill_alertrule_type.py#L1-L3) with the `django-pg-zero-downtime-migrations` package which causes the roll back of a `NOT NULL` constraint to fail.
+  If this happens with an old migration test, it's ok to delete the test rather than trying to fix the issue.
+- If you want to use existing [`create_*`](https://github.com/getsentry/sentry/blob/5f81ff47685db524133e75db181eb36e93f04327/src/sentry/testutils/factories.py#L241) helper functions to create model instances, override [`setup_initial_state`](https://github.com/getsentry/sentry/blob/57367022f65ada2323fb40147b38e795f869f148/src/sentry/testutils/cases.py#L1596-L1602)
+  rather than `setup_before_migration`. This function will run _before_ the database is rolled back to `migration_from`.
+
 ### Filters
 
 If a (data) migration involves large tables, or columns that aren't indexed it is better to iterate over the entire table instead of using a filter.
