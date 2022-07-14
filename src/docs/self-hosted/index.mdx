@@ -30,7 +30,7 @@ Environment="NO_PROXY=127.0.0.0/8"
 
 From there you can run `./install.sh` like usual.
 
-By default Sentry sends anonymous usage statistics to the Sentry team. It helps to improve the product. To make this feature work it's required to allow Docker containers to access the Internet. To add your proxy environment variables into Sentry's Docker containers, create `~/.docker/config.json` with these contents:
+By default Sentry sends anonymous usage statistics to the Sentry team. It helps to improve the product. Also there can be different external integrations with third party services like Slack or Twilio. To make these features work it's required to allow Docker containers to access the Internet. To add your proxy environment variables into Sentry's Docker containers, create `~/.docker/config.json` with these contents:
 
 ```json
 {
