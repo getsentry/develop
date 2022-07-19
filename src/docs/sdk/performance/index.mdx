@@ -36,12 +36,13 @@ See more about how sampling should be performed below.
 
 ### `tracePropagationTargets`
 
-Sentry SDKs propagate trace information via headers of outgoing Http requests to downstream SDKs (see [`sentry-trace`](#header-sentry-trace) and [`baggage`](/sdk/performance/dynamic-sampling-context/#baggage) for more details).
-The `tracePropagationTargets` option gives users a mechanism of controlling to which outgoing Http requests these headers should be attached.
-For example, users can specify this property to keep trace propagation within their infrastructure, thereby stopping it from being sent to third party services.
+Sentry SDKs propagate trace information to downstream SDKs via headers on outgoing HTTP requests.
+The `tracePropagationTargets` option gives users a mechanism of controlling to which outgoing HTTP requests these headers should be attached.
+For example, users can specify this property to keep trace propagation within their infrastructure, thereby preventing data within the headers from being sent to third party services.
 
-This option takes an array of strings or regular expressions to match against the URLs of outgoing requests.
-If this option is specified by users, SDKs may only add the trace headers to a request if the the request's URL matches (contains) at least one of the items from the array.
+This option takes an array of strings and/or regular expressions, and SDKs should only add trace headers to an outgoing request if the request's URL matches (or, in the case of string literals, contains) at least one of the items from the array.
+
+See [`sentry-trace`](#header-sentry-trace) and [`baggage`](/sdk/performance/dynamic-sampling-context/#baggage) for more details on the individual headers which are attached to outgoing requests.
 
 #### Example
 
