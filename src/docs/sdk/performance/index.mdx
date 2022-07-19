@@ -197,7 +197,7 @@ To offer a minimal compatibility with the [W3C `traceparent` header](https://www
 To avoid confusion with the W3C `traceparent` header (to which our header is similar but not identical), we call it simply `sentry-trace`.
 No version is being defined in the header.
 
-The `sentry-trace` header should only be attached to an outgoing request, if the request's URL matches at least one entry of the [`tracePropagationTargets`](#tracepropagationtargets) SDK option (or its fallback default behaviour).
+The `sentry-trace` header should only be attached to an outgoing request if the request's URL matches at least one entry of the [`tracePropagationTargets`](#tracepropagationtargets) SDK option.
 
 ### The `sampled` Value
 
