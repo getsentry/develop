@@ -42,25 +42,23 @@ For example, users can specify this property to keep trace propagation within th
 
 This option takes an array of strings and/or regular expressions, and SDKs should only add trace headers to an outgoing request if the request's URL matches (or, in the case of string literals, contains) at least one of the items from the array.
 
+SDKs may choose a default value which makes sense for their use case.
+Most SDKs default to the regex `/.*/` (meaning they attach headers to all outgoing requests), but deviation is allowed if necessary.
+For example, because of CORS, browser-based SDKs default to only adding headers to domain-internal requests.
+
 See [`sentry-trace`](#header-sentry-trace) and [`baggage`](/sdk/performance/dynamic-sampling-context/#baggage) for more details on the individual headers which are attached to outgoing requests.
 
 #### Example
 
+The following example shows which URLs of outgoing requests would (not) match a given `tracePropagationTargets` array.
+
 ```JS
-// Entries can be strings or RegEx
+// Entries can be strings or regex
 tracePropagationTargets: ['localhost', /^\// ,/myApi.com\/v[2-4]/]
 
 URLs matching: 'localhost:8443/api/users', '/api/envelopes', 'myApi.com/v2/projects'
 URLs not matching: 'someHost.com/data', 'myApi.com/v1/projects'
 ```
-
-#### Default Behaviour
-
-If the `tracePropagationTargets` option is not specified by users, SDKs should fall back to their default behaviour for trace propagation.
-This default behaviour is not standardized and can vary across SDKs.
-For instance, Server-side SDKs may propagate trace headers to all outgoing requests by default while client-side SDKs (e.g. Javascript) can fall back to a default array of allowed domains (e.g. `localhost` and `/^\//` in JavaScript).
-Choosing a sensible default behaviour is up to the SDK maintainers, however, special limitations, such as CORS issues for frontend web SDKs must be considered.
-SDKs that previously supported the `tracingOrigins` property (see deprecation notice below) can continue using the already established default behaviour for `tracePropagationTargets`
 
 <Alert level="info" title="Deprecation of tracingOrigins">
 
