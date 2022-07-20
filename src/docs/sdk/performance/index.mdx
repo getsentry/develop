@@ -36,21 +36,17 @@ See more about how sampling should be performed below.
 
 ### `tracePropagationTargets`
 
-Sentry SDKs propagate trace information to downstream SDKs via headers on outgoing HTTP requests.
-The `tracePropagationTargets` option gives users a mechanism of controlling to which outgoing HTTP requests these headers should be attached.
-For example, users can specify this property to keep trace propagation within their infrastructure, thereby preventing data within the headers from being sent to third party services.
+Sentry SDKs propagate trace information to downstream SDKs via headers on outgoing HTTP requests. The `tracePropagationTargets` option gives users a mechanism of controlling to which outgoing HTTP requests these headers should be attached. For example, users can specify this property to keep trace propagation within their infrastructure, thereby preventing data within the headers from being sent to third party services.
 
 This option takes an array of strings and/or regular expressions, and SDKs should only add trace headers to an outgoing request if the request's URL matches (or, in the case of string literals, contains) at least one of the items from the array.
 
-SDKs may choose a default value which makes sense for their use case.
-Most SDKs default to the regex `/.*/` (meaning they attach headers to all outgoing requests), but deviation is allowed if necessary.
-For example, because of CORS, browser-based SDKs default to only adding headers to domain-internal requests.
+SDKs may choose a default value which makes sense for their use case. Most SDKs default to the regex `/.*/` (meaning they attach headers to all outgoing requests), but deviation is allowed if necessary. For example, because of CORS, browser-based SDKs default to only adding headers to domain-internal requests.
 
 See [`sentry-trace`](#header-sentry-trace) and [`baggage`](/sdk/performance/dynamic-sampling-context/#baggage) for more details on the individual headers which are attached to outgoing requests.
 
 #### Example
 
-The following example shows which URLs of outgoing requests would (not) match a given `tracePropagationTargets` array.
+The following example shows which URLs of outgoing requests would (not) match a given `tracePropagationTargets` array:
 
 ```JS
 // Entries can be strings or regex
@@ -62,9 +58,7 @@ URLs not matching: 'someHost.com/data', 'myApi.com/v1/projects'
 
 <Alert level="info" title="Deprecation of tracingOrigins">
 
-This Option replaces the non-standardized `tracingOrigins` option which was previously used in some SDKs.
-SDKs that support `tracingOrigins` are encouraged to deprecate and and eventually remove `tracingOrigins` in favour `tracePropagationTargets`.
-In case both options are specified by users, SDKs should only rely on the `tracePropagationTargets` array.
+This Option replaces the non-standardized `tracingOrigins` option which was previously used in some SDKs. SDKs that support `tracingOrigins` are encouraged to deprecate and and eventually remove `tracingOrigins` in favour `tracePropagationTargets`. In case both options are specified by users, SDKs should only rely on the `tracePropagationTargets` array.
 
 </Alert>
 
