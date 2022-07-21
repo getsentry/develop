@@ -20,7 +20,7 @@ slack.client-secret: <client secret>
 slack.signing-secret: <signing secret>
 ```
 
-**NOTE**: If you're doing local Sentry development, you should use a tool like Ngrok and add `system.url-prefix: "https://armenzg.ngrok.io"` to your `~/.sentry/config.yml`, otherwise, installing the Slack APP will complain because the redirect URI points to `localhost:8000`.
+**NOTE**: If you're doing local Sentry development, you should use a tool like Ngrok and add `system.url-prefix: "https://<your_subdomain>.ngrok.io"` to your `~/.sentry/config.yml`, otherwise, installing the Slack APP will complain because the redirect URI points to `localhost:8000`. Also, install the Slack integration from the ngrok subdomain or it will fail to install.
 
 After you update the <code>config.yml</code> you need to restart your Sentry server to continue configuring the Slack app.
 
