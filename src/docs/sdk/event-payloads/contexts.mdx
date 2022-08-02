@@ -502,6 +502,35 @@ The `type` and default key is `"culture"`.
 
 : _Optional_. The timezone of the locale. For example, `Europe/Vienna`.
 
+## Screenshot Context
+
+The Screenshots Context carries information about screenshots that have been included with an
+event as attachments. 
+
+The `type` and default key is `"screenshot"`.
+
+Each key of `screenshot` should match the filename of an attachment. An SDK can
+include any additional information to helps determine the state of an windows
+and which screenshot is most relevant to the event.
+
+Example:
+
+```json
+{
+  "contexts": {
+    "screenshot": {
+      "screenshot.png": {
+        "focus": true
+      },
+      "screenshot-1.png": {
+        "focus": false,
+        "errored": true,
+      }
+    }
+  }
+}
+```
+
 ## Examples
 
 The following example illustrates the contexts part of the <Link to="/sdk/event-payloads/">event payload</Link> and omits other attributes for simplicity.
