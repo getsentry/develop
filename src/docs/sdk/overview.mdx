@@ -156,7 +156,6 @@ which acts as an ownership identifier:
 ```
 X-Sentry-Auth: Sentry sentry_version=7,
   sentry_client=<client version, arbitrary>,
-  sentry_timestamp=<current timestamp>,
   sentry_key=<public api key>,
   sentry_secret=<secret api key>
 ```
@@ -195,7 +194,9 @@ it’s possible to send these values via the querystring:
 
 `sentry_timestamp`
 
-: The unix timestamp representing the time at which this event was generated.
+: The unix timestamp representing the time at which this event was generated.<br/>  
+  *This key is effectively deprecated, and it is ignored on the receiving side.
+  Use the [`sent_at` envelope header](../envelopes/#envelope-headers) instead.*
 
 `sentry_secret`
 
