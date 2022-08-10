@@ -200,11 +200,9 @@ it’s possible to send these values via the querystring:
 
 `sentry_secret`
 
-: The secret key which should be provided as part of the SDK configuration.
-
-  This key is effectively deprecated but for the time being should still be
-  emitted by SDKs as some older Sentry versions required it in most situations.
-  The secret key will be phased out entirely in future versions of Sentry.
+: The secret key which should be provided as part of the SDK configuration.<br/>  
+  *This key is effectively deprecated, and no longer needs to be set. However, since it was required in older versions,
+  it should still be allowed and passed through to Sentry if set.*
 
 ## HTTP Headers
 
