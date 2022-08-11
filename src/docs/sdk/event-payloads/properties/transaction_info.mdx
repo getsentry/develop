@@ -26,4 +26,4 @@ only be set by integrations and not by developers directly.
 | `view`      | Name of the view handling the request.                                                                                          | `UserListView`                                         |
 | `component` | Named after a software component, such as a function or class name.                                                             | `AuthLogin.login`<br /> `LoginActivity.login_button`   |
 | `task`      | Name of a background task (e.g. a Celery task)                                                                                  | `sentry.tasks.do_something`                            |
-| (`unknown`) | This is the default value set by Relay for legacy SDKs. Do not set this value in SDKs!                                          |                                                        |
+| `unknown`   | _Value set by Relay for legacy SDKs. SDKs must not set this value explicitly._                                                  |                                                        |
