@@ -301,9 +301,6 @@ export default () => {
           <SidebarLink to="https://docs.sentry.io">
             User Documentation
           </SidebarLink>
-          <SidebarLink to="https://forum.sentry.io">
-            Community Forum
-          </SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
