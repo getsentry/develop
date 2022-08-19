@@ -1,0 +1,22 @@
+---
+title: "Logs rotation"
+---
+
+By default docker writes logs of a container to one log file which can be giant - tens of gigabytes.
+
+To reduce a used space for logs you can 
+ * modify docker-compose.yaml file by adding into a common section for each container following logging settings:
+
+```
+x-restart-policy: &restart_policy
+  restart: unless-stopped
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "20m"
+      max-file: "10"
+```
+
+And docker daemon will automatically control size of a log file for each container from the yaml file: 20Mb * 10 = 200Mb for each container. <a href="https://docs.docker.com/compose/compose-file/compose-file-v3/#logging">Offical documentaion</a> about those settings.
+
+ * modify a docker daemon <a href="https://docs.docker.com/config/containers/logging/configure/"><code>log settings</code></a> to apply them to all newly created containers.
