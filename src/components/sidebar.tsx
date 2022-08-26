@@ -150,6 +150,21 @@ export default () => {
         </ul>
       </li>
 
+      <li className="mb-3" data-frontend-branch>
+        <div
+          className="sidebar-title d-flex align-items-center mb-0"
+          data-sidebar-link
+        >
+          <h6>Backend</h6>
+        </div>
+
+        <ul className="list-unstyled" data-frontend-tree>
+          <SidebarLink to="/backend/development-server/">
+            Development Server
+          </SidebarLink>
+        </ul>
+      </li>
+
       <li className="mb-3" data-sidebar-branch>
         <div
           className="sidebar-title d-flex align-items-center mb-0"
