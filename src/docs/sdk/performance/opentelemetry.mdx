@@ -34,21 +34,6 @@ Below describe the transformations between an OpenTelemetry span and a Sentry Sp
 
 This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/sentryexporter/docs/transformation.md).
 
- <!-- <table>
-    <tr>
-        <th>OpenTelemetry Span</th>
-        <th>Sentry Span</th>
-        <th>Notes</th>
-    </tr>
-    <tr>
-        <td>
-            <a title="OpenTelemetry Span Protobuf TraceID definitions" href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L81-L89">Span.TraceID</a>
-        </td>
-        <td>Hello</td>
-        <td>Hello</td>
-    </tr>
- </table> -->
-
 | OpenTelemetry Span                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Sentry Span                                                                                                                                    | Note                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [Span.TraceID](https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L81-L89)                                                                                                                                                                                                                                                                                                                                                | [Span.trace_id](https://github.com/getsentry/relay/blob/7fb4ef6546cbe27c2b6e101dc46fd36cbe273d57/relay-general/src/protocol/span.rs#L37)       |                                                                                                                                                                                                                                                                                                                                                                                                                                          |
