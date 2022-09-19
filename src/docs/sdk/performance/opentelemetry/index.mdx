@@ -22,15 +22,55 @@ TODO: Add history about OpenTelemetry Sentry Exporter: https://github.com/open-t
 
 TODO: Talk about the approach we are using, based on Matt's hackweek project - https://github.com/getsentry/sentry-ruby/pull/1876
 
-## OpenTelemetry Context
-
-TODO: Do we add OpenTelemetry Event Context?
-
 ## Transaction Protocol
 
 TODO: Talk about generating transactions
 
 import "./span-protocol.mdx"
+
+## OpenTelemetry Context
+
+Aside from information from Spans and Transactions, OpenTelemetry has meta-level information about the SDK, resource, and service that generated spans. To track this information, we generate a new OpenTelemetry Event Context.
+
+The existence of this context on an event (transaction or error) is how the Sentry backend will know that the incoming event is an OpenTelemetry event.
+
+It uses the following schema:
+
+```ts
+interface OpenTelemetryContext {
+    type?: "opentelemetry",
+
+    // https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/resource/semantic_conventions/README.md#service
+    service?: {
+        // from: service.name
+        name: string;
+        // from: service.namespace
+        namespace?: string;
+        // from: service.instance.id
+        instance_id?: string;
+        // from: service.version
+        version?: string;
+    };
+
+    // https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/resource/semantic_conventions/README.md#telemetry-sdk
+    sdk?: {
+        // from: telemetry.sdk.name
+        name?: string;
+        // from: telemetry.sdk.language
+        language?: SDKLanguage;
+        // from: telemetry.sdk.version
+        version?: string;
+        // from: telemetry.auto.version
+        auto_version?: string;
+    };
+
+    // Rest of attribute keys excluding service and sdk keys
+    // https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/resource/v1/resource.proto#L32
+    [key: string]?: string,
+}
+```
+
+The reason sdk and service are split are so they can be indexed as top level fields in the future for easier usage within Sentry.
 
 ## SDK Spec
 
