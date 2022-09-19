@@ -22,11 +22,13 @@ TODO: Add history about OpenTelemetry Sentry Exporter: https://github.com/open-t
 
 TODO: Talk about the approach we are using, based on Matt's hackweek project - https://github.com/getsentry/sentry-ruby/pull/1876
 
-## Transaction Protocol
-
-TODO: Talk about generating transactions
+## Span Protocol
 
 import "./span-protocol.mdx"
+
+## Transaction Protocol
+
+There is no concept of a transaction within OpenTelemetry, so we rely on promoting spans to become transactions. The span `description` becomes the transaction `name`, and the span `op` becomes the transaction `op`. Therefore, OpenTelemetry spans must be mapped to Sentry spans before they can be promoted to become a transaction.
 
 ## OpenTelemetry Context
 
