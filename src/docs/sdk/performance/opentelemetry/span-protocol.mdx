@@ -1,3 +1,5 @@
+## Span Protocol
+
 Below describe the transformations between an OpenTelemetry span and a Sentry Span. Related: [the interface for a Sentry Span](https://develop.sentry.dev/sdk/event-payloads/span/), [the Relay spec for a Sentry Span](https://github.com/getsentry/relay/blob/master/relay-general/src/protocol/span.rs) and the spec for an [OpenTelemetry span](https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L80-L256).
 
 This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/exporter/sentryexporter/docs/transformation.md).
@@ -17,7 +19,7 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="OpenTelemetry Span trace_id Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L81-L89"
                 >
-                    Span.trace_id
+                    trace_id
                 </a>
             </td>
             <td>
@@ -25,7 +27,7 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="Sentry Span trace_id Relay definitions"
                     href="https://github.com/getsentry/relay/blob/7fb4ef6546cbe27c2b6e101dc46fd36cbe273d57/relay-general/src/protocol/span.rs#L37"
                 >
-                    Span.trace_id
+                    trace_id
                 </a>
             </td>
             <td></td>
@@ -36,7 +38,7 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="OpenTelemetry Span span_id Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L91-L99"
                 >
-                    Span.span_id
+                    span_id
                 </a>
             </td>
             <td>
@@ -44,7 +46,7 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="Sentry Span span_id Relay definitions"
                     href="https://github.com/getsentry/relay/blob/7fb4ef6546cbe27c2b6e101dc46fd36cbe273d57/relay-general/src/protocol/span.rs#L30"
                 >
-                    Span.span_id
+                    span_id
                 </a>
             </td>
             <td></td>
@@ -55,7 +57,7 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="OpenTelemetry Span parent_span_id Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L106-L108"
                 >
-                    Span.parent_span_id
+                    parent_span_id
                 </a>
             </td>
             <td>
@@ -63,7 +65,7 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="Sentry Span parent_span_id Relay definitions"
                     href="https://github.com/getsentry/relay/blob/7fb4ef6546cbe27c2b6e101dc46fd36cbe273d57/relay-general/src/protocol/span.rs#L33"
                 >
-                    Span.parent_span_id
+                    parent_span_id
                 </a>
             </td>
             <td>
@@ -85,19 +87,21 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="OpenTelemetry Span name Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L110-L121"
                 >
-                    Span.name
+                    name
                 </a>
+                ,
                 <a
                     title="OpenTelemetry Span attributes Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L174-L186"
                 >
-                    Span.attributes
+                    attributes
                 </a>
+                ,
                 <a
                     title="OpenTelemetry Span kind Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L153-L156"
                 >
-                    Span.kind
+                    kind
                 </a>
             </td>
             <td>
@@ -105,7 +109,7 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="Sentry Span description Relay definitions"
                     href="https://github.com/getsentry/relay/blob/7fb4ef6546cbe27c2b6e101dc46fd36cbe273d57/relay-general/src/protocol/span.rs#L22"
                 >
-                    Span.description
+                    description
                 </a>
             </td>
             <td>
@@ -115,14 +119,14 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="OpenTelemetry Span name Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L110-L121"
                 >
-                    Span.name
+                    name
                 </a>
                 maps to a Sentry
                 <a
                     title="Sentry Span description Relay definitions"
                     href="https://github.com/getsentry/relay/blob/7fb4ef6546cbe27c2b6e101dc46fd36cbe273d57/relay-general/src/protocol/span.rs#L22"
                 >
-                    Span.description
+                    description
                 </a>
             </td>
         </tr>
@@ -132,19 +136,21 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="OpenTelemetry Span name Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L110-L121"
                 >
-                    Span.name
+                    name
                 </a>
+                ,
                 <a
                     title="OpenTelemetry Span attributes Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L174-L186"
                 >
-                    Span.attributes
+                    attributes
                 </a>
+                ,
                 <a
                     title="OpenTelemetry Span kind Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L153-L156"
                 >
-                    Span.kind
+                    kind
                 </a>
             </td>
             <td>
@@ -152,7 +158,7 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="Sentry Span op Relay definitions"
                     href="https://github.com/getsentry/relay/blob/d7c5698888a2148799697d5427b37bfbe3b895bc/relay-general/src/protocol/span.rs#L26"
                 >
-                    Span.op
+                    op
                 </a>
             </td>
             <td></td>
@@ -163,19 +169,21 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="OpenTelemetry Span attributes Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L174-L186"
                 >
-                    Span.attributes
+                    attributes
                 </a>
+                ,
                 <a
                     title="OpenTelemetry Span kind Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L153-L156"
                 >
-                    Span.kind
+                    kind
                 </a>
+                ,
                 <a
                     title="OpenTelemetry Span Status Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L253-L255"
                 >
-                    Span.Status
+                    status
                 </a>
             </td>
             <td>
@@ -183,7 +191,7 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="Sentry Span tags Relay definitions"
                     href="https://github.com/getsentry/relay/blob/d7c5698888a2148799697d5427b37bfbe3b895bc/relay-general/src/protocol/span.rs#L44"
                 >
-                    Span.tags
+                    tags
                 </a>
             </td>
             <td>
@@ -196,13 +204,14 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="OpenTelemetry Span attributes Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L174-L186"
                 >
-                    Span.attributes
+                    attributes
                 </a>
+                ,
                 <a
                     title="OpenTelemetry Span Status Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L253-L255"
                 >
-                    Span.Status
+                    status
                 </a>
             </td>
             <td>
@@ -210,7 +219,7 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="Sentry Span status Relay definitions"
                     href="https://github.com/getsentry/relay/blob/d7c5698888a2148799697d5427b37bfbe3b895bc/relay-general/src/protocol/span.rs#L40"
                 >
-                    Span.status
+                    status
                 </a>
             </td>
             <td>
@@ -223,7 +232,7 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="OpenTelemetry Span start_time_unix_nano Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L158-L164"
                 >
-                    Span.start_time_unix_nano
+                    start_time_unix_nano
                 </a>
             </td>
             <td>
@@ -231,7 +240,7 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="Sentry Span start_timestamp Relay definitions"
                     href="https://github.com/getsentry/relay/blob/d7c5698888a2148799697d5427b37bfbe3b895bc/relay-general/src/protocol/span.rs#L14"
                 >
-                    Span.start_timestamp
+                    start_timestamp
                 </a>
             </td>
             <td></td>
@@ -242,7 +251,7 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="OpenTelemetry Span end_time_unix_nano Protobuf definitions"
                     href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L166-L172"
                 >
-                    Span.end_time_unix_nano
+                    end_time_unix_nano
                 </a>
             </td>
             <td>
@@ -250,7 +259,7 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
                     title="Sentry Span timestamp Relay definitions"
                     href="https://github.com/getsentry/relay/blob/d7c5698888a2148799697d5427b37bfbe3b895bc/relay-general/src/protocol/span.rs#L10"
                 >
-                    Span.timestamp
+                    timestamp
                 </a>
             </td>
             <td></td>
