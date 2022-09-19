@@ -264,6 +264,21 @@ This is based on a mapping done as part of work on the [OpenTelemetry Sentry Exp
             </td>
             <td></td>
         </tr>
+        <tr>
+            <td>
+                <a
+                    title="OpenTelemetry Span event Protobuf definitions"
+                    href="https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L193-L214"
+                >
+                    event
+                </a>
+            </td>
+            <td>
+            </td>
+            <td>
+                See <Link to="./#span-events">Span Events</Link> for more details
+            </td>
+        </tr>
     </tbody>
 </table>
 
@@ -344,3 +359,14 @@ default:
 return sentryStatus
 ```
 
+### Span Events
+
+OpenTelemetry, has the concept of [Span Events](https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L193-L214). As per the spec:
+
+> An event is a human-readable message on a span that represents “something happening” during it’s lifetime
+
+In Sentry, we have two options for how to treat span events. First, we can add them as breadcrumbs to the transaction the span belongs to. Second, we can create an artificial "point-in-time" span (a span with 0 duration), and add it to the span tree. TODO on what approach we take here.
+
+In the special case that the span event is an exception span, [where the `name` of the span event is `exception`](https://opentelemetry.io/docs/reference/specification/trace/semantic_conventions/exceptions/), we also have the possibility of generating a Sentry error from an exception. In this case, we can create this [exception based on the attributes of an event](https://opentelemetry.io/docs/reference/specification/trace/semantic_conventions/exceptions/#attributes), which include the error message and stacktrace. This exception can also inherit all other attributes of the span event + span as tags on the event.
+
+In the OpenTelemetry Sentry exporter, we've used this [strategy to generate Sentry errors](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/8eda2f80b6dbd5aea03ca699c3ad1454714156d0/exporter/sentryexporter/sentry_exporter.go#L169-L196).
