@@ -32,14 +32,6 @@ TODO: Talk about generating transactions
 
 import "./span-protocol.mdx"
 
-- TODO: Talk about generating stuff (breadcrumbs/error events) from Span Events: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/48ee3288c030ed32374125190a8abf7ced1a4238/exporter/sentryexporter/sentry_exporter.go#L167-L202
-
-### Semantic Conventions
-
-Using the [Span.Name](https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L110-L121), [Span.Attributes](https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L174-L186), and [Span.Kind](https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L153-L156) of OpenTelemetry Spans, we can generate ops, descriptions, and tags. This exact mapping is described below.
-
-TODO: Talk about what we do here: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/48ee3288c030ed32374125190a8abf7ced1a4238/exporter/sentryexporter/sentry_exporter.go#L226-L267
-
 ## SDK Spec
 
 - SpanProcessor: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/sdk.md#span-processor
