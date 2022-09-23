@@ -78,7 +78,7 @@ In the case that another vendor added Sentry values to an outgoing request, SDKs
 SDKs must not add other vendors' baggage from incoming requests to outgoing requests.
 Sentry SDKs only concern themselves with Sentry baggage.
   
-On the Java SDK we went with an explicit param for passing in pre-existing headers on the outgoing request (`span.toBaggageHeader(preExistingBaggageHeaders)`) as these are required to produce a new header that respects the limits and only contains Sentry values once. An alternative is to have some util function that does the merging (as done e.g. in the Dart SDK).
+On the Java SDK ([1](TODO) [2](TODO)) we went with an explicit param for passing in pre-existing headers on the outgoing request (`span.toBaggageHeader(preExistingBaggageHeaders)`) as these are required to produce a new header that respects the limits and only contains Sentry values once. An alternative is to have some util function that does the merging (as done e.g. in the [Dart SDK](https://github.com/getsentry/sentry-dart/blob/c2653112519fb98ceecaf3eeb8106c5ecf38fe40/dart/lib/src/utils/tracing_utils.dart#L9-L41)).
 
 </Alert>
 
