@@ -82,56 +82,54 @@ JS Frameworks should be prepended with the `ui` category for operations related 
 
 Web server related spans should aim to follow OpenTelemetry's [HTTP](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/http.md) and [RPC](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/rpc.md) semantic conventions when possible.
 
-| Category   | Usage                                 | Description                                                        |
-| ---------- | ------------------------------------- | ------------------------------------------------------------------ |
-| http       |                                       | Spans related to http operations                                   |
-|            | http.client                           |                                                                    |
-|            | http.server                           |                                                                    |
-| websocket  |                                       |                                                                    |
-|            | websocket.server                      |                                                                    |
-| rpc        |                                       | Spans related to remote procedure calls (RPC)                      |
-| grpc       |                                       | Usage of the [gRPC framework](https://grpc.io/)                    |
-| graphql    |                                       | a GraphQL operation                                                |
-|            | graphql.execute                       |                                                                    |
-|            | graphql.resolve                       |                                                                    |
-|            | graphql.request                       |                                                                    |
-|            | graphql.query                         |                                                                    |
-|            | graphql.mutation                      |                                                                    |
-|            | graphql.subscription                  |                                                                    |
-| subprocess |                                       |                                                                    |
-|            | subprocess.wait                       |                                                                    |
-|            | subprocess.communicate                |                                                                    |
-| middleware |                                       | Usage of webserver middleware                                      |
-|            | middleware.express                    |                                                                    |
-|            | middleware.express                    |                                                                    |
-|            | middleware.starlette                  |                                                                    |
-|            | middleware.django                     |                                                                    |
-| view       |                                       | Rendering of a view                                                |
-|            | view.django                           |                                                                    |
-|            | view.process_action.action_controller |                                                                    |
-|            | view.render                           |                                                                    |
-| template   |                                       |                                                                    |
-|            | template.init                         |                                                                    |
-|            | template.parse                        |                                                                    |
-|            | template.render                       |                                                                    |
-|            | template.django.render                |                                                                    |
-|            | template.render_template.action_view  |                                                                    |
-| serialize  |                                       | Serialization of data                                              |
-| console    |                                       | Accessing web servers through the command line (ex. Rails console) |
-|            | console.command                       |                                                                    |
-| file       |                                       | Operations on the file system (internal or external)               |
-
-## Web Frameworks
-
-| Category        | Usage                           | Description                                                  |
-| --------------- | ------------------------------- | ------------------------------------------------------------ |
-| function        |                                 |                                                              |
-| function.remix  |                                 | Spans related to [Remix](https://remix.run/) data fetchers   |
-|                 | function.remix.document_request |                                                              |
-|                 | function.remix.action           |                                                              |
-|                 | function.remix.loader           |                                                              |
-| function.nextjs |                                 | Spans related to [NextJS](https://nextjs.org/) data fetchers |
-|                 | function.nextjs                 |                                                              |
+| Category        | Usage                                 | Description                                                        |
+| --------------- | ------------------------------------- | ------------------------------------------------------------------ |
+| http            |                                       | Spans related to http operations                                   |
+|                 | http.client                           |                                                                    |
+|                 | http.server                           |                                                                    |
+| websocket       |                                       |                                                                    |
+|                 | websocket.server                      |                                                                    |
+| rpc             |                                       | Spans related to remote procedure calls (RPC)                      |
+| grpc            |                                       | Usage of the [gRPC framework](https://grpc.io/)                    |
+| graphql         |                                       | a GraphQL operation                                                |
+|                 | graphql.execute                       |                                                                    |
+|                 | graphql.resolve                       |                                                                    |
+|                 | graphql.request                       |                                                                    |
+|                 | graphql.query                         |                                                                    |
+|                 | graphql.mutation                      |                                                                    |
+|                 | graphql.subscription                  |                                                                    |
+| subprocess      |                                       |                                                                    |
+|                 | subprocess.wait                       |                                                                    |
+|                 | subprocess.communicate                |                                                                    |
+| middleware      |                                       | Usage of webserver middleware                                      |
+|                 | middleware.express                    |                                                                    |
+|                 | middleware.express                    |                                                                    |
+|                 | middleware.starlette                  |                                                                    |
+|                 | middleware.django                     |                                                                    |
+|                 | middleware.laravel.handle             |                                                                    |
+|                 | middleware.laravel.bootstrap          |                                                                    |
+|                 | middleware.laravel.autoload           |                                                                    |
+| view            |                                       | Rendering of a view                                                |
+|                 | view.django                           |                                                                    |
+|                 | view.process_action.action_controller |                                                                    |
+|                 | view.render                           |                                                                    |
+| template        |                                       |                                                                    |
+|                 | template.init                         |                                                                    |
+|                 | template.parse                        |                                                                    |
+|                 | template.render                       |                                                                    |
+|                 | template.django.render                |                                                                    |
+|                 | template.render_template.action_view  |                                                                    |
+| function        |                                       |                                                                    |
+| function.remix  |                                       | Spans related to [Remix](https://remix.run/) data fetchers         |
+|                 | function.remix.document_request       |                                                                    |
+|                 | function.remix.action                 |                                                                    |
+|                 | function.remix.loader                 |                                                                    |
+| function.nextjs |                                       | Spans related to [NextJS](https://nextjs.org/) data fetchers       |
+|                 | function.nextjs                       |                                                                    |
+| serialize       |                                       | Serialization of data                                              |
+| console         |                                       | Accessing web servers through the command line (ex. Rails console) |
+|                 | console.command                       |                                                                    |
+| file            |                                       | Operations on the file system (internal or external)               |
 
 ## Database
 
