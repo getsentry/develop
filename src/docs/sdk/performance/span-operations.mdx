@@ -110,7 +110,6 @@ Web server related spans should aim to follow OpenTelemetry's [HTTP](https://git
 |                 | middleware.laravel.bootstrap          |                                                                    |
 |                 | middleware.laravel.autoload           |                                                                    |
 | view            |                                       | Rendering of a view                                                |
-|                 | view.django                           |                                                                    |
 |                 | view.process_action.action_controller |                                                                    |
 |                 | view.render                           |                                                                    |
 | template        |                                       |                                                                    |
@@ -130,6 +129,8 @@ Web server related spans should aim to follow OpenTelemetry's [HTTP](https://git
 | console         |                                       | Accessing web servers through the command line (ex. Rails console) |
 |                 | console.command                       |                                                                    |
 | file            |                                       | Operations on the file system (internal or external)               |
+| app             |                                       |                                                                    |
+|                 | app.bootstrap                         |                                                                    |
 
 ## Database
 
