@@ -23,6 +23,7 @@ If a span operation is not provided, the value of `default` is set by Relay.
 | Category | Usage | Description                                         |
 | -------- | ----- | --------------------------------------------------- |
 | mark     |       | A general point-in-time span (span with 0 duration) |
+| function |       | The time it took for a general function to execute  |
 
 ## Browser
 
@@ -102,6 +103,7 @@ Web server related spans should aim to follow OpenTelemetry's [HTTP](https://git
 |            | subprocess.communicate                |                                                                    |
 | middleware |                                       | Usage of webserver middleware                                      |
 |            | middleware.express                    |                                                                    |
+|            | middleware.express                    |                                                                    |
 |            | middleware.starlette                  |                                                                    |
 |            | middleware.django                     |                                                                    |
 | view       |                                       | Rendering of a view                                                |
@@ -121,22 +123,15 @@ Web server related spans should aim to follow OpenTelemetry's [HTTP](https://git
 
 ## Web Frameworks
 
-When possible, you should use the generalized web server span operations above.
-
-| Category    | Usage                         | Description                                                |
-| ----------- | ----------------------------- | ---------------------------------------------------------- |
-| asgi.server |                               |                                                            |
-| laravel     |                               |                                                            |
-|             | laravel.handle                |                                                            |
-|             | laravel.bootstrap             |                                                            |
-|             | laravel.autoload              |                                                            |
-|             | laravel.autoload              |                                                            |
-| remix       |                               | Spans related to the [Remix](https://remix.run/) framework |
-|             | remix.server.document_request |                                                            |
-|             | remix.server.action           |                                                            |
-|             | remix.server.loader           |                                                            |
-| nextjs      |                               |
-|             | nextjs.data.server            |                                                            |
+| Category        | Usage                           | Description                                                  |
+| --------------- | ------------------------------- | ------------------------------------------------------------ |
+| function        |                                 |                                                              |
+| function.remix  |                                 | Spans related to [Remix](https://remix.run/) data fetchers   |
+|                 | function.remix.document_request |                                                              |
+|                 | function.remix.action           |                                                              |
+|                 | function.remix.loader           |                                                              |
+| function.nextjs |                                 | Spans related to [NextJS](https://nextjs.org/) data fetchers |
+|                 | function.nextjs                 |                                                              |
 
 ## Database
 
@@ -161,20 +156,20 @@ Databased related spans are expected to follow OpenTelemetry's [Database](https:
 
 Serverless related spans are expected to follow OpenTelemetry's [Function as a Service](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/faas.md) (FaaS) semantic conventions when possible.
 
-| Category   | Usage                | Description                                 |
-| ---------- | -------------------- | ------------------------------------------- |
-| http       |                      |                                             |
-|            | http.client          |                                             |
-|            | http.client.stream   |                                             |
-| grpc       |                      |                                             |
-|            | grpc.client          |                                             |
-| faas.gcp   |                      | Invocations of a GCP function               |
-|            | faas.gcp.event       |                                             |
-|            | faas.gcp.cloud_event |                                             |
-|            | faas.gcp.http        |                                             |
-| faas.aws   |                      | Invocations of an AWS serverless function   |
-|            | faas.aws.lambda      |                                             |
-| faas.azure |                      | Invocations of an Azure serverless function |
+| Category       | Usage                    | Description                                 |
+| -------------- | ------------------------ | ------------------------------------------- |
+| http           |                          |                                             |
+|                | http.client              |                                             |
+|                | http.client.stream       |                                             |
+| grpc           |                          |                                             |
+|                | grpc.client              |                                             |
+| function.gcp   |                          | Invocations of a GCP function               |
+|                | function.gcp.event       |                                             |
+|                | function.gcp.cloud_event |                                             |
+|                | function.gcp.http        |                                             |
+| function.aws   |                          | Invocations of an AWS serverless function   |
+|                | function.aws.lambda      |                                             |
+| function.azure |                          | Invocations of an Azure serverless function |
 
 ## Mobile
 
@@ -268,9 +263,6 @@ Messages/Queue spans are expected follow OpenTelemetry's [Messaging](https://git
 | console    |             |
 | db         |             |
 | file       |             |
-| faas       |             |
+| function   |             |
 | topic      |             |
 | queue      |             |
-| asgi       |             |
-| remix      |             |
-| laravel    |             |
