@@ -101,9 +101,9 @@ Web server related spans should aim to follow OpenTelemetry's [HTTP](https://git
 | subprocess      |                                       |                                                                    |
 |                 | subprocess.wait                       |                                                                    |
 |                 | subprocess.communicate                |                                                                    |
-| middleware      |                                       | Usage of webserver middleware                                      |
+| middleware      |                                       | Usage of webserver middlewares                                     |
 |                 | middleware.express                    |                                                                    |
-|                 | middleware.express                    |                                                                    |
+|                 | middleware.handle                     |                                                                    |
 |                 | middleware.starlette                  |                                                                    |
 |                 | middleware.django                     |                                                                    |
 | view            |                                       | Rendering of a view                                                |
@@ -121,13 +121,13 @@ Web server related spans should aim to follow OpenTelemetry's [HTTP](https://git
 |                 | function.remix.action                 |                                                                    |
 |                 | function.remix.loader                 |                                                                    |
 | function.nextjs |                                       | Spans related to [NextJS](https://nextjs.org/) data fetchers       |
-|                 | function.nextjs                       |                                                                    |
 | serialize       |                                       | Serialization of data                                              |
 | console         |                                       | Accessing web servers through the command line (ex. Rails console) |
 |                 | console.command                       |                                                                    |
 | file            |                                       | Operations on the file system (internal or external)               |
 | app             |                                       |                                                                    |
 |                 | app.bootstrap                         |                                                                    |
+|                 | app.php.autoload                      |                                                                    |
 
 ## Database
 
