@@ -92,6 +92,8 @@ Web server related spans should aim to follow OpenTelemetry's [HTTP](https://git
 |                 | http.server                           |                                                                    |
 | websocket       |                                       |                                                                    |
 |                 | websocket.server                      |                                                                    |
+| asgi            |                                       | Spans related to [ASGI](https://asgi.readthedocs.io) operations    |
+|                 | asgi.server                           |                                                                    |
 | rpc             |                                       | Spans related to remote procedure calls (RPC)                      |
 | grpc            |                                       | Usage of the [gRPC framework](https://grpc.io/)                    |
 | graphql         |                                       | a GraphQL operation                                                |
@@ -111,13 +113,16 @@ Web server related spans should aim to follow OpenTelemetry's [HTTP](https://git
 |                 | middleware.django                     |                                                                    |
 | view            |                                       | Rendering of a view                                                |
 |                 | view.process_action.action_controller |                                                                    |
-|                 | view.render                           |                                                                    |
+|                 | view.render                           |
+|                 | view.django                           |
 | template        |                                       |                                                                    |
 |                 | template.init                         |                                                                    |
 |                 | template.parse                        |                                                                    |
 |                 | template.render                       |                                                                    |
 |                 | template.django.render                |                                                                    |
 |                 | template.render_template.action_view  |                                                                    |
+| event           |                                       |                                                                    |
+|                 | event.django                          | Spans related to Django signals                                    |
 | function        |                                       |                                                                    |
 | function.remix  |                                       | Spans related to [Remix](https://remix.run/) data fetchers         |
 |                 | function.remix.document_request       |                                                                    |
