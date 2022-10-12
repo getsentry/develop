@@ -12,9 +12,9 @@ To configure the GitHub integration you'll need to create a GitHub app and obtai
 
 <CreateGitHubAppForm url="https://github.com/organizations/:org/settings/apps/new?name=:org-Sentry-Integration&public=false&members=read&emails=read&administration=read&contents=read&issues=write&pull_requests=write&repository_hooks=write&url=:url-prefix&callback_url=:url-prefix%2Fauth%2Fsso%2F&setup_url=:url-prefix%2Fextensions%2Fgithub%2Fsetup%2F&webhook_url=:url-prefix%2Fextensions%2Fgithub%2Fwebhook%2F&events[]=push&events[]=pull_request&webhook_active=true" defaultOrg="your-organization" defaultUrlPrefix="https://your-sentry-url-prefix.com" />
 
-Start by following GitHub's [official guide on creating a GitHub App](https://developer.github.com/apps/building-github-apps/creating-a-github-app/).
+NOTE: The button above will likely give you a 404. Adjust the url by changing `your-organization` for your Github org and try again.
 
-If the form above does not work for you, you need the following settings for your GitHub Application:
+If the form above does not work for you, you will need to create your Github App manually ([official guide on creating a GitHub App](https://developer.github.com/apps/building-github-apps/creating-a-github-app/). You need the following settings for your GitHub Application:
 
 | Setting                         | Value                                      |
 | ------------------------------- | ------------------------------------------ |
@@ -52,11 +52,13 @@ github-app.client-id: "GITHUB_CLIENT_ID"
 github-app.client-secret: "GITHUB_CLIENT_SECRET"
 ```
 
-Sentry utilizes webhooks for `Push` and `Pull Request` events. Generate a webhook secret and add it to your configuration:
+Sentry utilizes webhooks for `Push` and `Pull Request` events. Generate a webhook secret
 
 ```shell
 $ ruby -rsecurerandom -e 'puts SecureRandom.hex(20)'
 ```
+
+Add it to your configuration:
 
 ```yml
 github-app.webhook-secret: "GITHUB_WEBHOOK_SECRET"
