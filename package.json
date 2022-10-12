@@ -81,10 +81,10 @@
     "react-test-renderer": "^16.13.1"
   },
   "volta": {
-    "node": "12.22.12",
+    "node": "14.20.1",
     "yarn": "1.22.17"
   },
   "engines": {
-    "node": "12.22.12"
+    "node": "14.20.1"
   }
 }
