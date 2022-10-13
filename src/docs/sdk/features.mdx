@@ -231,6 +231,56 @@ If Performance Monitoring is both supported by the SDK and enabled in the client
 - span status must match HTTP response status code ([see Span status to HTTP status code mapping](/sdk/event-payloads/span/))
 - when network error occurs, span status must be set to `internal_error`
 
+### HTTP Client errors
+
+HTTP Client errors are automatically captured and sent to `https://sentry.io`.
+
+The HTTP Client integration should have 3 configuration options:
+
+* `captureFailedRequests` defaults to `false` due to PII reasons.
+* `failedRequestStatusCode` defaults to `500` to `599`, this param accepts a `List` of `HttpStatusCodeRange` which is a range of HTTP status code -> `min` to `max`.
+* `failedRequestsTargets` defaults to `.*`, this param accepts a `List` of `String` that may be Regular expressions as well, similar to `tracePropagationTargets`.
+
+Rules for automatically capturing error events.
+
+* SDKs won't capture error events if `captureFailedRequests` is disabled.
+* SDKs won't capture error events if the HTTP Request url isn't a match for any of the `failedRequestsTargets`.
+* SDKs won't capture error events if the HTTP Response status code isn't within the defined ranges in `failedRequestStatusCode`.
+
+The SDKs should capture error events with the following properties:
+
+See the <Link to="/sdk/event-payloads/request/">Request interface</Link> for details.
+
+The Response context:
+
+```json
+{
+  "contexts": {
+    "response": {
+      "type": "response",
+      "cookies": "PHPSESSID=298zf09hf012fh2; csrftoken=u32t4o3tb3gg43; _gat=1;",
+      "headers": {
+        "content-type": "text/html"
+        /// ...
+      },
+      "status_code": 500,
+      "body_size": 1000, // in bytes
+    }
+  }
+}
+```
+
+See the <Link to="/sdk/event-payloads/exception/">Exception Interface</Link> for details.
+
+If the HTTP Client integration does not throw an error for unsuccessful requests, you can create a synthetic exception following this recommendation:
+
+* Set the <Link to="/sdk/event-payloads/exception/#exception-mechanism">Exception Mechanism</Link> with a proper `type` such as `SentryOkHttpInterceptor`.
+* Set the <Link to="/sdk/event-payloads/stacktrace/">Stack Trace Interface</Link> with `snapshot=true`.
+
+When capturing the error event, pass the original `Request` and `Response` objects from the HTTP Client as `hints`, so users may filter out this event with more context.
+
+Those events can be searchable and alertable by the `http.url` and `http.status_code` properties, learn more about it in the [Searchable Properties](https://docs.sentry.io/product/sentry-basics/search/searchable-properties/) docs. 
+
 ## Attaching Request Body in Server SDKs
 
 Ability for the SDK to attach request body to events and triggered during the execution of request.
