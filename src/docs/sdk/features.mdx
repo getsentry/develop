@@ -238,14 +238,14 @@ HTTP Client errors are automatically captured and sent to `https://sentry.io`.
 The HTTP Client integration should have 3 configuration options:
 
 * `captureFailedRequests` defaults to `false` due to PII reasons.
-* `failedRequestStatusCode` defaults to `500` to `599`, this configuration option accepts a `List` of `HttpStatusCodeRange` which is a range of HTTP status code -> `min` to `max` or a single `status_code`.
-* `failedRequestsTargets` defaults to `.*`, this configuration option accepts a `List` of `String` that may be Regular expressions as well, similar to <Link to="/sdk/performance/#tracepropagationtargets">tracePropagationTargets</Link>.
+* `failedRequestStatusCodes` defaults to `500` to `599`, this configuration option accepts a `List` of `HttpStatusCodeRange` which is a range of HTTP status code -> `min` to `max` or a single `status_code`.
+* `failedRequestTargets` defaults to `.*`, this configuration option accepts a `List` of `String` that may be Regular expressions as well, similar to <Link to="/sdk/performance/#tracepropagationtargets">tracePropagationTargets</Link>.
 
 Then the HTTP Client integration should not capture the error:
 
 * If `captureFailedRequests` is disabled.
 * If the HTTP Request url isn't a match for any of the `failedRequestsTargets`.
-* If the HTTP Response status code isn't within the defined ranges in `failedRequestStatusCode`.
+* If the HTTP Response status code isn't within the defined ranges in `failedRequestStatusCodes`.
 
 The HTTP Client integration should capture error events with the following properties:
 
