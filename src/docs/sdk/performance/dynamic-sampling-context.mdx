@@ -52,13 +52,8 @@ This involves:
 Because there are quite a few things to keep in mind for DSC propagation and to avoid every SDK running into the same problems, we defined a [unified propagation mechanism](#unified-propagation-mechanism) (step-by-step instructions) that all SDK implementations should be able to follow.
 
 #### Currently supported SDKs:
-As this is an experimental feature and not yet available on all SDKs, we will communicate supported SDKs here.
 
-| SDK | Starting the head trace | Propagating head of the trace |
-|-----|:---:|:---:|
-|[sentry-javascript](https://github.com/getsentry/sentry-javascript)|✅|✅|
-|[sentry-python](https://github.com/getsentry/sentry-python)|❌|✅|
-|other SDKs|❌|❌|
+The currently supported SDKs are documented on the [Dynamic Sampling Product docs](https://docs.sentry.io/product/data-management-settings/server-side-sampling/getting-started/#current-limitations). Please update that list once you release an SDK that supports dynamic sampling features. To be considered a supported SDK for dynamic sampling, the SDK must support both creating the DSC at the head of the trace, and propagating the DSC from continuing traces (if possible for that environment).
 
 
 ## Baggage
@@ -82,6 +77,8 @@ In the case that another vendor added Sentry values to an outgoing request, SDKs
 
 SDKs must not add other vendors' baggage from incoming requests to outgoing requests.
 Sentry SDKs only concern themselves with Sentry baggage.
+  
+On the Java SDK ([1](https://github.com/getsentry/sentry-java/blob/725a1edc2b1c713f4d91fef6985e9c98ef2bd873/sentry/src/main/java/io/sentry/Span.java#L149-L150) [2](https://github.com/getsentry/sentry-java/blob/725a1edc2b1c713f4d91fef6985e9c98ef2bd873/sentry/src/main/java/io/sentry/BaggageHeader.java#L15-L26)) we went with an explicit param for passing in pre-existing headers on the outgoing request (`span.toBaggageHeader(preExistingBaggageHeaders)`) as these are required to produce a new header that respects the limits and only contains Sentry values once. An alternative is to have some util function that does the merging (as done e.g. in the [Dart SDK](https://github.com/getsentry/sentry-dart/blob/c2653112519fb98ceecaf3eeb8106c5ecf38fe40/dart/lib/src/utils/tracing_utils.dart#L9-L41)).
 
 </Alert>
 

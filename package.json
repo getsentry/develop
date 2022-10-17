@@ -7,11 +7,11 @@
     "@mdx-js/mdx": "^1.6.22",
     "@mdx-js/react": "^v1.6.22",
     "@sentry-internal/global-search": "0.0.43",
-    "@sentry/gatsby": "^7.0.0",
-    "@sentry/tracing": "^7.0.0",
+    "@sentry/gatsby": "^7.15.0",
+    "@sentry/tracing": "^7.15.0",
     "@sentry/webpack-plugin": "^1.18.3",
     "@types/dompurify": "^2.0.3",
-    "@types/node": "^12",
+    "@types/node": "^14",
     "@types/react": "^16.9.46",
     "@types/react-dom": "^16.9.8",
     "@types/react-helmet": "^6.1.0",
@@ -81,7 +81,7 @@
     "react-test-renderer": "^16.13.1"
   },
   "volta": {
-    "node": "12.22.12",
+    "node": "14.20.1",
     "yarn": "1.22.17"
   }
 }
