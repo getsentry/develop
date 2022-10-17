@@ -28,7 +28,7 @@ import "./span-protocol.mdx"
 
 There is no concept of a transaction within OpenTelemetry, so we rely on promoting spans to become transactions. The span `description` becomes the transaction `name`, and the span `op` becomes the transaction `op`. Therefore, OpenTelemetry spans must be mapped to Sentry spans before they can be promoted to become a transaction.
 
-**We should not set tags on transactions. Instead, we should populate the `attributes` field on the `otel` context, [defined below](./#opentelemetry-context)**
+**We should not set tags on transactions. Instead, we should populate the `attributes` field on the `otel` context, <Link to="./#opentelemetry-context">see below</Link>**
 
 ## OpenTelemetry Context
 
