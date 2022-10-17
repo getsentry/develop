@@ -8,6 +8,8 @@
     "@mdx-js/react": "^v1.6.22",
     "@sentry-internal/global-search": "0.0.43",
     "@sentry/gatsby": "^7.15.0",
+    "@sentry/node": "^7.15.0",
+    "@sentry/profiling-node": "^0.0.0-alpha.1",
     "@sentry/tracing": "^7.15.0",
     "@sentry/webpack-plugin": "^1.18.3",
     "@types/dompurify": "^2.0.3",
