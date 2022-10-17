@@ -23,7 +23,7 @@ This behavior is typically provided by a default integration that can be disable
 
 Scopes should be provided by SDKs to set common attributes and context data on events sent to Sentry emitted from the current scope. They should be inherited to lower scopes so that they can be set "globally" on startup.  Note that some attributes can only be set in the client options (`release`, `environment`) and not on scopes.
 
-What scope means depends on the application, for a web framework it is most likely a single request/response cycle. For a mobile application there is often just one single scope that represents the single user and their actions. Scoping can be difficult to implement because it often has to deal with threads or concurrency and can involve deep integration with frameworks. <Link to="/sdk/unified-api#scope">See the scopes page</Link> for more information.
+What scope means depends on the application, for a web framework it is most likely a single request/response cycle. For a mobile application there is often just one single scope that represents the single user and their actions. Scoping can be difficult to implement because it often has to deal with threads or concurrency and can involve deep integration with frameworks. <Link to="/sdk/unified-api#scope">see the scopes page</Link> for more information.
 
 ## Automatic Context Data
 
@@ -246,7 +246,7 @@ The HTTP Client integration should have 3 configuration options:
 
 The HTTP Client integration should capture error events with the following properties:
 
-The Request interface, See the <Link to="/sdk/event-payloads/request/">Spec</Link> for details.
+The Request interface, see the <Link to="/sdk/event-payloads/request/">Spec</Link> for details.
 
 The Response context (Not yet under the Spec):
 
@@ -267,7 +267,7 @@ The Response context (Not yet under the Spec):
 }
 ```
 
-The Exception Interface, See the <Link to="/sdk/event-payloads/exception/">Spec</Link> for details.
+The Exception Interface, see the <Link to="/sdk/event-payloads/exception/">Spec</Link> for details.
 
 If the HTTP Client integration does not throw an exception for unsuccessful requests, you can create a synthetic exception following this Spec:
 
@@ -279,7 +279,7 @@ When capturing error events, pass the original `Request` and `Response` objects 
 
 Automatically captured HTTP Client error events can be searchable and alertable with the `http.url` and `http.status_code` properties, learn more about it in the [Searchable Properties](https://docs.sentry.io/product/sentry-basics/search/searchable-properties/) docs.
 
-As an example, See the [OkHTTP Client integration](https://github.com/getsentry/sentry-java/pull/2287) for Android.
+As an example, see the [OkHTTP Client integration](https://github.com/getsentry/sentry-java/pull/2287) for Android.
 
 ## Attaching Request Body in Server SDKs
 
