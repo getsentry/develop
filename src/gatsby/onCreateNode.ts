@@ -1,6 +1,18 @@
+import * as Sentry from "@sentry/node";
 import { createFilePath } from "gatsby-source-filesystem";
 
 export default ({ node, actions, getNode }) => {
+  const transaction = Sentry.getCurrentHub()
+    .getScope()
+    .getTransaction();
+  const span = transaction.startChild({
+    op: "function",
+    description: `onCreateNode ${node.internal.type}`,
+    tags: {
+      nodeType: node.internal.type,
+    },
+  });
+
   const { createNodeField } = actions;
   if (
     node.internal.type === "Mdx" &&
@@ -14,4 +26,5 @@ export default ({ node, actions, getNode }) => {
       value,
     });
   }
+  span.finish();
 };
