@@ -242,7 +242,7 @@ The HTTP Client integration should have 3 configuration options:
 - `failedRequestStatusCodes` defaults to `500 - 599`, this configuration option accepts a `List` of `HttpStatusCodeRange` which is a range of HTTP status code -> `min` to `max` or a single `status_code`.
   - The SDK will only capture HTTP Client errors if the HTTP Response status code is within the defined ranges in `failedRequestStatusCodes`.
 - `failedRequestTargets` defaults to `.*`, this configuration option accepts a `List` of `String` that may be Regular expressions as well, similar to <Link to="/sdk/performance/#tracepropagationtargets">tracePropagationTargets</Link>.
-  - The SDK will only capture HTTP Client errors if the HTTP Request url is a match for any of the `failedRequestsTargets`.
+  - The SDK will only capture HTTP Client errors if the HTTP Request URL is a match for any of the `failedRequestsTargets`.
 
 The HTTP Client integration should capture error events with the following properties:
 
