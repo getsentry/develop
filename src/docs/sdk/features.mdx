@@ -233,7 +233,7 @@ If Performance Monitoring is both supported by the SDK and enabled in the client
 
 ### HTTP Client Errors
 
-The SDK automatically captures HTTP Client errors and sends them to `https://sentry.io`.
+The SDK automatically captures HTTP Client errors and sends them to [sentry.io](https://sentry.io).
 
 The HTTP Client integration should have 3 configuration options:
 
@@ -241,7 +241,8 @@ The HTTP Client integration should have 3 configuration options:
   - The SDK will only capture HTTP Client errors if it is enabled.
 - `failedRequestStatusCodes` defaults to `500 - 599`, this configuration option accepts a `List` of `HttpStatusCodeRange` which is a range of HTTP status code -> `min` to `max` or a single `status_code`.
   - The SDK will only capture HTTP Client errors if the HTTP Response status code is within the defined ranges in `failedRequestStatusCodes`.
-- `failedRequestTargets` defaults to `.*`, this configuration option accepts a `List` of `String` that may be Regular expressions as well, similar to <Link to="/sdk/performance/#tracepropagationtargets">tracePropagationTargets</Link>.
+  - If the language has a `Range` type, it should be used instead of `HttpStatusCodeRange`.
+- `failedRequestTargets` defaults to (`.*`), this configuration option accepts a `List` of `String` that may be Regular expressions as well, similar to <Link to="/sdk/performance/#tracepropagationtargets">tracePropagationTargets</Link>.
   - The SDK will only capture HTTP Client errors if the HTTP Request URL is a match for any of the `failedRequestsTargets`.
 
 The HTTP Client integration should capture error events with the following properties:
