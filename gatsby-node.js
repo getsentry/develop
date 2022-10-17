@@ -1,15 +1,18 @@
 const Sentry = require("@sentry/node");
-const Tracing = require("@sentry/tracing");
+require("@sentry/tracing");
 const Profiling = require("@sentry/profiling-node");
+
+const activeEnv =
+  process.env.GATSBY_ENV || process.env.NODE_ENV || "development";
 
 Sentry.init({
   dsn:
     process.env.SENTRY_DSN ||
     "https://f107f3f0deb544289e4e056922e5e5a4@o1.ingest.sentry.io/5266138",
   debug: true,
-  environment: "development",
-  tracesSampleRate: 1,
-  profilesSampleRate: 1, // Set profiling sampling rate.
+  environment: activeEnv,
+  tracesSampleRate: activeEnv === "development" ? 0 : 1,
+  profilesSampleRate: activeEnv === "development" ? 0 : 1, // Set profiling sampling rate.
   integrations: [new Profiling.ProfilingIntegration()],
 });
 
