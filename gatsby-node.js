@@ -21,59 +21,62 @@ exports.onCreateWebpackConfig = require("./src/gatsby/onCreateWebpackConfig").de
 exports.createPages = require("./src/gatsby/createPages").default;
 exports.createSchemaCustomization = require("./src/gatsby/createSchemaCustomization").default;
 
-exports.onPreInit = () => {
-  // store job creation action to use it later
+Sentry.configureScope(scope => {
+  const id = process.env.GITHUB_RUN_ID;
+  if (id) {
+    scope.setUser({ id });
+  }
+});
+
+function startFromPrevTransaction(newTransactionContext) {
+  const oldTransaction = Sentry.getCurrentHub()
+    ?.getScope()
+    ?.getTransaction();
+
+  let oldTransactionTraceParent;
+  if (oldTransaction) {
+    oldTransactionTraceParent = {
+      traceId: oldTransaction.traceId,
+      parentSpanId: oldTransaction.spanId,
+      sampled: oldTransaction.sampled,
+    };
+    oldTransaction.finish();
+  }
+
   const transaction = Sentry.startTransaction({
+    ...newTransactionContext,
+    ...oldTransactionTraceParent,
+    tags: {
+      ref: process.env.GITHUB_BASE_REF,
+      sha: process.env.GITHUB_SHA,
+      job: process.env.GITHUB_JOB,
+      run: process.env.GITHUB_RUN_ID,
+    },
+  });
+  Sentry.configureScope(scope => {
+    scope.setSpan(transaction);
+  });
+}
+
+exports.onPreInit = () => {
+  startFromPrevTransaction({
     op: "build",
     name: "Init",
   });
-  Sentry.configureScope(scope => scope.setSpan(transaction));
 };
 
 exports.onPreBootstrap = () => {
-  const oldTransaction = Sentry.getCurrentHub()
-    ?.getScope()
-    ?.getTransaction();
-
-  let oldTransactionTraceParent;
-  if (oldTransaction) {
-    oldTransactionTraceParent = {
-      traceId: oldTransaction.traceId,
-      parentSpanId: oldTransaction.spanId,
-      sampled: oldTransaction.sampled,
-    };
-    oldTransaction.finish();
-  }
-
-  const transaction = Sentry.startTransaction({
+  startFromPrevTransaction({
     op: "build",
     name: "Bootstrap",
-    ...oldTransactionTraceParent,
   });
-  Sentry.configureScope(scope => scope.setSpan(transaction));
 };
 
 exports.onPreBuild = () => {
-  const oldTransaction = Sentry.getCurrentHub()
-    ?.getScope()
-    ?.getTransaction();
-
-  let oldTransactionTraceParent;
-  if (oldTransaction) {
-    oldTransactionTraceParent = {
-      traceId: oldTransaction.traceId,
-      parentSpanId: oldTransaction.spanId,
-      sampled: oldTransaction.sampled,
-    };
-    oldTransaction.finish();
-  }
-
-  const transaction = Sentry.startTransaction({
+  startFromPrevTransaction({
     op: "build",
     name: "Build",
-    ...oldTransactionTraceParent,
   });
-  Sentry.configureScope(scope => scope.setSpan(transaction));
 };
 
 exports.onPostBuild = () => {
@@ -83,5 +86,5 @@ exports.onPostBuild = () => {
   if (transaction) {
     transaction.finish();
   }
-  Sentry.flush(2000);
+  Sentry.flush(7000);
 };
