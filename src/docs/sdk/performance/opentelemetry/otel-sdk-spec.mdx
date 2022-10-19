@@ -1,6 +1,8 @@
 To transform SDK data to Sentry, we rely on the [OpenTelemetry SpanProcessor](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/sdk.md#span-processor). The SpanProcessor is a component that runs on the same thread as the application code, so it effectively runs in process alongside user code and the Sentry SDK.
 
-Here is an example span processor that exports spans to Sentry written in TypeScript. Essentially we keep track
+### Step 1: Implement the SentrySpanProcessor on your SDK
+
+Below we have written a custom SpanProcessor that will transform the OpenTelemetry spans to Sentry spans.
 
 This relies on a couple key assumptions.
 
@@ -34,27 +36,33 @@ class SentrySpanProcessor implements SpanProcessor {
 
     const parentSpan = scope.getSpan();
     if (parentSpan) {
-        const spanCtx = generateSpanCtx(otelSpan);
-        // If the parentSpan exists, we create a new span as a child of the parentSpan
-        const childSpan = parentSpan.startChild(spanCtx);
+      // If the parentSpan exists, we create a new span as a child of the parentSpan
+      const childSpan = parentSpan.startChild({
+        description: otelSpan.name,
+        // don't define op because we will do that on span.finish
+      });
 
-        if (childSpan) {
-            // We store the otelSpan and it's parent in the map
-            this._map[otelSpanId] = [childSpan, parentSpan];
-            scope.setSpan(childSpan);
-        }
+      if (childSpan) {
+          // We store the otelSpan and it's parent in the map
+          this._map[otelSpanId] = [childSpan, parentSpan];
+          scope.setSpan(childSpan);
+      }
 
     } else {
-        // Will grab Dynamic Sampling Context and sentry-trace header if available
-        const transactionCtx = generateTransactionCtx(otelSpan);
-        // If the parentSpan doesn't exist, we create a new transaction
-        const transaction = Sentry.startTransaction(transactionCtx);
+      // Will grab Dynamic Sampling Context and sentry-trace header if available
+      const traceCtx = getTraceData(otelSpan);
+      // If the parentSpan doesn't exist, we create a new transaction
+      const transaction = Sentry.startTransaction({
+        name: otelSpan.name,
+        ...traceCtx,
+        // don't define op because we will do that on span.finish
+      });
 
-        if (transaction) {
-            // We store the otelSpan and it's parent in the map
-            this._map[otelSpanId] = [transaction, undefined];
-            scope.setSpan(transaction);
-        }
+      if (transaction) {
+          // We store the otelSpan and it's parent in the map
+          this._map[otelSpanId] = [transaction, undefined];
+          scope.setSpan(transaction);
+      }
     }
   }
 
@@ -68,20 +76,86 @@ class SentrySpanProcessor implements SpanProcessor {
     const mapVal = this._map[otelSpanId];
 
     if (mapVal) {
-        const [sentrySpan, parentSpan] = mapVal;
+      const [sentrySpan, parentSpan] = mapVal;
 
-        // Update op, description, and attach otel resource attributes
-        updateSpanWithOtelData(sentrySpan, otelSpan);
+      // Update op, description, and attach otel resource attributes
+      updateSpanWithOtelData(sentrySpan, otelSpan);
 
-        // We finish the span
-        sentrySpan.finish();
-        // We set the parent span as the active span if parent span is defined
-        if (parentSpan) {
-            scope.setSpan(parentSpan);
-        }
-        // We remove the span from the map
-        delete this._map[otelSpanId];
+      // We finish the span
+      sentrySpan.finish();
+      // We set the parent span as the active span if parent span is defined
+      if (parentSpan) {
+          scope.setSpan(parentSpan);
+      }
+      // We remove the span from the map
+      delete this._map[otelSpanId];
     }
   }
 }
 ```
+
+Users are required to add this `SentrySpanProcessor` to their OpenTelemetry SDK initialization logic to make this work, like so. Individual SDK implementations might be a little different.
+
+```ts
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { Resource } from "@opentelemetry/resources";
+import * as Sentry from "@sentry/node";
+import { SentrySpanProcessor } from "@sentry/opentelemetry-node";
+
+Sentry.init({
+  /// ...
+});
+
+const sdk = new NodeSDK({
+  resource: new Resource({
+    "service.name": "my-service",
+    "service.version": "1.0.0",
+  }),
+  spanProcessor: new SentrySpanProcessor(),
+});
+```
+
+### Step 2: Define `getTraceData`
+
+We want to make sure a transaction is started with information from the `sentry-trace` and `baggage` headers.
+
+TODO
+
+### Step 3: Define `updateSpanWithOtelData`
+
+We want to update the Sentry Span with the OpenTelemetry data. This includes the span's operation, description, and resource attributes.
+
+TODO
+
+### Step 3: Add OpenTelemetry Context
+
+All SDKs are required to add event context with the key `otel` to events generated by the SpanProcessor. This is detailed in <Link to="./#opentelemetry-context">our spec for the Context</Link>. The OpenTelemetryContext should be generated from information from the OpenTelemetry Span.
+
+```ts
+{
+  contexts: {
+    otel: {
+      attributes: {
+        "http.method": "GET",
+        "http.url": "https://example.com",
+        "http.status_code": 200,
+      },
+      service: {
+        name: "my-service",
+        version: "1.0.0",
+      },
+      otel_sdk: {
+        name: "opentelemetry-node"
+        version: "4.0.0",
+      },
+      // ...
+    }
+  },
+}
+```
+
+### Step 4: Add instrumentor option to Sentry SDK
+
+To control ...
+
+TODO
