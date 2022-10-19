@@ -274,7 +274,7 @@ If the HTTP Client integration does not throw an exception for unsuccessful requ
 
 - Set the <Link to="/sdk/event-payloads/exception/#exception-mechanism">Exception Mechanism</Link> with a proper `type` such as `SentryOkHttpInterceptor`.
 - Set the <Link to="/sdk/event-payloads/stacktrace/">Stack Trace Interface</Link> with `snapshot=true`.
-  - The Exception message can be `Event was captured because the request status code was $code`.
+  - `HTTP Client Error with status code: $code`.
 
 When capturing error events, pass the original `Request` and `Response` objects from the HTTP Client as `hints`, so the users may filter out events in `beforeSend` with the full context.
 
