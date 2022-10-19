@@ -141,13 +141,15 @@ const sdk = new NodeSDK({
 
 We want to make sure a transaction is started with information from the `sentry-trace` and `baggage` headers.
 
-TODO
+TODO @neel
 
 ### Step 3: Define `updateSpanWithOtelData`
 
 We want to update the Sentry Span with the OpenTelemetry data. This includes the span's operation, description, and resource attributes.
 
-TODO
+The Sentry span description should come from the OpenTelemetry Span name. The Sentry span operation should come from a combinations of the OpenTelemetry Span name, kind, and attributes.
+
+To make things simple, only set ops for `db` and `http` spans. Don't do any other extended logic, this will be done in Relay in the future.
 
 ### Step 3: Add OpenTelemetry Context
 
