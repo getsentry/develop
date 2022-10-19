@@ -39,6 +39,7 @@ class SentrySpanProcessor implements SpanProcessor {
       // If the parentSpan exists, we create a new span as a child of the parentSpan
       const childSpan = parentSpan.startChild({
         description: otelSpan.name,
+        instrumentor: 'otel',
         // don't define op because we will do that on span.finish
       });
 
@@ -55,6 +56,7 @@ class SentrySpanProcessor implements SpanProcessor {
       const transaction = Sentry.startTransaction({
         name: otelSpan.name,
         ...traceCtx,
+        instrumentor: 'otel'
         // don't define op because we will do that on span.finish
       });
 
@@ -156,6 +158,44 @@ All SDKs are required to add event context with the key `otel` to events generat
 
 ### Step 4: Add instrumentor option to Sentry SDK
 
-To control ...
+We want to avoid double instrumenting the same library. To do this, we want to add an option to the Sentry SDK that disables Sentry performance auto-instrumentation when OpenTelemetry is enabled. For now users will have to manually add this option to their SDK initialization code, but in the future we can do this automatically (by detecting if OpenTelemetry exists).
 
-TODO
+TODO @neel about this section and how it works
+
+```ts
+Sentry.init({
+  // ...
+  instrumentor: "otel",
+});
+```
+
+Internally in the Sentry SDK, we can use this `instrumentor` option to disable Sentry performance auto-instrumentation.
+
+```ts
+class Hub implements HubInterface {
+  // ...
+  startTransaction(
+    this: Hub,
+    context: TransactionContext
+  ): Transaction | undefined {
+    // ...
+    if (this._options.instrumentor === "otel") {
+      return;
+    }
+    // ...
+  }
+}
+```
+
+```ts
+class Transaction extends Span {
+  // ...
+  finish(this: Transaction, context: SpanContext): Span | undefined {
+    // ...
+    if (this._hub._options.instrumentor !== this._instrumentor) {
+      return;
+    }
+    // ...
+  }
+}
+```
