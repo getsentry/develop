@@ -180,8 +180,6 @@ All SDKs are required to add event context with the key `otel` to events generat
 
 We want to avoid double instrumenting the same library. To do this, we want to add an option to the Sentry SDK that disables Sentry performance auto-instrumentation when OpenTelemetry is enabled. For now users will have to manually add this option to their SDK initialization code, but in the future we can do this automatically (by detecting if OpenTelemetry exists).
 
-TODO @neel about this section and how it works
-
 ```ts
 Sentry.init({
   // ...
@@ -189,7 +187,9 @@ Sentry.init({
 });
 ```
 
-Internally in the Sentry SDK, we can use this `instrumentor` option to disable Sentry performance auto-instrumentation.
+You have two options for this:
+
+1. Add an early return to `Sentry.startTransaction` and `Sentry.trace` (a helper method that ) if the `instrumentor` option is set to `otel`. This may require SDK changes, as `trace` is not part of the unified API.
 
 ```ts
 class Hub implements HubInterface {
@@ -199,26 +199,37 @@ class Hub implements HubInterface {
     context: TransactionContext
   ): Transaction | undefined {
     // ...
-    if (this._options.instrumentor === "otel") {
+    if (this.instrumentor !== context.instrumentor) {
       return;
+    }
+    // ...
+  }
+
+  // Note this is not part of the unified API.
+  // It is being proposed as part of:
+  // https://github.com/getsentry/rfcs/issues/28
+  // see: https://github.com/getsentry/develop/issues/720
+  trace<T>(this: Hub, context: SpanContext, callback: (span?: Span) => T): T {
+    // ...
+    if (this.instrumentor !== context.instrumentor) {
+      return callback();
     }
     // ...
   }
 }
 ```
 
+2. Add if conditionals around all callsites where you are using `Sentry.startTransaction` and `span.startChild` in the Sentry SDK code. This is a little more work, but it doesn't require any SDK changes to the unified API.
+
 ```ts
-class Transaction extends Span {
-  // ...
-  finish(this: Transaction, context: SpanContext): Span | undefined {
+if (instrumentor === "otel") {
+  span.startChild({
     // ...
-    if (this._hub._options.instrumentor !== this._instrumentor) {
-      return;
-    }
-    // ...
-  }
+  });
 }
 ```
+
+You are also free to do both, or an alternative method, the only requirement is that we don't double instrument.
 
 ## Span Protocol
 
