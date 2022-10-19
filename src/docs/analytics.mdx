@@ -41,7 +41,7 @@ analytics.register(ExampleTutorialCreatedEvent)
 analytics.register(ExampleTutorialDeletedEvent)
 ```
 
-Your event classes will inherit from `[analytics.Event](https://github.com/getsentry/sentry/blob/master/src/sentry/analytics/event.py)` as shown above. All events have a `type` and `attributes`.
+Your event classes will inherit from [`analytics.Event`](https://github.com/getsentry/sentry/blob/master/src/sentry/analytics/event.py) as shown above. All events have a `type` and `attributes`.
 
 `type`
 
@@ -65,7 +65,7 @@ from __future__ import absolute_import
 from .analytics import *  # NOQA
 ```
 
-Here, you have your usual `absolute_import` but in addition you will import every class in your `[analytics.py](http://analytics.py)` add `# NOQA` to avoid linter complaints.
+Here, you have your usual `absolute_import` but in addition you will import every class in your [`analytics.py`](http://analytics.py) add `# NOQA` to avoid linter complaints.
 
 ### Step 2: Add it to the code you want to track
 
