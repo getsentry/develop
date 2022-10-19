@@ -1,0 +1,87 @@
+To transform SDK data to Sentry, we rely on the [OpenTelemetry SpanProcessor](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/sdk.md#span-processor). The SpanProcessor is a component that runs on the same thread as the application code, so it effectively runs in process alongside user code and the Sentry SDK.
+
+Here is an example span processor that exports spans to Sentry written in TypeScript. Essentially we keep track
+
+This relies on a couple key assumptions.
+
+1. Hub/Scope propogation works properly in your platform. This means that the hub used in `onStart` is the same hub used in `onEnd` and it means that hubs fork properly in async contexts.
+2. The SDK is initialized before the OpenTelemetry SDK is initialized.
+3. There will only be a single transaction occuring at the same time. This is a limitation of the current SDK design.
+
+```ts
+import { SpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { Span as OpenTelemetrySpan } from '@opentelemetry/api';
+import { Span as SentrySpan } from '@sentry/tracing';
+
+class SentrySpanProcessor implements SpanProcessor {
+  /**
+   * A map that stores a spanId to a tuple of a span and it's parent span.
+   * Used to decide what span gets finished.
+   */
+  private readonly _map: Record<SentrySpan['spanId'], [span: SentrySpan, parentSpan?: SentrySpan]>;
+
+  constructor(options: SentrySpanProcessorOptions) {
+    this._options = options;
+  }
+
+  onStart(otelSpan: OpenTelemetrySpan): void {
+    const hub = Sentry.getCurrentHub();
+    const scope = hub.getScope();
+
+    if (!hub || !scope) return;
+
+    const otelSpanId = span.spanContext().spanId;
+
+    const parentSpan = scope.getSpan();
+    if (parentSpan) {
+        const spanCtx = generateSpanCtx(otelSpan);
+        // If the parentSpan exists, we create a new span as a child of the parentSpan
+        const childSpan = parentSpan.startChild(spanCtx);
+
+        if (childSpan) {
+            // We store the otelSpan and it's parent in the map
+            this._map[otelSpanId] = [childSpan, parentSpan];
+            scope.setSpan(childSpan);
+        }
+
+    } else {
+        // Will grab Dynamic Sampling Context and sentry-trace header if available
+        const transactionCtx = generateTransactionCtx(otelSpan);
+        // If the parentSpan doesn't exist, we create a new transaction
+        const transaction = Sentry.startTransaction(transactionCtx);
+
+        if (transaction) {
+            // We store the otelSpan and it's parent in the map
+            this._map[otelSpanId] = [transaction, undefined];
+            scope.setSpan(transaction);
+        }
+    }
+  }
+
+  onEnd(otelSpan: OpenTelemetrySpan): void {
+    const hub = Sentry.getCurrentHub();
+    const scope = hub.getScope();
+
+    if (!hub || !scope) return;
+
+    const otelSpanId = otelSpan.spanContext().spanId;
+    const mapVal = this._map[otelSpanId];
+
+    if (mapVal) {
+        const [sentrySpan, parentSpan] = mapVal;
+
+        // Update op, description, and attach otel resource attributes
+        updateSpanWithOtelData(sentrySpan, otelSpan);
+
+        // We finish the span
+        sentrySpan.finish();
+        // We set the parent span as the active span if parent span is defined
+        if (parentSpan) {
+            scope.setSpan(parentSpan);
+        }
+        // We remove the span from the map
+        delete this._map[otelSpanId];
+    }
+  }
+}
+```
