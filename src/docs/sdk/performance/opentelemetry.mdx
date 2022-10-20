@@ -18,7 +18,7 @@ When Sentry performance monitoring was initially introduced, OpenTelemetry was i
 
 ## Approach
 
-To transform SDK data to Sentry, we rely on the [OpenTelemetry SpanProcessor](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/sdk.md#span-processor). The SpanProcessor is a component that runs on the same thread as the application code, so it effectively runs in process alongside user code and the Sentry SDK.
+To transform OpenTelemetry SDK data to Sentry data, we rely on the [OpenTelemetry SpanProcessor](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/sdk.md#span-processor). The SpanProcessor is a component that runs on the same thread as the application code, so it effectively runs in process alongside user code and the Sentry SDK.
 
 ### Step 1: Implement the SentrySpanProcessor on your SDK
 
@@ -59,7 +59,7 @@ class SentrySpanProcessor implements SpanProcessor {
       // If the parentSpan exists, we create a new span as a child of the parentSpan
       const childSpan = parentSpan.startChild({
         description: otelSpan.name,
-        instrumentor: 'otel',
+        instrumenter: 'otel',
         // don't define op because we will do that on span.finish
       });
 
@@ -76,7 +76,7 @@ class SentrySpanProcessor implements SpanProcessor {
       const transaction = Sentry.startTransaction({
         name: otelSpan.name,
         ...traceCtx,
-        instrumentor: 'otel'
+        instrumenter: 'otel'
         // don't define op because we will do that on span.finish
       });
 
@@ -178,20 +178,20 @@ All SDKs are required to add event context with the key `otel` to events generat
 }
 ```
 
-### Step 4: Add instrumentor option to Sentry SDK
+### Step 4: Add instrumenter option to Sentry SDK
 
-We want to avoid double instrumenting the same library. To do this, we want to add an option to the Sentry SDK that disables Sentry performance auto-instrumentation when OpenTelemetry is enabled. For now users will have to manually add this option to their SDK initialization code, but in the future we can do this automatically (by detecting if OpenTelemetry exists).
+We want to avoid double instrumenting the same library. To do this, we want to add an option to the Sentry SDK that disables Sentry performance instrumentation (automatic and manual) when OpenTelemetry is enabled. For now users will have to manually add this option to their SDK initialization code, but in the future we can do this automatically (by detecting if OpenTelemetry exists).
 
 ```ts
 Sentry.init({
   // ...
-  instrumentor: "otel",
+  instrumenter: "otel",
 });
 ```
 
 You have two options for this:
 
-1. Add an early return to `Sentry.startTransaction` and `Sentry.trace` (a helper method that ) if the `instrumentor` option is set to `otel`. This may require SDK changes, as `trace` is not part of the unified API.
+1. Add an early return to `Sentry.startTransaction()` and `Sentry.trace()` (a helper method) if the `instrumenter` option is set to `otel`. This may require SDK changes, as `Sentry.trace()` is not part of the unified API.
 
 ```ts
 class Hub implements HubInterface {
@@ -201,7 +201,7 @@ class Hub implements HubInterface {
     context: TransactionContext
   ): Transaction | undefined {
     // ...
-    if (this.instrumentor !== context.instrumentor) {
+    if (this.instrumenter !== context.instrumenter) {
       return;
     }
     // ...
@@ -213,7 +213,7 @@ class Hub implements HubInterface {
   // see: https://github.com/getsentry/develop/issues/720
   trace<T>(this: Hub, context: SpanContext, callback: (span?: Span) => T): T {
     // ...
-    if (this.instrumentor !== context.instrumentor) {
+    if (this.instrumenter !== context.instrumenter) {
       return callback();
     }
     // ...
@@ -224,7 +224,7 @@ class Hub implements HubInterface {
 2. Add if conditionals around all callsites where you are using `Sentry.startTransaction` and `span.startChild` in the Sentry SDK code. This is a little more work, but it doesn't require any SDK changes to the unified API.
 
 ```ts
-if (instrumentor === "otel") {
+if (instrumenter === "otel") {
   span.startChild({
     // ...
   });
