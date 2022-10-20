@@ -26,11 +26,11 @@ attribute to cross-reference this thread.
 
 `crashed`
 
-: _Optional_. A flag indicating whether the thread crashed. Defaults to `false`.
+: _Optional_. A flag indicating whether the thread was the cause for the event being sent, e.g. due to a crash. Defaults to `false`.
 
 `current`
 
-: _Optional_. A flag indicating whether the thread was in the foreground.
+: _Optional_. A flag indicating whether the thread was in the foreground. A thread is in foreground when it's executing.
 Defaults to `false`.
 
 `name`
