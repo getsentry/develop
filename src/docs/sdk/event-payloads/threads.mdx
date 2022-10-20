@@ -33,6 +33,11 @@ attribute to cross-reference this thread.
 : _Optional_. A flag indicating whether the thread was in the foreground. A thread is in foreground when it's executing.
 Defaults to `false`.
 
+`ui`
+
+: _Optional_. If applicable, a flag indicating whether the thread was responsible for rendering the user interface.
+Defaults to `false`. On mobile platforms this is oftentimes referred to as the "main thread" or "ui thread".
+
 `name`
 
 : _Optional_. The thread name.
