@@ -48,26 +48,29 @@ class SentrySpanProcessor implements SpanProcessor {
 
   onStart(otelSpan: OpenTelemetrySpan): void {
     const hub = Sentry.getCurrentHub();
+    if (!hub) return;
+
     const scope = hub.getScope();
+    if (!scope) return;
 
-    if (!hub || !scope) return;
-
-    const otelSpanId = span.spanContext().spanId;
+    const otelSpanId = otelSpan.spanContext().spanId;
 
     const parentSpan = scope.getSpan();
     if (parentSpan) {
-      // If the parentSpan exists, we create a new span as a child of the parentSpan
+      // create a new span as a child of the parentSpan
       const childSpan = parentSpan.startChild({
         description: otelSpan.name,
         instrumenter: 'otel',
-        // don't define op because we will do that on span.finish
+        // Make sure we use otel span id as the span id.
+        spanId: otelSpanId,
+        startTimestamp: otelSpan.startTime,
+        // Use `default` since we will redefine span op on finish
+        op: 'default',
       });
 
-      if (childSpan) {
-          // We store the otelSpan and it's parent in the map
-          this._map[otelSpanId] = [childSpan, parentSpan];
-          scope.setSpan(childSpan);
-      }
+      // We store the otelSpan and its parent in the map
+      this._map[otelSpanId] = [childSpan, parentSpan];
+      scope.setSpan(childSpan);
 
     } else {
       // Will grab Dynamic Sampling Context and sentry-trace header if available
@@ -76,12 +79,14 @@ class SentrySpanProcessor implements SpanProcessor {
       const transaction = Sentry.startTransaction({
         name: otelSpan.name,
         ...traceCtx,
-        instrumenter: 'otel'
-        // don't define op because we will do that on span.finish
+        instrumenter: 'otel',
+        startTimestamp: otelSpan.startTime,
+        // Use `default` since we will redefine span op on finish
+        op: 'default',
       });
 
       if (transaction) {
-          // We store the otelSpan and it's parent in the map
+          // We store the otelSpan and its parent in the map
           this._map[otelSpanId] = [transaction, undefined];
           scope.setSpan(transaction);
       }
@@ -90,9 +95,10 @@ class SentrySpanProcessor implements SpanProcessor {
 
   onEnd(otelSpan: OpenTelemetrySpan): void {
     const hub = Sentry.getCurrentHub();
-    const scope = hub.getScope();
+    if (!hub) return;
 
-    if (!hub || !scope) return;
+    const scope = hub.getScope();
+    if (!scope) return;
 
     const otelSpanId = otelSpan.spanContext().spanId;
     const mapVal = this._map[otelSpanId];
@@ -100,15 +106,13 @@ class SentrySpanProcessor implements SpanProcessor {
     if (mapVal) {
       const [sentrySpan, parentSpan] = mapVal;
 
-      // Update op, description, and attach otel resource attributes
+      // Update op, description, status, and endTimestamp.
       updateSpanWithOtelData(sentrySpan, otelSpan);
 
       // We finish the span
       sentrySpan.finish();
-      // We set the parent span as the active span if parent span is defined
-      if (parentSpan) {
-          scope.setSpan(parentSpan);
-      }
+      // We set the parent span as the active span if parent span is defined.
+      scope.setSpan(parentSpan);
       // We remove the span from the map
       delete this._map[otelSpanId];
     }
@@ -595,42 +599,18 @@ It uses the following schema:
 type Primitive = number | string | boolean | bigint;
 
 interface Attributes<T extends Primitive> {
-    [key: string]: T | Array<T> | Record<string, T>;
+  [key: string]: T | Array<T> | Record<string, T>;
 }
 
 interface OpenTelemetryContext {
-    type?: "otel",
+  type?: "otel";
 
-    // https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L174-L186
-    attributes?: Attributes;
+  // https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/trace/v1/trace.proto#L174-L186
+  attributes?: Attributes;
 
-    // https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/resource/semantic_conventions/README.md#service
-    service?: {
-        // from: service.name
-        name: string;
-        // from: service.namespace
-        namespace?: string;
-        // from: service.instance.id
-        instance_id?: string;
-        // from: service.version
-        version?: string;
-    };
-
-    // https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/resource/semantic_conventions/README.md#telemetry-sdk
-    otel_sdk?: {
-        // from: telemetry.sdk.name
-        name?: string;
-        // from: telemetry.sdk.language
-        language?: SDKLanguage;
-        // from: telemetry.sdk.version
-        version?: string;
-        // from: telemetry.auto.version
-        auto_version?: string;
-    };
-
-    // Rest of attribute keys excluding service and sdk keys
-    // https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/resource/v1/resource.proto#L32
-    [key: string]?: string,
+  // https://github.com/open-telemetry/opentelemetry-proto/blob/724e427879e3d2bae2edc0218fff06e37b9eb46e/opentelemetry/proto/resource/v1/resource.proto
+  // Resource information.
+  resource?: Attributes;
 }
 ```
 
