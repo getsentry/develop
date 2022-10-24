@@ -210,8 +210,9 @@ We recommend implementing this feature for mobile SDKs.
 If the application crashes shortly after the init of the SDK, the SDK should provide a mechanism to guarantee transmission
 to Sentry. Ideally, SDKs could send the events in a separate process not impacted by the crashing application. With the
 limitations on mobile platforms, spawning an extra process only for sending envelopes is hard to achieve or impossible.
-The SDKs on these platforms send envelopes on a background thread to not block the UI thread. A crash occurring shortly
-after the SDK init could lead to never reporting such crashes, keeping the users unaware of a critical bug. 
+The SDKs on these platforms send envelopes on a background thread to not block the UI thread or because they forbid network
+operations on the UI thread. A crash occurring shortly after the SDK init could lead to never reporting such crashes,
+keeping the users unaware of a critical bug. 
 
 When the app crashes, the SDK needs to check if it happens two seconds after the SDK init. If it does, it needs to store
 that information on the disk. We recommend using a marker file, which the SDK checks on initialization. Suppose the SDK
