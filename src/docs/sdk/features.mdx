@@ -205,7 +205,7 @@ If the SDK is being [rate-limited](/sdk/rate-limiting/), which causes the SDK to
 
 ## Start-Up Crash Detection
 
-We recommend implementing this feature for mobile SDKs.
+We recommend implementing this feature for mobile and desktop SDKs.
 
 If the application crashes shortly after the init of the SDK, the SDK should provide a mechanism to guarantee transmission
 to Sentry. Ideally, SDKs could send the events in a separate process not impacted by the crashing application. With the
