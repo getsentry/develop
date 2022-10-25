@@ -65,7 +65,7 @@ class SentrySpanProcessor implements SpanProcessor {
 
     const mapVal = this._map[otelSpanId];
     if (mapVal) {
-    const [parentSpan] = mapVal;
+      const [parentSpan] = mapVal;
       // create a new span as a child of the parentSpan
       const childSpan = parentSpan.startChild({
         description: otelSpan.name,
