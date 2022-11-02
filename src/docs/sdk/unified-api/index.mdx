@@ -111,20 +111,6 @@ Additionally it also sets up all default integrations.
 
 - `last_event_id()`: Should return the last event ID emitted by the current scope. This is for instance used to implement user feedback dialogs.
 
-## Concurrency
-
-All SDKs should have the concept of concurrency safe context storage. What this means depends on the language. The basic idea is that a user of the SDK can call a method to safely provide additional context information for all events that are about to be recorded.
-
-This is implemented as a thread local stack in most languages, but in some (such as JavaScript) it might be global under the assumption that this is something that makes sense in the environment.
-
-Here are some common concurrency patterns:
-
-* **Thread bound hub**: In that pattern each thread gets its own "hub" which internally manages a stack of scopes.  If that pattern is followed one thread (the one that calls `init()`) becomes the "main" hub which is used as the base for newly spawned threads which will get a hub that is based on the main hub (but otherwise independent).
-
-* **Internally scoped hub**: On some platforms such as .NET ambient data is available in which case the Hub can internally manage the scopes.
-
-* **Dummy hub**: On some platforms concurrency just doesn't inherently exist.  In that case the hub might be entirely absent or just be a singleton without concurrency management.
-
 ## Hub
 
 Under normal circumstances the hub consists of a stack of clients and scopes.
@@ -229,6 +215,49 @@ A Client is the part of the SDK that is responsible for event creation. To give 
 - `Client::close(timeout)`: Flushes out the queue for up to timeout seconds. If the client can guarantee delivery of events only up to the current point in time this is preferred. This might block for timeout seconds. The client should be disabled or disposed after close is called
 
 - `Client::flush(timeout)`: Same as `close` difference is that the client is NOT disposed after calling flush
+
+## Concurrency
+
+All SDKs should have the concept of concurrency safe context storage. What this means depends on the language. The basic idea is that a user of the SDK can call a method to safely provide additional context information for all events that are about to be recorded.
+
+This is implemented as a thread local stack in most languages, but in some (such as JavaScript) it might be global under the assumption that this is something that makes sense in the environment.
+
+Here are some common concurrency patterns:
+
+* **Thread bound hub**: In that pattern each thread gets its own "hub" which internally manages a stack of scopes.  If that pattern is followed one thread (the one that calls `init()`) becomes the "main" hub which is used as the base for newly spawned threads which will get a hub that is based on the main hub (but otherwise independent).
+
+* **Internally scoped hub**: On some platforms such as .NET ambient data is available in which case the Hub can internally manage the scopes.
+
+* **Dummy hub**: On some platforms concurrency just doesn't inherently exist.  In that case the hub might be entirely absent or just be a singleton without concurrency management.
+
+## Hub propagation for concurrent tasks
+
+Correct usage and propagation of `Hub`s might be difficult to understand in some circumstances. The goal is that each concurrent task gets its own independent copy of the `Hub` and its associated `Scope`.
+
+Here we are talking about the abstract concept of a `Task`. It does not matter if these tasks are run in parallel on multiple threads, or concurrently on a single threaded runtime. Depending on the language ecosystem these Tasks might be called `Promise` or `Future`. Or they might as well be OS-level _threads_.
+
+We can differentiate between three distinct use-cases:
+
+* **Concurrent Tasks**: In this case we fan-out to multiple tasks that do work concurrently. For example "fetch N http requests concurrently" or "process N files in parallel".
+  This pattern might look like `await Promise.all(tasks.map(spawnTask))` in JavaScript or `futures::future::join_all(futures.iter().map(spawn_task)).await` in Rust.
+  In this case each task needs to have its _own independent copy_ of the `Hub`. Not giving each task its own copy would lead to bugs, as setting properties on the scope such as "url to fetch" or "file to process" would not be deterministic.
+  Language ecosystems or packages that allow hooking into their internal operations should be automatically patched so this `Hub` copy and propagation happens automatically.
+  Otherwise this patterns should be clearly documented so users know when to manually create a copy of the `Hub` and bind it to the task.
+
+* **"Fire and Forget" Tasks**: These are tasks that leave the current control flow of the calling function.
+  For example, JavaScript `Promise`s run to completion even if the caller does not `await` them. In Rust this is the case for `tokio::spawn` or `std::thread::spawn`.
+  These tasks need their _own independent copy_ of the `Hub` as well.
+  Language ecosystems or packages that allow hooking into task spawning should be automatically patched so this `Hub` propagation happens automatically.
+  Otherwise this pattern should be clearly documented so users know when to manually create a copy of the `Hub` and bind it to the task.
+
+* **Await-ed Tasks**: These are tasks that are directly `await`-ed or `join`-ed, and do not outlive their caller context.
+  This is the case for simple async function calls, but also a special case of the "fire and forget" concept above.
+  In this case, the tasks do not need their own independent copy of the `Hub`, but they can _reuse the existing `Hub`_. As the caller is suspended while `await`-ing the task, scope modifications can not overlap.
+  Furthermore, it is often desired that scope modifications are visible after the `await`-ed task returns control flow to its caller.
+  It is advised to explicitly bind a `Hub` to the task, even though it might not be strictly necessary depending on the language ecosystem.
+  For example, a `async_future().await` call in Rust would reuse the callers `Hub` directly, whereas `tokio::spawn(async_future).await` does not, and would need to bind the `Hub` explicitly.
+  Again, language ecosystems or packages that allow hooking into task creation should be automatically patched so this `Hub` propagation happens automatically.
+  Otherwise this pattern should be clearly documented so users know when explicit binding of the current `Hub` is needed.
 
 ## Hints
 
