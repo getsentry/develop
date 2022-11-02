@@ -160,7 +160,7 @@ const sdk = new NodeSDK({
 import { Context, TextMapPropagator } from "@opentelemetry/api";
 import { SpanContext } from "@opentelemetry/api";
 
-export class SentryPropogator implements TextMapPropagator {
+export class SentryPropagator implements TextMapPropagator {
   inject(context: Context, carrier: unknown, setter: TextMapSetter): void {
     const spanContext = getSpanContext(context);
     if (isSentryRequest(spanContext)) {
