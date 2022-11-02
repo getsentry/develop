@@ -168,7 +168,16 @@ TODO: We need to make sure we filter these out somehow. Spec WIP
 
 ### Step 3: Define `getTraceData`
 
-We want to make sure a transaction is started with information from the `sentry-trace` and `baggage` headers.
+```ts
+function getTraceData(otelSpan: OtelSpan): Partial<TransactionContext> {
+  const spanContext = otelSpan.spanContext();
+  const traceId = spanContext.traceId;
+  const spanId = spanContext.spanId;
+
+  const parentSpanId = otelSpan.parentSpanId;
+  return { spanId, traceId, parentSpanId };
+}
+```
 
 If the user is using the `SentryPropagator`, the `sentry-trace` information should be getting attached to incoming spans automatically. This should mean that we don't need to explicitly grab the header. The `SentryPropagator` should also be putting the Dynamic Sampling Context from the baggage header onto the OpenTelemetry Context, which then can be used in `getTraceData` to inject the DSC in during transaction creation.
 
