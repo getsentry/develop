@@ -55,7 +55,7 @@ You can replace <code>snuba-consumers</code> with other consumer groups or <code
 
 This option is as follows ([reported](https://github.com/getsentry/self-hosted/issues/1690) by [@gabn88](https://github.com/gabn88)):
 
-1. Set offset to latest and execute
+1. Set offset to latest and execute:
    ```shell
    docker-compose run --rm kafka kafka-consumer-groups --bootstrap-server kafka:9092 --all-groups --all-topics --reset-offsets --to-latest --execute
    ```
