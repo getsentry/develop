@@ -217,7 +217,7 @@ export default () => {
           <SidebarLink to="/sdk/philosophy/">Philosophy</SidebarLink>
           <SidebarLink to="/sdk/basics/">Basics</SidebarLink>
           <SidebarLink to="/sdk/overview/">Overview</SidebarLink>
-          <SidebarLink to="/sdk/craft-quick-start/">craft Quick Start</SidebarLink>
+          <SidebarLink to="/sdk/craft-quick-start/">Craft Quick Start</SidebarLink>
           <SidebarLink to="/sdk/unified-api/" title="Unified API"></SidebarLink>
           <SidebarLink to="/sdk/features/">Expected Features</SidebarLink>
           <SidebarLink to="/sdk/data-handling/">Data Handling</SidebarLink>
