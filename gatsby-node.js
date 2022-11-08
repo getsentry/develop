@@ -9,7 +9,6 @@ Sentry.init({
   dsn:
     process.env.SENTRY_DSN ||
     "https://f107f3f0deb544289e4e056922e5e5a4@o1.ingest.sentry.io/5266138",
-  debug: true,
   environment: activeEnv,
   tracesSampleRate: activeEnv === "development" ? 0 : 1,
   profilesSampleRate: activeEnv === "development" ? 0 : 1, // Set profiling sampling rate.
