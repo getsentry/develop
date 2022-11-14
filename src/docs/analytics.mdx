@@ -113,7 +113,7 @@ Note that in the future this will change so that by default, all events will go 
 
 ## Route Based Frontend Analytics
 
-All in-app page loads will generate analytics events by default (both Reload and Amplitude). All analytics related to page load should be handled within the route based analytics system instead of manually instrume front-end events. The default names are based on the parameterized path and are prefixed with `Page View`. Here is an example event name:
+All in-app page loads will generate analytics events by default (both Reload and Amplitude). All analytics related to page load should be handled within the route based analytics system instead of manually instruming front-end events. The default names are based on the parameterized path and are prefixed with `Page View`. Here is an example event name:
 
 ```
 Page View: :OrgId :ProjectId Releases
@@ -123,7 +123,7 @@ Any field that has a `:` at the front is a parameterized field. The value of the
 
 ### Cusomization
 
-Route based analytics can be customized to have different event names add parameters. For class based components, `withRouteAnalytics` can be used. For functional components, the following hooks can be used:
+Route based analytics can be customized to have different event names and parameters. For class based components, `withRouteAnalytics` can be used. For functional components, the following hooks can be used:
 
 - `useDisableRouteAnalytics`: Disables route based analytics for the component.
 - `useRouteAnalyticsEventNames`: Customizes the event name. First argument is the Reload `eventKey` and second argument is the Amplitude `eventName`.
@@ -146,7 +146,7 @@ export default function SpanDetailsContentWrapper(props: Props) {
 
 ```
 
-The main purpose of customizing the event names is to create more readable event names that don't won't change if the underlying route changes.
+The main purpose of customizing the event names is to create more readable event names that won't change if the underlying route changes.
 
 
 ## For Frontend events
