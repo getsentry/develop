@@ -29,12 +29,14 @@ To deploy to production using Freight, follow these steps:
 
 If you've deployed something bad, you'll need to do the following:
 
-- Deploy the most recently known good commit that succeeded ASAP. Keep an eye on
-  this as deploys MUST finish, otherwise it's possible some web machines will
-  still be stuck on the bad deploy's code.
+- Immediately deploy the most recently known good commit using Freight. Under "Deploy History" click the release you want to roll back to, and click "Re-deploy" in the bottom right
+- Lock Freight deploys by clicking the "Lock Deploys" button in the top right
 - Inform #team-engineering that you're rolling back a bad deploy, and that no
   one should deploy getsentry master until the issue is resolved.
+- Keep an eye on the deploy, as deploys MUST finish, otherwise it's possible some web machines will
+  still be stuck on the bad deploy's code.
 - Fix the issue, and get it merged into master.
+- Unlock Freight deploys
 - Deploy the fix, and verify that the issue has indeed been fixed.
 - Inform #team-engineering that it is safe to deploy getsentry again.
 
