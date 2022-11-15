@@ -268,7 +268,7 @@ If Performance Monitoring is both supported by the SDK and enabled in the client
 - span status must match HTTP response status code ([see Span status to HTTP status code mapping](/sdk/event-payloads/span/))
 - when network error occurs, span status must be set to `internal_error`
 
-The `url` in breadcumbs and span descriptions must be stripped of data worth protecting. Query parameters and username/password must be removed.
+The `url` in breadcumbs and `$url` in span descriptions must be stripped of sensitive data like query parameters or username/password.
 This example URL `https://username:password@example.com/bla/blub?token=abc&sessionid=123&save=true#fragment` has to be modified to look like this `https://%s:%s@example.com/bla/blub?token=%s&sessionid=%s&save=%s#fragment`.
 
 If the config option `sendDefaultPii` is set to `true` the `url` can contain a full URL.
