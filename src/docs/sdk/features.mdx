@@ -259,6 +259,11 @@ Add a breadcrumb for each outgoing HTTP request after the request finishes:
   - `request_body_size` Size in bytes
   - `response_body_size` Size in bytes
 
+The `url` must be stripped of data worth protecting. Query parameters and username/password must be removed.
+This example URL `https://username:password@example.com/bla/blub?token=abc&sessionid=123&save=true#fragment` has to be modified to look like this `https://%s:%s@example.com/bla/blub?token=%s&sessionid=%s&save=%s#fragment`.
+
+If the config option `sendDefaultPii` is set to `true` the `url` can contain a full URL.
+
 If Performance Monitoring is both supported by the SDK and enabled in the client application when the transaction is active a new `Span` must be created around the HTTP request:
 
 - operation: `http.client`
