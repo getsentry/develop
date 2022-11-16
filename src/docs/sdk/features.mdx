@@ -268,10 +268,34 @@ If Performance Monitoring is both supported by the SDK and enabled in the client
 - span status must match HTTP response status code ([see Span status to HTTP status code mapping](/sdk/event-payloads/span/))
 - when network error occurs, span status must be set to `internal_error`
 
-The `url` in breadcumbs and `$url` in span descriptions must be stripped of sensitive data like query parameters and/or username/password.
-This example URL `https://username:password@example.com/bla/blub?token=abc&sessionid=123&save=true#fragment` has to be modified to look like this `https://%s:%s@example.com/bla/blub?token=%s&sessionid=%s&save=%s#fragment`.
 
-If the config option `sendDefaultPii` is set to `true` the URL can contain sensitive information.
+### Scrubbing Sensitive Data
+
+HTTP Client Integrations record the URLs of HTTP requests. URLs can contain two categories of sensitive information:
+* Privacy related data like passwords, private keys, etc.
+* Personally identifiable information (PII) like email addresses, addresses, names, social security numbers, etc.
+
+#### Privacy Related Data
+
+Privacy related data from the `url` in breadcumbs and `$url` in span descriptions must always be scrubbed.
+
+The username and passwords that can be included in an URL (like `https://username:password123@example.com`) must always be scrubbed.
+
+Query params that contain sensitive information must also be redacted.
+
+The SDK should maintain a list of query params that can include sensitive data. The default of the list should be the same list that relay uses to scrub sensitive data: https://github.com/getsentry/relay/blob/master/relay-general/src/pii/regexes.rs#L272
+
+The values of all query parameters whose name is in the list of params with sensitive data must be scrubbed.
+
+This example URL `https://username:password@example.com/bla/blub?token=abc&sessionid=123&save=true&secret=geheim123#fragment` has to be modified to look like this `https://%s:%s@example.com/bla/blub?token=%s&sessionid=123&save=true&secret=%s#fragment`.
+
+#### Personally Identifiable Information (PII)
+
+SDKs should also give the user the possibility to define a custom list of query param names that should be scrubbed. Given the user full control over what data gets sent do Sentry.
+
+There should be a config option to the SDKs `init()` call that can set a list of query params that should be scrubbed. By setting this config option the default list of query params with sensitive data is overridden.
+
+This way it is possible to set additional query params to be scrubbed, but also make it possible for the user to not scrubbing any query params. (Which is not recommended)
 
 
 ### HTTP Client Errors
