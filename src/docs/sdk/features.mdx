@@ -277,7 +277,7 @@ HTTP Client Integrations record the URLs of HTTP requests. URLs can contain two 
 
 #### Privacy Related Data
 
-Privacy related data from the `url` in breadcumbs and `$url` in span descriptions must always be scrubbed.
+The SDKs must scrub privacy-related data from the `url` in breadcumbs and `$url` in span descriptions.
 
 The username and passwords that can be included in an URL (like `https://username:password123@example.com`) must always be scrubbed.
 
