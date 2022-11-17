@@ -27,7 +27,8 @@ Before diving into the specification with all the edge cases, let's look at two 
 1. The user clicks a button that triggers some requests to the backend and stores data in the
 local database. The SDK can create a meaningful transaction in that case.
 2. The user clicks a button that solely validates some form data and triggers nothing that the
-SDK can automatically instrument. The SDK could only create a transaction without any spans, which would be valueless.
+SDK can automatically instrument. The SDK could only create a transaction without any spans, which would
+be valueless.
 
 # Specification
 
@@ -35,124 +36,115 @@ Users can change the `idleTimeout` via the SDK config options. The default is 3.
 
 The specification is written in the [Gherkin syntax](https://cucumber.io/docs/gherkin/reference/).
 
-**1. Starting UI Event transactions** 
-```
-Given an instrumentable UI event
-Then the SDK starts a UI event transaction 
-And starts the idle timeout with idleTimeout of the options
-```
+```Gherkin
+Scenario: Starting UI Event transactions
+    Given an instrumentable UI event
+    Then the SDK starts a UI event transaction 
+    And starts the idle timeout with idleTimeout of the options
 
-**5. Wait for children when starting span**
-```
-Given a UI event transaction
-When the SDK starts a child span
-Then the SDK cancels the idle timeout
-And waits for the child to finish
-```
+Scenario: Wait for children when starting span
+    Given a UI event transaction
+    When the SDK starts a child span
+    Then the SDK cancels the idle timeout
+    And waits for the child to finish
 
-**4. Start timeout when the last span finishes**
-```
-Given a UI event transaction
-And the transaction has one or multiple running child spans
-And the transaction is waiting for its children to finish
-When the SDK finishes the last child span
-Then the SDK starts the idle timeout
-```
+Scenario: Start timeout when the last span finishes
+    Given a UI event transaction
+    And the transaction has one or multiple running child spans
+    And the transaction is waiting for its children to finish
+    When the SDK finishes the last child span
+    Then the SDK starts the idle timeout
 
-**3. Don't reset timeout when the second last span finishes**
-```
-Given a UI event transaction
-And the transaction has two running child spans
-When the SDK finishes the first child span
-Then the SDK doesn't reset the idle timeout
-And waits for the children to finish
-```
+Scenario: Don't reset timeout when the second last span finishes
+    Given a UI event transaction
+    And the transaction has two running child spans
+    When the SDK finishes the first child span
+    Then the SDK doesn't reset the idle timeout
+    And waits for the children to finish
 
-**2. Discard UI event transactions without child spans**
-```
-Given a UI event transaction
-And the transaction has no child spans
-When the idleTimeout times out
-Then the SDK discards the transaction 
-```
+Scenario: Discard UI event transactions without child spans
+    Given a UI event transaction
+    And the transaction has no child spans
+    When the idleTimeout times out
+    Then the SDK discards the transaction 
 
-**3. Set time to last finished child span**
-```
-Given a UI event transaction
-And the transaction has one finished child span
-And the transaction has one running child span
-When the running child span finishes
-Then the SDK finishes the transaction
-And trims the end time of the transaction to the one of the last finished child span
-```
+Scenario: Set time to last finished child span
+    Given a UI event transaction
+    And the transaction has one finished child span
+    And the transaction has one running child span
+    When the running child span finishes
+    Then the SDK finishes the transaction
+    And trims the end time of the transaction to the one of the last finished child span
 
-**6. Same UI element with same event**
-```
-Given an ongoing UI event transaction
-When the user triggers the same UI event with the same type for the same UI element
-Then the SDK resets the timeout
-And doesn't create a new transaction
-```
+Scenario: Same UI element with same event
+    Given an ongoing UI event transaction
+    When the user triggers the same UI event with the same type for the same UI element
+    Then the SDK resets the timeout
+    And doesn't create a new transaction
 
-**10. Same UI element with different event**
-If your SDK binds transactions to the scope see 11.
-```
-Given an ongoing UI event transaction
-When the user triggers the same UI element with a different event
-Or the user triggers a different UI element
-Then the SDK finishes the ongoing transaction
-And sets the status to OK
-And waits for the children to finish
-And cancels the timeout
-And starts a new transaction
+# If your SDK binds auto-genrated transactions to the scope see binding to scope
+Scenario: Same UI element with different event
+    Given an ongoing UI event transaction
+    When the user triggers the same UI element with a different event
+    Or the user triggers a different UI element
+    Then the SDK finishes the ongoing transaction
+    And sets the status to OK
+    And waits for the children to finish
+    And cancels the timeout
+    And starts a new transaction
 ```
 
 ## Binding to scope
 
-**11. Same UI element with different event**
-```
-Given an ongoing UI event transaction
-When the user triggers the same UI element with a different event
-Or the user triggers a different UI element
-Then the SDK finishes the ongoing transaction
-And sets the status to OK
-And waits for the children to finish
-And cancels the timeout
-And removes the ongoing transaction from the scope
-And starts a new transaction
-And puts the new transaction on the scope
+On platforms mainly interacting with the static API, such as mobile, it's typical to bind auto-generated
+transactions to the scope so that users can access them via the static API. We recommend binding UI event
+transactions to the scope on these platforms. The following extra rules apply as UI event transactions
+could interfere with other auto-generated transactions.
+
+```Gherkin
+Scenario: Same UI element with different event
+    Given an ongoing UI event transaction
+    When the user triggers the same UI element with a different event
+    Or the user triggers a different UI element
+    Then the SDK finishes the ongoing transaction
+    And sets the status to OK
+    And waits for the children to finish
+    And cancels the timeout
+    And removes the ongoing transaction from the scope
+    And starts a new transaction
+    And puts the new transaction on the scope
+
+Scenario: UI event triggered but transaction ended
+    Given an auto-generated transaction from a any UI event
+    And the transaction already  is finished
+    When the user triggers the same UI event
+    Then the SDK starts a new UI event transaction
+
+Scenario: Manually created transaction bound to the scope
+    Given an ongoing manually created transaction by the user bound to the scope
+    When the SDK creates a new UI event transaction
+    Then the SDK doesn't add the UI event transaction to the scope 
 ```
 
-**11. UI event triggered but transaction ended**
-```
-Given an auto-generated transaction from a any event
-And the transaction finished
-When the user triggers the same event
-Then the SDK starts a new transaction
-```
 
-**6. Ongoing screen load transaction**
-```
-Given an ongoing screen load transaction
-When the SDK starts a new UI event transaction
-Then the SDK doesn't bind the new UI event transaction to the scope
-```
+### Screen load transactions
 
-**7. Ongoing UI event transaction**
-```
-Given an ongoing UI event transaction
-When the SDK creates a new screen load transaction
-Then the SDK finishes the ongoing UI event transaction
-And removes it from the scope
-And sets the status to canceled
-And waits for its children to finish
-```
+This section deals specifically with auto-generated transactions for loading screens. If your SDK has
+other types of auto-generated transactions, please update the specification here.
 
-**8. Manually created transaction on the scope**
-```
-Given an ongoing manually transaction bound to the scope by the user
-When the SDK creates a new auto-generated transaction
-Then the SDK doesn't add the new auto-generated transaction to the scope 
+```Gherkin
+Scenario: Ongoing UI event transaction
+    Given an ongoing UI event transaction
+    When the SDK creates a new screen load transaction
+    Then the SDK finishes the ongoing UI event transaction
+    And removes it from the scope
+    And sets the status to canceled
+    And waits for its children to finish
+
+Scenario: Ongoing screen load transaction
+    Given an ongoing screen load transaction
+    When the SDK starts a new UI event transaction
+    Then the SDK doesn't bind the new UI event transaction to the scope
 ```
 
 ## Transaction name
