@@ -137,30 +137,6 @@ eval "\$(pyenv init --path)"
 
 ````
 
-```shell {filename: ~/.config/fish/config.fish} {tabTitle: Fish}
-# pyenv init
-status is-login; and pyenv init --path | source
-````
-
-### (Optional) Setup `fish` shell
-
-If you use [fish](https://fishshell.com/) you need to manually set some of the environment variables. This only needs to be done once.
-
-```shell {tabTitle: Fish}
-set -Ux PYENV_ROOT $HOME/.pyenv
-# fish >=3.2.0
-fish_add_path $PYENV_ROOT/bin
-# fish <3.2.0
-set -U fish_user_paths $PYENV_ROOT/bin $fish_user_paths
-```
-
-Once that's done, your shell needs to be reloaded. You can either reload it in-place, or close your terminal and start it
-again and cd into sentry. To reload it, run:
-
-```shell
-exec "$SHELL"
-```
-
 ### Virtual Environment
 
 You're now ready to create a Python virtual environment. Run:
@@ -177,10 +153,6 @@ source .venv/bin/activate
 
 ```shell {tabTitle: Zsh}
 source .venv/bin/activate
-```
-
-```shell {tabTitle: Fish}
-source .venv/bin/activate.fish
 ```
 
 If everything worked, running `which python` should now result in something like `/Users/you/sentry/.venv/bin/python`.
@@ -213,12 +185,6 @@ grep --silent "$VOLTA_HOME/bin" <<< $PATH || export PATH="$VOLTA_HOME/bin:\$PATH
 ```shell {filename: ~/.zshrc} {tabTitle: Zsh}
 export VOLTA_HOME="$HOME/.volta"
 grep --silent "$VOLTA_HOME/bin" <<< $PATH || export PATH="$VOLTA_HOME/bin:$PATH"
-````
-
-```shell {filename: ~/.config/fish/config.fish} {tabTitle: Fish}
-set -gx VOLTA_HOME "$HOME/.volta"
-set -gx PATH "$VOLTA_HOME/bin" \$PATH
-
 ````
 
 Now, if you try and run `volta`, you should see some help text, meaning volta is installed correctly. To install node,
@@ -281,11 +247,6 @@ eval "\$(direnv hook bash)"
 
 ```shell {filename: ~/.zshrc} {tabTitle: Zsh}
 eval "$(direnv hook zsh)"
-````
-
-```shell {filename ~/.config/fish/config.fish} {tabTitle: Fish}
-direnv hook fish | source
-
 ````
 
 And after doing that, reload your shell:
