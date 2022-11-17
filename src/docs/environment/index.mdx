@@ -104,21 +104,6 @@ Sentry depends on binary Python packages called [Python Wheels](https://packagin
 - Linux (arm64 or x86_64) compatible with [PEP-600](https://peps.python.org/pep-0600/) (``manylinux_2_28)
 - macOS 11 (x86_64) or macOS 12 (arm64) or newer
 
-If your development machine does not run one of the above systems, you need to install the Rust
-toolchain.
-
-### (Optional) Install Rust toolchain
-
-Follow the instructions at [https://www.rust-lang.org/tools/install](https://www.rust-lang.org/tools/install)
-to install the compiler and related tools. Once installed, the Sentry setup will automatically use Rust to build all
-binary modules without additional configuration.
-
-We generally track the latest stable Rust version, which updates every six weeks. Therefore, ensure to keep your Rust
-toolchain up to date by occasionally running:
-
-```shell
-rustup update stable
-```
 
 ## Python
 
