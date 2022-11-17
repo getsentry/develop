@@ -135,7 +135,7 @@ for instructions on how to set up Bash.
 
 eval "\$(pyenv init --path)"
 
-````
+```
 
 ### Virtual Environment
 
@@ -180,19 +180,19 @@ startup script:
 export VOLTA_HOME="$HOME/.volta"
 grep --silent "$VOLTA_HOME/bin" <<< $PATH || export PATH="$VOLTA_HOME/bin:\$PATH"
 
-````
+```
 
 ```shell {filename: ~/.zshrc} {tabTitle: Zsh}
 export VOLTA_HOME="$HOME/.volta"
 grep --silent "$VOLTA_HOME/bin" <<< $PATH || export PATH="$VOLTA_HOME/bin:$PATH"
-````
+```
 
 Now, if you try and run `volta`, you should see some help text, meaning volta is installed correctly. To install node,
 simply run:
 
 ```shell
 node -v
-````
+```
 
 Volta intercepts this and automatically downloads and installs the node and yarn versions in sentry's `package.json`.
 
@@ -243,17 +243,17 @@ After direnv is installed add the following snippet to the end of your startup s
 ```shell {filename: ~/.bashrc} {tabTitle: Bash}
 eval "\$(direnv hook bash)"
 
-````
+```
 
 ```shell {filename: ~/.zshrc} {tabTitle: Zsh}
 eval "$(direnv hook zsh)"
-````
+```
 
 And after doing that, reload your shell:
 
 ```shell
 exec "$SHELL"
-````
+```
 
 Any time the `.envrc` configuration changes (including the first load) you will be prompted to run
 
