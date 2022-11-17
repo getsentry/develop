@@ -74,15 +74,18 @@ Scenario: Set time to last finished child span
     And the transaction has one running child span
     When the running child span finishes
     Then the SDK finishes the transaction
-    And trims the end time of the transaction to the one of the last finished child span
+    And trims the end time of the transaction to the one of the last finished
+        child span
 
 Scenario: Same UI element with same event
     Given an ongoing UI event transaction
-    When the user triggers the same UI event with the same type for the same UI element
+    When the user triggers the same UI event with the same type for the same
+        UI element
     Then the SDK resets the timeout
     And doesn't create a new transaction
 
-# If your SDK binds auto-genrated transactions to the scope see binding to scope
+# If your SDK binds auto-genrated transactions to the scope see binding
+# to scope
 Scenario: Same UI element with different event
     Given an ongoing UI event transaction
     When the user triggers the same UI element with a different event
@@ -121,7 +124,8 @@ Scenario: UI event triggered but transaction ended
     Then the SDK starts a new UI event transaction
 
 Scenario: Manually created transaction bound to the scope
-    Given an ongoing manually created transaction by the user bound to the scope
+    Given an ongoing manually created transaction by the user bound to the
+        scope
     When the SDK creates a new UI event transaction
     Then the SDK doesn't add the UI event transaction to the scope 
 ```
@@ -149,17 +153,8 @@ Scenario: Ongoing screen load transaction
 
 ## Transaction name
 
-**12. Transaction name**
-```
-When the user clicks a button
-Then the SDK starts a transaction
-And the transaction name is the [[screen.name](http://screen.name/)](http://screen.name) + [[view.id](http://view.id/)](http://view.id) or the accessibility identifier of the view (e.g. `LoginActivity.login_button`)
-```
-
-**13. Transaction name [[view.id](http://view.id/)](http://view.id) or accessibility identifier not specified**
-```
-When the user clicks a button
-And the button has no [[view.id](http://view.id/)](http://view.id) or accessibility identifier
-Then the SDK doesn't start a transaction
-And prints a warning to the console
-```
+The user should be able to identify to which UI element the UI event transaction belongs on which screen
+by only looking at the transaction name. Choose whatever works best for your specific platform. Be
+attentive not to use any PII in the transaction name. One recommendation is 
+`screen name + view identifier || accessibility identifier`. On Android, this would map to
+`LoginActivity.login_button`, and on Cocoa, to `YourApp.LoginViewController.loginButton`.
