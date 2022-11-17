@@ -101,8 +101,8 @@ You can verify that Docker is running by running `docker ps` in your terminal.
 
 Sentry depends on binary Python packages called [Python Wheels](https://packaging.python.org/en/latest/specifications/binary-distribution-format/#binary-distribution-format), which we distribute for the following platforms:
 
-- Linux compatible with [PEP-513](https://www.python.org/dev/peps/pep-0513/) (`manylinux1`)
-- macOS 10.15 or newer
+- Linux (arm64 or x86_64) compatible with [PEP-600](https://peps.python.org/pep-0600/) (``manylinux_2_28)
+- macOS 11 (x86_64) or macOS 12 (arm64) or newer
 
 If your development machine does not run one of the above systems, you need to install the Rust
 toolchain.
