@@ -226,6 +226,7 @@ export default () => {
           <SidebarLink to="/sdk/rate-limiting/">Rate Limiting</SidebarLink>
           <SidebarLink to="/sdk/performance/" title="Performance">
             <SidebarLink to="/sdk/performance/span-operations/">Span Operations</SidebarLink>
+            <SidebarLink to="/sdk/performance/ui-event-transactions/">UI Event Transactions</SidebarLink>
             <SidebarLink to="/sdk/performance/dynamic-sampling-context/">Dynamic Sampling Context</SidebarLink>
             <SidebarLink to="/sdk/performance/opentelemetry/">OpenTelemetry Support</SidebarLink>
           </SidebarLink>
