@@ -58,6 +58,7 @@ brew bundle --verbose
 On Docker Desktop, you can adjust the memory limits by going to: `Preferences > Resources > Memory`
 
 Or through CLI:
+
 ```shell
 # quit Docker if its running
 osascript -e 'quit app "Docker"'
@@ -68,7 +69,7 @@ cat /Users/`id -un`/Library/Group\ Containers/group.com.docker/settings.json | g
 # increase configured memory to something reasonable
 sed -i .bak 's/"memoryMiB":.*/"memoryMiB": 7168,/g' /Users/`id -un`/Library/Group\ Containers/group.com.docker/settings.json
 
-# check configuration 
+# check configuration
 cat /Users/`id -un`/Library/Group\ Containers/group.com.docker/settings.json | grep "memoryMiB"
 
 # start up docker with next steps
@@ -151,13 +152,15 @@ for instructions on how to set up Bash.
 ```shell {filename: ~/.zprofile} {tabTitle: Zsh}
 
 # It is assumed that pyenv is installed via Brew, so this is all we need to do.
-eval "$(pyenv init --path)"
-```
+
+eval "\$(pyenv init --path)"
+
+````
 
 ```shell {filename: ~/.config/fish/config.fish} {tabTitle: Fish}
 # pyenv init
 status is-login; and pyenv init --path | source
-```
+````
 
 ### Virtual Environment
 
@@ -204,25 +207,27 @@ startup script:
 
 ```shell {filename: ~/.bashrc} {tabTitle: Bash}
 export VOLTA_HOME="$HOME/.volta"
-grep --silent "$VOLTA_HOME/bin" <<< $PATH || export PATH="$VOLTA_HOME/bin:$PATH"
-```
+grep --silent "$VOLTA_HOME/bin" <<< $PATH || export PATH="$VOLTA_HOME/bin:\$PATH"
+
+````
 
 ```shell {filename: ~/.zshrc} {tabTitle: Zsh}
 export VOLTA_HOME="$HOME/.volta"
 grep --silent "$VOLTA_HOME/bin" <<< $PATH || export PATH="$VOLTA_HOME/bin:$PATH"
-```
+````
 
 ```shell {filename: ~/.config/fish/config.fish} {tabTitle: Fish}
 set -gx VOLTA_HOME "$HOME/.volta"
-set -gx PATH "$VOLTA_HOME/bin" $PATH
-```
+set -gx PATH "$VOLTA_HOME/bin" \$PATH
+
+````
 
 Now, if you try and run `volta`, you should see some help text, meaning volta is installed correctly. To install node,
 simply run:
 
 ```shell
 node -v
-```
+````
 
 Volta intercepts this and automatically downloads and installs the node and yarn versions in sentry's `package.json`.
 
@@ -252,22 +257,24 @@ First, you should be done bootstrapping. Then, run `brew install direnv` and add
 startup script:
 
 ```shell {filename: ~/.bashrc} {tabTitle: Bash}
-eval "$(direnv hook bash)"
-```
+eval "\$(direnv hook bash)"
+
+````
 
 ```shell {filename: ~/.zshrc} {tabTitle: Zsh}
 eval "$(direnv hook zsh)"
-```
+````
 
 ```shell {filename ~/.config/fish/config.fish} {tabTitle: Fish}
 direnv hook fish | source
-```
+
+````
 
 And after doing that, reload your shell:
 
 ```shell
 exec "$SHELL"
-```
+````
 
 Any time the `.envrc` configuration changes (including the first load) you will be prompted to run `direnv allow` before any
 of the configuration will run. This is for security purposes and you are encouraged to inspect the changes before running this command.
