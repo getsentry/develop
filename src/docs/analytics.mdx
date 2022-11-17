@@ -121,9 +121,9 @@ Page View: :OrgId :ProjectId Releases
 
 Any field that has a `:` at the front is a parameterized field. The value of the field will be the value of the parameter. For example, the `:OrgId` field will be the value of the `orgId` parameter (really the `slug`).
 
-### Cusomization
+### Customization
 
-Route based analytics can be customized to have different event names and parameters. For class based components, `withRouteAnalytics` can be used. For functional components, the following hooks can be used:
+Route based analytics can be customized to have different event names and parameters. For functional components, the following hooks can be used:
 
 - `useDisableRouteAnalytics`: Disables route based analytics for the component.
 - `useRouteAnalyticsEventNames`: Customizes the event name. First argument is the Reload `eventKey` and second argument is the Amplitude `eventName`.
@@ -148,6 +148,13 @@ export default function SpanDetailsContentWrapper(props: Props) {
 
 The main purpose of customizing the event names is to create more readable event names that won't change if the underlying route changes.
 
+For class based components, the following functions can be used:
+
+- `setDisableRouteAnalytics`: Disables route based analytics for the component.
+- `setEventNames`: Customizes the event name. First argument is the Reload `eventKey` and second argument is the Amplitude `eventName`.
+- `setRouteAnalyticsParams`: Customizes the parameters.
+
+You will need to import both `withRouteAnalytics` and `WithRouteAnalyticsProps`. `WithRouteAnalyticsProps` needs to be added to the Props of the class. The functions can then accessed through the Props. For example, `this.props.setEventNames('issue_details.viewed', 'Issue Details: Viewed")`. `withRouteAnalytics` is called while exporting the class.
 
 ## For Frontend events
 
