@@ -23,7 +23,7 @@ for Sentry engineers.
 
 This will guide you through manually setting up your development environment.
 
-### Clone the Repository
+## Clone the Repository
 
 To get started, clone the repo at [https://github.com/getsentry/sentry](https://github.com/getsentry/sentry) or your fork.
 
@@ -97,15 +97,12 @@ cat /Users/`id -un`/Library/Group\ Containers/group.com.docker/settings.json | g
 
 You can verify that Docker is running by running `docker ps` in your terminal.
 
-## Build Toolchain
+## Python
 
 Sentry depends on binary Python packages called [Python Wheels](https://packaging.python.org/en/latest/specifications/binary-distribution-format/#binary-distribution-format), which we distribute for the following platforms:
 
 - Linux (arm64 or x86_64) compatible with [PEP-600](https://peps.python.org/pep-0600/) (``manylinux_2_28)
 - macOS 11 (x86_64) or macOS 12 (arm64) or newer
-
-
-## Python
 
 We utilize [pyenv](https://github.com/pyenv/pyenv) to install and manage Python versions. It got
 installed when you ran `brew bundle`.
