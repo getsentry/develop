@@ -120,7 +120,7 @@ Scenario: Same UI element with different event
 
 Scenario: UI event triggered but transaction ended
     Given an auto-generated transaction from any UI event
-    And the transaction already  is finished
+    And the transaction is already finished
     When the user triggers the same UI event
     Then the SDK starts a new UI event transaction
 
