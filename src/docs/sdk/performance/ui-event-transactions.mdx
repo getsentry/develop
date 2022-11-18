@@ -17,7 +17,7 @@ two concepts is needed to implement the wait-and-see logic: __idle transactions_
 __wait-for-children__. Check out the specification below to see how those two concepts work
 together with covering multiple edge cases. The following description is drastically simplified:
 
-* __Idle-transactions__: The SDK starts an idle timeout for the transaction when starting it.
+* __Idle-transactions__: The SDK schedule an idle timeout for the transaction when starting it.
 When the transaction or any of its spans starts a new span, it resets the timeout. The SDK finishes
 the transaction when the timeout succeeds.
 * __Wait-for-children__: A transaction waits for all its child spans to finish before finishing itself.
@@ -40,7 +40,7 @@ The specification is written in the [Gherkin syntax](https://cucumber.io/docs/gh
 Scenario: Starting UI Event transactions
     Given an instrumentable UI event
     Then the SDK starts a UI event transaction 
-    And starts the idle timeout with idleTimeout of the options
+    And schedule the idle timeout with idleTimeout of the options
 
 Scenario: Wait for children when starting span
     Given a UI event transaction
@@ -48,7 +48,7 @@ Scenario: Wait for children when starting span
     Then the SDK cancels the idle timeout
     And waits for the child to finish
 
-Scenario: Start timeout when the last span finishes
+Scenario: Schedule timeout when the last span finishes
     Given a UI event transaction
     And the transaction has one or multiple running child spans
     And the transaction is waiting for its children to finish
