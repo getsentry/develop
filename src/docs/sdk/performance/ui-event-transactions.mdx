@@ -40,7 +40,8 @@ The specification is written in the [Gherkin syntax](https://cucumber.io/docs/gh
 Scenario: Starting UI Event transactions
     Given an instrumentable UI event
     Then the SDK starts a UI event transaction 
-    And schedule the idle timeout with idleTimeout of the options
+    And schedules to finish the UIEventTransaction with
+     the idle timeout of the options
 
 Scenario: Wait for children when starting span
     Given a UI event transaction
@@ -105,6 +106,10 @@ transactions to the scope so that users can access them via the static API. We r
 transactions to the scope on these platforms. The following extra rules apply as UI event transactions
 could interfere with other auto-generated transactions.
 
+The SDK adds auto-generated spans to the transaction bound to the scope. UI event transactions need
+auto-generated spans not to be empty. Therefore, the SDK shouldn't start a UI event transaction if there
+is already an ongoing screen load/navigation transaction or a transaction bound to the scope by the user.
+
 ```Gherkin
 Scenario: Same UI element with different event
     Given an ongoing UI event transaction
@@ -124,10 +129,6 @@ Scenario: UI event triggered but transaction ended
     When the user triggers the same UI event
     Then the SDK starts a new UI event transaction
 
-# The SDK adds auto-generated spans to the transaction bound to the scope.
-# UI event transactions need auto-generated spans not to be empty. Therefore,
-# the SDK can't start a UI event transaction if there is already a
-# transaction bound to the scope by the user.
 Scenario: Manually created transaction bound to the scope
     Given an ongoing manually created transaction by the user bound to the
         scope
@@ -153,7 +154,7 @@ Scenario: Ongoing UI event transaction
 Scenario: Ongoing screen load/navigation transaction
     Given an ongoing screen load transaction
     When the SDK starts a new UI event transaction
-    Then the SDK doesn't bind the new UI event transaction to the scope
+    Then the SDK doesn't start a UI event transaction
 ```
 
 ## Transaction name
