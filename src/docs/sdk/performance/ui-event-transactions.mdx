@@ -159,4 +159,4 @@ attentive not to use any PII in the transaction name. One recommendation is
 `screen name + view identifier`. On Android, this would map to
 `LoginActivity.login_button`, and on Cocoa, to `YourApp.LoginViewController.loginButton`. If the UI element
 doesn't have a view identifier, it's acceptable that the SDK doesn't start a UI event transaction and logs
-a warning to inform the user.
+a warning to inform the user. The Cocoa SDK uses the method the UI element calls as the view identifier. 
