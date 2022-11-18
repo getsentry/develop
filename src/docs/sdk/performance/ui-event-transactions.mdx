@@ -119,7 +119,7 @@ Scenario: Same UI element with different event
     And puts the new transaction on the scope
 
 Scenario: UI event triggered but transaction ended
-    Given an auto-generated transaction from a any UI event
+    Given an auto-generated transaction from any UI event
     And the transaction already  is finished
     When the user triggers the same UI event
     Then the SDK starts a new UI event transaction
