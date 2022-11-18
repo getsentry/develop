@@ -155,6 +155,8 @@ Scenario: Ongoing screen load transaction
 
 The user should be able to identify to which UI element the UI event transaction belongs on which screen
 by only looking at the transaction name. Choose whatever works best for your specific platform. Be
-attentive not to use any PII in the transaction name. One recommendation is 
-`screen name + view identifier || accessibility identifier`. On Android, this would map to
-`LoginActivity.login_button`, and on Cocoa, to `YourApp.LoginViewController.loginButton`.
+attentive not to use any PII in the transaction name. One recommendation is  
+`screen name + view identifier`. On Android, this would map to
+`LoginActivity.login_button`, and on Cocoa, to `YourApp.LoginViewController.loginButton`. If the UI element
+doesn't have a view identifier, it's acceptable that the SDK doesn't start a UI event transaction and logs
+a warning to inform the user.
