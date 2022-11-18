@@ -123,11 +123,15 @@ Scenario: UI event triggered but transaction ended
     When the user triggers the same UI event
     Then the SDK starts a new UI event transaction
 
+# The SDK adds auto-generated spans to the transaction bound to the scope.
+# UI event transactions need auto-generated spans not to be empty. Therefore,
+# the SDK can't start a UI event transaction if there is already a
+# transaction bound to the scope by the user.
 Scenario: Manually created transaction bound to the scope
     Given an ongoing manually created transaction by the user bound to the
         scope
-    When the SDK creates a new UI event transaction
-    Then the SDK doesn't add the UI event transaction to the scope 
+    When the user triggers the a UI event
+    Then the SDK doesn't start a UI event transaction
 ```
 
 
