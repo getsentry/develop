@@ -77,6 +77,13 @@ Scenario: Set time to last finished child span
     And trims the end time of the transaction to the one of the last finished
         child span
 
+Scenario: Don't overwrite existing status of UI event transactions
+    Given a UI event transaction
+    And the UI event transaction has a status
+    When the SDK finishes the UI event transaction
+    Then it keeps the status 
+    And doesn't overwrite it
+
 Scenario: Same UI element with same event
     Given an ongoing UI event transaction
     When the user triggers the same UI event with the same type for the same
