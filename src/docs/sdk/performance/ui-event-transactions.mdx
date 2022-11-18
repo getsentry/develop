@@ -137,7 +137,7 @@ Scenario: Manually created transaction bound to the scope
 ```
 
 
-### Screen load transactions
+### Screen load/navigation transactions
 
 This section deals specifically with auto-generated transactions for loading screens. If your SDK has
 other types of auto-generated transactions, please update the specification here.
@@ -152,7 +152,7 @@ Scenario: Ongoing UI event transaction
     And waits for its children to finish
 
 Scenario: Ongoing screen load/navigation transaction
-    Given an ongoing screen load transaction
+    Given an ongoing screen load/navigation transaction
     When the SDK starts a new UI event transaction
     Then the SDK doesn't start a UI event transaction
 ```
