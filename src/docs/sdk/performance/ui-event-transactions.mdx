@@ -48,24 +48,17 @@ Scenario: Wait for children when starting span
     Then the SDK cancels the idle timeout
     And waits for the child to finish
 
-Scenario: Schedule timeout when the last span finishes
+Scenario: Schedule idle timeout when the last span finishes
     Given a UI event transaction
     And the transaction has one or multiple running child spans
     And the transaction is waiting for its children to finish
     When the SDK finishes the last child span
-    Then the SDK starts the idle timeout
-
-Scenario: Don't reset timeout when the second last span finishes
-    Given a UI event transaction
-    And the transaction has two running child spans
-    When the SDK finishes the first child span
-    Then the SDK doesn't reset the idle timeout
-    And waits for the children to finish
+    Then the SDK schedules the idle timeout 
 
 Scenario: Discard UI event transactions without child spans
     Given a UI event transaction
     And the transaction has no child spans
-    When the idleTimeout times out
+    When the idle timeout times out
     Then the SDK discards the transaction 
 
 Scenario: Set time to last finished child span
@@ -88,7 +81,7 @@ Scenario: Same UI element with same event
     Given an ongoing UI event transaction
     When the user triggers the same UI event with the same type for the same
         UI element
-    Then the SDK resets the timeout
+    Then the SDK reschedule the idle timeout
     And doesn't create a new transaction
 
 # If your SDK binds auto-generated transactions to the scope see binding
@@ -100,7 +93,7 @@ Scenario: Same UI element with different event
     Then the SDK finishes the ongoing transaction
     And sets the status to OK
     And waits for the children to finish
-    And cancels the timeout
+    And cancels the idle timeout
     And starts a new transaction
 ```
 
@@ -119,7 +112,7 @@ Scenario: Same UI element with different event
     Then the SDK finishes the ongoing transaction
     And sets the status to OK
     And waits for the children to finish
-    And cancels the timeout
+    And cancels the idle timeout
     And removes the ongoing transaction from the scope
     And starts a new transaction
     And puts the new transaction on the scope
