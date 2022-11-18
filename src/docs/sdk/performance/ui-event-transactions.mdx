@@ -67,7 +67,7 @@ Scenario: Set time to last finished child span
     And the transaction has one running child span
     When the running child span finishes
     Then the SDK schedules the idle timeout
-    And the SDK finishes the transaction after timeout
+    And the SDK finishes the transaction after the idle timeout
     And trims the end time of the transaction to the one of the last finished
         child span
 
