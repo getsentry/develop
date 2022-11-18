@@ -150,7 +150,7 @@ Scenario: Ongoing UI event transaction
     And sets the status to canceled
     And waits for its children to finish
 
-Scenario: Ongoing screen load transaction
+Scenario: Ongoing screen load/navigation transaction
     Given an ongoing screen load transaction
     When the SDK starts a new UI event transaction
     Then the SDK doesn't bind the new UI event transaction to the scope
