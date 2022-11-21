@@ -153,7 +153,7 @@ Scenario: Ongoing UI event transaction
 
 Scenario: Ongoing screen load/navigation transaction
     Given an ongoing screen load/navigation transaction
-    When the SDK starts a new UI event transaction
+    When the user triggers a UI event
     Then the SDK doesn't start a UI event transaction
 ```
 
