@@ -132,7 +132,7 @@ Scenario: UI event triggered but transaction ended
 Scenario: Manually created transaction bound to the scope
     Given an ongoing manually created transaction by the user bound to the
         scope
-    When the user triggers the a UI event
+    When the user triggers a UI event
     Then the SDK doesn't start a UI event transaction
 ```
 
