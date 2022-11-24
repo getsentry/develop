@@ -15,19 +15,19 @@ and is **disabled by default**. That means that data that is naturally sensitive
 
 Some examples of data guarded by this flag:
 
-  - When attaching HTTP requests to events
-    - Request Body: "raw" bodies (bodies which cannot be parsed as JSON or formdata) are removed
-    - HTTP Headers: known sensitive headers such as `Authorization` or `Cookies` are removed too.
-    - *Note* that if a user explicitly sets a request on the scope, nothing is stripped from that request. The above rules only apply to integrations that come with the SDK.
-  - User-specific information (e.g. the current user ID according to the used web-framework) is not sent at all.
-  - On desktop applications
-    - The username logged in the device is not included. This is often a person's name.
-    - The machine name is not included, for example `Bruno's laptop`
-  - SDKs don't set `{{auto}}` as `user.ip`. This instructs the server to keep the connection's IP address.*
+- When attaching HTTP requests to events
+  - Request Body: "raw" bodies (bodies which cannot be parsed as JSON or formdata) are removed
+  - HTTP Headers: known sensitive headers such as `Authorization` or `Cookies` are removed too.
+  - _Note_ that if a user explicitly sets a request on the scope, nothing is stripped from that request. The above rules only apply to integrations that come with the SDK.
+- User-specific information (e.g. the current user ID according to the used web-framework) is not sent at all.
+- On desktop applications
+  - The username logged in the device is not included. This is often a person's name.
+  - The machine name is not included, for example `Bruno's laptop`
+- SDKs don't set `{{auto}}` as `user.ip`. This instructs the server to keep the connection's IP address.\*
 
 * Specifically about IP address, it's important to note that it's standard to log IP address of incoming connecting in services on the Internet.
-This not only allows security tools and operations to understand abuse coming from a single IP, like spam bots and other issues.
-But also developers to understand if issues in their application are being triggered by a single malicious source.
+  This not only allows security tools and operations to understand abuse coming from a single IP, like spam bots and other issues.
+  But also developers to understand if issues in their application are being triggered by a single malicious source.
 
 Sentry server is always aware of the connecting IP address and can use it for logging in some platforms. Namely JavaScript and iOS/macOS/tvOS.
 All other platforms require the event to include `user.ip={{auto}}` which happens if `sendDefaultPii` is set to true.
@@ -50,6 +50,32 @@ Some examples of auto instrumentation that could attach sensitive data:
 - A SQL integration that includes the query. If a user doesn't use parameterized queries, and appends sensitive data to it, the SDK could include that in the event payload.
 - Desktop apps including window title.
 - A Web framework routing instrumentation attaching route `to` and `from`.
+
+## Structuring Data
+
+For better data scrubbing on the server side, SDKs should save data in a strucutured way, when possible.
+
+Starting point of the discussion was this [RFC-0038](https://github.com/getsentry/rfcs/blob/main/text/0038-scrubbing-sensitive-data.md)
+
+Here a list of data that can be collected and how it should be stored:
+
+### Spans
+
+- `http` spans containing urls:
+
+  tbd
+
+- `db` spans containing database queries: (sql, graphql, elasticsearch, mongodb, ...)
+
+  tbd
+
+### Breadcrumbs
+
+tbd
+
+### Local variables
+
+tbd
 
 ## Variable Size
 
