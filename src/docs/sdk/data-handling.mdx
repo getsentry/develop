@@ -63,7 +63,16 @@ Here a list of data that can be collected and how it should be stored:
 
 - `http` spans containing urls:
 
-  tbd
+  The description of http spans must follow the format `HTTP_METHOD scheme://host/path` (`GET https://example.com/foo`).
+  If an authority is present in the URL (`https://username:password@example.com`), the authority must be omitted completely.
+  If query strings or fragments are present in the URL, both are set into the data attribute of the span.
+
+  ```js
+  span.setData({
+      'http.query':   url.getQuery(),
+      'http.fragment: url.getFragment(),
+  })
+  ```
 
 - `db` spans containing database queries: (sql, graphql, elasticsearch, mongodb, ...)
 
