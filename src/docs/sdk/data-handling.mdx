@@ -53,17 +53,15 @@ Some examples of auto instrumentation that could attach sensitive data:
 
 ## Structuring Data
 
-For better data scrubbing on the server side, SDKs should save data in a strucutured way, when possible.
-
-Starting point of the discussion was this [RFC-0038](https://github.com/getsentry/rfcs/blob/main/text/0038-scrubbing-sensitive-data.md)
-
-Here a list of data that can be collected and how it should be stored:
+For better data scrubbing on the server side, SDKs should save data in a strucutured way, when possible. Starting point of the discussion was [RFC-0038](https://github.com/getsentry/rfcs/blob/main/text/0038-scrubbing-sensitive-data.md)
 
 ### Spans
 
+This helps Relay to know what kind of data it receives and this helps with scrubbing sensitive data.
+
 - `http` spans containing urls:
 
-  The description of http spans must follow the format `HTTP_METHOD scheme://host/path` (`GET https://example.com/foo`).
+  The description of spans with `op` set to `http` must follow the format `HTTP_METHOD scheme://host/path` (ex. `GET https://example.com/foo`).
   If an authority is present in the URL (`https://username:password@example.com`), the authority must be omitted completely.
   If query strings or fragments are present in the URL, both are set into the data attribute of the span.
 
@@ -74,17 +72,20 @@ Here a list of data that can be collected and how it should be stored:
   })
   ```
 
+  Additionally all semantic conventions of OpenTelementry for http spans should be set in the `span.data` if applicable:
+  https://opentelemetry.io/docs/reference/specification/trace/semantic_conventions/http/
+
 - `db` spans containing database queries: (sql, graphql, elasticsearch, mongodb, ...)
 
-  tbd
+  The `description` fields should include the saniticed database command. All sensitive data should be removed and replaced with a placeholder.
+
+  Additionally all semantic conventions of OpenTelementry for database spans should be set in the `span.data` if applicable:
+  https://opentelemetry.io/docs/reference/specification/trace/semantic_conventions/database/
 
 ### Breadcrumbs
 
-tbd
-
-### Local variables
-
-tbd
+If the `message` in a breadcrumb contains an URL it should be formatted the same way as in `http` spans (see above).
+The query and the fragment should also be set in the data attribute like with `http` spans.
 
 ## Variable Size
 
