@@ -36,14 +36,31 @@ This relies on a couple key assumptions.
 
 ```ts
 import { SpanProcessor } from '@opentelemetry/sdk-trace-base';
-import { Span as OpenTelemetrySpan } from '@opentelemetry/api';
+import { Span as OpenTelemetrySpan, trace } from '@opentelemetry/api';
 import { Span as SentrySpan } from '@sentry/tracing';
 
 const MAP = Map<SentrySpan['spanId'], SentrySpan> = new Map<SentrySpan['spanId'], SentrySpan>();
 
 class SentrySpanProcessor implements SpanProcessor {
-  constructor(options: SentrySpanProcessorOptions) {
-    this._options = options;
+  constructor() {
+    Sentry.addGlobalEventProcessor(event => {
+      const otelSpan = trace.getActiveSpan();
+      if (!otelSpan) {
+        return event;
+      }
+
+      const otelSpanId = otelSpan.spanContext().spanId;
+      const sentrySpan = MAP.get(otelSpanId);
+
+      if (!sentrySpan) {
+        return event;
+      }
+
+      // If event has already set `trace` context, use that one.
+      // This happens in the case of transaction events.
+      event.contexts = { trace: sentrySpan.getTraceContext(), ...event.contexts };
+      return event;
+    });
   }
 
   onStart(otelSpan: OpenTelemetrySpan): void {
