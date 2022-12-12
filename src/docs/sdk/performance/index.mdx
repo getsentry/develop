@@ -232,7 +232,7 @@ them accessible with `Sentry.span`.
 If the SDK has global mode enabled, which specifies whether to use global scope
 management mode and should be `true` for client applications and `false` for server
 applications, `Sentry.span` shall return the active transaction. If the
-user disables global mode, `Sentry.span` shall return the latest unfinished span.
+user disables global mode, `Sentry.span` shall return the latest active (unfinished) span.
 
 ## `Hub` Changes
 
