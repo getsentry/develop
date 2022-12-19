@@ -58,9 +58,6 @@ const getPlugins = () => {
             },
           },
           {
-            resolve: "gatsby-remark-mermaid",
-          },
-          {
             resolve: require.resolve("./plugins/gatsby-plugin-code-tabs"),
           },
           {
