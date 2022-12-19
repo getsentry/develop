@@ -1,15 +1,13 @@
-import * as Sentry from "@sentry/node";
+import * as Sentry from '@sentry/node';
 
-export default async function({ actions, graphql, reporter }) {
-  const transaction = Sentry.getCurrentHub()
-    .getScope()
-    .getTransaction();
+export default async function ({actions, graphql, reporter}) {
+  const transaction = Sentry.getCurrentHub().getScope().getTransaction();
   const span = transaction.startChild({
-    op: "function",
-    description: "createPages",
+    op: 'function',
+    description: 'createPages',
   });
 
-  const { data, errors } = await graphql(`
+  const {data, errors} = await graphql(`
     query {
       allFile {
         nodes {

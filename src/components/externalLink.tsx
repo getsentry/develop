@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 type Props =
   | {
@@ -6,7 +6,7 @@ type Props =
     }
   | React.HTMLProps<HTMLAnchorElement>;
 
-export default ({ children, ...props }: Props): JSX.Element => (
+export default ({children, ...props}: Props): JSX.Element => (
   <a {...props}>
     {children}
 

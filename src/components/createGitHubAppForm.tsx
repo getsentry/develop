@@ -1,13 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, {useState, useRef} from 'react';
 
 const MAX_COMPONENTS_ON_PAGE = 100;
 
-const CreateGitHubAppForm = ({
-  url,
-  defaultOrg,
-  defaultUrlPrefix,
-  ...props
-}) => {
+const CreateGitHubAppForm = ({url, defaultOrg, defaultUrlPrefix, ...props}) => {
   const [orgSlug, setOrgSlug] = useState(defaultOrg);
   const [urlPrefix, setUrlPrefix] = useState(defaultUrlPrefix);
   const renderedUrl = url
@@ -15,7 +10,7 @@ const CreateGitHubAppForm = ({
     .replace(/:url-prefix(?=\W)/g, encodeURIComponent(urlPrefix));
 
   const labelStyle = {
-    margin: "0.5rem",
+    margin: '0.5rem',
   };
 
   // This is to avoid in case multiple instances of this component are used on the page
@@ -45,10 +40,7 @@ const CreateGitHubAppForm = ({
       </tr>
       <tr>
         <td align="right" className="content-flush-bottom">
-          <label
-            htmlFor={`sentry-url-prefix-${randomCounter}`}
-            style={labelStyle}
-          >
+          <label htmlFor={`sentry-url-prefix-${randomCounter}`} style={labelStyle}>
             Sentry <code>url-prefix</code>
           </label>
         </td>
@@ -65,11 +57,11 @@ const CreateGitHubAppForm = ({
       </tr>
       <tr>
         <td colSpan={2} align="right">
-          {" "}
+          {' '}
           <button
             type="button"
             className="btn btn-primary d-block d-inline-block-md"
-            onClick={() => window.open(renderedUrl, "_blank", "noopener")}
+            onClick={() => window.open(renderedUrl, '_blank', 'noopener')}
           >
             Create GitHub App
           </button>

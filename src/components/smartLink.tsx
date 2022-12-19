@@ -1,35 +1,35 @@
-import React from "react";
-import { Link } from "gatsby";
+import React from 'react';
+import {Link} from 'gatsby';
 
-import ExternalLink from "./externalLink";
+import ExternalLink from './externalLink';
 
 type Props = {
-  to?: string,
-  href?: string,
-  remote?: boolean,
-  children?: React.ReactNode,
-  activeClassName?: string,
-  className?: string,
-  title?: string,
+  to?: string;
+  href?: string;
+  remote?: boolean;
+  children?: React.ReactNode;
+  activeClassName?: string;
+  className?: string;
+  title?: string;
 };
 
 export default ({
   to,
   href,
   children,
-  activeClassName = "active",
+  activeClassName = 'active',
   remote = false,
-  className = "",
+  className = '',
   ...props
 }: Props): JSX.Element => {
-  const realTo = to || href || "";
-  if (realTo.indexOf("://") !== -1) {
+  const realTo = to || href || '';
+  if (realTo.indexOf('://') !== -1) {
     return (
       <ExternalLink href={realTo} className={className} {...props}>
         {children || to || href}
       </ExternalLink>
     );
-  } else if (realTo.indexOf("/") !== 0 || remote) {
+  } else if (realTo.indexOf('/') !== 0 || remote) {
     // this handles cases like anchor tags (where Link messes thats up)
     return (
       <a href={realTo} className={className} {...props}>
@@ -38,12 +38,7 @@ export default ({
     );
   }
   return (
-    <Link
-      to={realTo}
-      activeClassName={activeClassName}
-      className={className}
-      {...props}
-    >
+    <Link to={realTo} activeClassName={activeClassName} className={className} {...props}>
       {children || to || href}
     </Link>
   );

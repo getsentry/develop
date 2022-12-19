@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from "react";
+import {useEffect, useCallback, useRef} from 'react';
 
 type ClickOutsideCallback = (event: MouseEvent) => void;
 
@@ -13,9 +13,9 @@ export function useOnClickOutside<T>(
         handler(event);
       }
     };
-    document.addEventListener("click", cb);
+    document.addEventListener('click', cb);
     return () => {
-      document.removeEventListener("click", cb);
+      document.removeEventListener('click', cb);
     };
   }, [ref, handler]);
 }
@@ -59,10 +59,7 @@ type Page = {
   };
 };
 
-export const sortPages = (
-  arr: any,
-  extractor: (any) => Page = n => n
-): any[] => {
+export const sortPages = (arr: any, extractor: (any) => Page = n => n): any[] => {
   return arr.sort((a, b) => {
     a = extractor(a);
     b = extractor(b);

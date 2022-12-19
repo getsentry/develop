@@ -1,25 +1,25 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {useState, useEffect, useRef} from 'react';
 
-import Logo from "./logo";
+import Logo from './logo';
 
 import {
   SentryGlobalSearch,
   standardSDKSlug,
   Result,
-} from "@sentry-internal/global-search";
+} from '@sentry-internal/global-search';
 
-import DOMPurify from "dompurify";
+import DOMPurify from 'dompurify';
 
 const MAX_HITS = 10;
 
 const search = new SentryGlobalSearch([
   {
-    site: "develop",
+    site: 'develop',
     pathBias: true,
   },
-  "docs",
-  "help-center",
-  "blog",
+  'docs',
+  'help-center',
+  'blog',
 ]);
 
 const useClickOutside = (
@@ -51,7 +51,7 @@ type Props = {
   platforms?: string[];
 };
 
-export default ({ path, platforms = [] }: Props): JSX.Element => {
+export default ({path, platforms = []}: Props): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState(``);
   const [results, setResults] = useState([] as Result[]);
@@ -81,7 +81,7 @@ export default ({ path, platforms = [] }: Props): JSX.Element => {
 
           if (results.length === 1 && results[0].hits.length === 0) {
             setShowOffsiteResults(true);
-            searchFor(query, { searchAllIndexes: true });
+            searchFor(query, {searchAllIndexes: true});
           } else {
             setResults(results);
           }
@@ -102,7 +102,7 @@ export default ({ path, platforms = [] }: Props): JSX.Element => {
         placeholder="Search"
         aria-label="Search"
         className="form-control"
-        onChange={({ target: { value: query } }) => {
+        onChange={({target: {value: query}}) => {
           searchFor(query);
         }}
         value={query}
@@ -124,15 +124,9 @@ export default ({ path, platforms = [] }: Props): JSX.Element => {
                     return (
                       <React.Fragment key={result.site}>
                         {showOffsiteResults && (
-                          <h4 className="sgs-site-result-heading">
-                            From {result.name}
-                          </h4>
+                          <h4 className="sgs-site-result-heading">From {result.name}</h4>
                         )}
-                        <ul
-                          className={`sgs-hit-list ${
-                            i === 0 ? "" : "sgs-offsite"
-                          }`}
-                        >
+                        <ul className={`sgs-hit-list ${i === 0 ? '' : 'sgs-offsite'}`}>
                           {hits.map(hit => (
                             <li key={hit.id} className="sgs-hit-item">
                               <a href={hit.url}>
@@ -141,7 +135,7 @@ export default ({ path, platforms = [] }: Props): JSX.Element => {
                                     <span
                                       dangerouslySetInnerHTML={{
                                         __html: DOMPurify.sanitize(hit.title, {
-                                          ALLOWED_TAGS: ["mark"],
+                                          ALLOWED_TAGS: ['mark'],
                                         }),
                                       }}
                                     ></span>
@@ -151,7 +145,7 @@ export default ({ path, platforms = [] }: Props): JSX.Element => {
                                   <span
                                     dangerouslySetInnerHTML={{
                                       __html: DOMPurify.sanitize(hit.text, {
-                                        ALLOWED_TAGS: ["mark"],
+                                        ALLOWED_TAGS: ['mark'],
                                       }),
                                     }}
                                   />
@@ -192,7 +186,7 @@ export default ({ path, platforms = [] }: Props): JSX.Element => {
               <button
                 className="sgs-expand-results-button"
                 onClick={() => setShowOffsiteResults(true)}
-                onMouseOver={() => searchFor(query, { searchAllIndexes: true })}
+                onMouseOver={() => searchFor(query, {searchAllIndexes: true})}
               >
                 Search <em>{query}</em> across all Sentry sites
               </button>

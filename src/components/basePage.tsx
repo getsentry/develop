@@ -1,39 +1,34 @@
-import React, { useRef } from "react";
+import React, {useRef} from 'react';
 
-import CodeContext, { useCodeContextState } from "./codeContext";
-import SEO from "./seo";
-import Layout from "./layout";
-import SmartLink from "./smartLink";
-import TableOfContents from "./tableOfContents";
-import * as Sentry from "@sentry/gatsby";
+import CodeContext, {useCodeContextState} from './codeContext';
+import SEO from './seo';
+import Layout from './layout';
+import SmartLink from './smartLink';
+import TableOfContents from './tableOfContents';
+import * as Sentry from '@sentry/gatsby';
 
 type GitHubCTAProps = {
   sourceInstanceName: string;
   relativePath: string;
 };
 
-const GitHubCTA = ({
-  sourceInstanceName,
-  relativePath,
-}: GitHubCTAProps): JSX.Element => (
+const GitHubCTA = ({sourceInstanceName, relativePath}: GitHubCTAProps): JSX.Element => (
   <div className="github-cta">
     <small>
-      You can{" "}
+      You can{' '}
       <SmartLink
         to={`https://github.com/getsentry/develop/edit/master/src/${sourceInstanceName}/${relativePath}`}
       >
         edit this page
-      </SmartLink>{" "}
+      </SmartLink>{' '}
       on GitHub.
     </small>
   </div>
 );
 
-const WrappedTOC = React.forwardRef(
-  (props, ref: React.RefObject<HTMLDivElement>) => {
-    return <TableOfContents {...props} contentRef={ref} />;
-  }
-);
+const WrappedTOC = React.forwardRef((props, ref: React.RefObject<HTMLDivElement>) => {
+  return <TableOfContents {...props} contentRef={ref} />;
+});
 
 type Props = {
   data?: {
@@ -55,29 +50,27 @@ type Props = {
 };
 
 export default ({
-  data: { file } = {},
+  data: {file} = {},
   pageContext = {},
   seoTitle,
   sidebar,
   children,
   prependToc,
 }: Props): JSX.Element => {
-  const tx = Sentry.getCurrentHub()
-    .getScope()
-    .getTransaction();
+  const tx = Sentry.getCurrentHub().getScope().getTransaction();
   if (tx) {
-    tx.setStatus("ok");
+    tx.setStatus('ok');
   }
 
-  const { title, excerpt, description } = pageContext;
+  const {title, excerpt, description} = pageContext;
   const hasToc = !pageContext.notoc;
 
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const pageDescription = description || (excerpt ? excerpt.slice(0, 160) : "");
+  const pageDescription = description || (excerpt ? excerpt.slice(0, 160) : '');
 
   return (
-    <Layout {...{ sidebar, pageContext }}>
+    <Layout {...{sidebar, pageContext}}>
       <SEO
         title={seoTitle || title}
         description={pageDescription}
@@ -87,9 +80,7 @@ export default ({
       <div className="row">
         <div
           className={
-            hasToc || prependToc
-              ? "col-sm-8 col-md-12 col-lg-8 col-xl-9"
-              : "col-12"
+            hasToc || prependToc ? 'col-sm-8 col-md-12 col-lg-8 col-xl-9' : 'col-12'
           }
         >
           <h1 className="mb-3">{title}</h1>

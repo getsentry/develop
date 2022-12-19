@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 type Props = {
   title?: string;
@@ -15,22 +15,17 @@ export default ({
   deepLink,
   dismiss = false,
 }: Props): JSX.Element => {
-  let className = "alert";
+  let className = 'alert';
   if (level) {
     className += ` alert-${level}`;
   }
-  if (children.props && typeof children.props.children === "string") {
-    className += " markdown-text-only";
+  if (children.props && typeof children.props.children === 'string') {
+    className += ' markdown-text-only';
   }
   return (
     <div className={className} role="alert" id={deepLink}>
       {dismiss && (
-        <button
-          type="button"
-          className="close"
-          data-dismiss="alert"
-          aria-label="Close"
-        >
+        <button type="button" className="close" data-dismiss="alert" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       )}
