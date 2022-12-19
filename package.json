@@ -64,7 +64,7 @@
     "init": "cp .env.example .env.development && yarn install",
     "prestart": "gatsby clean",
     "start": "yarn run develop",
-    "format": "prettier --ignore-path .gitignore --write \"**/*.js\"",
+    "format": "prettier --ignore-path .gitignore --write \"**/*.{js,ts,jsx,tsx}\"",
     "test": "GATSBY_ENV=test gatsby build"
   },
   "devDependencies": {
@@ -75,7 +75,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^26.0.1",
     "jest-environment-jsdom-fourteen": "^1.0.1",
-    "prettier": "^1.19.1",
+    "prettier": "2.7.1",
     "react-test-renderer": "^16.13.1"
   },
   "volta": {

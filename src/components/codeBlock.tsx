@@ -1,9 +1,9 @@
-import React, { useState, useRef, useContext } from "react";
-import copy from "copy-to-clipboard";
-import { MDXProvider } from "@mdx-js/react";
-import { Clipboard } from "react-feather";
-import { useOnClickOutside, useRefWithCallback } from "../utils";
-import CodeContext from "./codeContext";
+import React, {useState, useRef, useContext} from 'react';
+import copy from 'copy-to-clipboard';
+import {MDXProvider} from '@mdx-js/react';
+import {Clipboard} from 'react-feather';
+import {useOnClickOutside, useRefWithCallback} from '../utils';
+import CodeContext from './codeContext';
 
 const KEYWORDS_REGEX = /\b___(?:([A-Z_][A-Z0-9_]*)\.)?([A-Z_][A-Z0-9_]*)___\b/g;
 
@@ -15,7 +15,7 @@ function makeKeywordsClickable(children) {
   KEYWORDS_REGEX.lastIndex = 0;
 
   return children.reduce((arr: any[], child) => {
-    if (typeof child !== "string") {
+    if (typeof child !== 'string') {
       arr.push(child);
       return arr;
     }
@@ -30,7 +30,7 @@ function makeKeywordsClickable(children) {
       }
       arr.push(
         Selector({
-          group: match[1] || "PROJECT",
+          group: match[1] || 'PROJECT',
           keyword: match[2],
           key: lastIndex,
         })
@@ -47,29 +47,24 @@ function makeKeywordsClickable(children) {
   }, []);
 }
 
-function Selector({ keyword, group, ...props }) {
+function Selector({keyword, group, ...props}) {
   const [isOpen, setIsOpen] = useState(false);
   const codeContext = useContext(CodeContext);
-  const [
-    sharedSelection,
-    setSharedSelection,
-  ] = codeContext.sharedKeywordSelection;
+  const [sharedSelection, setSharedSelection] = codeContext.sharedKeywordSelection;
   const spanRef = useRef<HTMLSpanElement>();
-  const [menuRef, setMenuRef] = useRefWithCallback<HTMLSpanElement>(
-    menuNode => {
-      if (menuNode) {
-        for (const node of menuNode.childNodes as any) {
-          if (node.getAttribute("data-active") === "1") {
-            node.parentNode.scrollTop =
-              node.offsetTop -
-              node.parentNode.getBoundingClientRect().height / 2 +
-              node.getBoundingClientRect().height / 2;
-            break;
-          }
+  const [menuRef, setMenuRef] = useRefWithCallback<HTMLSpanElement>(menuNode => {
+    if (menuNode) {
+      for (const node of menuNode.childNodes as any) {
+        if (node.getAttribute('data-active') === '1') {
+          node.parentNode.scrollTop =
+            node.offsetTop -
+            node.parentNode.getBoundingClientRect().height / 2 +
+            node.getBoundingClientRect().height / 2;
+          break;
         }
       }
     }
-  );
+  });
 
   useOnClickOutside(menuRef, () => {
     if (isOpen) {
@@ -77,7 +72,7 @@ function Selector({ keyword, group, ...props }) {
     }
   });
 
-  const { codeKeywords } = useContext(CodeContext);
+  const {codeKeywords} = useContext(CodeContext);
   const choices = (codeKeywords && codeKeywords[group]) || [];
   const currentSelectionIdx = sharedSelection[group] || 0;
   const currentSelection = choices[currentSelectionIdx];
@@ -93,9 +88,9 @@ function Selector({ keyword, group, ...props }) {
   } = {};
   if (spanRef.current) {
     const rect = spanRef.current.getBoundingClientRect();
-    style.left = spanRef.current.offsetLeft - 10 + "px";
-    style.top = spanRef.current.offsetTop + 20 + "px";
-    style.minWidth = rect.width + 20 + "px";
+    style.left = spanRef.current.offsetLeft - 10 + 'px';
+    style.top = spanRef.current.offsetTop + 20 + 'px';
+    style.minWidth = rect.width + 20 + 'px';
   }
 
   return (
@@ -104,13 +99,13 @@ function Selector({ keyword, group, ...props }) {
         ref={spanRef}
         role="button"
         tabIndex={0}
-        className={`keyword-selector ${isOpen ? " open" : ""}`}
+        className={`keyword-selector ${isOpen ? ' open' : ''}`}
         title={currentSelection && currentSelection.title}
         onClick={() => {
           setIsOpen(!isOpen);
         }}
         onKeyDown={e => {
-          if (e.key === "Enter") {
+          if (e.key === 'Enter') {
             setIsOpen(!isOpen);
           }
         }}
@@ -124,14 +119,14 @@ function Selector({ keyword, group, ...props }) {
             return (
               <button
                 key={idx}
-                data-active={isActive ? "1" : ""}
+                data-active={isActive ? '1' : ''}
                 onClick={() => {
-                  const newSharedSelection = { ...sharedSelection };
+                  const newSharedSelection = {...sharedSelection};
                   newSharedSelection[group] = idx;
                   setSharedSelection(newSharedSelection);
                   setIsOpen(false);
                 }}
-                className={isActive ? "active" : ""}
+                className={isActive ? 'active' : ''}
               >
                 {item.title}
               </button>
@@ -144,7 +139,7 @@ function Selector({ keyword, group, ...props }) {
 }
 
 function CodeWrapper(props): JSX.Element {
-  let { children, class: className, ...rest } = props;
+  let {children, class: className, ...rest} = props;
   if (children) {
     children = makeKeywordsClickable(children);
   }
@@ -156,7 +151,7 @@ function CodeWrapper(props): JSX.Element {
 }
 
 function SpanWrapper(props): JSX.Element {
-  let { children, class: className, ...rest } = props;
+  let {children, class: className, ...rest} = props;
   if (children) {
     children = makeKeywordsClickable(children);
   }
@@ -174,14 +169,14 @@ type Props = {
   children: JSX.Element;
 };
 
-export default ({ filename, language, children }: Props): JSX.Element => {
+export default ({filename, language, children}: Props): JSX.Element => {
   const [showCopied, setShowCopied] = useState(false);
   const codeRef = useRef(null);
 
   function copyCode() {
     let code = codeRef.current.innerText;
     // don't copy leading prompt for bash
-    if (language === "bash" || language === "shell") {
+    if (language === 'bash' || language === 'shell') {
       const match = code.match(/^\$\s*/);
       if (match) {
         code = code.substr(match[0].length);
@@ -200,7 +195,7 @@ export default ({ filename, language, children }: Props): JSX.Element => {
           <Clipboard size={16} />
         </button>
       </div>
-      <div className="copied" style={{ opacity: showCopied ? 1 : 0 }}>
+      <div className="copied" style={{opacity: showCopied ? 1 : 0}}>
         Copied
       </div>
       <div ref={codeRef}>

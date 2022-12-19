@@ -1,15 +1,15 @@
-import { withPrefix } from "gatsby";
-import React from "react";
-import { useLocation } from "@reach/router";
+import {withPrefix} from 'gatsby';
+import React from 'react';
+import {useLocation} from '@reach/router';
 
-import SmartLink from "./smartLink";
+import SmartLink from './smartLink';
 
 type Props = {
-  to: string,
-  title?: string,
-  children?: React.ReactNode,
-  className?: string,
-  collapsed?: boolean | null,
+  to: string;
+  title?: string;
+  children?: React.ReactNode;
+  className?: string;
+  collapsed?: boolean | null;
 };
 
 export default ({
@@ -17,14 +17,14 @@ export default ({
   title,
   children,
   collapsed = null,
-  className = "",
+  className = '',
 }: Props): JSX.Element => {
   const location = useLocation();
   const isActive = location && location.pathname.indexOf(withPrefix(to)) === 0;
 
-  className += " toc-item";
+  className += ' toc-item';
   if (isActive || collapsed === false) {
-    className += " toc-visible";
+    className += ' toc-visible';
   }
 
   return (

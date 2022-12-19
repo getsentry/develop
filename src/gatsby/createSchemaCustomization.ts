@@ -1,4 +1,4 @@
-export default ({ actions: { createTypes } }) => {
+export default ({actions: {createTypes}}) => {
   const typeDefs = `
     type PageContext {
       title: String

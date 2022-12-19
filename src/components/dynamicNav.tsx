@@ -1,42 +1,42 @@
-import { withPrefix } from "gatsby";
-import React from "react";
-import { useLocation } from "@reach/router";
+import {withPrefix} from 'gatsby';
+import React from 'react';
+import {useLocation} from '@reach/router';
 
-import SmartLink from "./smartLink";
-import SidebarLink from "./sidebarLink";
-import { sortPages } from "~src/utils";
+import SmartLink from './smartLink';
+import SidebarLink from './sidebarLink';
+import {sortPages} from '~src/utils';
 
 type Node = {
-  path: string,
+  path: string;
   context: {
-    title?: string | null,
-    sidebar_order?: number | null,
-    sidebar_title?: string | null,
-    [key: string]: any,
-  },
-  [key: string]: any,
+    title?: string | null;
+    sidebar_order?: number | null;
+    sidebar_title?: string | null;
+    [key: string]: any;
+  };
+  [key: string]: any;
 };
 
 type Entity<T> = {
-  name: string,
-  children: T[],
-  node: Node | null,
+  name: string;
+  children: T[];
+  node: Node | null;
 };
 
 export interface EntityTree extends Entity<EntityTree> {}
 
 export const toTree = (nodeList: Node[]): EntityTree[] => {
   const result = [];
-  const level = { result };
+  const level = {result};
 
   nodeList
     .sort((a, b) => a.path.localeCompare(b.path))
     .forEach(node => {
-      let curPath = "";
-      node.path.split("/").reduce((r, name: string, i, a) => {
+      let curPath = '';
+      node.path.split('/').reduce((r, name: string, i, a) => {
         curPath += `${name}/`;
         if (!r[name]) {
-          r[name] = { result: [] };
+          r[name] = {result: []};
           r.result.push({
             name,
             children: r[name].result,
@@ -59,14 +59,11 @@ export const renderChildren = (
 ): React.ReactNode[] => {
   return sortPages(
     children.filter(
-      ({ name, node }) =>
-        node &&
-        !!node.context.title &&
-        name !== "" &&
-        exclude.indexOf(node.path) === -1
+      ({name, node}) =>
+        node && !!node.context.title && name !== '' && exclude.indexOf(node.path) === -1
     ),
-    ({ node }) => node
-  ).map(({ node, children }) => {
+    ({node}) => node
+  ).map(({node, children}) => {
     return (
       <SidebarLink
         to={node.path}
@@ -81,9 +78,9 @@ export const renderChildren = (
 };
 
 type ChildrenProps = {
-  tree: EntityTree[],
-  exclude?: string[],
-  showDepth?: number,
+  tree: EntityTree[];
+  exclude?: string[];
+  showDepth?: number;
 };
 
 export const Children = ({
@@ -91,21 +88,19 @@ export const Children = ({
   exclude = [],
   showDepth = 0,
 }: ChildrenProps): JSX.Element => {
-  return (
-    <React.Fragment>{renderChildren(tree, exclude, showDepth)}</React.Fragment>
-  );
+  return <React.Fragment>{renderChildren(tree, exclude, showDepth)}</React.Fragment>;
 };
 
 type Props = {
-  root: string,
-  tree: EntityTree[],
-  title?: string,
-  collapse?: boolean,
-  exclude?: string[],
-  showDepth?: number,
-  suppressMissing?: boolean,
-  prependLinks?: [string, string][],
-  noHeadingLink?: boolean,
+  root: string;
+  tree: EntityTree[];
+  title?: string;
+  collapse?: boolean;
+  exclude?: string[];
+  showDepth?: number;
+  suppressMissing?: boolean;
+  prependLinks?: [string, string][];
+  noHeadingLink?: boolean;
 };
 
 export default ({
@@ -119,18 +114,16 @@ export default ({
   suppressMissing = false,
   noHeadingLink = false,
 }: Props): JSX.Element | null => {
-  if (root.indexOf("/") === 0) root = root.substr(1);
+  if (root.indexOf('/') === 0) root = root.substr(1);
 
   let entity: EntityTree;
   let currentTree = tree;
-  const rootBits = root.split("/");
+  const rootBits = root.split('/');
   rootBits.forEach(bit => {
     entity = currentTree.find(n => n.name === bit);
     if (!entity) {
       if (!suppressMissing)
-        console.warn(
-          `Could not find entity at ${root} (specifically at ${bit})`
-        );
+        console.warn(`Could not find entity at ${root} (specifically at ${bit})`);
       return;
     }
     currentTree = entity.children;
@@ -139,14 +132,13 @@ export default ({
   if (!title && entity.node)
     title = entity.node.context.sidebar_title || entity.node.context.title;
   const parentNode = entity.children
-    ? entity.children.find((n: EntityTree) => n.name === "")
+    ? entity.children.find((n: EntityTree) => n.name === '')
     : null;
 
   const location = useLocation();
-  const isActive =
-    location && location.pathname.indexOf(withPrefix(`/${root}/`)) === 0;
+  const isActive = location && location.pathname.indexOf(withPrefix(`/${root}/`)) === 0;
 
-  const headerClassName = "sidebar-title d-flex align-items-center mb-0";
+  const headerClassName = 'sidebar-title d-flex align-items-center mb-0';
   const header =
     parentNode && !noHeadingLink ? (
       <SmartLink
@@ -174,11 +166,7 @@ export default ({
                 {link[1]}
               </SidebarLink>
             ))}
-          <Children
-            tree={entity.children}
-            exclude={exclude}
-            showDepth={showDepth}
-          />
+          <Children tree={entity.children} exclude={exclude} showDepth={showDepth} />
         </ul>
       )}
     </li>

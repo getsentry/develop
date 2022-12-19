@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from 'react';
 
 type ProjectCodeKeywords = {
   DSN: string;
@@ -44,18 +44,18 @@ let cachedCodeKeywords = null;
 const DEFAULTS: CodeKeywords = {
   PROJECT: [
     {
-      DSN: "https://examplePublicKey@o0.ingest.sentry.io/0",
-      PUBLIC_DSN: "https://examplePublicKey@o0.ingest.sentry.io/0",
-      PUBLIC_KEY: "examplePublicKey",
-      SECRET_KEY: "exampleSecretKey",
-      API_URL: "https://sentry.io/api",
+      DSN: 'https://examplePublicKey@o0.ingest.sentry.io/0',
+      PUBLIC_DSN: 'https://examplePublicKey@o0.ingest.sentry.io/0',
+      PUBLIC_KEY: 'examplePublicKey',
+      SECRET_KEY: 'exampleSecretKey',
+      API_URL: 'https://sentry.io/api',
       PROJECT_ID: 0,
-      PROJECT_SLUG: "example-project",
+      PROJECT_SLUG: 'example-project',
       ORG_ID: 0,
-      ORG_SLUG: "exmaple-org",
-      ORG_INGEST_DOMAIN: "o0.ingest.sentry.io",
-      MINIDUMP_URL: "https://examplePublicKey@o0.ingest.sentry.io/0",
-      UNREAL_URL: "https://examplePublicKey@o0.ingest.sentry.io/0",
+      ORG_SLUG: 'exmaple-org',
+      ORG_INGEST_DOMAIN: 'o0.ingest.sentry.io',
+      MINIDUMP_URL: 'https://examplePublicKey@o0.ingest.sentry.io/0',
+      UNREAL_URL: 'https://examplePublicKey@o0.ingest.sentry.io/0',
       title: `example-org / example-project`,
     },
   ],
@@ -69,7 +69,7 @@ type CodeContextType = {
 
 const CodeContext = React.createContext<CodeContextType | null>(null);
 
-const parseDsn = function(dsn: string): Dsn {
+const parseDsn = function (dsn: string): Dsn {
   const match = dsn.match(/^(.*?\/\/)(.*?):(.*?)@(.*?)(\/.*?)$/);
 
   return {
@@ -81,17 +81,16 @@ const parseDsn = function(dsn: string): Dsn {
   };
 };
 
-const formatMinidumpURL = ({ scheme, host, pathname, publicKey }: Dsn) => {
+const formatMinidumpURL = ({scheme, host, pathname, publicKey}: Dsn) => {
   return `${scheme}${host}/api${pathname}/minidump/?sentry_key=${publicKey}`;
 };
 
-const formatUnrealEngineURL = ({ scheme, host, pathname, publicKey }: Dsn) => {
+const formatUnrealEngineURL = ({scheme, host, pathname, publicKey}: Dsn) => {
   return `${scheme}${host}/api${pathname}/unreal/${publicKey}/`;
 };
 
-const formatApiUrl = ({ scheme, host }: Dsn) => {
-  const apiHost =
-    host.indexOf(".ingest.") >= 0 ? host.split(".ingest.")[1] : host;
+const formatApiUrl = ({scheme, host}: Dsn) => {
+  const apiHost = host.indexOf('.ingest.') >= 0 ? host.split('.ingest.')[1] : host;
 
   return `${scheme}${apiHost}/api`;
 };
@@ -100,7 +99,7 @@ export function fetchCodeKeywords() {
   return new Promise(resolve => {
     function transformResults(projects: ProjectApiResult[]) {
       if (projects.length === 0) {
-        console.warn("Unable to fetch codeContext - using defaults.");
+        console.warn('Unable to fetch codeContext - using defaults.');
         resolve(DEFAULTS);
       } else {
         resolve({
@@ -127,9 +126,9 @@ export function fetchCodeKeywords() {
     }
 
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://sentry.io/docs/api/user/");
+    xhr.open('GET', 'https://sentry.io/docs/api/user/');
     xhr.withCredentials = true;
-    xhr.responseType = "json";
+    xhr.responseType = 'json';
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4) {
         if (xhr.status === 0) {

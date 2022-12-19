@@ -1,8 +1,8 @@
-import React from "react";
-import { useLocation } from "@reach/router";
-import { Nav } from "react-bootstrap";
+import React from 'react';
+import {useLocation} from '@reach/router';
+import {Nav} from 'react-bootstrap';
 
-import Search from "./search";
+import Search from './search';
 
 export default (): JSX.Element => {
   const location = useLocation();
@@ -11,7 +11,7 @@ export default (): JSX.Element => {
     <div className="navbar navbar-expand-md navbar-light global-header">
       <div className="collapse navbar-collapse content-max" id="navbar-menu">
         <Search path={location.pathname} />
-        <Nav className="justify-content-end" style={{ flex: 1 }}>
+        <Nav className="justify-content-end" style={{flex: 1}}>
           <Nav.Item>
             <Nav.Link href="https://sentry.io/">
               Sign In

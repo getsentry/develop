@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "@emotion/styled";
+import React from 'react';
+import styled from '@emotion/styled';
 
 type Props = {
   children?: any;
@@ -12,7 +12,7 @@ const Note = styled.div`
 
 const NoteBody = styled.div``;
 
-export default ({ children }: Props): JSX.Element => {
+export default ({children}: Props): JSX.Element => {
   //   let className = "";
   //   if (children.props && typeof children.props.children === "string") {
   //     className += " markdown-text-only";

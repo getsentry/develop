@@ -1,27 +1,27 @@
-import React, { useState, useContext, useRef, useEffect } from "react";
-import CodeContext from "./codeContext";
+import React, {useState, useContext, useRef, useEffect} from 'react';
+import CodeContext from './codeContext';
 
 // human readable versions of names
 const LANGUAGES = {
-  javascript: "JavaScript",
-  typescript: "TypeScript",
-  jsx: "JSX",
-  html: "HTML",
-  coffee: "CoffeeScript",
-  powershell: "PowerShell",
-  json: "JSON",
-  cpp: "C++",
-  csharp: "C#",
-  es6: "JavaScript (ES6)",
-  yml: "YAML",
-  yaml: "YAML",
+  javascript: 'JavaScript',
+  typescript: 'TypeScript',
+  jsx: 'JSX',
+  html: 'HTML',
+  coffee: 'CoffeeScript',
+  powershell: 'PowerShell',
+  json: 'JSON',
+  cpp: 'C++',
+  csharp: 'C#',
+  es6: 'JavaScript (ES6)',
+  yml: 'YAML',
+  yaml: 'YAML',
 };
 
 type Props = {
   children: JSX.Element | JSX.Element[];
 };
 
-export default ({ children }: Props): JSX.Element => {
+export default ({children}: Props): JSX.Element => {
   if (!Array.isArray(children)) {
     children = [children];
   } else {
@@ -43,11 +43,11 @@ export default ({ children }: Props): JSX.Element => {
   // selection.  If there is no title fall back to the title cased language
   // name (or override from `LANGUAGES`).
   let possibleChoices = children.map(x => {
-    const { title, language } = x.props;
+    const {title, language} = x.props;
     return (
       title ||
       LANGUAGES[language] ||
-      (language ? language[0].toUpperCase() + language.substr(1) : "Text")
+      (language ? language[0].toUpperCase() + language.substr(1) : 'Text')
     );
   });
 
@@ -88,8 +88,7 @@ export default ({ children }: Props): JSX.Element => {
   // box might also toggle and change height.
   useEffect(() => {
     if (lastScrollOffset !== null) {
-      const diff =
-        tabBarRef.current.getBoundingClientRect().y - lastScrollOffset;
+      const diff = tabBarRef.current.getBoundingClientRect().y - lastScrollOffset;
       window.scroll(window.scrollX, window.scrollY + diff);
       setLastScrollOffset(null);
     }
@@ -103,8 +102,9 @@ export default ({ children }: Props): JSX.Element => {
 
     return (
       <button
-        className={`${isSelected && "active"} ${possibleChoices.length === 1 &&
-          "only-choice"}`}
+        className={`${isSelected && 'active'} ${
+          possibleChoices.length === 1 && 'only-choice'
+        }`}
         onClick={() => {
           // see useEffect above.
           setLastScrollOffset(tabBarRef.current.getBoundingClientRect().y);

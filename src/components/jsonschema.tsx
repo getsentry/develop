@@ -1,9 +1,9 @@
-import React from "react";
-import { MDXProvider } from "@mdx-js/react";
-import { MDXRenderer } from "gatsby-plugin-mdx";
-import { graphql, useStaticQuery } from "gatsby";
+import React from 'react';
+import {MDXProvider} from '@mdx-js/react';
+import {MDXRenderer} from 'gatsby-plugin-mdx';
+import {graphql, useStaticQuery} from 'gatsby';
 
-const JsonSchema = ({ id }) => {
+const JsonSchema = ({id}) => {
   // XXX(markus): No clue if this can be replaced by non-static query
   //
   // This contrived query takes extra care in not referencing allJsonSchema or
@@ -13,9 +13,7 @@ const JsonSchema = ({ id }) => {
   // failing the build.
   const query = useStaticQuery(graphql`
     {
-      allMdx(
-        filter: { parent: { internal: { type: { eq: "JsonSchemaMarkdown" } } } }
-      ) {
+      allMdx(filter: {parent: {internal: {type: {eq: "JsonSchemaMarkdown"}}}}) {
         nodes {
           body
           parent {
@@ -31,7 +29,7 @@ const JsonSchema = ({ id }) => {
   const mdxNode = query.allMdx.nodes.find(node => node.parent.parent.id === id);
 
   if (!mdxNode) {
-    return "Failed to load JSON Schema. Either the ID you have passed into the component does not exist or you are missing some git submmodules.";
+    return 'Failed to load JSON Schema. Either the ID you have passed into the component does not exist or you are missing some git submmodules.';
   }
 
   return (

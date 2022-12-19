@@ -1,9 +1,9 @@
-import React from "react";
-import { graphql } from "gatsby";
+import React from 'react';
+import {graphql} from 'gatsby';
 
-import BasePage from "~src/components/basePage";
-import Content from "~src/components/content";
-import Sidebar from "~src/components/sidebar";
+import BasePage from '~src/components/basePage';
+import Content from '~src/components/content';
+import Sidebar from '~src/components/sidebar';
 
 export default (props: any) => {
   return (
@@ -15,7 +15,7 @@ export default (props: any) => {
 
 export const pageQuery = graphql`
   query DocQuery($id: String) {
-    file(id: { eq: $id }) {
+    file(id: {eq: $id}) {
       id
       relativePath
       sourceInstanceName

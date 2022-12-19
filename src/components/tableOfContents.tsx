@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import * as Sentry from "@sentry/gatsby";
+import React, {useEffect, useState} from 'react';
+import * as Sentry from '@sentry/gatsby';
 
 type Item = {
   title?: string;
@@ -10,9 +10,7 @@ type Item = {
 const getHeadings = (element: HTMLElement): Item[] => {
   const levels = [2, 3];
   const headingSelector = levels.map(level => `h${level}`).join(`, `);
-  const htmlNodes: HTMLElement[] = Array.from(
-    element.querySelectorAll(headingSelector)
-  );
+  const htmlNodes: HTMLElement[] = Array.from(element.querySelectorAll(headingSelector));
   const headings = [];
   const tree = [];
   let lastDepth = null;
@@ -58,7 +56,7 @@ type Props = {
   contentRef: React.RefObject<HTMLElement>;
 };
 
-export default ({ contentRef }: Props) => {
+export default ({contentRef}: Props) => {
   const [items, setItems] = useState<Item[]>(null);
 
   useEffect(() => {

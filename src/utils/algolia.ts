@@ -1,7 +1,4 @@
-import {
-  extrapolate,
-  sentryAlgoliaIndexSettings,
-} from "@sentry-internal/global-search";
+import {extrapolate, sentryAlgoliaIndexSettings} from '@sentry-internal/global-search';
 
 const pageQuery = `{
     pages: allSitePage {
@@ -24,10 +21,10 @@ const pageQuery = `{
 const flatten = (arr: any[]) =>
   arr
     .filter(
-      ({ node: { context } }) =>
+      ({node: {context}}) =>
         context && !context.draft && !context.noindex && context.title
     )
-    .map(({ node: { objectID, context, path } }) => {
+    .map(({node: {objectID, context, path}}) => {
       // https://github.com/getsentry/sentry-global-search#algolia-record-stategy
       return {
         objectID,
@@ -35,7 +32,7 @@ const flatten = (arr: any[]) =>
         section: context.title,
         url: path,
         text: context.excerpt,
-        pathSegments: extrapolate(path, "/").map(x => `/${x}/`),
+        pathSegments: extrapolate(path, '/').map(x => `/${x}/`),
         keywords: context.keywords || [],
         legacy: context.legacy || false,
       };
@@ -43,13 +40,13 @@ const flatten = (arr: any[]) =>
 
 const indexPrefix = process.env.GATSBY_ALGOLIA_INDEX_PREFIX;
 if (!indexPrefix) {
-  throw new Error("`GATSBY_ALGOLIA_INDEX_PREFIX` must be configured!");
+  throw new Error('`GATSBY_ALGOLIA_INDEX_PREFIX` must be configured!');
 }
 
 export default [
   {
     query: pageQuery,
-    transformer: ({ data }) => flatten(data.pages.edges),
+    transformer: ({data}) => flatten(data.pages.edges),
     indexName: `${indexPrefix}docs`,
     settings: {
       ...sentryAlgoliaIndexSettings,
