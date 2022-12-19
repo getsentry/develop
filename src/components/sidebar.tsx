@@ -134,6 +134,9 @@ export default () => {
 
         <ul className="list-unstyled" data-frontend-tree>
           <SidebarLink to="/frontend/">Frontend Handbook</SidebarLink>
+          <SidebarLink to="/frontend/upgrade-policies/">
+            Dependency Upgrade Policies
+          </SidebarLink>
           <SidebarLink to="/frontend/storybook/">
             Storybook Styleguide
           </SidebarLink>
