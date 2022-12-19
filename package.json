@@ -1,6 +1,11 @@
 {
   "name": "sentry-docs-develop",
-  "description": "",
+  "version": "0.0.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/getsentry/develop.git"
+  },
   "dependencies": {
     "@emotion/core": "^10.0.35",
     "@emotion/styled": "^10.0.27",
@@ -53,9 +58,6 @@
     "ts-node": "^9.0.0",
     "typescript": "^3.9.7"
   },
-  "keywords": [
-    "gatsby"
-  ],
   "scripts": {
     "build": "gatsby build",
     "develop": "gatsby develop",
