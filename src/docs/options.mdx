@@ -1,3 +1,118 @@
 ---
 title: 'Options'
 ---
+
+Options are a way to store generic system-wide configuration. They serve a similar purpose to configuration files, but they are backed by a database, so it's possible to change them at runtime. This makes options well-suited for rates, quotas, and limits.
+
+## Adding New Options
+
+To add a new system option, add it to [`sentry/options/defaults.py`](https://github.com/getsentry/sentry/blob/master/src/sentry/options/defaults.py). e.g.,
+
+```python
+register("performance.some-feature-rate", default=0.0)
+```
+
+### Tips
+
+- namespace your option. Something like `feature-scope.feature-name`
+- colocate your `register` with similar options
+- use dashes and not underscores
+- always set a default value with `default=`
+- the default value can be a boolean, integer, string, or float
+
+<Alert level="warning">
+  Always split up registering the new option and the code that relies on the new option. Register new options in their own pull requests, ahead of the code changes.
+</Alert>
+
+## Using Options
+
+To check the value of an option at runtime, import the `options` module and use the `get` method. e.g.,
+
+```python
+from sentry import options
+feature_rate = options.get("performance.some-feature-rate")
+```
+
+## Setting Options
+
+Options are stored in the database and are cached. You can change the value of an option using `sentry shell`, or by using the management UI.
+
+### Sentry Shell
+
+You can set option values using `sentry shell`. e.g.,
+
+```bash
+sentry shell
+```
+
+then,
+
+```python
+from sentry import options
+options.set("performance.some-feature-rate", 0.01)
+```
+
+<Alert level="warning">
+Do not use <code>options.set</code> in your application code. <code>options.set</code> is meant for OPS use.
+</Alert>
+
+<Alert level="info">
+If you do not have access to the shell, you'll need to contact OPS to set the option value for you.
+</Alert>
+
+### Management UI
+
+If you expect to frequently update your option, you may want to make it editable in the management UI. The `/admin/settings` page has inputs for a small set of the available options. You can submit a pull request to add your option to the UI by [updating the corresponding React view](https://github.com/getsentry/sentry/blob/master/static/app/views/admin/options.tsx).
+
+## Using Options for Feature Rollout
+
+If you're working on a system-wide feature, you may choose to use options for your rollout instead of feature flags. Unlike feature flags, options don't allow for easy segmentation, but they are fast and simple. e.g.,
+
+```python
+from sentry import options
+
+rate = options.get("performance.some-feature-rate")
+if rate and rate > random.random():
+    do_feature_stuff()
+```
+
+However, be careful! Using `random.random` will cause your feature to be enabled and disabled randomly between page requests. This may be unacceptable for user-facing features. Instead, you should use the `sample_modulo` helper. e.g.,
+
+```python
+from sentry.utils.options import sample_modulo
+
+if sample_modulo("performance.some-feature-rate", organization.id):
+    do_feature_stuff()
+```
+
+`sample_modulo` guarantees that for a given value of the option and a given organization it will always return `True` or `False` for every invocation.
+
+## Setting Options in Tests
+
+In order to test features that check options, you can use the `override_options` decorator. e.g.,
+
+```python
+from sentry.testutils.helpers import override_options
+
+@override_options({"performance.some-feature-rate": 1.0})
+def test_some_feature(self):
+    ...
+```
+
+## Removing Options
+
+If your option is short-lived, you should remove it once it's no longer needed. First, create a pull request to remove the option and its usage. Then, remove the option from the database. To do this, you can use the Sentry shell. e.g.,
+
+```bash
+sentry shell
+```
+
+then,
+```python
+from sentry import options
+options.delete("performance.some-feature-rate")
+```
+
+<Alert level="info">
+If you do not have access to the shell, you'll need to contact OPS to remove the option for you.
+</Alert>
