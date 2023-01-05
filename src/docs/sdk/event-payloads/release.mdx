@@ -42,17 +42,4 @@ title: Detect Release Automatically
 | PHP           | in order of precedence:<br /> PHP/Laravel/Symfony<br /> - `options.release`<br /> - `SENTRY_RELEASE`                            |
 | Ruby          | in order of precedence:<br /> - `config.release`<br /> - `ENV[’SENTRY_RELEASE’]`<br /> - `git rev-parse —short HEAD` if .git present<br /> - capistrano `REVISION` file or from `revisions.log`<br /> - `ENV['HEROKU_SLUG_COMMIT']` if on heroku<br /> - nil otherwise                                                                                                                                |
 | Golang        | in order of precedence:<br /> - `options.Release`<br /> - various env vars<br /> `"SENTRY_RELEASE"`<br /> `"HEROKU_SLUG_COMMIT"`<br /> `"SOURCE_VERSION"`<br /> `"CODEBUILD_RESOLVED_SOURCE_VERSION"`<br /> `"CIRCLE_SHA1"`<br /> `"GAE_DEPLOYMENT_ID"`<br /> `"GITHUB_SHA"`<br /> `"COMMIT_REF"`<br /> `"VERCEL_GIT_COMMIT_SHA"`<br /> `"ZEIT_GITHUB_COMMIT_SHA"`<br /> `"ZEIT_GITLAB_COMMIT_SHA"`<br /> `"ZEIT_BITBUCKET_COMMIT_SHA"`<br /> - `git describe --long --always --dirty` |
-| .NET          | In order of precedence:
-<br /> - The `release` configuration option if set
-<br /> - The `SENTRY_RELEASE` env var if set
-<br /> - `"{AssemblyName}@{AssemblyInformationalVersion}"` based on the entry assembly, when an informational version attribute is present (commonly set by csproj `<Version>` tag in modern .NET)
-<br /> - `"{AssemblyName}@{AssemblyVersion}"` based on the entry assembly, using the full assembly version (usually in older .NET Framework)
-<br /> 
-<br /> Varies slightly for mobile.
-<br /> On .NET Android:
-<br /> - The `release` configuration option if set
-<br /> - `"{PackageName}@{PackageVersion}+{PackageVersionCode}"` from the Android package.  (Should matche `appId@appVersion+buildNumber` from the Android SDK.)
-<br /> 
-<br /> On .NET for iOS/MacCatalyst:
-<br /> - The Release configuration option if set
-<br /> - `"{CFBundleIdentifier}@{CFBundleShortVersionString}+{CFBundleVersion}"` which matches the iOS SDK.                                                                                                                                |
+| .NET          | In order of precedence:<br /> - The `release` configuration option if set<br /> - The `SENTRY_RELEASE` env var if set<br /> - `"{AssemblyName}@{AssemblyInformationalVersion}"` based on the entry assembly, when an informational version attribute is present (commonly set by csproj `<Version>` tag in modern .NET)<br /> - `"{AssemblyName}@{AssemblyVersion}"` based on the entry assembly, using the full assembly version (usually in older .NET Framework)<br /> <br /> Varies slightly for mobile.<br /> On .NET Android:<br /> - The `release` configuration option if set<br /> - `"{PackageName}@{PackageVersion}+{PackageVersionCode}"` from the Android package.  (Should matche `appId@appVersion+buildNumber` from the Android SDK.)<br /> <br /> On .NET for iOS/MacCatalyst:<br /> - The Release configuration option if set<br /> - `"{CFBundleIdentifier}@{CFBundleShortVersionString}+{CFBundleVersion}"` which matches the iOS SDK. |
