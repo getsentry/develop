@@ -12,13 +12,14 @@ To add a new system option, add it to [`sentry/options/defaults.py`](https://git
 register("performance.some-feature-rate", default=0.0)
 ```
 
-### Tips
+Follow these rules when adding new options:
 
 - namespace your option (e.g., `feature-scope.feature-name`)
 - colocate your new option with related existing options
 - use dashes and not underscores
 - always set a default value with `default=`
-- the value of an option can be any pickleable value
+
+The value of an option can be any pickleable value.
 
 <Alert level="warning">
   Always split up registering the new option and the code that relies on the new option.
