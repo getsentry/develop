@@ -2,10 +2,11 @@
 title: 'Options'
 ---
 
-Options are a way to store generic system-wide configuration. They serve a similar purpose to configuration files, but they are backed by a database, so it's possible to change them at runtime without a deploy. This makes options well-suited for rates, quotas, and limits.
+Options are a way to store generic system-wide configuration. They serve a similar purpose to configuration files, but they are backed by a database, so it's possible to change them at runtime without a deploy. Options are stored in the database and cached, so they are performant and reliable. This makes options well-suited for rates, quotas, and limits.
 
 ## Adding New Options
 
+ch
 To add a new system option, add it to [`sentry/options/defaults.py`](https://github.com/getsentry/sentry/blob/master/src/sentry/options/defaults.py) by registering it. e.g.,
 
 ```python
@@ -41,7 +42,7 @@ feature_rate = options.get("performance.some-feature-rate")
 
 ## Setting Options
 
-Options are stored in the database and are cached. You can change the value of an option using `sentry shell`, or by using the [options UI](#options-ui).
+You can change the value of an option using `sentry shell`, or by using the [options UI](#options-ui).
 
 ### Sentry Shell
 
