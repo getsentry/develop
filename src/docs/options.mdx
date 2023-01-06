@@ -21,7 +21,8 @@ register("performance.some-feature-rate", default=0.0)
 - the value of an option can be any pickleable value
 
 <Alert level="warning">
-  Always split up registering the new option and the code that relies on the new option. Register new options in their own pull requests, ahead of the code changes.
+  Always split up registering the new option and the code that relies on the new option.
+  Register new options in their own pull requests, ahead of the code changes.
 </Alert>
 
 ## Using Options
@@ -53,7 +54,8 @@ options.set("performance.some-feature-rate", 0.01)
 ```
 
 <Alert level="info">
-If you do not have access to the shell, you'll need to contact OPS to set the option value for you.
+  If you do not have access to the shell, you'll need to contact OPS to set the option
+  value for you.
 </Alert>
 
 ### Management UI
@@ -122,5 +124,6 @@ options.delete("performance.some-feature-rate")
 ```
 
 <Alert level="info">
-If you do not have access to the shell, you'll need to contact OPS to remove the option for you.
+  If you do not have access to the shell, you'll need to contact OPS to remove the option
+  for you.
 </Alert>
