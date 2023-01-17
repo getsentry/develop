@@ -187,7 +187,8 @@ Example:
 <RestartButton
   analyticsEventName="Growth: Guided Tour Restart"
   analyticsEventKey="growth.guided_tour_restart"
-  analyticsParams={{tour} />
+  analyticsParams={{tour}}
+/>
 ```
 
 In this example, clicking this button will now send an event to amplitude with the `analyticsEventName` , send an event to reload with the new `analyticsEventKey`, and add on `tour` as a parameter sent with each event.
