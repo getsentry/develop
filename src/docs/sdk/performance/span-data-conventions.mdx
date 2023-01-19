@@ -8,15 +8,14 @@ The `data` field on the span is expected to follow [OpenTelemetry's semantic con
 
 Keys on the `data` field should be lower-case and use underscores instead of camel-case. There are some exceptions to this, but these exist because of backwards compatability.
 
-Below describes the conventions for the Span interface for the `data` field on the span and how they are currently used by the product.
+Below describes the conventions for the Span interface for the `data` field on the span that are currently used by the product or are important to bring up.
 
 ## Mobile
 
-| Attribute                                                                                             | Type              | Description                                                                                          | Examples |
-| ----------------------------------------------------------------------------------------------------- | ----------------- | ---------------------------------------------------------------------------------------------------- | -------- |
-| `blocked_main_thread`                                                                                 | boolean           | Whether the main thread was blocked by the span.                                                     | `true`   |
-| `call_stack`                                                                                          | Array<StackFrame> | The most relevant stack frames, that lead to the File I/O span. The stack frame should adhere to the |
-| [`StackFrame`](https://develop.sentry.dev/sdk/event-payloads/stacktrace/#frame-attributes) interface. |                   |
+| Attribute             | Type              | Description                                                                                                                                                                                                | Examples |
+| --------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `blocked_main_thread` | boolean           | Whether the main thread was blocked by the span.                                                                                                                                                           | `true`   |
+| `call_stack`          | Array<StackFrame> | The most relevant stack frames, that lead to the File I/O span. The stack frame should adhere to the [`StackFrame`](https://develop.sentry.dev/sdk/event-payloads/stacktrace/#frame-attributes) interface. |          |
 
 ## Browser
 
