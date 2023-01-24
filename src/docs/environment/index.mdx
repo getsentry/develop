@@ -297,9 +297,10 @@ Please refer to [Frontend Development Server](/frontend/development-server/) and
 
 Some services are not run in all situations. Among those are <Link to="/services/relay/">Relay</Link> and the ingest workers. If you need
 a more production-like environment in development, you can set `SENTRY_USE_RELAY=True` in `~/.sentry/sentry.conf.py`. This will launch Relay
-as part of the `devserver` workflow.
+as part of the `devserver` workflow. If you want to enable the entire metrics ingestion pipeline, you need set
+`SENTRY_USE_METRICS_DEV=True` and `SENTRY_EVENTSTREAM = "sentry.eventstream.kafka.KafkaEventStream"` in `~/.sentry/sentry.conf.py`.
 
-Additionally you can explicitly control this during `devserver` usage with the `--ingest` and `--no-ingest` flags. The `sentry devservices`
+Additionally, you can explicitly control this during `devserver` usage with the `--ingest` and `--no-ingest` flags. The `sentry devservices`
 command will not update Relay automatically in that case, to do this manually run:
 
 ```shell
