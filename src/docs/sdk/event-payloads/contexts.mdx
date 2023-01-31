@@ -538,16 +538,16 @@ The `type` and default key is `"cloud"`.
 
 `cloud.provider`
 
-: _Optional_. Name of the cloud provider. For example `aws`.
+: _Optional_. Name of the cloud provider.
 
-List of well-known values. If one of them applies, then the respective value MUST be used, otherwise a custom value MAY be used:
-
-- `alibaba_cloud` - Alibaba Cloud
-- `aws` - Amazon Web Services
-- `azure` - Microsoft Azure
-- `gcp` - Google Cloud Platform
-- `ibm_cloud` - IBM Cloud
-- `tencent_cloud` - Tencent Cloud
+- List of well-known values. If one of them applies, then the respective value MUST be used, otherwise a custom value MAY be used:
+  - `alibaba_cloud` - Alibaba Cloud
+  - `aws` - Amazon Web Services
+  - `azure` - Microsoft Azure
+  - `gcp` - Google Cloud Platform
+  - `ibm_cloud` - IBM Cloud
+  - `tencent_cloud` - Tencent Cloud
+- Example: `aws`.
 
 `cloud.account.id`
 
@@ -557,7 +557,7 @@ List of well-known values. If one of them applies, then the respective value MUS
 
 : _Optional_. The geographical region the resource is running.
 
-: For example `us-central1` or `us-east-1`.
+- Example: `us-central1` or `us-east-1`.
 
 `cloud.availability_zone`
 
@@ -567,9 +567,9 @@ List of well-known values. If one of them applies, then the respective value MUS
 
 : _Optional_. The cloud platform in use. The prefix of the service SHOULD match the one specified in `cloud.provider`.
 
-  For example `aws_ecs`
+- Example: `aws_ecs`
 
-## Examples
+### Example Cloud Context
 
 The following example illustrates the contexts part of the <Link to="/sdk/event-payloads/">event payload</Link> and omits other attributes for simplicity.
 
