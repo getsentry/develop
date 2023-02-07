@@ -268,7 +268,7 @@ output of the `uname` syscall.
 system. For some well-known runtimes, Sentry will attempt to parse `name` and
 `version` from this string, if they are not explicitly given.
 
-### Example
+### Example OS Context
 
 The OS Context for the 3 major OSs should look like this:
 
@@ -445,17 +445,21 @@ Examples: `"Apple Metal"` or `"Direct3D11"`
 
 : _Optional_. Are geometry shaders available on the device?
 
-Example:
+### Example GPU Context
 
 ```json
-"gpu": {
-  "name": "AMD Radeon Pro 560",
-  "vendor_name": "Apple",
-  "memory_size": 4096,
-  "api_type": "Metal",
-  "multi_threaded_rendering": true,
-  "version": "Metal",
-  "npot_support": "Full"
+{
+  "contexts": {
+    "gpu": {
+      "name": "AMD Radeon Pro 560",
+      "vendor_name": "Apple",
+      "memory_size": 4096,
+      "api_type": "Metal",
+      "multi_threaded_rendering": true,
+      "version": "Metal",
+      "npot_support": "Full"
+    }
+  }
 }
 ```
 
@@ -469,18 +473,22 @@ The `type` and default key is `"state"`.
 
 : **Required**. Object with two keys: _Optional_ `type` for naming the state library (e.g.: Redux, MobX, Vuex) and **Required** `value` that holds the state object.
 
-Example:
+### Example State Context
 
 ```json
-"state": {
-  "state": {
-    "type": "MobX",
-    "value": {
-      "flights": [],
-      "airports": [],
-      "showModal": false
+{
+  "contexts": {
+    "state": {
+      "state": {
+        "type": "MobX",
+        "value": {
+          "flights": [],
+          "airports": [],
+          "showModal": false
+        }
+      }
     }
-  },
+  }
 }
 ```
 
@@ -510,25 +518,6 @@ The `type` and default key is `"culture"`.
 `timezone`
 
 : _Optional_. The timezone of the locale. For example, `Europe/Vienna`.
-
-## Examples
-
-The following example illustrates the contexts part of the <Link to="/sdk/event-payloads/">event payload</Link> and omits other attributes for simplicity.
-
-```json
-{
-  "contexts": {
-    "os": {
-      "name": "Windows"
-    },
-    "electron": {
-      "type": "runtime",
-      "name": "Electron",
-      "version": "4.0"
-    }
-  }
-}
-```
 
 ## Cloud Context
 
