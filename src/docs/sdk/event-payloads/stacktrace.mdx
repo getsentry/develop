@@ -97,6 +97,11 @@ in this stack trace. For example, the frames that might power the framework’s
 web server of your app are probably not relevant. However, calls to the
 framework’s library once you start handling code likely are relevant.
 
+`debug_id`
+
+: References a particular source map artifact that should be used to resolve the
+stack frame.
+
 `stack_start`
 
 : Marks this frame as the bottom of a chained stack trace. Stack traces from
