@@ -333,8 +333,8 @@ URL pulled from the `external_debug_info` custom section.
 
 `code_id`
 
-: _Optional_. Identifier of the WASM file.  It is the value of the
-`build_id` custom section formatted as HEX string.  It can be omitted in case
+: _Optional_. Identifier of the WASM file. It is the value of the
+`build_id` custom section formatted as HEX string. It can be omitted in case
 the section contains a UUID (16 bytes).
 
 `code_file`
@@ -367,6 +367,36 @@ Example:
 ```json
 {
   "uuid": "395835f4-03e0-4436-80d3-136f0749a893"
+}
+```
+
+### Source Map Images
+
+Source Map images are used to provide information about which artifact (i.e.
+source map) should be used to deminify a particular file. We use the `filename`
+property of a stack frame and the `source_filename` field in the image to query
+for a source map file via the `debug_id` field.
+
+Attributes:
+
+`type`
+
+: **Required**. Type of the debug image. Must be `"sourcemap"`.
+
+`source_filename`
+
+: **Required**. Name of the file that should be mapped.
+
+`debug_id`
+
+: **Required**. Identifier of the file that will be used to resolve the source
+file (`source_filename`).
+
+```json
+{
+  "type": "sourcemap",
+  "source_filename": "https://example.com/static/js/main.js",
+  "debug_id": "395835f4-03e0-4436-80d3-136f0749a893"
 }
 ```
 
