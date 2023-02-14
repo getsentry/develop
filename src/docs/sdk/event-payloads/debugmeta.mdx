@@ -375,8 +375,9 @@ Example:
 
 Source Map images are used to provide information about which artifact (i.e.
 source map) should be used to resolve a particular JavaScript file to its
-original source. We use the `abs_path` property of a stack frame and the `url`
-field in the image to query for a source map file via the `debug_id` field.
+original source. We use the `abs_path` property of a stack frame and the
+`code_file` field in the image to query for a source map file via the `debug_id`
+field.
 
 Attributes:
 
@@ -384,9 +385,9 @@ Attributes:
 
 : **Required**. Type of the debug image. Must be `"sourcemap"`.
 
-`url`
+`code_file`
 
-: **Required**. Url of the file that should be mapped. Corresponds to the
+: **Required**. Path/Url of the file that should be mapped. Corresponds to the
 `abs_path` property inside a stack frame.
 
 `debug_id`
@@ -397,7 +398,7 @@ file.
 ```json
 {
   "type": "sourcemap",
-  "url": "https://example.com/static/js/main.js",
+  "code_file": "https://example.com/static/js/main.js",
   "debug_id": "395835f4-03e0-4436-80d3-136f0749a893"
 }
 ```
