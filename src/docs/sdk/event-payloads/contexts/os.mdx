@@ -1,0 +1,99 @@
+## OS Context
+
+OS context under the default key `"os"` describes the operating system on which
+the crash happened/the event was created.
+
+The `type` and default key is `"os"`. However, since contexts can be set
+multiple times under different keys, there has historically been a lot of
+confusion about which OS context represents what. So here's some examples:
+
+- In events reported from a Python/ASP.NET/Rails web backend, the OS context
+  under the default key `"os"` is the server's operating system, and is set by
+  the SDK (if at all).
+
+  Additionally, the Sentry server will attempt to parse the `User-Agent` header
+  from the event's [Request Interface](/sdk/event-payloads/request/) and create a _secondary_ OS
+  context under the non-default key `"client_os"`.
+
+- In events reported from a JS web frontend, the SDK typically reports no OS
+  context.
+
+  The server however knows by looking at the platform (`"javascript"`) that the
+  incoming User-Agent can only come from the crashing device, and creates the
+  User-Agent based OS context under the default key `"os"`.
+
+To summarize:
+
+- `"os"` key for the device generating the event.
+- `"client_os"` key for an adjacent client device's OS (that is _not_ the
+  device creating the event) if it's important. The Sentry server sets this as part of
+  User-Agent parsing, but SDKs can set this directly too.
+- If in doubt, just send `"os"`. Any other keys are not searchable in the
+  product and will not be visually pronounced using icons, so using something
+  like `"server_os"` to clarify what you meant is probably going to
+  backfire with regards to the overall product experience.
+
+  Under the existing mental model, a hypothetical `"server_os"` key would
+  actually mean you're reporting the operating system of an adjacent "upstream"
+  device that the crashing device is talking to.
+
+  As Kurt Tucholsky said: "The opposite of good is not evil, but good intentions"
+
+`name`
+
+: _Recommended_. The name of the operating system. It might be derived from `raw_description`. It is **required** if `raw_description` is not provided.
+
+`version`
+
+: _Optional_. The version of the operating system.
+
+`build`
+
+: _Optional_. The internal build revision of the operating system.
+
+`kernel_version`
+
+: _Optional_. An independent kernel version string. This is typically the entire
+output of the `uname` syscall.
+
+`rooted`
+
+: _Optional_. A flag indicating whether the OS has been jailbroken or rooted.
+
+`theme`
+
+: _Optional_. Either `light` or `dark`. Describes whether the OS runs in dark mode or not.
+
+`raw_description`
+
+: _Optional_. An unprocessed description string obtained by the operating
+system. For some well-known runtimes, Sentry will attempt to parse `name` and
+`version` from this string, if they are not explicitly given.
+
+### Example OS Context
+
+The OS Context for the 3 major OSs should look like this:
+
+```json
+{
+  "windows": {
+    "type": "os",
+    "name": "Windows",
+    "version": "10.0.19041",
+    "build": "662"
+  },
+  "mac": {
+    "type": "os",
+    "name": "macOS",
+    "version": "11.1.0",
+    "build": "20C69",
+    "kernel_version": "20.2.0"
+  },
+  "linux": {
+    "type": "os",
+    "name": "Linux",
+    "version": "5.10.6",
+    "build": "arch1-1"
+  }
+}
+```

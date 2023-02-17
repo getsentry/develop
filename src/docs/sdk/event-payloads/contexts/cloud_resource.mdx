@@ -1,0 +1,75 @@
+## Cloud Resource Context
+
+Cloud Resource Context describes certain properties of cloud provider the software is running.
+The data in the context abides to the [Cloud](https://opentelemetry.io/docs/reference/specification/resource/semantic_conventions/cloud/) and [Host](https://opentelemetry.io/docs/reference/specification/resource/semantic_conventions/host/) semantic conventions of OpenTelemenetry.
+
+The `type` and default key is `"cloud_resource"`.
+
+`cloud.provider`
+
+: _Optional_. Name of the cloud provider.
+
+- List of well-known values. If one of them applies, then the respective value MUST be used, otherwise a custom value MAY be used:
+  - `alibaba_cloud` - Alibaba Cloud
+  - `aws` - Amazon Web Services
+  - `azure` - Microsoft Azure
+  - `gcp` - Google Cloud Platform
+  - `ibm_cloud` - IBM Cloud
+  - `tencent_cloud` - Tencent Cloud
+- Example: `aws`
+
+`cloud.account.id`
+
+: _Optional_. The cloud account ID the resource is assigned to.
+
+- Example: `111111111111`
+
+`cloud.region`
+
+: _Optional_. The geographical region the resource is running.
+
+- Example: `us-central1` or `us-east-1`
+
+`cloud.availability_zone`
+
+: _Optional_. Cloud regions often have multiple, isolated locations known as zones to increase availability. Availability zone represents the zone where the resource is running.
+
+- Example: `us-east-1c`
+
+`cloud.platform`
+
+: _Optional_. The cloud platform in use. The prefix of the service SHOULD match the one specified in `cloud.provider`.
+
+- Example: `aws_ecs`
+
+`host.id`
+
+: _Optional_. Unique host ID.
+
+- Example: `3635354529892309001`
+
+`host.type`
+
+: _Optional_. Machine type of host.
+
+- Example: `t4g.medium`
+
+### Example Cloud Resource Context
+
+The following example illustrates the contexts part of the <Link to="/sdk/event-payloads/">event payload</Link> and omits other attributes for simplicity.
+
+```json
+{
+  "contexts": {
+    "cloud_resource": {
+      "cloud.provider": "aws",
+      "cloud.platform": "aws_ec2",
+      "cloud.account.id": "499517922981",
+      "cloud.region": "us-east-1",
+      "cloud.availability_zone": "us-east-1e",
+      "host.id": "i-07d3301208fe0a55a",
+      "host.type": "t2.large"
+    }
+  }
+}
+```

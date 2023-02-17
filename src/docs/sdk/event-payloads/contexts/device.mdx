@@ -1,0 +1,171 @@
+## Device Context
+
+Device context describes the device that caused the event. This is most
+appropriate for mobile applications.
+
+The `type` and default key is `"device"`.
+
+`name`
+
+: **Required**. The name of the device. This is typically a hostname.
+
+`family`
+
+: _Optional_. The family of the device. This is usually the common part of model
+names across generations. For instance, `iPhone` would be a reasonable family,
+so would be `Samsung Galaxy`.
+
+`model`
+
+: _Optional_. The model name. This, for example, can be `Samsung Galaxy S3`.
+
+`model_id`
+
+: _Optional_. An internal hardware revision to identify the device exactly.
+
+`arch`
+
+: _Optional_. The CPU architecture.
+
+`battery_level`
+
+: _Optional_. If the device has a battery, this can be a floating point value
+defining the battery level (in the range 0-100).
+
+`orientation`
+
+: _Optional_. This can be a string `portrait` or `landscape` to define the
+orientation of a device.
+
+`manufacturer`
+
+: _Optional_. The manufacturer of the device.
+
+`brand`
+
+: _Optional_. The brand of the device.
+
+`screen_resolution`
+
+: _Optional_. The screen resolution. (e.g.: 800x600, 3040x1444).
+
+`screen_height_pixels`
+
+: _Optional_. The height of the screen.
+
+`screen_width_pixels`
+
+: _Optional_. The width of the screen.
+
+`screen_density`
+
+: _Optional_. A floating point denoting the screen density.
+
+`screen_dpi`
+
+: _Optional_. A decimal value reflecting the DPI (dots-per-inch) density.
+
+`online`
+
+: _Optional_. Whether the device was online or not.
+
+`charging`
+
+: _Optional_. Whether the device was charging or not.
+
+`low_memory`
+
+: _Optional_. Whether the device was low on memory.
+
+`simulator`
+
+: _Optional_. A flag indicating whether this device is a simulator or an actual
+device.
+
+`memory_size`
+
+: _Optional_. Total system memory available in bytes.
+
+`free_memory`
+
+: _Optional_. Free system memory in bytes.
+
+`usable_memory`
+
+: _Optional_. Memory usable for the app in bytes.
+
+`storage_size`
+
+: _Optional_. Total device storage in bytes.
+
+`free_storage`
+
+: _Optional_. Free device storage in bytes.
+
+`external_storage_size`
+
+: _Optional_. Total size of an attached external storage in bytes (for example,
+android SDK card).
+
+`external_free_storage`
+
+: _Optional_. Free size of an attached external storage in bytes (for example,
+android SDK card).
+
+`boot_time`
+
+: _Optional_. A formatted UTC timestamp when the system was booted. For example,
+`"2018-02-08T12:52:12Z"`.
+
+`timezone`
+
+: _Optional_. The timezone of the device. For example, `Europe/Vienna`. This field is deprecated, please use `timezone` of [culture context](#culture-context) instead.
+
+`language`
+
+: _Optional_. The language of the device. For example, `en`. This field is deprecated, please use `locale` of [culture context](#culture-context) instead.
+
+`processor_count`
+
+: _Optional_. Number of "logical processors". For example, `8`.
+
+`cpu_description`
+
+: _Optional_. CPU description. For example, `Intel(R) Core(TM)2 Quad CPU Q6600 @ 2.40GHz`.
+
+`processor_frequency`
+
+: _Optional_. Processor frequency in MHz. Note that the actual CPU frequency might vary depending on current load and power conditions,
+especially on low-powered devices like phones and laptops.
+
+`device_type`
+
+: _Optional_. Kind of device the application is running on. For example, `Unknown, Handheld, Console, Desktop`.
+
+`battery_status`
+
+: _Optional_. Status of the device's battery. For example, `Unknown, Charging, Discharging, NotCharging, Full`.
+
+`device_unique_identifier`
+
+: _Optional_. Unique device identifier. This value might only be used if `sendDefaultPii` is enabled.
+
+`supports_vibration`
+
+: _Optional_. Is vibration available on the device?
+
+`supports_accelerometer`
+
+: _Optional_. Is accelerometer available on the device?
+
+`supports_gyroscope`
+
+: _Optional_. Is gyroscope available on the device?
+
+`supports_audio`
+
+: _Optional_. Is audio available on the device?
+
+`supports_location_service`
+
+: _Optional_. Is the device capable of reporting its location?

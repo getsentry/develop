@@ -1,0 +1,28 @@
+## State Context
+
+State context describes the state of the application (e.g.: Redux store object).
+
+The `type` and default key is `"state"`.
+
+`state`
+
+: **Required**. Object with two keys: _Optional_ `type` for naming the state library (e.g.: Redux, MobX, Vuex) and **Required** `value` that holds the state object.
+
+### Example State Context
+
+```json
+{
+  "contexts": {
+    "state": {
+      "state": {
+        "type": "MobX",
+        "value": {
+          "flights": [],
+          "airports": [],
+          "showModal": false
+        }
+      }
+    }
+  }
+}
+```

@@ -1,0 +1,44 @@
+## App Context
+
+App context describes the application. As opposed to the runtime, this is the
+actual application that was running and carries metadata about the current
+session.
+
+The `type` and default key is `"app"`.
+
+`app_start_time`
+
+: _Optional_. Formatted UTC timestamp when the user started the application.
+
+`device_app_hash`
+
+: _Optional_. Application-specific device identifier.
+
+`build_type`
+
+: _Optional_. String identifying the kind of build. For example, `testflight`.
+
+`app_identifier`
+
+: _Optional_. Version-independent application identifier, often a dotted bundle
+ID.
+
+`app_name`
+
+: _Optional_. Human readable application name, as it appears on the platform.
+
+`app_version`
+
+: _Optional_. Human readable application version, as it appears on the platform.
+
+`app_build`
+
+: _Optional_. Internal build identifier, as it appears on the platform.
+
+`app_memory`
+
+: _Optional_. Amount of memory used by the application in bytes.
+
+`in_foreground`
+
+: _Optional_. A flag indicating whether the app is in foreground or not. An app is in foreground when it's visible to the user.
