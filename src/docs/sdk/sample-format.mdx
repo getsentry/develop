@@ -82,7 +82,7 @@ A profile should always be associated with a transaction.
 }
 ```
 
-### Attributes
+### Profile metadata
 
 `debug_meta`
 
@@ -226,7 +226,7 @@ It can have the following attributes:
 Acceptable values are:
 - `"1"`
 
-### Profile Data
+### Profile data
 
 The profile data consists of a list of samples referring to stacks which in
 terms refers to frames as well as some metadata about threads. This is to keep the amount of data we transfer to the
@@ -272,14 +272,14 @@ stack ID.
 : *List, required* Contains a list of sample object captured during execution.
 Each sample can contain the following attributes:
 
-- `relative_timestamp_ns`: *String, required.* Contains the relative timestamp in nanoseconds since the value contained
+- `elapsed_since_start_ns`: *String, required.* Contains the relative timestamp in nanoseconds since the value contained
 in the `timestamp` field when the sample was captured.
 - `stack_id`: *Integer, required.* Contains the stack index from the `stacks` list.
 - `thread_id`: *String, required.* Contains the thread ID on which the sample was captured.
 
 ```json
 {
-  "relative_timestamp_ns": 1234567890,
+  "elapsed_since_start_ns": 1234567890,
   "stack_id": 1,
   "thread_id": "259",
 }
