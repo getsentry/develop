@@ -310,6 +310,17 @@ detected during runtime.
 }
 ```
 
+## Validation
+
+We will reject a profile in Relay for several reasons:
+- profile data is missing
+- not enough samples (we need at least 2 samples)
+- no transaction associated with the profile
+- any of the metadata required is missing
+- size of the profile exceeds 50MB
+
+It is suggested to validate these conditions before sending the profile.
+
 ## Ingestion
 
 After this payload is generated, serialize it as JSON, pack it into an
