@@ -12,8 +12,6 @@ collected by a profiler.
 
 A profile should always be associated with a transaction.
 
-Here is a JSON Schema definition of the format.
-
 ## Data Model
 
 ### Example
@@ -293,10 +291,23 @@ in the `timestamp` field when the sample was captured.
 
 : *List, required*. Contains a list of frame indices forming a stack trace.
 
+We expect the stack to be from outermost frame to innermost (which means the
+root frame is at the bottom of the stack).
+
 `frames`
 
 : *List, required*. Contains a list of frame objects (see [Frame
 Attributes](/sdk/event-payloads/stacktrace/#frame-attributes)).
+
+Technically, all attributes are optional so we won't reject the payload if some
+are missing.
+
+Now, for native platforms (`cocoa` or `rust` for example),
+`instruction_addr` is required in order to be able to symbolicate and get more
+info about the frame.
+
+For the rest of the platforms, whatever is passed here will travel to the
+frontend and whatever is available can be used to show more or less information.
 
 `thread_metadata`
 
