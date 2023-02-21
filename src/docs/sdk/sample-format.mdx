@@ -12,6 +12,8 @@ collected by a profiler.
 
 A profile should always be associated with a transaction.
 
+Here is a JSON Schema definition of the format.
+
 ## Data Model
 
 ### Example
@@ -19,14 +21,16 @@ A profile should always be associated with a transaction.
 ```json
 {
   "debug_meta": {
-    "images": {
-      "debug_id": "32420279-25E2-34E6-8BC7-8A006A8F2425",
-      "image_addr": "0x000000010258c000",
-      "code_file": "/private/var/containers/Bundle/Application/C3511752-DD67-4FE8-9DA2-ACE18ADFAA61/TrendingMovies.app/TrendingMovies",
-      "type": "macho",
-      "image_size": 1720320,
-      "image_vmaddr": "0x0000000100000000"
-    }
+    "images": [
+      {
+        "debug_id": "32420279-25E2-34E6-8BC7-8A006A8F2425",
+        "image_addr": "0x000000010258c000",
+        "code_file": "/private/var/containers/Bundle/Application/C3511752-DD67-4FE8-9DA2-ACE18ADFAA61/TrendingMovies.app/TrendingMovies",
+        "type": "macho",
+        "image_size": 1720320,
+        "image_vmaddr": "0x0000000100000000"
+      }
+    ]
   },
   "device": {
     "architecture": "arm64e",
