@@ -291,8 +291,7 @@ in the `timestamp` field when the sample was captured.
 
 : *List, required*. Contains a list of frame indices forming a stack trace.
 
-We expect the stack to be from outermost frame to innermost (which means the
-root frame is at the bottom of the stack).
+Stacks should be ordered from outermost to innermost frame.
 
 `frames`
 
