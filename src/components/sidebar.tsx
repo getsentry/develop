@@ -221,6 +221,9 @@ export default () => {
           <SidebarLink to="/sdk/research/performance">
             Research: Performance Monitoring API
           </SidebarLink>
+          <SidebarLink to="/sdk/one-step-onboarding/">
+            One-Step Onboarding
+          </SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>

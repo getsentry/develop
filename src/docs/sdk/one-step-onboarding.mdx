@@ -1,0 +1,54 @@
+---
+title: 'One-Step Onboarding'
+---
+
+<Alert level="warning">
+
+This page is under active development. Specifications are not final and subject to change.
+
+"Proof is in the progress" - Drake
+
+</Alert>
+
+This document details how Sentry sets up one-step onboarding flows for new users.
+
+
+## Background
+
+Getting users onboarded is the first step for any new user. This is a critical step for Sentry as it is the first step in the user's journey to seeing the value of the product. The less friction we have in this step, the more likely the user is to continue using Sentry. The goal is to get an automated onboarding flow that works without human input for _most_ scenarios that we encounter for a specific SDK.
+
+The advantage of this one-step installation flow is that it's a single command we can expose to users that will automatically add Sentry to their project and configure it. We can put it in ads, in our docs, or anywhere else we want to get users to try Sentry. It's a new top of funnel way of getting folks using Sentry that's separate from navigating to https://sentry.io/signup/ and letting them do the traditional onboarding.
+
+We have successfully set up on-step onboarding for NextJS but we would like for as many SDKS to support it as possible.
+
+## Approach
+
+To get one-step onboarding working for a new SDK, we need to do the following:
+
+### CLI Command
+
+We need to add a command to the SDK that can be used to add Sentry to an existing project. This command should be able to be run from the root directory of a project and should be able to add Sentry to the project without any user input. For example, with the NextJS SDK, we can run `npx @sentry/wizard -i nextjs` which will automatically add Sentry to the project without a user having to do anything else. We also want to make sure it's a command a user can just run without a separate installation step for the CLI tool. For example, we don't want to require a user to run `npm install -g @sentry/wizard` before running the command to add Sentry to their project.
+
+
+### Automatically adding the Sentry Package
+
+As part of the command to add Sentry to an existing project, we need to automatically add the Sentry package to the project. This should be done in a way that is compatible with the package manager that the project is using. For example, if the project is using `yarn`, we should add the Sentry package using `yarn add @sentry/nextjs`. If we don't detect a specific package manager, it's OK to fail and ask the user to add the package manually.
+
+
+### Merging configuration files
+
+If there are any existing configuration files that need to be modified, for example `next.config.js` for NextJS, we need to merge the existing configuration with the new configuration. We might need to modify how we read from that configuration file to make auto-merging better. [Here's an example PR](https://github.com/getsentry/sentry-javascript/pull/6721) how we did this for NextJS.
+
+
+### Wizard Page
+
+We need to make sure that the existing [wizard page works](https://github.com/getsentry/sentry/blob/master/static/app/views/setupWizard/index.tsx) for the new platforms. It seems that this is largely SDK agnostic, so we should be able to use this as-is except for the link to documentation. The CLI tool should open the wizard page in the browser.
+
+
+### Query Parameters
+
+We need to support a `-s` option for the CLI command that installs Sentry that will redirect the user to signup if they are not already logged in. We do that by including specific query parameters in the URL that the wizard page will read and redirect the user to the signup page if they are not logged in. We need to make sure to include `signup=1&project_platform=<YOUR_PLATFORM>` in the URL. For example, we might have a wizar URL like this:
+
+https://sentry.io/account/settings/wizard/cizkmsmzwew25l67wgkxjvu69d2wmz60t5pcbqux6ev75h1x7u6hmowiurdh43bh/?signup=1&project_platform=javascript-nextjs
+
+The value of `project_platform` should match the naming you see [here](https://github.com/getsentry/sentry/blob/master/src/sentry/utils/platform_categories.py). This query parameter is what tells Sentry to automatically create a project of that type when the user signs up.
