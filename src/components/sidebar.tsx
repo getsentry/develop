@@ -176,6 +176,9 @@ export default () => {
             <SidebarLink to="/sdk/performance/ui-event-transactions/">
               UI Event Transactions
             </SidebarLink>
+            <SidebarLink to="/sdk/performance/time-to-initial-full-display/">
+              Time to Initial/Full Display
+            </SidebarLink>
             <SidebarLink to="/sdk/performance/dynamic-sampling-context/">
               Dynamic Sampling Context
             </SidebarLink>
