@@ -73,8 +73,8 @@ pytest --reuse-db tests/sentry/api/endpoints/
 
 Some frequently used options for pytest are:
 
-* `-k` Filter test methods/classes by a substring.
-* `-s` Don't capture stdout when running tests.
+- `-k` Filter test methods/classes by a substring.
+- `-s` Don't capture stdout when running tests.
 
 Refer to the [pytest](http://doc.pytest.org/en/latest/usage.html) docs for more usage options.
 
@@ -86,10 +86,9 @@ to build up the required organization, projects and other postgres based state.
 
 You should also use `store_event()` to store events in a similar way that the
 application does in production. Storing events requires your test to inherit
-from `SnubaTestCase`.  When using `store_event()` take care to set a timestamp
-*in the past* on the event. When omitted, the timestamp is uses 'now' which can
+from `SnubaTestCase`. When using `store_event()` take care to set a timestamp
+_in the past_ on the event. When omitted, the timestamp is uses 'now' which can
 result in events not being picked due to timestamp boundaries.
-
 
 ```python
 from sentry.testutils.helpers.datetime import before_now
@@ -257,9 +256,9 @@ baselines.
 While we have fairly wide coverage with visual regressions there are a few
 important blind spots:
 
-* Hover cards and hover states
-* Modal windows
-* Charts and data visualizations
+- Hover cards and hover states
+- Modal windows
+- Charts and data visualizations
 
 All of these components and interactions are generally not included in visual snapshots, and you should take care
 when working on any of them.
