@@ -9,7 +9,8 @@ If you need a quick way to backup and restore your Sentry instance and you don't
 ### Backup
 
 ```shell
-docker-compose run --rm -T -e SENTRY_LOG_LEVEL=CRITICAL SENTRY_BACKUP=true web export > sentry/backup.json
+// $(pwd) is interchangeable with the current filepath of self-hosted
+docker-compose run -v $(pwd)/sentry:/sentry-data/backup  --rm -T -e SENTRY_LOG_LEVEL=CRITICAL web export /sentry-data/backup/backup.json
 ```
 
 <Alert title="Note" level="info"><markdown>
