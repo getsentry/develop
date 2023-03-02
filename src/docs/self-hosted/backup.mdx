@@ -4,12 +4,11 @@ title: "Self-Hosted Backup & Restore"
 
 ## Quick Backup
 
-If you need a quick way to backup and restore your Sentry instance and you don't need historical event data, you can use the built in `export` and `import` commands. These commands will save and load all project and user data, but will not contain any event data.
+If you need a quick way to backup and restore your Sentry instance and you don't need historical event data, you can use the built in `export` and `import` commands. These commands will save and load all project and user data, but will not contain any event data. Run these from your `self-hosted` directory.
 
 ### Backup
 
 ```shell
-// $(pwd) is interchangeable with the current filepath of self-hosted
 docker-compose run -v $(pwd)/sentry:/sentry-data/backup  --rm -T -e SENTRY_LOG_LEVEL=CRITICAL web export /sentry-data/backup/backup.json
 ```
 
