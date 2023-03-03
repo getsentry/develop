@@ -1,4 +1,6 @@
-# How to code Rust at Sentry
+---
+title: Rust Development at Sentry
+---
 
 This is a document that contains a bunch of useful resources for getting started with Rust and adhering to our coding principles.
 
@@ -22,197 +24,192 @@ This is a document that contains a bunch of useful resources for getting started
 [https://doc.rust-lang.org/nomicon/](https://doc.rust-lang.org/nomicon/)
 - Rust by Example: A comprehensive list of examples
 [https://doc.rust-lang.org/stable/rust-by-example/](https://doc.rust-lang.org/stable/rust-by-example/)
+- [https://doc.rust-lang.org/1.15.1/book/choosing-your-guarantees.html](https://doc.rust-lang.org/1.15.1/book/choosing-your-guarantees.html)
+
 
 ## Coding Principles
 
-<aside>
-ℹ️ This section is still under development and may be incomplete.
 
-</aside>
+### Import order
 
-- **Import order**
+Imports must be declared before any other code in the file, and can only be preceded by module doc comments and module attributes (`#![...]`). We bundle imports in groups based on their origin, each separated by an empty line. The order of imports is:
 
-    Imports must be declared before any other code in the file, and can only be preceded by module doc comments and module attributes (`#![...]`). We bundle imports in groups based on their origin, each separated by an empty line. The order of imports is:
+1. Rust standard library, including `std`, `core` and `alloc`
+2. External dependencies
+3. Workspace dependencies
+4. Crate modules
+5. Re-exports (`pub use`)
 
-    1. Rust standard library, including `std`, `core` and `alloc`
-    2. External dependencies
-    3. Workspace dependencies
-    4. Crate modules
-    5. Re-exports (`pub use`)
+**Example:**
 
-    **Example:**
+```rust
+use std::borrow::Cow;
+use std::collections::HashMap;
+use std::io::{self, Seek, Write};
 
-    ```rust
-    use std::borrow::Cow;
-    use std::collections::HashMap;
-    use std::io::{self, Seek, Write};
+use fnv::{FnvHashMap, FnvHashSet};
+use num::FromPrimitive;
 
-    use fnv::{FnvHashMap, FnvHashSet};
-    use num::FromPrimitive;
+use symbolic_common::{Arch, DebugId, Language};
+use symbolic_debuginfo::{DebugSession, Function, LineInfo};
 
-    use symbolic_common::{Arch, DebugId, Language};
-    use symbolic_debuginfo::{DebugSession, Function, LineInfo};
+use crate::error::{SymCacheError, SymCacheErrorKind, ValueKind};
+use crate::format;
 
-    use crate::error::{SymCacheError, SymCacheErrorKind, ValueKind};
-    use crate::format;
+pub use gimli::RunTimeEndian as Endian;
+```
 
-    pub use gimli::RunTimeEndian as Endian;
-    ```
+### Declaration order
 
-- **Declaration order**
+Within a file, the order of components should always be roughly the same:
 
-    Within a file, the order of components should always be roughly the same:
+1. Module-level documentation
+2. Imports
+3. Public re-exports
+4. Modules and public modules
+5. Constants
+6. Error types
+7. All other functions and structs
+8. Unit tests
 
-    1. Module-level documentation
-    2. Imports
-    3. Public re-exports
-    4. Modules and public modules
-    5. Constants
-    6. Error types
-    7. All other functions and structs
-    8. Unit tests
+Always declare a type or function before using it. The only exceptions to this are:
 
-    Always declare a type or function before using it. The only exceptions to this are:
+- Public functions are always on top in `impl` blocks
+- Circular calls or references. In this case place the more significant item first. For example, for types that expose an iterator, declare the type and its impl block (including `fn iter`) first, then below define the corresponding iterator.
 
-    - Public functions are always on top in `impl` blocks
-    - Circular calls or references. In this case place the more significant item first. For example, for types that expose an iterator, declare the type and its impl block (including `fn iter`) first, then below define the corresponding iterator.
+When declaring a structure with an implementation, always ensure that the struct and its impl blocks are consecutive. Place helper functions and helper types **above** the struct definition. Use the following order for the blocks:
 
-    When declaring a structure with an implementation, always ensure that the struct and its impl blocks are consecutive. Place helper functions and helper types **above** the struct definition. Use the following order for the blocks:
+1. The `struct` or `enum` definition
+2. `impl` block
+3. `impl` block with further constraints
+4. Trait implementations of `std` traits
+5. Trait implementations of other traits
+6. Trait implementations of own traits
 
-    1. The `struct` or `enum` definition
-    2. `impl` block
-    3. `impl` block with further constraints
-    4. Trait implementations of `std` traits
-    5. Trait implementations of other traits
-    6. Trait implementations of own traits
+Inside an `impl` block, follow roughly this order:
 
-    Inside an `impl` block, follow roughly this order:
+1. Associated constants
+2. Associated non-instance functions
+3. Constructors
+4. Getters / setters
+5. Anything else
 
-    1. Associated constants
-    2. Associated non-instance functions
-    3. Constructors
-    4. Getters / setters
-    5. Anything else
+### Default lints
 
-- **Default Lints**
+We use [clippy](https://github.com/rust-lang/rust-clippy) with the `clippy::all` preset for linting. See The *Configuring CI* section for how to invoke it.
 
-    We use [clippy](https://github.com/rust-lang/rust-clippy) with the `clippy::all` preset for linting. See The *Configuring CI* section for how to invoke it.
+In addition to that, every crate enable the following warnings in its top-level file after the doc block before imports (see the [list of all available lints](https://doc.rust-lang.org/rustc/lints/listing/allowed-by-default.html)):
 
-    In addition to that, every crate enable the following warnings in its top-level file after the doc block before imports (see the [list of all available lints](https://doc.rust-lang.org/rustc/lints/listing/allowed-by-default.html)):
+```rust
+#![warn(missing_docs)]
+#![warn(missing_debug_implementations)]
+```
 
-    ```rust
-    #![warn(missing_docs)]
-    #![warn(missing_debug_implementations)]
-    ```
+Note that we do not enable `unsafe_code`, since that should already stand out in code review. There are a few legitimate cases for unsafe code, and the `unsafe` keyword alone already marks them sufficiently.
 
-    Note that we do not enable `unsafe_code`, since that should already stand out in code review. There are a few legitimate cases for unsafe code, and the `unsafe` keyword alone already marks them sufficiently.
+### Field visibility
 
-- **Field visibility**
+By default, fields of structs (including tuple-structs) should be fully private. The only exception to this are:
 
-    By default, fields of structs (including tuple-structs) should be fully private. The only exception to this are:
+- Newtypes (1-tuple structs) where direct access to the inner type is desired. This is to annotate semantics of a type where accessing the inner type is required.
+- Plain data types with a very stable signature.
 
-    - Newtypes (1-tuple structs) where direct access to the inner type is desired. This is to annotate semantics of a type where accessing the inner type is required.
-    - Plain data types with a very stable signature.
+Mixed visibility is never allowed, not even between private and `pub(crate)` or `pub(super)`. Instead, provide accessors:
 
-    Mixed visibility is never allowed, not even between private and `pub(crate)` or `pub(super)`. Instead, provide accessors:
+- `foo()`, `foo_mut()` and `set_foo()` for exposing the values
+- `pub(crate)` or `pub(super)` accessor functions in corner cases
+- A `Default` implementation and builder when incremental construction is required
 
-    - `foo()`, `foo_mut()` and `set_foo()` for exposing the values
-    - `pub(crate)` or `pub(super)` accessor functions in corner cases
-    - A `Default` implementation and builder when incremental construction is required
+### Naming
 
-- **Naming**
+We are strictly following the [Rust Naming Conventions](https://doc.rust-lang.org/1.0.0/style/style/naming/README.html). The entire conventions apply, although here are a few highlighted sections:
 
-    We are strictly following the [Rust Naming Conventions](https://doc.rust-lang.org/1.0.0/style/style/naming/README.html). The entire conventions apply, although here are a few highlighted sections:
+- [Avoid redundant prefixes](https://doc.rust-lang.org/1.0.0/style/style/naming/README.html#avoid-redundant-prefixes-[rfc-356])
+- [Getter and setter methods](https://doc.rust-lang.org/1.0.0/style/style/naming/README.html#getter/setter-methods-[rfc-344]) (`foo` instead of `get_foo`)
+- [Conversions](https://doc.rust-lang.org/1.0.0/style/style/naming/conversions.html) (`as_foo` vs `to_foo` vs `into_foo`)
+- [Iterators](https://doc.rust-lang.org/1.0.0/style/style/naming/iterators.html)
+- [Constructors](https://rust-lang.github.io/api-guidelines/predictability.html#constructors-are-static-inherent-methods-c-ctor) (Structs generally have `fn new(...) -> Self`, which never returns Result)
 
-    - [Avoid redundant prefixes](https://doc.rust-lang.org/1.0.0/style/style/naming/README.html#avoid-redundant-prefixes-[rfc-356])
-    - [Getter and setter methods](https://doc.rust-lang.org/1.0.0/style/style/naming/README.html#getter/setter-methods-[rfc-344]) (`foo` instead of `get_foo`)
-    - [Conversions](https://doc.rust-lang.org/1.0.0/style/style/naming/conversions.html) (`as_foo` vs `to_foo` vs `into_foo`)
-    - [Iterators](https://doc.rust-lang.org/1.0.0/style/style/naming/iterators.html)
-    - [Constructors](https://rust-lang.github.io/api-guidelines/predictability.html#constructors-are-static-inherent-methods-c-ctor) (Structs generally have `fn new(...) -> Self`, which never returns Result)
+### Writing Doc Comments
 
-- **Writing Doc Comments**
+We follow conventions from RFC 505 and RFC 1574 for writing doc comments. See the [full conventions text](https://github.com/rust-lang/rfcs/blob/master/text/1574-more-api-documentation-conventions.md#appendix-a-full-conventions-text). Particularly, this includes:
 
-    We follow conventions from RFC 505 and RFC 1574 for writing doc comments. See the [full conventions text](https://github.com/rust-lang/rfcs/blob/master/text/1574-more-api-documentation-conventions.md#appendix-a-full-conventions-text). Particularly, this includes:
+- A single-line short summary sentence written in American English using third-person.
+- Use the default headers where applicable, but avoid custom sections outside of module-level docs.
+- Link between types and methods where possible, especially within the crate.
+- Write doc tests
 
-    - A single-line short summary sentence written in American English using third-person.
-    - Use the default headers where applicable, but avoid custom sections outside of module-level docs.
-    - Link between types and methods where possible, especially within the crate.
-    - Write doc tests
-- **Writing Doc Tests**
+### Writing Doc Tests
 
-    If possible, prefer writing at least one doctest for the critical path of your methods or structs. Of course, this requires the interface to be public. This should even take precedence over an equal unit test, since it both tests and documents the API.
+If possible, prefer writing at least one doctest for the critical path of your methods or structs. Of course, this requires the interface to be public. This should even take precedence over an equal unit test, since it both tests and documents the API.
 
-    To format code in doc comments, you can temporarily [configure rustfmt](https://github.com/rust-lang/rustfmt/blob/master/Configurations.md#format_code_in_doc_comments) to do so. We might add this to our default configuration at some point:
+To format code in doc comments, you can temporarily [configure rustfmt](https://github.com/rust-lang/rustfmt/blob/master/Configurations.md#format_code_in_doc_comments) to do so. We might add this to our default configuration at some point:
 
-    ```rust
-    format_code_in_doc_comments = true
-    ```
+```rust
+format_code_in_doc_comments = true
+```
 
-- **Writing Tests**
+### Writing Tests
 
-    All test functions should start with `test_` and contain the function name + a simple condition in their name. The test name should be as concise as possible and avoid redundant words (such as "should", "that"). Examples:
+All test functions should start with `test_` and contain the function name + a simple condition in their name. The test name should be as concise as possible and avoid redundant words (such as "should", "that"). Examples:
 
-    - `test_parse_empty`
-    - `test_parse_null`
+- `test_parse_empty`
+- `test_parse_null`
 
-    Write unit tests in a `tests` submodule in code
+Write unit tests in a `tests` submodule in code
 
-    ```rust
-    fn foo() {}
+```rust
+fn foo() {}
 
-    #[cfg(test)]
-    mod tests {
-      use super::*;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-      #[test]
-      fn test_foo() { .. }
+    #[test]
+    fn test_foo() { .. }
+}
+```
+
+Integration tests should go into the `tests/` folder, ideally into a file based on the functionality they test. Such tests can only use the public interface.
+
+For libraries, consider providing examples in `examples/`.
+
+### Iterators
+
+Prefer writing explicit iterator types over `impl Iterator`. This allows to name the type in places like associated types or globals. The type name should end with `Iter` per naming convention.
+
+In addition to the standard `Iterator` trait, always consider to implement additional traits from `std::iter`:
+
+- `FusedIterator` in all cases unless there is a strong reason not to
+- `DoubleEndedIterator` if reverse iteration is possible
+- `ExactSizeIterator` if the size is known beforehand
+
+If it is exceptionally hard to write a custom iterator, then it can also be a private [newtype](https://doc.rust-lang.org/1.0.0/style/features/types/newtype.html) around a boxed iterator:
+
+```rust
+pub struct FooIter(Box<dyn Iterator<Item = Foo>>);
+
+impl Iterator for FooIter {
+    type Item = Foo;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.next()
     }
-    ```
+}
+```
 
-    Integration tests should go into the `tests/` folder, ideally into a file based on the functionality they test. Such tests can only use the public interface.
+### Async-await
 
-    For libraries, consider providing examples in `examples/`.
+In general we like to migrate to async-await using code, though much code exists which does not yet do this.  During migration you may need normal functions which return futures, for their signature you should generally prefer `-> impl Future<Output = ...>` over other return types.  This allows the compiler to figure out the details for callsites and avoids having to force things to be pinned or not.  Pinning should only be done explicitly when part of fields in structs or similar.
 
-- **Iterators**
+In **traits** you can not yet use `async fn` ([see this blog post](https://smallcultfollowing.com/babysteps/blog/2019/10/26/async-fn-in-traits-are-hard/)), in this case we have an exception and do the same as the [async-trait crate](https://crates.io/crates/async-trait) does and functions return `-> Pin<Box<dyn Future<Output = ...>>>`.  This allows seamless use in async-await code or in code dealing directly with futures.  Explicitly writing out the signatures is preferable over pulling in the macro syntactic sugar.
 
-    Prefer writing explicit iterator types over `impl Iterator`. This allows to name the type in places like associated types or globals. The type name should end with `Iter` per naming convention.
+### Discourage unwrap()
 
-    In addition to the standard `Iterator` trait, always consider to implement additional traits from `std::iter`:
+This may seem obvious, but *almost always* discourage the use of `.unwrap()`. Even if a piece of code is guaranteed not to panic in its current form (because some precondition is met), it might be reused or refactored in a future situation where the precondition does not hold anymore.
 
-    - `FusedIterator` in all cases unless there is a strong reason not to
-    - `DoubleEndedIterator` if reverse iteration is possible
-    - `ExactSizeIterator` if the size is known beforehand
+This was actually the root cause of incident [[INC-202] Local Queue overflow in `pop-europe`](https://www.notion.so/INC-202-Local-Queue-overflow-in-pop-europe-889dc5de37c146159dbf8f71094ff0cb) : A function compiling a regex from a string used `unwrap()` because it assumed to be called only on constant patterns, but then was used to compile user input received via project configs.
 
-    If it is exceptionally hard to write a custom iterator, then it can also be a private [newtype](https://doc.rust-lang.org/1.0.0/style/features/types/newtype.html) around a boxed iterator:
-
-    ```rust
-    pub struct FooIter(Box<dyn Iterator<Item = Foo>>);
-
-    impl Iterator for FooIter {
-    	type Item = Foo;
-
-      fn next(&mut self) -> Option<Self::Item> {
-    		self.0.next()
-      }
-    }
-    ```
-
-- **Async-await**
-
-    In general we like to migrate to async-await using code, though much code exists which does not yet do this.  During migration you may need normal functions which return futures, for their signature you should generally prefer `-> impl Future<Output = ...>` over other return types.  This allows the compiler to figure out the details for callsites and avoids having to force things to be pinned or not.  Pinning should only be done explicitly when part of fields in structs or similar.
-
-    In **traits** you can not yet use `async fn` ([see this blog post](https://smallcultfollowing.com/babysteps/blog/2019/10/26/async-fn-in-traits-are-hard/)), in this case we have an exception and do the same as the [async-trait crate](https://crates.io/crates/async-trait) does and functions return `-> Pin<Box<dyn Future<Output = ...>>>`.  This allows seamless use in async-await code or in code dealing directly with futures.  Explicitly writing out the signatures is preferable over pulling in the macro syntactic sugar.
-
-- **Discourage unwrap()**
-
-    This may seem obvious, but *almost always* discourage the use of `.unwrap()`. Even if a piece of code is guaranteed not to panic in its current form (because some precondition is met), it might be reused or refactored in a future situation where the precondition does not hold anymore.
-
-    This was actually the root cause of incident [[INC-202] Local Queue overflow in `pop-europe`](https://www.notion.so/INC-202-Local-Queue-overflow-in-pop-europe-889dc5de37c146159dbf8f71094ff0cb) : A function compiling a regex from a string used `unwrap()` because it assumed to be called only on constant patterns, but then was used to compile user input received via project configs.
-
-
-**Useful Resources**
-
-- [https://doc.rust-lang.org/1.15.1/book/choosing-your-guarantees.html](https://doc.rust-lang.org/1.15.1/book/choosing-your-guarantees.html)
 
 ## Development Environment
 
