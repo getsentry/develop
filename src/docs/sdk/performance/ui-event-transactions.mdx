@@ -87,9 +87,9 @@ Scenario: Don't overwrite existing status of UI event transactions
 
 # If your SDK binds auto-generated transactions to the scope see binding
 # to scope
-Scenario: New event on same UI element
+Scenario: Event on same UI element with child spans
     Given an ongoing UI event transaction with child spans
-    When the user triggers the same UI element with a new event (different or same)
+    When the user triggers the same UI element with a new event
     Or the user triggers a different UI element
     Then the SDK finishes the ongoing transaction
     And sets the status to OK
@@ -99,7 +99,7 @@ Scenario: New event on same UI element
 
 Scenario: New event on same UI element
     Given an ongoing UI event transaction without child spans
-    When the user triggers the same UI element with a new event (different or same)
+    When the user triggers the same UI element with a new event
     Or the user triggers a different UI element
     Then the SDK discards the transaction 
     And starts a new transaction
