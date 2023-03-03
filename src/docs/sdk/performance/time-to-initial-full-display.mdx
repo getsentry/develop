@@ -22,7 +22,7 @@ require any manual intervention from the user.
 ## Time to Full Display
 
 Time to Full Display is a span with operation `ui.load.full_display` which is finished manually through
-the `Sentry.reportFullDisplayed` static API. This feature has to be enabled by setting the SDK config
+the `Sentry.reportFullyDisplayed` static API. This feature has to be enabled by setting the SDK config
 option `enableTimeToFullDisplayTracing`. Remember that the screen load transactions wait for spans to finish,
 so the transaction will run until the user calls the API. So we recommend this feature to be disabled by default.
 
@@ -34,7 +34,7 @@ The specification is written in the [Gherkin syntax](https://cucumber.io/docs/gh
 Scenario: Option disabled
     Given an ongoing screen load/navigation transaction
     Then the Full Display span is not started
-    When the user calls the manual API `reportFullDisplayed`
+    When the user calls the manual API `reportFullyDisplayed`
     Then the SDK ignores the call
 
 Scenario: Option enabled
@@ -44,19 +44,19 @@ Scenario: Option enabled
 
 Scenario: Activity displayed
     Given an ongoing Full Display span
-    When the user calls the API `reportFullDisplayed`
+    When the user calls the API `reportFullyDisplayed`
     Then the SDK finishes the span
     And sets the status to ok
 
 Scenario: API not called
     Given an ongoing Full Display span
-    When the user doesn't call the API `reportFullDisplayed` in 30 seconds
+    When the user doesn't call the API `reportFullyDisplayed` in 30 seconds
     Then the SDK finishes the span
     And sets the status to deadline_exceeded
 
 Scenario: API called too early
     Given an ongoing Full Display span and an ongoing Initial Display span
-    When the user calls the API `reportFullDisplayed`
+    When the user calls the API `reportFullyDisplayed`
     Then the SDK finishes the Full Display span
     And
     When the Initial Display span is finished
@@ -70,7 +70,7 @@ Scenario: Another screen load/navigation transaction occurs
 
 Scenario: No ongoing screen load transaction
     Given there is no active screen load transaction
-    When the user calls the manual API `reportFullDisplayed`
+    When the user calls the manual API `reportFullyDisplayed`
     Then the SDK ignores the call
 
 ```
