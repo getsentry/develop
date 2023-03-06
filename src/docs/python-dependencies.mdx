@@ -17,7 +17,12 @@ This group is already automatically tagged in your PR to `sentry` or `getsentry`
 
 ## Depending on forks
 
-If you need to make modifications to a dependency and need to deploy the result before it is accepted upstream:
+If you need to make modifications to a dependency and need to deploy the result
+before it is accepted upstream, you can fork the dependency.
+
+Depending on forks is generally discouraged unless necessary, and you should
+make sure that the changes in your fork are **not required for self-hosted to
+function,** because they won't be included in the PyPI distribution of Sentry.
 
 1. Fork into the `getsentry` organization.
 2. Depend on the fork using `library-name @ https://github.com/getsentry/<repo>/archive/<40 char sha>.zip` in `getsentry`'s `requirements-base.txt`.
