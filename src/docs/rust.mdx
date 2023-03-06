@@ -156,7 +156,7 @@ All test functions should start with `test_` and contain the function name + a s
 - `test_parse_empty`
 - `test_parse_null`
 
-Write unit tests in a `tests` submodule in code
+Write unit tests in a `tests` submodule in code.
 
 ```rust
 fn foo() {}
@@ -208,7 +208,6 @@ In **traits** you can not yet use `async fn` ([see this blog post](https://small
 
 This may seem obvious, but *almost always* discourage the use of `.unwrap()`. Even if a piece of code is guaranteed not to panic in its current form (because some precondition is met), it might be reused or refactored in a future situation where the precondition does not hold anymore.
 
-This was actually the root cause of incident [[INC-202] Local Queue overflow in `pop-europe`](https://www.notion.so/INC-202-Local-Queue-overflow-in-pop-europe-889dc5de37c146159dbf8f71094ff0cb) : A function compiling a regex from a string used `unwrap()` because it assumed to be called only on constant patterns, but then was used to compile user input received via project configs.
 
 
 ## Development Environment
@@ -229,12 +228,12 @@ At the time of writing, Rust Analyzer is still under development. Updates are pu
   // If you don't like inline type annotations, this disables it
   "rust-analyzer.inlayHints.enable": false,
 
-	// To run automatic updates, if preferred
+  // To run automatic updates, if preferred
   "rust-analyzer.updates.askBeforeDownload": false
 }
 ```
 
-For testing, we often use the snapshot library `[insta](https://github.com/mitsuhiko/insta)` written by the one and only Armin. By default, when running tests with Cargo, insta will compare snapshots and pretty-print diffs on standard out. However, to get most out of insta, install `cargo-insta` and use the cargo command instead:
+For testing, we often use the snapshot library `[insta](https://github.com/mitsuhiko/insta)`. By default, when running tests with Cargo, insta will compare snapshots and pretty-print diffs on standard out. However, to get most out of insta, install `cargo-insta` and use the cargo command instead:
 
 ```bash
 # Install insta. This will upgrade outdated versions.
