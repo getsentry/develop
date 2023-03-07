@@ -222,6 +222,7 @@ export default () => {
           <SidebarLink to="/sdk/research/performance">
             Research: Performance Monitoring API
           </SidebarLink>
+          <SidebarLink to="/sdk/sample-format/">Sample format for Profiling</SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
