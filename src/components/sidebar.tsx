@@ -47,6 +47,7 @@ export default () => {
           <SidebarLink to="/environment/" title="Environment">
             <Children tree={tree.find(n => n.name === 'environment').children} />
           </SidebarLink>
+          <SidebarLink to="/philosophy/">Philosophy</SidebarLink>
           <SidebarLink to="/commit-messages/">Commit Messages</SidebarLink>
           <SidebarLink to="/code-review/">Code Review</SidebarLink>
           <SidebarLink to="/workflow/">Workflow</SidebarLink>
