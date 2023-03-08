@@ -6,36 +6,109 @@ This is a document that contains a bunch of useful resources for getting started
 
 ## Getting Started
 
-- Join the `#discuss-rust` channel in Slack
 - A quick introduction into the Syntax for first-timers:
   [A half-hour to learn Rust](https://fasterthanli.me/blog/2020/a-half-hour-to-learn-rust/)
 - The Rust Book, comprehensively documenting the language:
   [The Rust Programming Language](https://doc.rust-lang.org/book/)
-- We follow the Rust style (enforced by `rustfmt` and `clippy` where possible):
-  [Style Guidelines](https://doc.rust-lang.org/1.0.0/style/README.html)
 - [The Async Book](https://rust-lang.github.io/async-book/)
-
-## Advanced Reading
-
-- [The Little Book of Rust Macros](https://danielkeep.github.io/tlborm/book/index.html)
-- [Rust Nomicon: The Dark Arts of Unsafe Rust](https://doc.rust-lang.org/nomicon/)
-- [Rust by Example: A comprehensive list of examples](https://doc.rust-lang.org/stable/rust-by-example/)
-- [Rust for Rustaceans: Idiomatic Programming for Experienced Developers](https://rust-for-rustaceans.com/)
-- [Rust in Action: Systems programming concepts and techniques](https://www.rustinaction.com/)
-- [Zero To Production In Rust: An introduction to backend development](https://www.zero2prod.com/index.html?country=Austria&discount_code=VAT20)
-- [Rust Atomics and Locks](https://marabos.nl/atomics/)
+- Sentry employees: Join the `#discuss-rust` channel in Slack
 
 ## Coding Principles
 
-### Import order
+### Iterators
+
+Prefer explicit iterator types over `impl Iterator` in stable, public interfaces of published crates.
+This allows to name the type in places like associated types or globals. The type name should end with `Iter` per naming convention.
+
+In addition to the standard `Iterator` trait, always consider implementing additional traits from `std::iter`:
+
+- `FusedIterator` in all cases unless there is a strong reason not to
+- `DoubleEndedIterator` if reverse iteration is possible
+- `ExactSizeIterator` if the size is known beforehand
+
+If it is exceptionally hard to write a custom iterator, then it can also be a private [newtype](https://doc.rust-lang.org/1.0.0/style/features/types/newtype.html) around a boxed iterator:
+
+```rust
+pub struct FooIter(Box<dyn Iterator<Item = Foo>>);
+
+impl Iterator for FooIter {
+    type Item = Foo;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.next()
+    }
+}
+```
+
+<!-- ### Async-await
+
+In general we like to migrate to async-await using code, though much code exists which does not yet do this.
+Use
+During migration you may need normal functions which return futures, for their signature you should generally prefer `-> impl Future<Output = ...>` over other return types. This allows the compiler to figure out the details for callsites and avoids having to force things to be pinned or not. Pinning should only be done explicitly when part of fields in structs or similar. -->
+
+### Async Traits
+
+In **traits** you can not yet use `async fn` ([see this blog post](https://smallcultfollowing.com/babysteps/blog/2019/10/26/async-fn-in-traits-are-hard/)).
+In this case, functions should return `-> Pin<Box<dyn Future<Output = ...> + Send>>`:
+
+```rust
+trait Database {
+    fn get_user(&self) -> Pin<Box<dyn Future<Output = User> + Send + '_>>;
+}
+
+impl Database for MyDB {
+  fn get_user(&self) -> Pin<Box<dyn Future<Output = User> + Send + '_>> {
+    Box::pin(async {
+      // ...
+    })
+  }
+}
+```
+
+Note that the returned future type is `Send`, to ensure that it can run on a multi-threaded runtime.
+
+This corresponds to what the [async-trait crate](https://crates.io/crates/async-trait) does.
+
+### Avoid `.unwrap()`
+
+This may seem obvious, but _almost always_ avoid the use of `.unwrap()`. Even if a piece of code is guaranteed not to panic in its current form (because some precondition is met), it might be reused or refactored in a future situation where the precondition does not hold anymore.
+
+Instead, refactor your code and function signatures to use `match`, etc.
+
+### Use `.get()` Instead of Slice Syntax
+
+Slice syntax (`&foo[a..b]`) will panic if the indices are out of bounds or out of order. Especially when dealing with untrusted input, it is better to use `.get(a..b)` and an `if let Some(...) =` expression.
+
+### Checked Math
+
+Arithmetic under/overflows will panic in debug builds, but will lead to wrong results or panics in other parts of the code (like slice syntax mentioned above) in release builds.
+It is a good idea to always use checked math, such as `checked_sub` or `saturating_sub`. The `saturating` variants will be capped at the appropriate `MIN/MAX` of the underlying data type.
+
+### Field visibility
+
+By default, fields of structs (including tuple-structs) should be fully private. The only exception to this are:
+
+- Newtypes (1-tuple structs) where direct access to the inner type is desired. This is to annotate semantics of a type where accessing the inner type is required.
+- Plain data types with a very stable signature. For example, schema definitions such as the Sentry `Event` protocol.
+
+Mixed visibility is never allowed, not even between private and `pub(crate)` or `pub(super)`. Instead, provide accessors:
+
+- `foo()`, `foo_mut()` and `set_foo()` for exposing the values
+- `pub(crate)` or `pub(super)` accessor functions in corner cases
+- A `Default` implementation and builder when incremental construction is required
+
+## Style Guidelines
+
+In general, we follow the official Rust [Style Guidelines](https://doc.rust-lang.org/1.0.0/style/README.html).
+
+### Import Order
 
 Imports must be declared before any other code in the file, and can only be preceded by module doc comments and module attributes (`#![...]`). We bundle imports in groups based on their origin, each separated by an empty line. The order of imports is:
 
 1. Rust standard library, including `std`, `core` and `alloc`
-2. External dependencies
-3. Workspace dependencies
-4. Crate modules
-5. Re-exports (`pub use`)
+2. External & workspace dependencies
+3. Crate modules
+4. Re-exports (`pub use`)
 
 **Example:**
 
@@ -46,7 +119,6 @@ use std::io::{self, Seek, Write};
 
 use fnv::{FnvHashMap, FnvHashSet};
 use num::FromPrimitive;
-
 use symbolic_common::{Arch, DebugId, Language};
 use symbolic_debuginfo::{DebugSession, Function, LineInfo};
 
@@ -69,10 +141,8 @@ Within a file, the order of components should always be roughly the same:
 7. All other functions and structs
 8. Unit tests
 
-Always declare a type or function before using it. The only exceptions to this are:
-
-- Public functions are always on top in `impl` blocks
-- Circular calls or references. In this case place the more significant item first. For example, for types that expose an iterator, declare the type and its impl block (including `fn iter`) first, then below define the corresponding iterator.
+There is no hard rule on declaration order, but we suggest to place the more significant item first.
+For example, for types that expose an iterator, declare the type and its impl block (including `fn iter`) first, then below define the corresponding iterator.
 
 When declaring a structure with an implementation, always ensure that the struct and its impl blocks are consecutive. Use the following order for the blocks:
 
@@ -83,9 +153,8 @@ When declaring a structure with an implementation, always ensure that the struct
 1. Trait implementations of other traits
 1. Trait implementations of own traits
 
-Inside an `impl` block, follow roughly this order:
+Inside an `impl` block, follow roughly this order (public before private):
 
-1. Public before private
 1. Associated constants
 1. Associated non-instance functions
 1. Constructors
@@ -103,24 +172,13 @@ In addition to that, every crate enable the following warnings in its top-level 
 #![warn(missing_debug_implementations)]
 ```
 
-Note that we do not enable `unsafe_code`, since that should already stand out in code review. There are a few legitimate cases for unsafe code, and the `unsafe` keyword alone already marks them sufficiently.
-
-### Field visibility
-
-By default, fields of structs (including tuple-structs) should be fully private. The only exception to this are:
-
-- Newtypes (1-tuple structs) where direct access to the inner type is desired. This is to annotate semantics of a type where accessing the inner type is required.
-- Plain data types with a very stable signature. For example, schema definitions such as the Sentry `Event` protocol.
-
-Mixed visibility is never allowed, not even between private and `pub(crate)` or `pub(super)`. Instead, provide accessors:
-
-- `foo()`, `foo_mut()` and `set_foo()` for exposing the values
-- `pub(crate)` or `pub(super)` accessor functions in corner cases
-- A `Default` implementation and builder when incremental construction is required
+Note that we do not enable `unsafe_code`, since that should already stand out in code review.
+There are a few legitimate cases for unsafe code, and the `unsafe` keyword alone already marks them sufficiently.
 
 ### Naming
 
-We are strictly following the [Rust Naming Conventions](https://doc.rust-lang.org/1.0.0/style/style/naming/README.html). The entire conventions apply, although here are a few highlighted sections:
+We are strictly following the [Rust Naming Conventions](https://doc.rust-lang.org/1.0.0/style/style/naming/README.html).
+The entire conventions apply, although here are a few highlighted sections:
 
 - [Avoid redundant prefixes](https://doc.rust-lang.org/1.0.0/style/style/naming/README.html#avoid-redundant-prefixes-[rfc-356])
 - [Getter and setter methods](https://doc.rust-lang.org/1.0.0/style/style/naming/README.html#getter/setter-methods-[rfc-344]) (`foo` instead of `get_foo`)
@@ -139,7 +197,8 @@ We follow conventions from RFC 505 and RFC 1574 for writing doc comments. See th
 
 ### Writing Doc Tests
 
-If possible, prefer writing at least one doctest for the critical path of your methods or structs. Of course, this requires the interface to be public. This should even take precedence over an equal unit test, since it both tests and documents the API.
+For crate-public utilities and SDKs, prefer writing at least one doctest for the critical path of your methods or structs.
+Of course, this requires the interface to be public. This should even take precedence over an equal unit test, since it both tests and documents the API.
 
 To format code in doc comments, you can temporarily [configure rustfmt](https://github.com/rust-lang/rustfmt/blob/master/Configurations.md#format_code_in_doc_comments) to do so. We might add this to our default configuration at some point:
 
@@ -149,10 +208,10 @@ format_code_in_doc_comments = true
 
 ### Writing Tests
 
-All test functions should start with `test_` and contain the function name + a simple condition in their name. The test name should be as concise as possible and avoid redundant words (such as "should", "that"). Examples:
+All test functions should contain the function name + a simple condition in their name. The test name should be as concise as possible and avoid redundant words (such as "should", "that"). Examples:
 
-- `test_parse_empty`
-- `test_parse_null`
+- `tests::parse_empty`
+- `tests::parse_null`
 
 Place unit tests in a `tests` submodule annotated with `#[cfg(test)]`. This way, imports and helper functions for tests are only compiled before running tests. Depending on the editor, `rust-analyzer` will auto-expand `tmod` to an appropriate snippet.
 
@@ -164,7 +223,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_foo() { .. }
+    fn foo_works() { .. }
 }
 ```
 
@@ -173,69 +232,28 @@ See [this blog post](https://matklad.github.io/2021/02/27/delete-cargo-integrati
 
 For libraries, consider providing examples in `examples/`.
 
-### Iterators
-
-Prefer explicit iterator types over `impl Iterator` in public interfaces. This allows to name the type in places like associated types or globals. The type name should end with `Iter` per naming convention.
-
-In addition to the standard `Iterator` trait, always consider implementing additional traits from `std::iter`:
-
-- `FusedIterator` in all cases unless there is a strong reason not to
-- `DoubleEndedIterator` if reverse iteration is possible
-- `ExactSizeIterator` if the size is known beforehand
-
-If it is exceptionally hard to write a custom iterator, then it can also be a private [newtype](https://doc.rust-lang.org/1.0.0/style/features/types/newtype.html) around a boxed iterator:
-
-```rust
-pub struct FooIter(Box<dyn Iterator<Item = Foo>>);
-
-impl Iterator for FooIter {
-    type Item = Foo;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.0.next()
-    }
-}
-```
-
-### Async-await
-
-In general we like to migrate to async-await using code, though much code exists which does not yet do this. During migration you may need normal functions which return futures, for their signature you should generally prefer `-> impl Future<Output = ...>` over other return types. This allows the compiler to figure out the details for callsites and avoids having to force things to be pinned or not. Pinning should only be done explicitly when part of fields in structs or similar.
-
-In **traits** you can not yet use `async fn` ([see this blog post](https://smallcultfollowing.com/babysteps/blog/2019/10/26/async-fn-in-traits-are-hard/)), in this case we have an exception and do the same as the [async-trait crate](https://crates.io/crates/async-trait) does and functions return `-> Pin<Box<dyn Future<Output = ...>>>`. This allows seamless use in async-await code or in code dealing directly with futures. Explicitly writing out the signatures is preferable over pulling in the macro syntactic sugar.
-
-### Discourage `.unwrap()`
-
-This may seem obvious, but _almost always_ discourage the use of `.unwrap()`. Even if a piece of code is guaranteed not to panic in its current form (because some precondition is met), it might be reused or refactored in a future situation where the precondition does not hold anymore.
-
-### Use `.get()` instead of slice syntax
-
-Slice syntax (`&foo[a..b]`) will panic if the indices are out of bounds or out of order. Especially when dealing with untrusted input, it is better to use `.get(a..b)` and an `if let Some(...) =` expression.
-
-### Use checked math
-
-Arithmetic under/overflows will panic in debug builds, but will lead to wrong results or panics in other parts of the code (like slice syntax mentioned above) in release builds.
-It is a good idea to always use checked math, such as `checked_sub` or `saturating_sub`. The `saturating` variants will be capped at the appropriate `MIN/MAX` of the underlying data type.
-
 ## Development Environment
 
 We use VSCode for development. Each repository contains settings files configuring code style, linters, and useful features. When opening the project for the first time, make sure to _"Install the Recommended Extensions"_, as they will allow editor assist during coding. The probably most up-to-date example can always be found in the [Relay repository](https://github.com/getsentry/relay/blob/master/.vscode/extensions.json):
 
-- _Rust Analyzer:_ A fast and feature-packed language server integration that has been developed as successor to RLS.
+- _Rust Analyzer:_ A fast and feature-packed language server integration.
 - _CodeLLDB:_ Debugger based on LLDB, required to debug with the Rust Analyzer extension
 - _Better TOML and Crates:_ Support for `Cargo.toml` files and bumping dependency versions
 
-Recommended Rust Analyzer settings in your User's `settings.json`:
+Recommended Rust Analyzer settings in your project's `.vscode/settings.json`:
 
 ```jsx
 {
-  // Run full clippy lints instead of just cargo check
-  "rust-analyzer.checkOnSave.command": "clippy",
+  // Enable all features
+  "rust-analyzer.cargo.features": "all",
 
-  // If you don't like inline type annotations, this disables it
-  "rust-analyzer.inlayHints.enable": false,
+  // If you don't like inline type annotations, this disables it unless Ctrl + Alt is pressed.
+ "editor.inlayHints.enabled": "offUnlessPressed",
 
-  // To run automatic updates, if preferred
-  "rust-analyzer.updates.askBeforeDownload": false
+  // Import rules
+  "rust-analyzer.imports.granularity.group": "module",
+  "rust-analyzer.imports.prefix": "crate"
+}
 }
 ```
 
@@ -255,7 +273,7 @@ $ cargo insta test --review
 $ cargo insta reject --all
 ```
 
-## Configuring CI
+## Makefiles
 
 We use `Makefiles` to collect the most standard actions. A full Makefile for a workspace comprising multiple crates should roughly look like this (can be simplified):
 
@@ -279,7 +297,7 @@ test-all:
 
 style:
 	@rustup component add rustfmt --toolchain stable 2> /dev/null
-	cargo +stable fmt -- --check
+	cargo +stable fmt --all -- --check
 .PHONY: style
 
 lint:
@@ -289,11 +307,14 @@ lint:
 
 format:
 	@rustup component add rustfmt --toolchain stable 2> /dev/null
-	cargo +stable fmt
+	cargo +stable fmt --all
 .PHONY: format
-```
 
-Note that in CI, we **do not configure caches**, since those keep growing and are generally slower to download than just rebuilding.
+doc:
+	cargo doc --workspace --all-features --no-deps
+.PHONY: doc
+
+```
 
 ## Cargo Version Numbers
 
@@ -314,3 +335,13 @@ Before a 1.0 release is reached [anything goes according to the spec](https://se
 - Breaking changes require bumping the minor (Y) version.
 - New features bump the patch (Z) version.
 - Bugfix-only releases bump the patch (Z) version.
+
+## Further Reading
+
+- [The Little Book of Rust Macros](https://danielkeep.github.io/tlborm/book/index.html)
+- [Rust Nomicon: The Dark Arts of Unsafe Rust](https://doc.rust-lang.org/nomicon/)
+- [Rust by Example: A comprehensive list of examples](https://doc.rust-lang.org/stable/rust-by-example/)
+- [Rust for Rustaceans: Idiomatic Programming for Experienced Developers](https://rust-for-rustaceans.com/)
+- [Rust in Action: Systems programming concepts and techniques](https://www.rustinaction.com/)
+- [Zero To Production In Rust: An introduction to backend development](https://www.zero2prod.com/)
+- [Rust Atomics and Locks](https://marabos.nl/atomics/)
