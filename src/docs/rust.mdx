@@ -8,27 +8,24 @@ This is a document that contains a bunch of useful resources for getting started
 
 - Join the `#discuss-rust` channel in Slack
 - A quick introduction into the Syntax for first-timers:
-[https://fasterthanli.me/blog/2020/a-half-hour-to-learn-rust/](https://fasterthanli.me/blog/2020/a-half-hour-to-learn-rust/)
+  [A half-hour to learn Rust](https://fasterthanli.me/blog/2020/a-half-hour-to-learn-rust/)
 - The Rust Book, comprehensively documenting the language:
-[https://doc.rust-lang.org/book/](https://doc.rust-lang.org/book/)
+  [The Rust Programming Language](https://doc.rust-lang.org/book/)
 - We follow the Rust style (enforced by `rustfmt` and `clippy` where possible):
-[https://doc.rust-lang.org/1.0.0/style/README.html](https://doc.rust-lang.org/1.0.0/style/README.html)
-- The Async Book:
-[https://rust-lang.github.io/async-book/](https://rust-lang.github.io/async-book/)
+  [Style Guidelines](https://doc.rust-lang.org/1.0.0/style/README.html)
+- [The Async Book](https://rust-lang.github.io/async-book/)
 
 ## Advanced Reading
 
-- The Little Book of Rust Macros
-[https://danielkeep.github.io/tlborm/book/index.html](https://danielkeep.github.io/tlborm/book/index.html)
-- Rust Nomicon: The Dark Arts of Unsafe Rust
-[https://doc.rust-lang.org/nomicon/](https://doc.rust-lang.org/nomicon/)
-- Rust by Example: A comprehensive list of examples
-[https://doc.rust-lang.org/stable/rust-by-example/](https://doc.rust-lang.org/stable/rust-by-example/)
-- [https://doc.rust-lang.org/1.15.1/book/choosing-your-guarantees.html](https://doc.rust-lang.org/1.15.1/book/choosing-your-guarantees.html)
-
+- [The Little Book of Rust Macros](https://danielkeep.github.io/tlborm/book/index.html)
+- [Rust Nomicon: The Dark Arts of Unsafe Rust](https://doc.rust-lang.org/nomicon/)
+- [Rust by Example: A comprehensive list of examples](https://doc.rust-lang.org/stable/rust-by-example/)
+- [Rust for Rustaceans: Idiomatic Programming for Experienced Developers](https://rust-for-rustaceans.com/)
+- [Rust in Action: Systems programming concepts and techniques](https://www.rustinaction.com/)
+- [Zero To Production In Rust: An introduction to backend development](https://www.zero2prod.com/index.html?country=Austria&discount_code=VAT20)
+- [Rust Atomics and Locks](https://marabos.nl/atomics/)
 
 ## Coding Principles
-
 
 ### Import order
 
@@ -80,23 +77,24 @@ Always declare a type or function before using it. The only exceptions to this a
 When declaring a structure with an implementation, always ensure that the struct and its impl blocks are consecutive. Use the following order for the blocks:
 
 1. The `struct` or `enum` definition
-2. `impl` block
-3. `impl` block with further constraints
-4. Trait implementations of `std` traits
-5. Trait implementations of other traits
-6. Trait implementations of own traits
+1. `impl` block
+1. `impl` block with further constraints
+1. Trait implementations of `std` traits
+1. Trait implementations of other traits
+1. Trait implementations of own traits
 
 Inside an `impl` block, follow roughly this order:
 
+1. Public before private
 1. Associated constants
-2. Associated non-instance functions
-3. Constructors
-4. Getters / setters
-5. Anything else
+1. Associated non-instance functions
+1. Constructors
+1. Getters / setters
+1. Anything else
 
 ### Default lints
 
-We use [clippy](https://github.com/rust-lang/rust-clippy) with the `clippy::all` preset for linting. See The *Configuring CI* section for how to invoke it.
+We use [clippy](https://github.com/rust-lang/rust-clippy) with the `clippy::all` preset for linting. See The _Configuring CI_ section for how to invoke it.
 
 In addition to that, every crate enable the following warnings in its top-level file after the doc block before imports (see the [list of all available lints](https://doc.rust-lang.org/rustc/lints/listing/allowed-by-default.html)):
 
@@ -171,12 +169,13 @@ mod tests {
 ```
 
 Integration tests should go into the `tests/` folder, ideally into a file based on the functionality they test. Such tests can only use the public interface.
+See [this blog post](https://matklad.github.io/2021/02/27/delete-cargo-integration-tests.html#Rules-of-Thumb) for tips on how to structure integration tests.
 
 For libraries, consider providing examples in `examples/`.
 
 ### Iterators
 
-Prefer writing explicit iterator types over `impl Iterator`. This allows to name the type in places like associated types or globals. The type name should end with `Iter` per naming convention.
+Prefer explicit iterator types over `impl Iterator` in public interfaces. This allows to name the type in places like associated types or globals. The type name should end with `Iter` per naming convention.
 
 In addition to the standard `Iterator` trait, always consider implementing additional traits from `std::iter`:
 
@@ -200,13 +199,13 @@ impl Iterator for FooIter {
 
 ### Async-await
 
-In general we like to migrate to async-await using code, though much code exists which does not yet do this.  During migration you may need normal functions which return futures, for their signature you should generally prefer `-> impl Future<Output = ...>` over other return types.  This allows the compiler to figure out the details for callsites and avoids having to force things to be pinned or not.  Pinning should only be done explicitly when part of fields in structs or similar.
+In general we like to migrate to async-await using code, though much code exists which does not yet do this. During migration you may need normal functions which return futures, for their signature you should generally prefer `-> impl Future<Output = ...>` over other return types. This allows the compiler to figure out the details for callsites and avoids having to force things to be pinned or not. Pinning should only be done explicitly when part of fields in structs or similar.
 
-In **traits** you can not yet use `async fn` ([see this blog post](https://smallcultfollowing.com/babysteps/blog/2019/10/26/async-fn-in-traits-are-hard/)), in this case we have an exception and do the same as the [async-trait crate](https://crates.io/crates/async-trait) does and functions return `-> Pin<Box<dyn Future<Output = ...>>>`.  This allows seamless use in async-await code or in code dealing directly with futures.  Explicitly writing out the signatures is preferable over pulling in the macro syntactic sugar.
+In **traits** you can not yet use `async fn` ([see this blog post](https://smallcultfollowing.com/babysteps/blog/2019/10/26/async-fn-in-traits-are-hard/)), in this case we have an exception and do the same as the [async-trait crate](https://crates.io/crates/async-trait) does and functions return `-> Pin<Box<dyn Future<Output = ...>>>`. This allows seamless use in async-await code or in code dealing directly with futures. Explicitly writing out the signatures is preferable over pulling in the macro syntactic sugar.
 
-### Discourage unwrap()
+### Discourage `.unwrap()`
 
-This may seem obvious, but *almost always* discourage the use of `.unwrap()`. Even if a piece of code is guaranteed not to panic in its current form (because some precondition is met), it might be reused or refactored in a future situation where the precondition does not hold anymore.
+This may seem obvious, but _almost always_ discourage the use of `.unwrap()`. Even if a piece of code is guaranteed not to panic in its current form (because some precondition is met), it might be reused or refactored in a future situation where the precondition does not hold anymore.
 
 ### Use `.get()` instead of slice syntax
 
@@ -219,11 +218,11 @@ It is a good idea to always use checked math, such as `checked_sub` or `saturati
 
 ## Development Environment
 
-We use VSCode for development. Each repository contains settings files configuring code style, linters, and useful features. When opening the project for the first time, make sure to *"Install the Recommended Extensions"*, as they will allow editor assist during coding. The probably most up-to-date example can always be found in the [Relay repository](https://github.com/getsentry/relay/blob/master/.vscode/extensions.json):
+We use VSCode for development. Each repository contains settings files configuring code style, linters, and useful features. When opening the project for the first time, make sure to _"Install the Recommended Extensions"_, as they will allow editor assist during coding. The probably most up-to-date example can always be found in the [Relay repository](https://github.com/getsentry/relay/blob/master/.vscode/extensions.json):
 
-- *Rust Analyzer:* A fast and feature-packed language server integration that has been developed as successor to RLS.
-- *CodeLLDB:* Debugger based on LLDB, required to debug with the Rust Analyzer extension
-- *Better TOML and Crates:* Support for `Cargo.toml` files and bumping dependency versions
+- _Rust Analyzer:_ A fast and feature-packed language server integration that has been developed as successor to RLS.
+- _CodeLLDB:_ Debugger based on LLDB, required to debug with the Rust Analyzer extension
+- _Better TOML and Crates:_ Support for `Cargo.toml` files and bumping dependency versions
 
 Recommended Rust Analyzer settings in your User's `settings.json`:
 
@@ -260,7 +259,7 @@ $ cargo insta reject --all
 
 We use `Makefiles` to collect the most standard actions. A full Makefile for a workspace comprising multiple crates should roughly look like this (can be simplified):
 
-```jsx
+```Makefile
 all: check test
 .PHONY: all
 
@@ -294,24 +293,11 @@ format:
 .PHONY: format
 ```
 
-To run this in CI, we generally configure the following tasks. Note that we **do not configure caches**, since those keep growing and are generally slower to download than just rebuilding.
-
-```jsx
-os: linux
-language: rust
-
-script: make $SUITE
-
-matrix:
-  include:
-    - env: SUITE=style
-    - env: SUITE=lint
-    - env: SUITE=test
-```
+Note that in CI, we **do not configure caches**, since those keep growing and are generally slower to download than just rebuilding.
 
 ## Cargo Version Numbers
 
-Cargo follows [Semantic Versioning](https://semver.org/), which uses X.Y.Z which are respectively called *major*, *minor* and *patch* version numbers.  There are two major cases:
+Cargo follows [Semantic Versioning](https://semver.org/), which uses X.Y.Z which are respectively called _major_, _minor_ and _patch_ version numbers. There are two major cases:
 
 ### After 1.0
 
@@ -323,7 +309,7 @@ Once a 1.0 release is reached following SemVer is easy:
 
 ### Before 1.0
 
-Before a 1.0 release is reached [anything goes according to the spec](https://semver.org/#spec-item-4).  However Cargo has [strictly defined update rules for caret requirements](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html) (caret requirements are the default if plain version numbers are used).  So in order to make `cargo update` behave well we adopt the following:
+Before a 1.0 release is reached [anything goes according to the spec](https://semver.org/#spec-item-4). However Cargo has [strictly defined update rules for caret requirements](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html) (caret requirements are the default if plain version numbers are used). So in order to make `cargo update` behave well we adopt the following:
 
 - Breaking changes require bumping the minor (Y) version.
 - New features bump the patch (Z) version.
