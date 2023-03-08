@@ -77,7 +77,7 @@ Always declare a type or function before using it. The only exceptions to this a
 - Public functions are always on top in `impl` blocks
 - Circular calls or references. In this case place the more significant item first. For example, for types that expose an iterator, declare the type and its impl block (including `fn iter`) first, then below define the corresponding iterator.
 
-When declaring a structure with an implementation, always ensure that the struct and its impl blocks are consecutive. Place helper functions and helper types **above** the struct definition. Use the following order for the blocks:
+When declaring a structure with an implementation, always ensure that the struct and its impl blocks are consecutive. Use the following order for the blocks:
 
 1. The `struct` or `enum` definition
 2. `impl` block
@@ -112,7 +112,7 @@ Note that we do not enable `unsafe_code`, since that should already stand out in
 By default, fields of structs (including tuple-structs) should be fully private. The only exception to this are:
 
 - Newtypes (1-tuple structs) where direct access to the inner type is desired. This is to annotate semantics of a type where accessing the inner type is required.
-- Plain data types with a very stable signature.
+- Plain data types with a very stable signature. For example, schema definitions such as the Sentry `Event` protocol.
 
 Mixed visibility is never allowed, not even between private and `pub(crate)` or `pub(super)`. Instead, provide accessors:
 
@@ -156,7 +156,7 @@ All test functions should start with `test_` and contain the function name + a s
 - `test_parse_empty`
 - `test_parse_null`
 
-Write unit tests in a `tests` submodule in code.
+Write unit tests in a `tests` submodule in code. Depending on the editor, `rust-analyzer` will auto-expand `tmod` to an appropriate snippet.
 
 ```rust
 fn foo() {}
@@ -178,7 +178,7 @@ For libraries, consider providing examples in `examples/`.
 
 Prefer writing explicit iterator types over `impl Iterator`. This allows to name the type in places like associated types or globals. The type name should end with `Iter` per naming convention.
 
-In addition to the standard `Iterator` trait, always consider to implement additional traits from `std::iter`:
+In addition to the standard `Iterator` trait, always consider implementing additional traits from `std::iter`:
 
 - `FusedIterator` in all cases unless there is a strong reason not to
 - `DoubleEndedIterator` if reverse iteration is possible
@@ -208,17 +208,24 @@ In **traits** you can not yet use `async fn` ([see this blog post](https://small
 
 This may seem obvious, but *almost always* discourage the use of `.unwrap()`. Even if a piece of code is guaranteed not to panic in its current form (because some precondition is met), it might be reused or refactored in a future situation where the precondition does not hold anymore.
 
+### Use `.get()` instead of slice syntax
 
+Slice syntax (`&foo[a..b]`) will panic if the indices are out of bounds or out of order. Especially when dealing with untrusted input, it is better to use `.get(a..b)` and an `if let Some(...) =` expression.
+
+### Use checked math
+
+Arithmetic under/overflows will panic in debug builds, but will lead to wrong results or panics in other parts of the code (like slice syntax mentioned above) in release builds.
+It is a good idea to always use checked math, such as `checked_sub` or `saturating_sub`. The `saturating` variants will be capped at the appropriate `MIN/MAX` of the underlying data type.
 
 ## Development Environment
 
-We use VSCode for development. Each repository contains settings files configuring code style, linters, and useful features. When opening the project for the first time, make sure to "*Install the Recommended Extensions"*, as they will allow editor assist during coding. The probably most up-to-date example can always be found in the [Relay repository](https://github.com/getsentry/relay/blob/master/.vscode/extensions.json):
+We use VSCode for development. Each repository contains settings files configuring code style, linters, and useful features. When opening the project for the first time, make sure to *"Install the Recommended Extensions"*, as they will allow editor assist during coding. The probably most up-to-date example can always be found in the [Relay repository](https://github.com/getsentry/relay/blob/master/.vscode/extensions.json):
 
 - *Rust Analyzer:* A fast and feature-packed language server integration that has been developed as successor to RLS.
 - *CodeLLDB:* Debugger based on LLDB, required to debug with the Rust Analyzer extension
 - *Better TOML and Crates:* Support for `Cargo.toml` files and bumping dependency versions
 
-At the time of writing, Rust Analyzer is still under development. Updates are published frequently, so make sure to confirm the update prompt. Some of its default settings may not be ideal, so we recommend the following settings in your User's `settings.json`:
+Recommended Rust Analyzer settings in your User's `settings.json`:
 
 ```jsx
 {
