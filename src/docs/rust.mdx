@@ -154,7 +154,7 @@ All test functions should start with `test_` and contain the function name + a s
 - `test_parse_empty`
 - `test_parse_null`
 
-Write unit tests in a `tests` submodule in code. Depending on the editor, `rust-analyzer` will auto-expand `tmod` to an appropriate snippet.
+Place unit tests in a `tests` submodule annotated with `#[cfg(test)]`. This way, imports and helper functions for tests are only compiled before running tests. Depending on the editor, `rust-analyzer` will auto-expand `tmod` to an appropriate snippet.
 
 ```rust
 fn foo() {}
