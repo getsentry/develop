@@ -56,6 +56,7 @@ export default () => {
           <SidebarLink to="/database-migrations/">Database Migrations</SidebarLink>
           <SidebarLink to="/testing/">Testing Tips</SidebarLink>
           <SidebarLink to="/analytics/">Analytics</SidebarLink>
+          <SidebarLink to="/rust/">Rust Development</SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
