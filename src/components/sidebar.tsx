@@ -47,6 +47,7 @@ export default () => {
           <SidebarLink to="/environment/" title="Environment">
             <Children tree={tree.find(n => n.name === 'environment').children} />
           </SidebarLink>
+          <SidebarLink to="/philosophy/">Philosophy</SidebarLink>
           <SidebarLink to="/commit-messages/">Commit Messages</SidebarLink>
           <SidebarLink to="/code-review/">Code Review</SidebarLink>
           <SidebarLink to="/workflow/">Workflow</SidebarLink>
@@ -55,6 +56,7 @@ export default () => {
           <SidebarLink to="/database-migrations/">Database Migrations</SidebarLink>
           <SidebarLink to="/testing/">Testing Tips</SidebarLink>
           <SidebarLink to="/analytics/">Analytics</SidebarLink>
+          <SidebarLink to="/rust/">Rust Development</SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
@@ -221,6 +223,7 @@ export default () => {
           <SidebarLink to="/sdk/research/performance">
             Research: Performance Monitoring API
           </SidebarLink>
+          <SidebarLink to="/sdk/sample-format/">Sample format for Profiling</SidebarLink>
           <SidebarLink to="/sdk/one-step-onboarding/">
             One-Step Onboarding
           </SidebarLink>
