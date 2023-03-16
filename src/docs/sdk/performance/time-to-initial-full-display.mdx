@@ -18,6 +18,9 @@ Time to Initial Display is a span with operation `ui.load.initial_display` which
 when the screen draws its first frame. It's controlled automatically by the SDK and doesn't
 require any manual intervention from the user.
 
+It's also set as a measurement of the transaction, with `time-to-initial-display` as key and the span duration as value.
+Note: The measurement is should be set only if the span finishes with an `OK`  status.
+
 
 ## Time to Full Display
 
@@ -25,6 +28,7 @@ Time to Full Display is a span with operation `ui.load.full_display` which is fi
 the `Sentry.reportFullyDisplayed` static API. This feature has to be enabled by setting the SDK config
 option `enableTimeToFullDisplayTracing`. Remember that the screen load transactions wait for spans to finish,
 so the transaction will run until the user calls the API. So we recommend this feature to be disabled by default.
+It's also set as a measurement of the transaction, with `time-to-full-display` as key and the span duration as value.
 
 The following section explain the possible scenarios of the Time to Full Display.
 
