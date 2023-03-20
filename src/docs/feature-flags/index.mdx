@@ -11,8 +11,10 @@ You can find a list of features available by looking at
 `sentry/features/__init__.py`. They're declared on the `FeatureManager` like so:
 
 ```python
-# pass FeatureHandlerStrategy.REMOTE to use flagr, or FeatureHandlerStrategy.INTERNAL if you don't plan to use flagr.
+# pass FeatureHandlerStrategy.REMOTE to use flagr:
 default_manager.add("organizations:onboarding", OrganizationFeature, FeatureHandlerStrategy.REMOTE)
+# pass FeatureHandlerStrategy.INTERNAL if you don't plan to use flagr:
+default_manager.add("organizations:onboarding", OrganizationFeature, FeatureHandlerStrategy.INTERNAL)
 ```
 
 The feature can be enabled with the following in your `sentry.conf.py`, usually located at `~/.sentry/`:
