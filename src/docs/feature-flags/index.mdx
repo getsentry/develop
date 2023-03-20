@@ -69,7 +69,7 @@ add the feature to the `FeatureManager` like so using the `REMOTE` enum.:
 default_manager.add('organizations:test-feature', OrganizationFeature, FeatureHandlerStrategy.REMOTE)
 ```
 
-If you don't plan to use flagr, use FeatureHandlerStrategy.INTERNAL, for example:
+If you don't plan to use flagr, use `FeatureHandlerStrategy.INTERNAL`, for example:
 
 ```python
 default_manager.add('organizations:test-feature', OrganizationFeature, FeatureHandlerStrategy.INTERNAL)
