@@ -33,6 +33,16 @@ If you don't see any errors and the process exits with code `0`, congratulations
 We strongly recommended that you restore your backup on the <strong>same version of Sentry</strong> on a fresh install (empty database but migrations are run). Otherwise, you are very likely to hit errors and may corrupt your database.
 </Alert>
 
+### Legacy Backup and Restore
+
+If you're running on a version of self-hosted Sentry that is below 23.3.1, you'll need to use the built in `import` and `export` commands instead.
+
+#### Backup
+docker-compose run -v $(pwd)/sentry:/sentry-data/backup  --rm -T -e SENTRY_LOG_LEVEL=CRITICAL web export /sentry-data/backup/backup.json
+
+#### Restore
+docker-compose run --rm -T web import /etc/sentry/backup.json
+
 ## Full Backup
 
 The ideal way to backup and restore Sentry is to backup and restore all Docker volumes that it uses. All volumes that hold critical long-term data are already defined as global volumes at install time and are prefixed with `sentry-`:
