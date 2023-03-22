@@ -38,10 +38,14 @@ We strongly recommended that you restore your backup on the <strong>same version
 If you're running on a version of self-hosted Sentry that is below 23.3.1, you'll need to use the built in `import` and `export` commands instead.
 
 #### Backup
+```shell
 docker-compose run -v $(pwd)/sentry:/sentry-data/backup  --rm -T -e SENTRY_LOG_LEVEL=CRITICAL web export /sentry-data/backup/backup.json
+```
 
 #### Restore
+```shell
 docker-compose run --rm -T web import /etc/sentry/backup.json
+```
 
 ## Full Backup
 
