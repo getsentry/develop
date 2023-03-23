@@ -1,0 +1,83 @@
+## GPU Context
+
+GPU context describes the GPU of the device.
+
+`name`
+
+: **Required**. The name of the graphics device.
+
+`version`
+
+: _Optional_. The Version of the graphics device.
+
+`id`
+
+: _Optional_. The PCI identifier of the graphics device.
+
+`vendor_id`
+
+: _Optional_. The PCI vendor identifier of the graphics device.
+
+`vendor_name`
+
+: _Optional_. The vendor name as reported by the graphics device.
+
+`memory_size`
+
+: _Optional_. The total GPU memory available in Megabytes.
+
+`api_type`
+
+: _Optional_. The device low-level API type.
+
+Examples: `"Apple Metal"` or `"Direct3D11"`
+
+`multi_threaded_rendering`
+
+: _Optional_. Whether the GPU has multi-threaded rendering or not.
+
+`npot_support`
+
+: _Optional_. The Non-Power-Of-Two-Support support.
+
+`max_texture_size`
+
+: _Optional_. Largest size of a texture that is supported by the graphics hardware. For example, `16384`.
+
+`graphics_shader_level`
+
+: _Optional_. Approximate "shader capability" level of the graphics device. For example, `Shader Model 2.0, OpenGL ES 3.0, Metal / OpenGL ES 3.1, 27 (unknown)`.
+
+`supports_draw_call_instancing`
+
+: _Optional_. Is GPU draw call instancing supported?
+
+`supports_ray_tracing`
+
+: _Optional_. Is ray tracing available on the device?
+
+`supports_compute_shaders`
+
+: _Optional_. Are compute shaders available on the device?
+
+`supports_geometry_shaders`
+
+: _Optional_. Are geometry shaders available on the device?
+
+### Example GPU Context
+
+```json
+{
+  "contexts": {
+    "gpu": {
+      "name": "AMD Radeon Pro 560",
+      "vendor_name": "Apple",
+      "memory_size": 4096,
+      "api_type": "Metal",
+      "multi_threaded_rendering": true,
+      "version": "Metal",
+      "npot_support": "Full"
+    }
+  }
+}
+```

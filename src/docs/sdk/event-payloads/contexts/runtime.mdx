@@ -1,0 +1,21 @@
+## Runtime Context
+
+Runtime context describes a runtime in more detail. Typically, this context is
+used multiple times if multiple runtimes are involved (for instance, if you have
+a JavaScript application running on top of JVM).
+
+The `type` and default key is `"runtime"`.
+
+`name`
+
+: _Recommended_. The name of the runtime. It might be derived from `raw_description`. It is **required** if `raw_description` is not provided.
+
+`version`
+
+: _Optional_. The version identifier of the runtime.
+
+`raw_description`
+
+: _Optional_. An unprocessed description string obtained by the runtime. For
+some well-known runtimes, Sentry will attempt to parse `name` and `version`
+from this string, if they are not explicitly given.
