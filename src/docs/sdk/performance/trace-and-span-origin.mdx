@@ -7,7 +7,7 @@ to tell whether the user or what precisely in the SDK created it. Origin solves 
 the <Link to="sdk/event-payloads/contexts/#trace-context">trace context</Link> or <Link to="sdk/event-payloads/span/">spans</Link>.
 
 
-The origin consists of four parts: `<type>.<category>.<integration-name>.<integration-part>`
+The origin consists of four parts: `<type>.<category>.<integration-name>.<integration-part>`.
 Only the first is mandatory. The parts build upon each other, meaning it is forbidden
 to skip one part. For example, you may send parts one and two but aren't allowed to send parts one and three without part two.
 
