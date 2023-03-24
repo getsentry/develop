@@ -176,7 +176,7 @@ export default () => {
               Span Data Conventions
             </SidebarLink>
             <SidebarLink to="/sdk/performance/trace-origin/">
-              Trace and Span Origin
+              Trace Origin
             </SidebarLink>
             <SidebarLink to="/sdk/performance/ui-event-transactions/">
               UI Event Transactions
