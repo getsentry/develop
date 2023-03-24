@@ -175,7 +175,7 @@ export default () => {
             <SidebarLink to="/sdk/performance/span-data-conventions/">
               Span Data Conventions
             </SidebarLink>
-            <SidebarLink to="/sdk/performance/trace-and-span-origin/">
+            <SidebarLink to="/sdk/performance/trace-origin/">
               Trace and Span Origin
             </SidebarLink>
             <SidebarLink to="/sdk/performance/ui-event-transactions/">
