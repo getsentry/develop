@@ -333,7 +333,8 @@ Each sample can contain the following attributes:
 
 : *List, required*. Contains a list of frame indices forming a stack trace.
 
-Stacks should be ordered from outermost to innermost frame.
+Frames in a stack should be ordered from leaf to root. It means your main frame
+should be at the end of the list.
 
 It's encouraged to deduplicate stacks by only storing it once and referring to
 the same `stack_id` for each sample that needs it.
