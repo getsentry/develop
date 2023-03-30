@@ -24,7 +24,12 @@ First and foremost, this makes it harder for the user to extract insights from [
 metrics](https://docs.sentry.io/product/performance/metrics/), because instead of presenting averages, percentiles and distributions of groups of transactions that logically
 belong together, we end up with a bunch of one-off transaction groups.
 
-_Screenshot here_
+```
+/account/settings/nf215j634705291cvcm725757m53451365023487cv562n905n2634590xn26340/
+/issues/1234567890
+/saml/acs/my-organization/
+/settings/e1fb593b4c3a4d388e2f6ea8c92c3abc/
+```
 
 Secondly, ingesting a high number of one-off transaction names puts a cost on our infrastructure,
 because with [metrics](https://getsentry.github.io/relay/relay_metrics/index.html), the cost of storage is determined by _cardinality_ (the number of distinct groups), not volume (the number of events ingested).
@@ -35,7 +40,7 @@ An intermediate solution to the cost problem was to drop the transaction tag fro
 when the transaction name is a raw URL. This effectively groups _all_ URL transactions into one big group,
 which also creates a bad user experience:
 
-_Screenshot here_
+![Project with only unparameterized transactions](./unparameterized.png)
 
 ## The Solution
 
@@ -138,10 +143,5 @@ is _some_ scrubbing rule (even if it does not match), or we found an identifier 
 | false positive | We miss an identifier, but still label as `sanitized`                                |
 | true negative  | We keep the transaction labeled as `url` and it contains identifiers                 |
 | false negative | We keep the transaction labeled as `url` even though it does not contain identifiers |
-
-```
-# Classification after scrubbing:
-true positive ...
-```
 
 The consequence of this is again potentially high cardinality in our metrics ingestion and storage, up to the point where we might hit the [cardinality limiter](https://github.com/getsentry/sentry/blob/9af20330c84b971882be9837d4e43e148af5a126/src/sentry/ratelimits/cardinality.py#L93-L95).
