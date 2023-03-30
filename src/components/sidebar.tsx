@@ -79,7 +79,7 @@ export default () => {
             <SidebarLink to="/pii/methods/">Redaction Methods</SidebarLink>
             <SidebarLink to="/pii/selectors/">Selectors</SidebarLink>
           </SidebarLink>
-          <SidebarLink to="/transaction-clustering/">Clustering URL Transactions</SidebarLink>
+          <SidebarLink to="/transaction-clustering/">Sanitizing URL Transactions</SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
