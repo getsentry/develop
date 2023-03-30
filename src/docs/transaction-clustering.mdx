@@ -1,0 +1,121 @@
+---
+title: Sanitizing URL Transactions # TODO: decide on name.
+---
+
+Sentry attempts to scrub high-cardinality identifiers from URL transactions
+to give the user more meaningful transaction groups.
+
+In terms of user experience, this feature plays a similar role as [Issue Grouping]().
+In terms of technical implementation, it is similar to [Data Scrubbing]().
+
+## The Problem
+
+In our [Performance]() product, transactions are grouped by their name (the [`event.transaction`]() field).
+This works well as long as the cardinality of distinct transaction names that the SDK sends is low, for example
+by using the [route of a web framework] as transaction name.
+
+However, in some cases the SDK does not have enough information to pick a meaningful group
+like the name of a [view] or a [route] of a web transaction,
+and it has to fall back to the raw URL (or rather,
+[its path component](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Syntax)).
+
+First and foremost, this makes it harder for the user to extract insights from Performance
+metrics, because instead of presenting averages, percentiles and distributions of groups of transactions that logically
+belong together, we end up with a bunch of one-off transaction groups.
+
+_Screenshot here_
+
+Secondly, ingesting a high number of one-off transaction names puts a cost on our infrastructure,
+because with [metrics], the cost of storage is determined by _cardinality_, not volume (TODO link here).
+
+TODO: talk about metrics and tag combinations.
+
+### << unparameterized >>
+
+An intermediate solution to the cost problem was to drop the transaction tag from Performance metrics
+when the transaction name is a [raw URL](). This effectively groups _all_ URL transactions into one big group,
+which also creates a bad user experience:
+
+_Screenshot here_
+
+## The Solution
+
+### Pattern-based Identifier Scrubbing
+
+In a first step, Relay strips common identifiers such as UUIDs, integer IDs and hashes
+from URL transactions (code). For example,
+
+```
+
+```
+
+### Automatic Transaction Clustering
+
+Some identifiers cannot be detected by looking at a single transaction. For example,
+free-form user names cannot be dinstinghuished from low-cardinality parts of a URL.
+
+_Insert slides here_
+
+[Trie]
+
+## Architecture
+
+_diagram here_
+
+1. In post processing, we add incoming transaction names of type `url` to a redis set (one set per project).
+   Every set is capped at 2000 entries. When the set is full, a random item is evicted.
+   404 transactions are excluded from this data collection step as they can potentially contain any URL.
+1. Every hour, a Celery task is spawned for every redis set, which
+   1. builds the tree and derives rules from merged nodes.
+   1. writes the rules into project options.
+1. The derived rules are written into the project config submitted to Relay.
+1. For every incoming transaction of type URL, Relay applies matching rules to scrub identifiers.
+
+### Rule TTL
+
+_WIP_ In order to prune unused rules, we keep a copy of discovered rules in redis, and in post processing
+bump a `last_used` field on a rule if it was applied to the current event.
+The information which rule was applied is provided by Relay through the `_meta` field.
+
+## Drawbacks
+
+### Accidental erasure of non-identifiers
+
+Every level of the tree of URL path segments could contain a mixture of identifiers and static pages, for example
+
+```
+/alice
+/bob
+/settings
+/carol
+...
+```
+
+our current approach would replace `settings` with `*` because it detects high cardinality on the first level.
+
+#### Possible Solution using Weights
+
+This could be fixed by assigning a weight to each node, proportional to the number of transactions that have this segment.
+Nodes with large weights would then be encoded into the replacement rules as exceptions.
+
+We decided against this because encoding exceptions into rules would bloat project configs on the wire and in Relay.
+
+### False Positives
+
+The discovery of replacement rules is a best-effort approach: No matter how many rules the clusterer discovers, a project can always
+introduce a new feature that brings more high-cardinality transactions.
+
+At the same time, the algorithm is blind to low-cardinality transactions that do not contain identifiers at all. For example, if a transaction
+like `/settings` has type `url`, neither the pattern-based nor the rule-based approach detect any identifiers.
+
+In order to prevent these false negatives, as of [PR]() we mark _every_ URL transaction as low-cardinality as long as there
+is _some_ scrubbing rule (even if it does not match), or we found an identifier pattern. In other words, we sacrifice [precision](https://en.wikipedia.org/wiki/Precision_and_recall) for the sake of [recall](https://en.wikipedia.org/wiki/Precision_and_recall).
+
+| category       | description                                                                          |
+| -------------- | ------------------------------------------------------------------------------------ |
+| true positive  | We scrub all identifiers and label the transaction as `sanitized`                    |
+| false positive | We miss an identifier, but still label as `sanitized`                                |
+| true negative  | We keep the transaction labeled as `url` and it contains identifiers                 |
+| false negative | We keep the transaction labeled as `url` even though it does not contain identifiers |
+
+The consequence of this is again potentially high cardinality in our metrics ingestion and storage, up to the point where we might hit the [cardinality limiter]().
