@@ -5,33 +5,34 @@ title: Sanitizing URL Transactions # TODO: decide on name.
 Sentry attempts to scrub high-cardinality identifiers from URL transactions
 to give the user more meaningful transaction groups.
 
-In terms of user experience, this feature plays a similar role as [Issue Grouping]().
-In terms of technical implementation, it is similar to [Data Scrubbing]().
+In terms of user experience, this feature plays a similar role as [Issue Grouping](/grouping).
+In terms of technical implementation, it is similar to [Data Scrubbing](/pii).
 
 ## The Problem
 
-In our [Performance]() product, transactions are grouped by their name (the [`event.transaction`]() field).
+In our [Performance](https://docs.sentry.io/product/performance/) product, transactions are grouped by their name
+(the [`event.transaction`](/sdk/event-payloads/#optional-attributes) field).
 This works well as long as the cardinality of distinct transaction names that the SDK sends is low, for example
-by using the [route of a web framework] as transaction name.
+by using the [route of a web framework](https://docs.sentry.io/platforms/javascript/guides/react/configuration/integrations/react-router/) as transaction name.
 
 However, in some cases the SDK does not have enough information to pick a meaningful group
-like the name of a [view] or a [route] of a web transaction,
+like the name of a view or a route of a web transaction,
 and it has to fall back to the raw URL (or rather,
 [its path component](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Syntax)).
 
-First and foremost, this makes it harder for the user to extract insights from Performance
-metrics, because instead of presenting averages, percentiles and distributions of groups of transactions that logically
+First and foremost, this makes it harder for the user to extract insights from [Performance
+metrics](https://docs.sentry.io/product/performance/metrics/), because instead of presenting averages, percentiles and distributions of groups of transactions that logically
 belong together, we end up with a bunch of one-off transaction groups.
 
 _Screenshot here_
 
 Secondly, ingesting a high number of one-off transaction names puts a cost on our infrastructure,
-because with [metrics], the cost of storage is determined by _cardinality_ (the number of distinct groups), not volume (the number of events ingested).
+because with [metrics](https://getsentry.github.io/relay/relay_metrics/index.html), the cost of storage is determined by _cardinality_ (the number of distinct groups), not volume (the number of events ingested).
 
-### \<< unparameterized >>
+### << unparameterized >>
 
 An intermediate solution to the cost problem was to drop the transaction tag from Performance metrics
-when the transaction name is a [raw URL](). This effectively groups _all_ URL transactions into one big group,
+when the transaction name is a raw URL. This effectively groups _all_ URL transactions into one big group,
 which also creates a bad user experience:
 
 _Screenshot here_
@@ -41,7 +42,8 @@ _Screenshot here_
 ### Pattern-based Identifier Scrubbing
 
 In a first step, Relay strips common identifiers such as UUIDs, integer IDs and hashes
-from URL transactions (code). For example,
+from URL transactions ([code](https://github.com/getsentry/relay/blob/e543401086c556b769b67ccb96fbfaca411696c8/relay-general/src/store/transactions/processor.rs#L273-L277)).
+For example,
 
 ```python
 "/hash/4c79f60c11214eb38604f4ae0781bfb2/diff"
@@ -70,6 +72,11 @@ For every merged segment, we create a glob-like replacement rule that can be use
 
 If a transaction name matches this glob, the segment matching `*` gets replaced, thereby erasing the identifier.
 
+Source code:
+
+- [clusterer (Sentry)](https://github.com/getsentry/sentry/blob/9af20330c84b971882be9837d4e43e148af5a126/src/sentry/ingest/transaction_clusterer/tree.py)
+- [application of replacement rules (Relay)](https://github.com/getsentry/relay/blob/e543401086c556b769b67ccb96fbfaca411696c8/relay-general/src/store/transactions/processor.rs#L37-L46)
+
 ## Architecture
 
 ![Architecture](./transaction-clustering-arch.png)
@@ -89,7 +96,7 @@ In order to prune unused rules, we keep a copy of discovered rules in redis, and
 bump a `last_used` field on a rule if it was applied to the current event.
 The information which rule was applied is provided by Relay through the `_meta` field.
 
-## Drawbacks
+## Known Issues
 
 ### Accidental erasure of non-identifiers
 
@@ -107,7 +114,7 @@ Every level of the tree of URL path segments could contain a mixture of identifi
 
 our current approach would replace `/user/settings` with `/user/*` because it detects high cardinality on the second level, even though `/settings` is a static route.
 
-#### Possible Solution using Weights
+**Possible Solution using Weights**:
 
 This could be fixed by assigning a weight to each node, proportional to the number of transactions that have this segment.
 Nodes with large weights would then be encoded into the replacement rules as exceptions.
@@ -117,23 +124,24 @@ We decided against this because encoding exceptions into rules would bloat proje
 ### False Positives
 
 The discovery of replacement rules is a best-effort approach: No matter how many rules the clusterer discovers, a project can always
-introduce a new feature that brings more high-cardinality transactions.
+introduce a new feature that brings more high-cardinality transactions, and it takes time until the clusterer discovers a new rule for those.
 
 At the same time, the algorithm is blind to low-cardinality transactions that do not contain identifiers at all. For example, if a transaction
 like `/settings` has type `url`, neither the pattern-based nor the rule-based approach detect any identifiers.
 
-In order to prevent these false negatives, as of [PR]() we mark _every_ URL transaction as low-cardinality as long as there
+In order to prevent these false negatives, as of [this PR](https://github.com/getsentry/relay/pull/1960) we mark _every_ URL transaction as low-cardinality as long as there
 is _some_ scrubbing rule (even if it does not match), or we found an identifier pattern. In other words, we sacrifice [precision](https://en.wikipedia.org/wiki/Precision_and_recall) for the sake of [recall](https://en.wikipedia.org/wiki/Precision_and_recall).
 
 | category       | description                                                                          |
 | -------------- | ------------------------------------------------------------------------------------ |
-| true positive  | We scrub all identifiers and label the transaction as `sanitized`                    |
+| true positive  | We scrubbed all identifiers (if any) and label the transaction as `sanitized`        |
 | false positive | We miss an identifier, but still label as `sanitized`                                |
 | true negative  | We keep the transaction labeled as `url` and it contains identifiers                 |
 | false negative | We keep the transaction labeled as `url` even though it does not contain identifiers |
 
-The consequence of this is again potentially high cardinality in our metrics ingestion and storage, up to the point where we might hit the [cardinality limiter]().
-
+```
+# Classification after scrubbing:
+true positive ...
 ```
 
-```
+The consequence of this is again potentially high cardinality in our metrics ingestion and storage, up to the point where we might hit the [cardinality limiter](https://github.com/getsentry/sentry/blob/9af20330c84b971882be9837d4e43e148af5a126/src/sentry/ratelimits/cardinality.py#L93-L95).
