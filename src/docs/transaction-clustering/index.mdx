@@ -26,11 +26,9 @@ belong together, we end up with a bunch of one-off transaction groups.
 _Screenshot here_
 
 Secondly, ingesting a high number of one-off transaction names puts a cost on our infrastructure,
-because with [metrics], the cost of storage is determined by _cardinality_, not volume (TODO link here).
+because with [metrics], the cost of storage is determined by _cardinality_ (the number of distinct groups), not volume (the number of events ingested).
 
-TODO: talk about metrics and tag combinations.
-
-### << unparameterized >>
+### \<< unparameterized >>
 
 An intermediate solution to the cost problem was to drop the transaction tag from Performance metrics
 when the transaction name is a [raw URL](). This effectively groups _all_ URL transactions into one big group,
@@ -45,8 +43,10 @@ _Screenshot here_
 In a first step, Relay strips common identifiers such as UUIDs, integer IDs and hashes
 from URL transactions (code). For example,
 
-```
-
+```python
+"/hash/4c79f60c11214eb38604f4ae0781bfb2/diff"
+# becomes
+"/hash/*/diff"
 ```
 
 ### Automatic Transaction Clustering
@@ -54,13 +54,25 @@ from URL transactions (code). For example,
 Some identifiers cannot be detected by looking at a single transaction. For example,
 free-form user names cannot be dinstinghuished from low-cardinality parts of a URL.
 
-_Insert slides here_
+To detect high-cardinality segments in the URL, we accumulate a set of unique URL transaction names for each project, split them by `"/"`, and build a tree from its path segments (similar to a [trie](https://en.wikipedia.org/wiki/Trie) data structure):
 
-[Trie]
+![tree of URL path segments](./tree.png)
+
+If the number of children of a node surpass a threshold (currently set to 200), we treat the path segment as high-cardinality, and fold its children into a single node:
+
+![tree with merged segments](./merged.png)
+
+For every merged segment, we create a glob-like replacement rule that can be used to scrub identifiers from new transactions. In the example above, the rule would be
+
+```
+/user/*/**
+```
+
+If a transaction name matches this glob, the segment matching `*` gets replaced, thereby erasing the identifier.
 
 ## Architecture
 
-_diagram here_
+![Architecture](./transaction-clustering-arch.png)
 
 1. In post processing, we add incoming transaction names of type `url` to a redis set (one set per project).
    Every set is capped at 2000 entries. When the set is full, a random item is evicted.
@@ -73,7 +85,7 @@ _diagram here_
 
 ### Rule TTL
 
-_WIP_ In order to prune unused rules, we keep a copy of discovered rules in redis, and in post processing
+In order to prune unused rules, we keep a copy of discovered rules in redis, and in post processing
 bump a `last_used` field on a rule if it was applied to the current event.
 The information which rule was applied is provided by Relay through the `_meta` field.
 
@@ -84,14 +96,16 @@ The information which rule was applied is provided by Relay through the `_meta` 
 Every level of the tree of URL path segments could contain a mixture of identifiers and static pages, for example
 
 ```
-/alice
-/bob
-/settings
-/carol
+
+/user/alice
+/user/bob
+/user/settings <-
+/user/carol
 ...
+
 ```
 
-our current approach would replace `settings` with `*` because it detects high cardinality on the first level.
+our current approach would replace `/user/settings` with `/user/*` because it detects high cardinality on the second level, even though `/settings` is a static route.
 
 #### Possible Solution using Weights
 
@@ -119,3 +133,7 @@ is _some_ scrubbing rule (even if it does not match), or we found an identifier 
 | false negative | We keep the transaction labeled as `url` even though it does not contain identifiers |
 
 The consequence of this is again potentially high cardinality in our metrics ingestion and storage, up to the point where we might hit the [cardinality limiter]().
+
+```
+
+```
