@@ -1,5 +1,5 @@
 ---
-title: Sanitizing URL Transactions # TODO: decide on name.
+title: Clustering URL Transactions
 ---
 
 Sentry attempts to scrub high-cardinality identifiers from URL transactions
@@ -44,10 +44,20 @@ which also creates a bad user experience:
 
 ## The Solution
 
+// TODO: short summary of two steps
+
+- In a first step, Relay strips common identifiers such as UUIDs, integer IDs and hashes
+from URL transactions.
+- Some identifiers cannot be detected by looking at a single transaction. For example,
+free-form user names cannot be dinstinguished from low-cardinality parts of a URL. For these cases, we run stateful, automatic transaction clustering.
+
+![Architecture](./transaction-clustering-arch.png)
+
 ### Pattern-based Identifier Scrubbing
 
-In a first step, Relay strips common identifiers such as UUIDs, integer IDs and hashes
-from URL transactions ([code](https://github.com/getsentry/relay/blob/e543401086c556b769b67ccb96fbfaca411696c8/relay-general/src/store/transactions/processor.rs#L273-L277)).
+// TODO: link to regex instead
+[code](https://github.com/getsentry/relay/blob/e543401086c556b769b67ccb96fbfaca411696c8/relay-general/src/store/transactions/processor.rs#L273-L277))
+
 For example,
 
 ```python
@@ -57,9 +67,6 @@ For example,
 ```
 
 ### Automatic Transaction Clustering
-
-Some identifiers cannot be detected by looking at a single transaction. For example,
-free-form user names cannot be dinstinghuished from low-cardinality parts of a URL.
 
 To detect high-cardinality segments in the URL, we accumulate a set of unique URL transaction names for each project, split them by `"/"`, and build a tree from its path segments (similar to a [trie](https://en.wikipedia.org/wiki/Trie) data structure):
 
@@ -84,7 +91,7 @@ Source code:
 
 ## Architecture
 
-![Architecture](./transaction-clustering-arch.png)
+// TODO: deconstruct this section into other sections
 
 1. In post processing, we add incoming transaction names of type `url` to a redis set (one set per project).
    Every set is capped at 2000 entries. When the set is full, a random item is evicted.
@@ -102,6 +109,8 @@ bump a `last_used` field on a rule if it was applied to the current event.
 The information which rule was applied is provided by Relay through the `_meta` field.
 
 ## Known Issues
+
+### Parameter Tuning
 
 ### Accidental erasure of non-identifiers
 
