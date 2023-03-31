@@ -44,19 +44,17 @@ which also creates a bad user experience:
 
 ## The Solution
 
-// TODO: short summary of two steps
-
 - In a first step, Relay strips common identifiers such as UUIDs, integer IDs and hashes
-from URL transactions.
-- Some identifiers cannot be detected by looking at a single transaction. For example,
-free-form user names cannot be dinstinguished from low-cardinality parts of a URL. For these cases, we run stateful, automatic transaction clustering.
+  from URL transactions.
+- In a second step, we run automatic transaction clustering across a sample of observed transaction names.
+
+### Overview
 
 ![Architecture](./transaction-clustering-arch.png)
 
 ### Pattern-based Identifier Scrubbing
 
-// TODO: link to regex instead
-[code](https://github.com/getsentry/relay/blob/e543401086c556b769b67ccb96fbfaca411696c8/relay-general/src/store/transactions/processor.rs#L273-L277))
+Relay tests all incoming URL transactions against a static regex, and replaces matched groups with `"*"` ([code](https://github.com/getsentry/relay/blob/897ca0e35ab981228274d0cb89ea050cc93e3632/relay-general/src/store/regexes.rs#L8-L52)).
 
 For example,
 
@@ -67,6 +65,9 @@ For example,
 ```
 
 ### Automatic Transaction Clustering
+
+Some identifiers cannot be detected by looking at a single transaction. For example,
+free-form user names cannot be dinstinguished from low-cardinality parts of a URL.
 
 To detect high-cardinality segments in the URL, we accumulate a set of unique URL transaction names for each project, split them by `"/"`, and build a tree from its path segments (similar to a [trie](https://en.wikipedia.org/wiki/Trie) data structure):
 
@@ -84,14 +85,7 @@ For every merged segment, we create a glob-like replacement rule that can be use
 
 If a transaction name matches this glob, the segment matching `*` gets replaced, thereby erasing the identifier.
 
-Source code:
-
-- [clusterer (Sentry)](https://github.com/getsentry/sentry/blob/9af20330c84b971882be9837d4e43e148af5a126/src/sentry/ingest/transaction_clusterer/tree.py)
-- [application of replacement rules (Relay)](https://github.com/getsentry/relay/blob/e543401086c556b769b67ccb96fbfaca411696c8/relay-general/src/store/transactions/processor.rs#L37-L46)
-
-## Architecture
-
-// TODO: deconstruct this section into other sections
+Details:
 
 1. In post processing, we add incoming transaction names of type `url` to a redis set (one set per project).
    Every set is capped at 2000 entries. When the set is full, a random item is evicted.
@@ -101,16 +95,24 @@ Source code:
    1. writes the rules into project options.
 1. The derived rules are written into the project config submitted to Relay.
 1. For every incoming transaction of type URL, Relay applies matching rules to scrub identifiers.
+1. In order to prune unused rules, we keep a copy of discovered rules in redis, and in post processing
+   bump a `last_used` field on a rule if it was applied to the current event.
+   The information which rule was applied is provided by Relay through the `_meta` field.
 
-### Rule TTL
+Source code:
 
-In order to prune unused rules, we keep a copy of discovered rules in redis, and in post processing
-bump a `last_used` field on a rule if it was applied to the current event.
-The information which rule was applied is provided by Relay through the `_meta` field.
+- [clusterer (Sentry)](https://github.com/getsentry/sentry/blob/9af20330c84b971882be9837d4e43e148af5a126/src/sentry/ingest/transaction_clusterer/tree.py)
+- [application of replacement rules (Relay)](https://github.com/getsentry/relay/blob/e543401086c556b769b67ccb96fbfaca411696c8/relay-general/src/store/transactions/processor.rs#L37-L46)
 
 ## Known Issues
 
 ### Parameter Tuning
+
+The current threshold which decides whether or not a path segment is considered an identifier is set at 200.
+We increased it from 100 because we noticed there are websites which have > 100 static pages.
+
+For the sample of observed transactions, a larger set increases the probability of discovering a rule.
+The current size is 2000 (10x the merge threshold).
 
 ### Accidental erasure of non-identifiers
 
