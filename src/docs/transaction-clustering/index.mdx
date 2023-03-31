@@ -20,7 +20,7 @@ like the name of a view or a route of a web transaction,
 and it has to fall back to the raw URL (or rather,
 [its path component](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Syntax)).
 
-First and foremost, this makes it harder for the user to extract insights from [Performance
+This makes it harder for the user to extract insights from [Performance
 metrics](https://docs.sentry.io/product/performance/metrics/), because instead of presenting averages, percentiles and distributions of groups of transactions that logically
 belong together, we end up with a bunch of one-off transaction groups.
 
@@ -31,12 +31,12 @@ belong together, we end up with a bunch of one-off transaction groups.
 /settings/e1fb593b4c3a4d388e2f6ea8c92c3abc/
 ```
 
-Secondly, ingesting a high number of one-off transaction names puts a cost on our infrastructure,
-because with [metrics](https://getsentry.github.io/relay/relay_metrics/index.html), the cost of storage is determined by _cardinality_ (the number of distinct groups), not volume (the number of events ingested).
-
 ### << unparameterized >>
 
-An intermediate solution to the cost problem was to drop the transaction tag from Performance metrics
+Secondly, ingesting a high number of one-off transaction names does not scale to the required volume,
+because with [metrics](https://getsentry.github.io/relay/relay_metrics/index.html), scalability is determined by _cardinality_ (the number of distinct groups), not volume (the number of events ingested).
+
+An intermediate solution to the scal problem was to drop the transaction tag from Performance metrics
 when the transaction name is a raw URL. This effectively groups _all_ URL transactions into one big group,
 which also creates a bad user experience:
 
