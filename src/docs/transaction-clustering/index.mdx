@@ -33,10 +33,10 @@ belong together, we end up with a bunch of one-off transaction groups.
 
 ### << unparameterized >>
 
-Secondly, ingesting a high number of one-off transaction names does not scale to the required volume,
+Secondly, ingesting a high number of one-off transaction names also does not scale to the required volume,
 because with [metrics](https://getsentry.github.io/relay/relay_metrics/index.html), scalability is determined by _cardinality_ (the number of distinct groups), not volume (the number of events ingested).
 
-An intermediate solution to the scal problem was to drop the transaction tag from Performance metrics
+An intermediate solution to the scale problem was to drop the transaction tag from Performance metrics
 when the transaction name is a raw URL. This effectively groups _all_ URL transactions into one big group,
 which also creates a bad user experience:
 
@@ -87,17 +87,22 @@ If a transaction name matches this glob, the segment corresponding to `*` get re
 
 Details:
 
-1. In post processing, we add incoming transaction names of type `url` to a project-specific set in redis.
+- In post processing, we add incoming transaction names of type `url` to a project-specific set in redis.
    Every set is capped with a maximum capacity. When the set is full, a random item is evicted.
    404 transactions are excluded from this data collection step as they can potentially contain any URL.
-1. Every hour, a Celery task is spawned for every redis set, which
-   1. builds the tree and derives rules from merged nodes.
-   1. writes the rules into project options.
-1. The derived rules are written into the project config submitted to Relay.
-1. For every incoming transaction of type URL, Relay applies matching rules to scrub identifiers.
-1. In order to prune unused rules, we keep a copy of discovered rules in redis, and in post processing
+- Every hour, a Celery task is spawned for every redis set, which
+   - builds the tree and derives rules from merged nodes.
+   - writes the rules into project options.
+- The derived rules are written into the project config submitted to Relay.
+- For every incoming transaction of type URL, Relay applies matching rules to scrub identifiers.
+- TTL: In order to prune unused rules, we keep a copy of discovered rules in redis, and in post processing
    bump a `last_used` field on a rule if it was applied to the current event.
    The information which rule was applied is provided by Relay through the `_meta` field.
+- Parameters:
+   - The **merge threshold** which decides whether or not a path segment is considered an identifier is set at 200.
+We increased it from 100 because we noticed there are websites which have > 100 static pages.
+   - The **sample size** of observed transactions, is currently set to 2000 (10x the merge threshold).
+     A larger set increases the probability of discovering a rule.
 
 Source code:
 
@@ -105,14 +110,6 @@ Source code:
 - [application of replacement rules (Relay)](https://github.com/getsentry/relay/blob/e543401086c556b769b67ccb96fbfaca411696c8/relay-general/src/store/transactions/processor.rs#L37-L46)
 
 ## Known Issues
-
-### Parameter Tuning
-
-The current threshold which decides whether or not a path segment is considered an identifier is set at 200.
-We increased it from 100 because we noticed there are websites which have > 100 static pages.
-
-For the sample of observed transactions, a larger set increases the probability of discovering a rule.
-The current size is 2000 (10x the merge threshold).
 
 ### Accidental erasure of non-identifiers
 
