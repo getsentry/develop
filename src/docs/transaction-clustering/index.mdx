@@ -67,7 +67,7 @@ For example:
 ### Automatic Transaction Clustering
 
 Some identifiers cannot be detected by looking at a single transaction. For example,
-free-form user names cannot be dinstinguished from low-cardinality parts of a URL.
+free-form user names cannot be distinguished from low-cardinality parts of a URL.
 
 To detect high-cardinality segments in the URL, we accumulate a set of unique URL transaction names for each project, split them by `"/"`, and build a tree from its path segments (similar to a [trie](https://en.wikipedia.org/wiki/Trie) data structure):
 
