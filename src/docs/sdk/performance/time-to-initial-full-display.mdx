@@ -1,11 +1,11 @@
 ---
-title: "Time to Initial Display/Time to Full Display"
+title: "Time to Initial/Full Display"
 ---
 
 We recommend implementing this feature for mobile and desktop SDKs.
 
-The current screen load transactions timings are not reliable to understand the time spent in the screen creation.
-This is because they wait for any span created in the meantime, including any file I/O or network request.
+The current screen load transactions timings are unreliable in understanding the time spent in the screen creation.
+This is because they wait for any span created, including any file I/O or network request.
 Time to Initial Display and Time to Full Display are spans added to the screen load transactions,
 which can be used to show more accurate information on the time spent in the screen creation.
 Being spans, they don't impact on user quota.
@@ -14,12 +14,12 @@ They start as soon as a new screen is created, as long as the screen load auto-g
 
 ## Time to Initial Display
 
-Time to Initial Display is a span with operation `ui.load.initial_display` which finishes automatically
+Time to Initial Display is a span with the operation `ui.load.initial_display`, which finishes automatically
 when the screen draws its first frame. It's controlled automatically by the SDK and doesn't
 require any manual intervention from the user.
 
-It's also set as a measurement of the transaction, with `time_to_initial_display` as key and the span duration as value.
-Note: The measurement is should be set only if the span finishes with an `OK`  status.
+The SDKs set the time to initial display as a transaction measurement, with `time_to_initial_display` as the key and the span duration as the value.
+Note: The measurement should be set only if the span finishes with the status `OK`.
 
 
 ## Time to Full Display
@@ -30,14 +30,14 @@ option `enableTimeToFullDisplayTracing`. Remember that the screen load transacti
 so the transaction will run until the user calls the API. So we recommend this feature to be disabled by default.
 It's also set as a measurement of the transaction, with `time_to_full_display` as key and the span duration as value.
 
-The following section explain the possible scenarios of the Time to Full Display.
+The following section explains the possible scenarios of the Time to Full Display.
 
 The specification is written in the [Gherkin syntax](https://cucumber.io/docs/gherkin/reference/).
 
 ```Gherkin
 Scenario: Option disabled
     Given an ongoing screen load/navigation transaction
-    Then the Full Display span is not started
+    Then the SDK doesn't start the Full Display span
     When the user calls the manual API `reportFullyDisplayed`
     Then the SDK ignores the call
 
@@ -46,7 +46,7 @@ Scenario: Option enabled
     When the SDK creates a new screen load transaction
     Then the Full Display span is started
 
-Scenario: Activity displayed
+Scenario: Screen displayed
     Given an ongoing Full Display span
     When the user calls the API `reportFullyDisplayed`
     Then the SDK finishes the span
@@ -57,6 +57,7 @@ Scenario: API not called
     When the user doesn't call the API `reportFullyDisplayed` in 30 seconds
     Then the SDK finishes the span
     And sets the status to deadline_exceeded
+    And sets the timestamp to the timestamp of the Initial Display span
 
 Scenario: API called too early
     Given an ongoing Full Display span and an ongoing Initial Display span
