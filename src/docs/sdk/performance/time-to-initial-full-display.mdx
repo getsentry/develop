@@ -42,12 +42,13 @@ Scenario: Option disabled
     Then the SDK ignores the call
 
 Scenario: Option enabled
-    Given the enableTimeToFullDisplayTracing option is enabled
+    Given the enableTimeToFullDisplay option is enabled
     When the SDK creates a new screen load transaction
     Then the Full Display span is started
 
 Scenario: Screen displayed
     Given an ongoing Full Display span
+    And the SDK finished the  Initial Display span
     When the user calls the API `reportFullyDisplayed`
     Then the SDK finishes the span
     And sets the status to ok
