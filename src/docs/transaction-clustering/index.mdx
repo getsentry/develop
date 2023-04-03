@@ -87,15 +87,16 @@ If a transaction name matches this glob, the segment corresponding to `*` get re
 
 Details:
 
-- In post processing, we add incoming transaction names of type `url` to a project-specific set in redis.
-  Every set is capped with a maximum capacity. When the set is full, a random item is evicted.
-  404 transactions are excluded from this data collection step as they can potentially contain any URL.
-- Every hour, a Celery task is spawned for every redis set, which
-  - builds the tree and derives rules from merged nodes.
-  - writes the rules into project options.
-- The derived rules are written into the project config submitted to Relay.
-- For every incoming transaction of type URL, Relay applies matching rules to scrub identifiers.
-- TTL: In order to prune unused rules, we keep a copy of discovered rules in redis, and in post processing
+- Steps:
+  1.  In post processing, we add incoming transaction names of type `url` to a project-specific set in redis.
+      Every set is capped with a maximum capacity. When the set is full, a random item is evicted.
+      404 transactions are excluded from this data collection step as they can potentially contain any URL.
+  1.  Every hour, a Celery task is spawned for every redis set, which
+      a. builds the tree and derives rules from merged nodes.
+      a. writes the rules into project options.
+  1.  The derived rules are written into the project config submitted to Relay.
+  1.  For every incoming transaction of type URL, Relay applies matching rules to scrub identifiers.
+- **TTL:** In order to prune unused rules, we keep a copy of discovered rules in redis, and in post processing
   bump a `last_used` field on a rule if it was applied to the current event.
   The information which rule was applied is provided by Relay through the `_meta` field.
 - Parameters:
