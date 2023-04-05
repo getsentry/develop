@@ -78,6 +78,9 @@
     "prettier": "2.7.1",
     "react-test-renderer": "^16.13.1"
   },
+  "resolutions": {
+    "*/sharp": "^0.32.0"
+  },
   "volta": {
     "node": "16.16.0",
     "yarn": "1.22.5"
