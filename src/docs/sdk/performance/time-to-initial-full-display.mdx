@@ -8,7 +8,7 @@ The current screen load transactions timings are unreliable in understanding the
 This is because they wait for any span created, including any file I/O or network request.
 Time to Initial Display and Time to Full Display are spans added to the screen load transactions,
 which can be used to show more accurate information on the time spent in the screen creation.
-Being spans, they don't impact on user quota.
+Being spans, they don't impact user quota.
 
 The SDK starts them as soon as a new screen is created, as long as there is an active transaction for the screen load.
 
@@ -19,14 +19,15 @@ when the screen draws its first frame. It's controlled automatically by the SDK 
 require any manual intervention from the user.
 
 The SDKs set the time to initial display as a transaction measurement, with `time_to_initial_display` as the key and the span duration as the value.
-Note: The measurement should be set only if the span finishes with the status `OK`.
+Note: The measurement should be set only if the span finishes with the status `OK`. In case a screen is used just as a
+ router to start other screens, it could be finished before drawing a frame.
 
 
 ## Time to Full Display
 
 Time to Full Display is a span with operation `ui.load.full_display` which is finished manually through
 the `Sentry.reportFullyDisplayed` static API. This feature has to be enabled by setting the SDK config
-option `enableTimeToFullDisplay`. Remember that the screen load transactions wait for spans to finish,
+option `enableTimeToFullDisplayTracing`. Remember that the screen load transactions wait for spans to finish,
 so the transaction will run until the user calls the API. So we recommend this feature to be disabled by default.
 It's also set as a measurement of the transaction, with `time_to_full_display` as key and the span duration as value.
 
@@ -60,12 +61,14 @@ Scenario: API not called
     And sets the status to deadline_exceeded
     And sets the timestamp to the timestamp of the Initial Display span
 
-Scenario: API called too early
-    Given an ongoing Full Display span and an ongoing Initial Display span
+Scenario: API called
+    Given an ongoing Full Display span
     When the user calls the API `reportFullyDisplayed`
     Then the SDK finishes the Full Display span
     And set the status to ok
-    And
+
+Scenario: API called too early
+    Given an ongoing Initial Display span and the user calls the API `reportFullyDisplayed`
     When the Initial Display span is finished
     Then the SDK sets the status to ok
     And adjusts the Full Display span end timestamp to the Initial Display span end timestamp
