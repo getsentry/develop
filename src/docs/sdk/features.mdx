@@ -55,7 +55,7 @@ if random() < sample_rate:
     transport.capture_event(event)
 ```
 
-To further simplfiy ignoring certain events from being sent to sentry, it is also suggested to provide `ignoreTransactions` and `ignoreErrors` (or exception, choose terminology which is best for the platform). This option should provide a simple way to allow users to discard events (ignore) from before they are sent to sentry. Prevents sending data which is is undesired and may consume quota or resources on the Sentry server.
+To further simplfiy ignoring certain events from being sent to sentry, it is also suggested to provide `ignoreTransactions` and `ignoreErrors` (or exception, choose terminology which is best for the platform). The array for `ignoreTransactions` specifically should contain an array of transaction names, as is stored in the transcation event schema (ie `GET /info`). These options should provide a simple way to allow users to discard events (ignore) from before they are sent to sentry. Prevents sending data which is is undesired and may consume quota or resources on the Sentry server.
 
 ```python
 ignore_transactions = ['GET /api/health','/api/v1/*']
