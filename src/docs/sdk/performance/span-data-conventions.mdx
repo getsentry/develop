@@ -31,7 +31,8 @@ Below describes the conventions for the Span interface for the `data` field on t
 | `url`                                  | string | The URL of the resource that was fetched.   | `https://example.com` |
 | `method`                               | string | The HTTP method used.                       | `GET`                 |
 | `type`                                 | string | The type of the resource that was fetched.  | `xhr`                 |
-| `http.encoded_response_content_length` | number | The encoded body size of the request.       | `123`                 |
-| `http.decoded_response_content_length` | number | The decoded body size of the request.       | `456`                 |
-| `http.transfer_size`                   | number | The transfer size of the request.           | `789`                 |
+| `http.response_content_length`         | number | The content length of the response.         | `123`                 |   
+| `resource.encoded_body_size`           | number | The encoded body size of the request.       | `123`                 |
+| `resource.decoded_body_size`           | number | The decoded body size of the request.       | `456`                 |
+| `resource.transfer_size`               | number | The transfer size of the request.           | `789`                 |
 | `resource.render_blocking_status`      | string | The render blocking status of the resource. | `non-blocking`        |
