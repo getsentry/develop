@@ -12,14 +12,14 @@ Below describes the conventions for the Span interface for the `data` field on t
 
 ## HTTP
 
-| Attribute                          | Type   | Description                           | Examples           |
-| ---------------------------------- | ------ | ------------------------------------- | ------------------ |
-| `http.query`                       | string | The Query string present in the URL.  | `?foo=bar&bar=baz` |
-| `http.fragment`                    | string | The Fragments present in the URL.     | `#foo=bar`         |
-| `http.method`                      | string | The HTTP method used.                 | `GET`              |
-| `http.request_content_length`      | number | The encoded body size of the request. | `123`              |
-| `http.decoded_request_body_length` | number | The decoded body size of the request. | `456`              |
-| `http.transfer_size`               | number | The transfer size of the request.     | `789`              |
+| Attribute                           | Type   | Description                            | Examples           |
+| ----------------------------------- | ------ | -------------------------------------- | ------------------ |
+| `http.query`                        | string | The Query string present in the URL.   | `?foo=bar&bar=baz` |
+| `http.fragment`                     | string | The Fragments present in the URL.      | `#foo=bar`         |
+| `http.method`                       | string | The HTTP method used.                  | `GET`              |
+| `http.response_content_length`      | number | The encoded body size of the response. | `123`              |
+| `http.decoded_response_body_length` | number | The decoded body size of the response. | `456`              |
+| `http.response_transfer_size`       | number | The transfer size of the response.     | `789`              |
 
 ## Mobile
 
@@ -53,9 +53,9 @@ Below describes the conventions for the Span interface for the `data` field on t
 
 Names that SDKs are still sending so we cannot remove them yet, but should not be used in new code.
 
-| Attribute           | New name                           |
-| ------------------- | ---------------------------------- |
-| `method`            | `http.method`                      |
-| `Encoded Body Size` | `http.request_content_length`      |
-| `Decoded Body Size` | `http.decoded_request_body_length` |
-| `Transfer Size`     | `http.transfer_size `              |
+| Attribute           | New name                            |
+| ------------------- | ----------------------------------- |
+| `method`            | `http.method`                       |
+| `Encoded Body Size` | `http.response_content_length`      |
+| `Decoded Body Size` | `http.decoded_response_body_length` |
+| `Transfer Size`     | `http.response_transfer_size `      |
