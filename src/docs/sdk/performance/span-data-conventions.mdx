@@ -16,6 +16,7 @@ Below describes the conventions for the Span interface for the `data` field on t
 | --------------- | ------ | ------------------------------------ | ------------------ |
 | `http.query`    | string | The Query string present in the URL. | `?foo=bar&bar=baz` |
 | `http.fragment` | string | The Fragments present in the URL.    | `#foo=bar`         |
+| `http.method`   | string | The HTTP method used.                | `GET`              |
 
 ## Mobile
 
@@ -38,9 +39,10 @@ Below describes the conventions for the Span interface for the `data` field on t
 
 ## Database
 
-| Attribute   | Type   | Description                                                                                                                                                                                                                                                                                                            | Examples     |
-| ----------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| `db.system` | string | An identifier for the database management system (DBMS) product being used. See [OpenTelemetry docs for a list of well-known identifiers](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/database.md#notes-and-well-known-identifiers-for-dbsystem). | `postgresql` |
+| Attribute      | Type   | Description                                                                                                                                                                                                                                                                                                                | Examples     |
+| -------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| `db.system`    | string | An identifier for the database management system (DBMS) product being used. See [OpenTelemetry docs for a list of well-known identifiers](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/database.md#notes-and-well-known-identifiers-for-dbsystem).     | `postgresql` |
+| `db.operation` | string | The name of the operation being executed, e.g. the MongoDB command name such as findAndModify, or the SQL keyword. Based on [OpenTelemetry's call level db attributes](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/semantic_conventions/database.md#call-level-attributes) | `SELECT`     |
 
 ## Web Server
 
