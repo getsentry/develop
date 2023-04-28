@@ -124,7 +124,7 @@ An example script below:
 # Only keep the last 7 days of nodestore data. We heavily use performance monitoring.
 docker compose run --rm -T web cleanup --days 7 -m nodestore -l debug
 # This ensures pg-repack exists before running as the container gets recreated on upgrades
-docker compose run --rm -T postgres bash -c "apt update && apt install -y --no-install-recommends postgresql-9.6-repack && su postgres -c 'pg_repack -E info -t nodestore_node'"
+docker compose run --rm -T postgres bash -c "apt update && apt install -y --no-install-recommends postgresql-14-repack && su postgres -c 'pg_repack -E info -t nodestore_node'"
 ```
 
 If the script above still does not clear up enough disk space, you can try the following in Postgres. This will lead to data loss in event details. _SENTRY_RETENTION_DAYS_ will need to be filled in manually.
