@@ -209,6 +209,7 @@ export default () => {
             <SidebarLink to="/sdk/event-payloads/exception/">
               Exception Interface
             </SidebarLink>
+            <SidebarLink to="/sdk/event-payloads/lockreason/">Lock Reason Interface</SidebarLink>
             <SidebarLink to="/sdk/event-payloads/message/">Message Interface</SidebarLink>
             <SidebarLink to="/sdk/event-payloads/request/">Request Interface</SidebarLink>
             <SidebarLink to="/sdk/event-payloads/sdk/">SDK Interface</SidebarLink>

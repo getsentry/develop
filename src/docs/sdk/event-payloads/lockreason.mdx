@@ -1,11 +1,10 @@
 ---
 title: Lock Reason Interface
-sidebar_order: 3
 ---
 
-Represents an instance of a held lock (monitor object) in a thread. Typically, in languages
-like `Java` or `Kotlin` this will be represented as `java.lang.Object`. On Android, this information
-can't be obtained at runtime, but only from a thread dump provided by the system in case of an ANR. 
+Represents an instance of a held lock (monitor object) in a thread. Typically, this interface is useful
+to determine which other thread is holding the lock in case the current thread is blocked. In languages like
+`Java` or `Kotlin` this typically will be represented by a `java.lang.Object` type.
 
 ## Attributes
 
