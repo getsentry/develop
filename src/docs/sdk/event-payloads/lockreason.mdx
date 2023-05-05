@@ -1,0 +1,41 @@
+---
+title: Lock Reason Interface
+---
+
+Represents an instance of a held lock (monitor object) in a thread. Typically, in languages
+like `Java` or `Kotlin` this will be represented as `java.lang.Object`. On Android, this information
+can't be obtained at runtime, but only from a thread dump provided by the system in case of an ANR. 
+
+## Attributes
+
+`type`
+
+: **Required**. Type of lock on the thread with available options being blocked, waiting, sleeping and locked.
+
+`address`
+
+: _Optional_. Memory address of the monitor object.
+
+`package_name`
+
+: _Optional_. Package name of the monitor object.
+
+`class_name`
+
+: _Optional_. Class name of the monitor object.
+
+`thread_id`
+
+: _Optional_.  Thread ID that's holding the lock.
+
+## Examples
+
+```json
+{
+  "type": 8,
+  "address": "0x07d7437b",
+  "package_name": "android.database.sqlite",
+  "class_name": "SQLiteConnection",
+  "thread_id": 2
+}
+```
