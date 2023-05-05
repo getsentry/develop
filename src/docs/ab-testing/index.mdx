@@ -16,7 +16,7 @@ We showed half the visitors the new signup page, and the other half the old page
 
 ## Details
 
-Our A/B testing framework is built on [Facebook's planout library](http://facebook.github.io/planout/).
+Our A/B testing framework is built on [Facebook's planout library](https://github.com/facebookarchive/planout).
 
 Let's say you want to optimize the clickthrough rate for Sentry links and decide to test whether to show Plugins in the Integration Directory.
 
@@ -35,7 +35,7 @@ To launch the A/B test you will need to do the following:
 
 ### Changes to `getsentry/getsentry`
 
-In **getsentry/getsentry**, locate the  `getsentry/experiments/config.py` file). In this file, you will define an experiment class that inherits from either `OrgExperiment` or `UserExperiment`. Choose one depending on whether you want to assign the experiment across each user or each organization.
+In **getsentry/getsentry**, locate the  `getsentry/experiments/config.py` file. In this file, you will define an experiment class that inherits from either `OrgExperiment` or `UserExperiment`. Choose one depending on whether you want to assign the experiment across each user or each organization.
 
 For this example, we will use the `OrgExperiment` , this way everyone in the organization will be given the same experiment assignment.
 
@@ -64,11 +64,10 @@ class ShowPluginsExperiment(OrgExperiment):
             )
 ```
 
-A few things
 
 - You can set the assignment value to whatever is necessary for your experiment.
 - Assignment logic: The `assign` function on the experiment class determines which group an entity falls into. In the most simple case, you have just two groups: a control and test group. If that's the case, you can use `BernoulliTrial` to generate the test value. If you have three or more groups, you can use `UniformChoice`. You can also insert whatever custom logic you want, such as enabling an experiment if a particular feature flag is set.
-- You can use other random assignment operators. Learn more: [https://facebook.github.io/planout/docs/random-operators.html](https://facebook.github.io/planout/docs/random-operators.html)
+- You can use other random assignment operators.
 
 We are setting the values to "0" or "1" and giving a 50% chance an organization sees the plugins in the Integration Directory
 
@@ -76,13 +75,7 @@ Initialize the experiment in `getsentry/web/apps.py` :
 
 ```python
 class Config(AppConfig):
-		. 
-		. 
-		.
-		.
 		from getsentry.planout.show_plugins_experiment import ShowPluginsExperiment
-		.
-		.
     expt_manager.add(ShowPluginsExperiment, "variant")
 ```
 
@@ -92,9 +85,6 @@ In `src/sentry/static/sentry/app/types/index.tsx` :
 
 ```tsx
 export type ActiveExperiments = {
-  .
-	.
-	.
   ShowPluginsExperiment: '1' | '0';
 };
 ```
@@ -129,7 +119,3 @@ You can then add checks on the value of `exposed` to drive your in-app logic.
 ### Logging the Experiment on the Backend
 
 Logging the experiment on the backend can be tricky because it creates an analytics event each time it's triggered. That might be too many events depending on how often it's called. Refer to the implementation of the [log experiment endpoint](https://github.com/getsentry/getsentry/blob/master/getsentry/web/experiment.py) to see how to log the experiment on the backend.
-
-### Alternatives to Logging the Experiment
-
-If the volume of analytics events is too high, we can track experiments indirectly via other methods. For example, if your test impacts the
