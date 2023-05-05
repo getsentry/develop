@@ -1,0 +1,26 @@
+---
+title: The Big Picture
+sidebar_order: 1
+---
+
+The lifecycle of an event in Sentry is a complex process which involves many components. Dynamic Sampling is one of these components, and it is important to understand how it fits into the bigger picture.
+
+Dynamic Sampling occurs at the edge of our ingestion pipeline, precisely in Relay.
+
+When transaction events arrive, in a simplified model, they go through the following steps:
+
+1. **Inbound data filters**: every transaction runs through inbound data filters as configured in project settings, such as legacy browsers or denied releases. Transactions dropped here do not count for quota and are not included in “total transactions” data.
+2. **Quota enforcement**: Sentry charges for all further transactions sent in, before events are passed on to dynamic sampling.
+3. **Metrics extraction**: after passing quotas, Sentry extracts metrics from transactions. These metrics show up in the product as “total transactions” and provide granular numbers for the performance and frequency of every application transaction.
+4. **Dynamic Sampling**: based on an internal set of rules, Relay determines a sample rate for every incoming transaction event. A random number generator finally decides whether this payload should be indexed or dropped.
+5. **Rate limiting**: transactions that are sampled by dynamic sampling (i.e. not dropped) will be stored and indexed. To protect the infrastructure, internal rate limits apply at this point. Under normal operation, this **rate limit is never reached** since dynamic sampling already reduces the volume of indexed events.
+
+<Alert title="💡 Example" level="info">
+
+A customer is sending 1000 transactions per second to Sentry:
+1. 100 transactions per second are from old browsers and get dropped through an inbound data filter.
+2. Since the customer is a high roller, they have plenty of quota, so the remaining 900 transactions per second show up as total transactions in the product.
+3. Their current overall dynamic sample rate is at 20%, which statistically samples 180 transactions per second.
+4. Since this is above the 100/s limit, about 80 transactions per second are randomly dropped, and the rest is stored.
+
+</Alert>

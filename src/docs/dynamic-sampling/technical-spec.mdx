@@ -1,0 +1,74 @@
+---
+title: Technical Spec
+sidebar_order: 2
+---
+
+Dynamic Sampling is a feature that allows Sentry to automatically adjust the amount of data retained based on the value of the data. This is technically achieved by applying a **sample rate** to every event, which is determined by a set of rules that are evaluated for each event.
+
+## The Concept of Fidelity
+
+Sentry plans declare fidelity, which translates to an overall target sample rate that should be applied across all transactions of an organization. Within this target sample rate, Dynamic Sampling can create a **bias toward more meaningful data**. This is achieved by constantly updating and communicating special rules to Relay, via a project configuration, which then applies targeted sampling to every event.
+
+### Approximate Fidelity
+
+It is important to note that fidelity only determines an **approximate target sample rate**, so there is flexibility in creating exact sample rates. The ingestion pipeline does not have the infrastructure to track volume so that it can create an actual weighted distribution within the target sample rate.
+
+Instead, the Sentry backend computes set of rules whose goal is to cooperatively achieve the target sample rate. Determining when and how to set these rules is part of the Dynamic Sampling infrastructure.
+
+<Alert title="⚠️ Note" level="info">
+
+The effectively applied sample rate, in the end, depends on how much data matches each of the bias overrides.
+
+</Alert>
+
+## Biases for Sampling
+
+The set of rules that Relay pulls from Sentry is called a **bias**. A bias is a set of one or more rules that are evaluated for each event. More specifically, when we define a bias, we want to achieve a specific objective, that can be expressed as a set of rules.
+
+Sentry has already defined a set of biases that are available to all customers. These biases have all different goals but they can combine to express more complex semantics.
+
+### Deprioritize Health Checks
+
+This bias is used to deprioritize transactions that are classified as health checks. The goal is to reduce the amount of data that is retained for health checks, since they are not very useful for debugging.
+
+In order to mark a transaction as a health check, we leverage a list of known health check endpoints. This list is maintained by Sentry and is updated regularly.
+
+```python
+HEALTH_CHECK_GLOBS = [
+    "*healthcheck*",
+    "*healthy*",
+    "*live*",
+    "*ready*",
+    "*heartbeat*",
+    "*/health",
+    "*/healthz",
+]
+```
+
+### Prioritize Dev Environments
+
+This bias is used to prioritize transactions that are coming from a development environment. The goal is to increase the amount of data that is retained for development environments, since they are more likely to be useful for debugging.
+
+In order to mark a transaction as a development environment, we leverage a list of known development environments. This list is maintained by Sentry and is updated regularly.
+
+```python
+ENVIRONMENT_GLOBS = [
+    "*debug*",
+    "*dev*",
+    "*local*",
+    "*qa*",
+    "*test*",
+]
+```
+
+### Prioritize New Releases
+
+This bias is used to prioritize transactions that are coming from a new release. The goal is to increase the sample rate in the time window that incurs between the creation of a release and its adoption by users.
+
+Since the adoption of a release is not constant, we created a system of _decaying_ rules which can interpolate between two sample rates in a given time window with a given function (e.g. `linear`).
+
+The latest release bias uses a decaying rule to interpolate between a starting sample rate and an ending sample rate over a time window that is statically defined for each platform. For example Android has a bigger time window that Javascript because Android apps take more time to get adopted by users.
+
+### Prioritize Low Volume Transactions
+
+### Prioritize Low Volume Projects

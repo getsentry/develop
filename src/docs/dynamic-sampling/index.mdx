@@ -1,0 +1,19 @@
+---
+title: Dynamic Sampling
+---
+
+Dynamic sampling expands the SDKs’ sampling concept to the Sentry ingestion pipeline. Clients send a higher ratio — ideally all of their traffic — to Sentry, and the decision of whether to keep (i.e. sample) or drop data is made on Sentry’s servers.
+
+## Goals of Dynamic Sampling
+
+### Get value out of the box
+
+Sentry automatically biases data retention based on what we believe is more valuable for most users.
+
+### Prioritize based on your needs
+
+Sentry provides a mechanism for users to express priorities and then adjusts data retention as much as is practical to honor them.
+
+### Value at any scale
+
+We have a full view of your application and can accurately show performance metrics, and detect trends and performance issues from 100% of your events.
