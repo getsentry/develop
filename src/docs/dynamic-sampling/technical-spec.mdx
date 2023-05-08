@@ -45,6 +45,8 @@ HEALTH_CHECK_GLOBS = [
 ]
 ```
 
+The list of health check endpoints is available [here](https://github.com/getsentry/sentry/blob/4cb0d863de1ef8e3440153cb440eaca8025dee0d/src/sentry/dynamic_sampling/rules/biases/ignore_health_checks_bias.py#L14).
+
 ### Prioritize Dev Environments
 
 This bias is used to prioritize transactions that are coming from a development environment. The goal is to increase the amount of data that is retained for development environments, since they are more likely to be useful for debugging.
@@ -61,6 +63,8 @@ ENVIRONMENT_GLOBS = [
 ]
 ```
 
+The list of development environments is available [here](https://github.com/getsentry/sentry/blob/4cb0d863de1ef8e3440153cb440eaca8025dee0d/src/sentry/dynamic_sampling/rules/biases/boost_environments_bias.py#L7).
+
 ### Prioritize New Releases
 
 This bias is used to prioritize transactions that are coming from a new release. The goal is to increase the sample rate in the time window that incurs between the creation of a release and its adoption by users.
@@ -71,4 +75,25 @@ The latest release bias uses a decaying rule to interpolate between a starting s
 
 ### Prioritize Low Volume Transactions
 
+This bias is used to prioritize low volume transactions that can be drowned out by high volume transactions. The goal is to rebalance sample rates of the individual transactions so that low volume transactions are more likely to have representative samples.
+
+In order to rebalance transactions the system computes the counts of the transactions for each project and runs an algorithm that given the sample rate of the organization and the counts of each transaction, computes a new sample rate for each transaction assuming an ideal distribution of the counts.
+
+
+<Alert title="⚠️ Note" level="info">
+
+All of these calculations are made periodically with a sliding window in order to account for changes in the incoming volume.
+
+</Alert>
+
 ### Prioritize Low Volume Projects
+
+This bias is used to prioritize low volume projects that can be drowned out by high volume projects. The goal is to rebalance sample rates of the individual projects so that low volume projects are more likely to contain transactions.
+
+In order to rebalance the projects, this bias uses a similar mechanism to the low volume transactions bias. The system computes the counts of the transactions for each project and runs an algorithm that given the sample rate of the organization and the counts of each project, computes a new sample rate for each project assuming an ideal distribution of the counts.
+
+<Alert title="⚠️ Note" level="info">
+
+All of these calculations are made periodically with a sliding window in order to account for changes in the incoming volume.
+
+</Alert>
