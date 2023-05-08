@@ -68,6 +68,7 @@ export default () => {
           <SidebarLink to="/sentry-vs-getsentry/">sentry vs getsentry</SidebarLink>
           <SidebarLink to="/config/">Configuration</SidebarLink>
           <SidebarLink to="/feature-flags/">Feature Flags</SidebarLink>
+          <SidebarLink to="/ab-testing/">A/B Testing</SidebarLink>
           <SidebarLink to="/options/">Options</SidebarLink>
           <SidebarLink to="/serializers/">Serializers</SidebarLink>
           <SidebarLink to="/grouping/">Grouping</SidebarLink>
