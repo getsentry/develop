@@ -81,21 +81,18 @@ This bias is used to prioritize low volume transactions that can be drowned out 
 
 In order to rebalance transactions the system computes the counts of the transactions for each project and runs an algorithm that given the sample rate of the organization and the counts of each transaction, computes a new sample rate for each transaction assuming an ideal distribution of the counts.
 
+### Uniform Bias
 
-<Alert title="⚠️ Note" level="info">
+This bias is the simplest bias that can be defined. It applies on any incoming event and has the goal of containing the sample rate defined on a per project basis.
 
-All of these calculations are made periodically with a sliding window in order to account for changes in the incoming volume.
+The sample rate of the uniform bias is computed with a special algorithm that is based on the base sample rate, known as target fidelity rate. This rate is defined at the org level and it is done in the `quotas.get_blended_sample_rate` function.
 
-</Alert>
-
-### Prioritize Low Volume Projects
-
-This bias is used to prioritize low volume projects that can be drowned out by high volume projects. The goal is to rebalance sample rates of the individual projects so that low volume projects are more likely to contain transactions.
+The algorithm used for computing the uniform bias sample rate is used to prioritize low volume projects that can be drowned out by high volume projects. The goal is to rebalance sample rates of the individual projects so that low volume projects are more likely to contain transactions.
 
 In order to rebalance the projects, this bias uses a similar mechanism to the low volume transactions bias. The system computes the counts of the transactions for each project and runs an algorithm that given the sample rate of the organization and the counts of each project, computes a new sample rate for each project assuming an ideal distribution of the counts.
 
 <Alert title="⚠️ Note" level="info">
 
-All of these calculations are made periodically with a sliding window in order to account for changes in the incoming volume.
+The algorithms for the low volume transactions and uniform bias are run periodically (with cron jobs) with a sliding window in order to account for changes in the incoming volume.
 
 </Alert>
