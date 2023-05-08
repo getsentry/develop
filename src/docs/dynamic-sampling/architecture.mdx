@@ -2,3 +2,147 @@
 title: Architecture
 sidebar_order: 3
 ---
+
+Dynamic Sampling is a feature that allows Sentry to automatically adjust the amount of data retained based on the value of the data. This is technically achieved by applying a **sample rate** to every incoming event, which is determined by a set of rules that are evaluated for each event.
+
+The architecture that powers Dynamic Sampling is composed of several components that work together to get the organization sample rate closer to the target fidelity.
+
+The two main components of the architecture are [Sentry](https://github.com/getsentry/sentry) and [Relay](https://github.com/getsentry/relay) but there are several other sub-components that are used to achieve the desired result, such as Redis, Celery and Snuba.
+
+## Sampling in Relay
+
+Relay is the first component that is involved in the Dynamic Sampling pipeline. It is responsible for receiving events from the SDKs, sampling them and forwarding them to the Sentry backend. In reality Relay does much more than that, but for the purpose of this document we will focus on the sampling part.
+
+In order for Relay to perform sampling, it needs to be able to **compute the sample rate** for each incoming event. The configuration of sampling can be done via a rule-based system that enables the definition of complex sampling behaviors by combining simple rules. These rules are embedded into the **project configuration** which is computed and cached in Sentry. This configuration contains a series of fields that Relay uses to perform many of its tasks, including sampling.
+
+### Trace and Transaction Sampling
+
+Sentry supports **two fundamentally different types of sampling**. While this is completely opaque to the user, these rule types provide the basic building blocks of every dynamic sampling functionality and bias.
+
+#### Trace Sampling
+
+Trace Sampling ensures that **either all transactions of a trace are sampled or none** (except for specific cases in which transaction sampling also applies, more on that later). That is, these rules always yield the same sample decision for every transaction in the same trace. This requires the cooperation of SDKs and thus allows sampling only by `project`, `release`, `environment`, and `transaction` name.
+
+To achieve trace sampling, SDKs pass all fields that can be sampled by [Dynamic Sampling Context (DSC)](/sdk/performance/dynamic-sampling-context/) as they propagate traces. _This ensures that every transaction from the same trace comes with the same DSC._
+
+#### Transaction Sampling
+
+Transaction Sampling **does not guarantee complete traces** and instead **applies to individual transactions**. It can be used to remove unwanted transactions from traces, or individually boost transactions at the expense of incomplete contextual traces.
+
+### Sampling Configuration
+
+Inside the project configuration there is a field dedicated to sampling, named `dynamicSampling`. This field contains a list of **sampling rules** that are used to compute the sample rate for each incoming event. The rules will be defined in the `rulesV2` field, inside of the `dynamicSampling` object.
+
+#### The Rule Definition
+
+A **rule** is the core component of the sampling configuration and is defined in the following JSON format.
+
+```json
+{
+  "id": 1000,
+  "type": "trace",
+  "samplingValue": {
+    "type": "sampleRate",
+    "value": 0.1
+  },
+  "condition": { ... },
+  "timeRange": {
+    "start": "2022-10-21 18:50:25+00:00",
+    "end": "2022-10-21 19:50:25+00:00"
+  }
+}
+```
+
+The top level fields of a rule are:
+- `id`: a rule **must** have a unique `id` that is used by Relay to track outcomes.
+- `type`: a rule can be applied to a `trace` or a `transaction`. In practice this means that during matching a different payload will be inspected, either the Event of the Dynamic Sampling Context.
+- `samplingValue`: used to define the sample rate that will be applied to the incoming event. There are two types of sampling values:
+    - `factor`: when matched the matching will _continue_ to the next rules and the factor will be multiplied by the accumulated factors (1 in case no factor rules matched before).
+    - `sampleRate`: when matched the matching will _stop_ and the sample rate will be computed by multiplying the accumulated factors by the sample rate.
+- `condition`: used to express specific conditions on the incoming payload (e.g., `and`, `eq`, `glob`).
+- `timeRange`: used to define the time range in which the rule is active.
+
+#### Fetching the Sampling Configuration
+
+The sampling configuration is fetched by Relay from Sentry in a pull fashion. This is done by sending a request to the `/api/0/relays/projectconfigs/` endpoint periodically.
+
+On the Sentry side the configuration will be computed in case of a cache miss and then cached in Redis. The cache is invalidated every time the configuration changes but more details on that will be provided later.
+
+### Sampling Decision
+
+A sampling decision involves:
+
+1. Matching the incoming Event and/or DSC against the configuration
+2. Deriving a sample rate from the mix of `factor` and `sampleRate` rules
+3. Making the sampling decision with a random number generator
+
+_In case no match is found or there are problems during matching, we will accept the event under the assumption that we prefer to oversample than drop events._
+
+Relay samples with two sampling configurations, namely **non-root sampling configuration** and **root sampling configuration**. The non-root config is the config of the project to which the incoming event belongs, whereas the root config is the config of the project to which the head transaction of the trace belongs. *In case no root sampling configuration is available, only transaction sampling will be performed.*
+
+Once both configurations are fetched, Relay will **compute a merged configuration** consisting of all the transaction rules of the non-root project, **concatenated** to all the trace rules of the root project. This will result in a single configuration containing all the rules that Relay is going to try and match (**from top to bottom**). *The order of the rules of the same type is important because it will influence the sampling decision.*
+
+With the merged configurations, Relay is ready to match the rules. During matching, Relay will inspect two payloads:
+
+- [Event](/sdk/event-payloads/): inspected when the non-root project to has at least one transaction sampling rule.
+- [Dynamic Sampling Context (DSC)](/sdk/performance/dynamic-sampling-context/): inspected when the root project (the project of the head of the trace) has at least one trace sampling rule.
+
+The matching that Relay will perform is going to be based on the `samplingValue` of the rules encountered. As specified in the section above, based on the type of `samplingValue` we will either immediately return or continue matching other rules.
+
+#### Example of Sampling Decision
+
+Suppose Relay receives an incoming transaction with the following data:
+
+```json
+{
+  "dsc": {
+    # This is the transaction of the head of the trace.
+    "transaction": "/hello"
+  },
+  # This is the transaction of the incoming event.
+  "transaction": "/world",
+  "environment": "prod",
+  "release": "1.0.0"
+}
+```
+
+Suppose this is the merged configuration from the non-root and root project:
+
+```json
+{
+  "rules": [
+    {
+      "id": 1,
+      "samplingValue": {
+        "type": "factor",
+        "value": 2.0
+      },
+    },
+    {
+      "id": 1,
+      "samplingValue": {
+        "type": "sampleRate",
+        "value": 2.0
+      },
+    }
+  ]
+}
+```
+
+<Alert title="⚠️ Note" level="info">
+
+It is important to note that a `sampleRate` rule must match in order for a sampling decision to be made, in case this condition is not met, the event will be kept. In practice, each project will have a uniform trace rule which will always match and contains the base sample rate of the organization.
+
+</Alert>
+
+## Rules Generation in Sentry
+
+Sentry is the second component that is involved in the Dynamic Sampling pipeline. It is responsible for generating the rules that are used by Relay to perform sampling.
+
+### Generation of the Rules
+
+### Redis for Shared State
+
+### Tasks for Asynchronous Processing
+
+### Invalidation of the Project Configuration
