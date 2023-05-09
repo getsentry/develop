@@ -5,7 +5,7 @@ sidebar_order: 2
 
 Dynamic Sampling is a feature that allows Sentry to automatically adjust the amount of data retained based on the value of the data. This is technically achieved by applying a **sample rate** to every event, which is determined by a set of rules that are evaluated for each event.
 
-A single or multiple rules combined are what we call **biases** or **sampling priorities**. For example the latest release bias can support multiple concurrent boosts of different releases, which leads to multiple rules being created.
+A single or multiple rules combined are what we call **biases** or **sampling priorities**. For example, the latest release bias can support multiple concurrent boosts of different releases, which leads to multiple rules being created.
 
 ## The Concept of Fidelity
 
@@ -13,9 +13,9 @@ Sentry plans declare fidelity, which translates to an overall target sample rate
 
 ### Approximate Fidelity
 
-It is important to note that fidelity only determines an **approximate target sample rate**, so there is flexibility in creating exact sample rates. The ingestion pipeline does not have the infrastructure to track volume so that it can create an actual weighted distribution within the target sample rate.
+It is important to note that fidelity only determines an **approximate target sample rate**, so there is flexibility in creating exact sample rates. The ingestion pipeline does not have the infrastructure to track volume, so it cannot create an actual weighted distribution within the target sample rate.
 
-Instead, the Sentry backend computes set of rules whose goal is to cooperatively achieve the target sample rate. Determining when and how to set these rules is part of the Dynamic Sampling infrastructure.
+Instead, the Sentry backend computes a set of rules whose goal is to cooperatively achieve the target sample rate. Determining when and how to set these rules is part of the Dynamic Sampling infrastructure.
 
 <Alert title="⚠️ Note" level="info">
 
@@ -25,15 +25,15 @@ The effectively applied sample rate, in the end, depends on how much data matche
 
 ## Biases for Sampling
 
-The set of rules that Relay pulls from Sentry is called a **bias**. A bias is a set of one or more rules that are evaluated for each event. More specifically, when we define a bias, we want to achieve a specific objective, that can be expressed as a set of rules.
+The set of rules that Relay pulls from Sentry is called a **bias**. A bias is a set of one or more rules that are evaluated for each event. More specifically, when we define a bias, we want to achieve a specific objective, which **can be expressed as a set of rules**.
 
-Sentry has already defined a set of biases that are available to all customers. These biases have all different goals but they can combine to express more complex semantics.
+Sentry has already defined a set of biases that are available to all customers. These biases have different goals, but they can be combined to express more complex semantics.
 
 ### Deprioritize Health Checks
 
-This bias is used to deprioritize transactions that are classified as health checks. The goal is to reduce the amount of data that is retained for health checks, since they are not very useful for debugging.
+This bias is used to de-prioritize transactions that are classified as health checks. The goal is to reduce the amount of data retained for health checks, since they are not very useful for debugging.
 
-In order to mark a transaction as a health check, we leverage a list of known health check endpoints. This list is maintained by Sentry and is updated regularly.
+In order to mark a transaction as a health check, we leverage a list of known health check endpoints, which is maintained by Sentry and updated regularly.
 
 ```python
 HEALTH_CHECK_GLOBS = [
@@ -51,9 +51,9 @@ The list of health check endpoints is available [here](https://github.com/getsen
 
 ### Prioritize Dev Environments
 
-This bias is used to prioritize transactions that are coming from a development environment. The goal is to increase the amount of data that is retained for development environments, since they are more likely to be useful for debugging.
+This bias is used to prioritize transactions coming from a development environment in order to increase the amount of data retained for such environments, since they are more likely to be useful for debugging.
 
-In order to mark a transaction as a development environment, we leverage a list of known development environments. This list is maintained by Sentry and is updated regularly.
+To mark a transaction as a development environment, we leverage a list of known development environments, which is maintained and updated regularly by Sentry.
 
 ```python
 ENVIRONMENT_GLOBS = [
@@ -69,30 +69,28 @@ The list of development environments is available [here](https://github.com/gets
 
 ### Prioritize New Releases
 
-This bias is used to prioritize transactions that are coming from a new release. The goal is to increase the sample rate in the time window that incurs between the creation of a release and its adoption by users.
+This bias is used to prioritize transactions that are coming from a new release. The goal is to increase the sample rate in the time window that occurs between the creation of a release and its adoption by users.
 
-Since the adoption of a release is not constant, we created a system of _decaying_ rules which can interpolate between two sample rates in a given time window with a given function (e.g. `linear`).
+Since the adoption of a release is not constant, we created a system of *decaying* rules which can interpolate between two sample rates in a given time window with a given function (e.g. `linear`).
 
-The latest release bias uses a decaying rule to interpolate between a starting sample rate and an ending sample rate over a time window that is statically defined for each platform. For example Android has a bigger time window that Javascript because Android apps take more time to get adopted by users.
+The latest release bias uses a decaying rule to interpolate between a starting sample rate and an ending sample rate over a time window that is statically defined for each platform. For example, Android has a bigger time window than Javascript because Android apps take more time to get adopted by users.
 
 ### Prioritize Low Volume Transactions
 
-This bias is used to prioritize low volume transactions that can be drowned out by high volume transactions. The goal is to rebalance sample rates of the individual transactions so that low volume transactions are more likely to have representative samples.
+This bias is used to prioritize low-volume transactions that can be drowned out by high-volume transactions. The goal is to rebalance sample rates of the individual transactions so that low-volume transactions are more likely to have representative samples.
 
-In order to rebalance transactions the system computes the counts of the transactions for each project and runs an algorithm that given the sample rate of the organization and the counts of each transaction, computes a new sample rate for each transaction assuming an ideal distribution of the counts.
+In order to rebalance transactions, the system computes the counts of the transactions for each project and runs an algorithm that, given the sample rate of the organization and the counts of each transaction, computes a new sample rate for each transaction assuming an ideal distribution of the counts.
 
 ### Uniform Bias
 
-This bias is the simplest bias that can be defined. It applies on any incoming event and has the goal of containing the sample rate defined on a per project basis.
+This bias is the simplest one that can be defined. It applies to any incoming event and has the goal of containing the sample rate, which is defined on a per-project basis.
 
-The sample rate of the uniform bias is computed with a special algorithm that is based on the base sample rate, known as target fidelity rate. This rate is defined at the org level and it is done in the `quotas.get_blended_sample_rate` function.
+The sample rate of the uniform bias is computed using a special algorithm based on the base sample rate, known as the target fidelity rate. This rate is defined at the organizational level and is return by the `quotas.get_blended_sample_rate` function.
 
-The algorithm used for computing the uniform bias sample rate is used to prioritize low volume projects that can be drowned out by high volume projects. The goal is to rebalance sample rates of the individual projects so that low volume projects are more likely to contain transactions.
-
-In order to rebalance the projects, this bias uses a similar mechanism to the low volume transactions bias. The system computes the counts of the transactions for each project and runs an algorithm that given the sample rate of the organization and the counts of each project, computes a new sample rate for each project assuming an ideal distribution of the counts.
+The algorithm computes a new sample rate with the goal of prioritizing low-volume projects, which can be drowned out by high-volume projects. This algorithm uses a similar mechanism to the low-volume transactions bias in which given the sample rate of the organization and the counts of each project, it computes a new sample rate for each project, assuming an ideal distribution of the counts.
 
 <Alert title="⚠️ Note" level="info">
 
-The algorithms for the low volume transactions and uniform bias are run periodically (with cron jobs) with a sliding window in order to account for changes in the incoming volume.
+The algorithms for low-volume transactions and uniform bias are run periodically (with cron jobs) with a sliding window to account for changes in the incoming volume.
 
 </Alert>
