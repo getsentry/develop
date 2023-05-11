@@ -1,15 +1,15 @@
 ---
-title: Technical Spec
+title: Technical Specification
 sidebar_order: 2
 ---
 
-Dynamic Sampling is a feature that allows Sentry to automatically adjust the amount of data retained based on the value of the data. This is technically achieved by applying a **sample rate** to every event, which is determined by a set of rules that are evaluated for each event.
-
-A single or multiple rules combined are what we call **biases** or **sampling priorities**. For example, the latest release bias can support multiple concurrent boosts of different releases, which leads to multiple rules being created.
+Dynamic Sampling is a feature that allows Sentry to automatically adjust the amount of data retained based on the value of the data. This is technically achieved by applying a **sample rate** to every event, which is determined by a **set of rules** that are evaluated for each event.
 
 ## The Concept of Fidelity
 
 Sentry plans declare fidelity, which translates to an overall target sample rate that should be applied across all transactions of an organization. Within this target sample rate, Dynamic Sampling can create a **bias toward more meaningful data**. This is achieved by constantly updating and communicating special rules to Relay, via a project configuration, which then applies targeted sampling to every event.
+
+![Concept of Fidelity](/images/fidelityAndPriorities.png)
 
 ### Approximate Fidelity
 
