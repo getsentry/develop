@@ -11,7 +11,7 @@ The two main components of the architecture are [Sentry](https://github.com/gets
 
 ## Sampling in Relay
 
-Relay is the first component involved in the Dynamic Sampling pipeline. It is responsible for receiving events from SDKs, sampling them, and forwarding them to the Sentry backend. _In reality, Relay does much more than that, but for the purpose of this document, we will focus on the sampling part._
+Relay is the first component involved in the Dynamic Sampling pipeline. It is responsible for receiving events from SDKs, sampling them, and forwarding them to the Sentry backend. _In reality, Relay does much more than that. If you want to learn more about it, you can look at Relay docs [here](https://docs.sentry.io/product/relay/)._
 
 In order for Relay to perform sampling, it needs to be able to **compute the sample rate** for each incoming event. The configuration of sampling can be done via a **rule-based system** that enables the definition of complex sampling behaviors by combining simple rules. These rules are embedded into the **project configuration**, which is computed and cached in Sentry. This configuration contains a series of fields that Relay uses to perform many of its tasks, including sampling.
 
@@ -21,13 +21,15 @@ Sentry supports **two fundamentally different types of sampling**. While this is
 
 #### Trace Sampling
 
-Trace sampling ensures that **either all transactions of a trace are sampled, or none** (except for specific cases in which transaction sampling also applies). That is, these rules **always yield the same sampling decision** for every transaction in the same trace. This requires the cooperation of SDKs and thus allows sampling only by `project`, `release`, `environment`, and `transaction` name.
+A trace is a **collection of transactions that are related to each other**. For example a trace could contain transactions started from your frontend that are then generating transactions in your backend.
+
+Trace sampling ensures that **either all transactions of a trace are sampled, or none**. That is, these rules **always yield the same sampling decision** for every transaction in the same trace. This requires the cooperation of SDKs and thus allows sampling only by `project`, `release`, `environment`, and `transaction` name.
 
 To achieve trace sampling, SDKs pass all fields that can be sampled by [Dynamic Sampling Context (DSC)](/sdk/performance/dynamic-sampling-context/) (defined [here](https://getsentry.github.io/relay/relay_sampling/struct.DynamicSamplingContext.html)) as they propagate traces. _This ensures that every transaction from the same trace comes with the same DSC._
 
 ![Trace Sampling](/images/traceSampling.png)
 
-<Alert title="⚠️ Note" level="info">
+<Alert title="✨ Note" level="info">
 
 In order to achieve full trace sampling, the random number generator used by Relay is seeded with the trace ID inside of the DSC sent by the SDK. This ensures that traces with the same trace ID will always yield the same sampling decision.
 
@@ -51,12 +53,19 @@ A **rule** is the core component of the sampling configuration and is defined in
   "type": "trace",
   "samplingValue": {
     "type": "sampleRate",
-    "value": 0.1
+    "value": 0.5
   },
-  "condition": { ... },
+  "condition": {
+    "inner": [],
+    "op": "and"
+  },
   "timeRange": {
     "start": "2022-10-21 18:50:25+00:00",
     "end": "2022-10-21 19:50:25+00:00"
+  },
+  "decayingFn": {
+    "type": "linear",
+    "decayedValue": 0.2
   }
 }
 ```
@@ -67,8 +76,10 @@ The top level fields of a rule are:
 - `samplingValue`: used to define the sample rate that will be applied to the incoming event. There are two types of sampling values:
     - `factor`: when matched the matching will _continue_ to the next rules and the factor will be multiplied by the accumulated factors (1 in case no factor rules matched before).
     - `sampleRate`: when matched the matching will _stop_ and the sample rate will be computed by multiplying the accumulated factors by the sample rate.
-- `condition`: used to express specific conditions on the incoming payload (e.g., `and`, `eq`, `glob`).
+- `condition`: used to express specific conditions on the incoming payload (the actual definition is available [here](https://getsentry.github.io/relay/relay_sampling/enum.RuleCondition.html)).
 - `timeRange`: used to define the time range in which the rule is active.
+- `decayingFn`: used to define the decaying function that will be applied to interpolate between the `samplingValue` and `decayedValue` (the condition `samplingValue` >= `decayedValue` must hold). There currently two decaying functions supported, namely `constant` and `linear`.
+
 
 #### Fetching the Sampling Configuration
 
@@ -127,7 +138,7 @@ And suppose this is the merged configuration from the non-root and root project:
         "value": 2.0
       },
       "condition": {
-        # Not the actual syntax, just a simplified example..
+        # Not the actual syntax, just a simplified example.
         "trace.transaction": "/world"
       }
     },
@@ -139,7 +150,7 @@ And suppose this is the merged configuration from the non-root and root project:
         "value": 0.5
       },
       "condition": {
-        # Not the actual syntax, just a simplified example..
+        # Not the actual syntax, just a simplified example.
         "trace.transaction": "/hello"
       }
     }
@@ -151,7 +162,7 @@ In this case, the matching will happen from **top to bottom** and the following 
 1. Rule `1` is matched against the event payload, since it is of type `transaction`. The `samplingValue` is a `factor`, thus the accumulated factors will now be `2.0 * 1.0`, where `1.0` is the identity for the multiplication.
 2. Because rule `1` was a factor rule, the matching continues and rule `2` will be matched against the DSC, since it is of type `trace`. The `samplingValue` is a `sampleRate`, thus the matching will stop and the sample rate will be computed as `2.0 * 0.5 = 1.0`, where `2.0` is the factor accumulated from the previous rule and `0.5` is the sample rate of the current rule.
 
-<Alert title="⚠️ Note" level="info">
+<Alert title="✨ Note" level="info">
 
 It is important to note that a `sampleRate` rule must match in order for a sampling decision to be made; in case this condition is not met, the event will be kept. In practice, each project will have a uniform trace rule which will always match and contain the base sample rate of the organization.
 
@@ -181,11 +192,11 @@ The generation of the rules that will be part of the project configuration recal
 
 #### Redis for Shared State
 
-Certain biases require data that **must be computed from other parts of the system** (e.g., when a new release is created) or asynchronously by background tasks due to the complexity of the computation (e.g., running cross-org queries on Snuba).
+Certain biases require data that **must be computed from other parts of the system** (e.g., when a new release is created) or by background tasks that are run asynchronously.
 
 For such use cases, we decided to use a separate Redis instance, which is used to store many kinds of information, such as sample rates and boosted releases. During rule generation, we connect to this Redis instance and fetch the necessary data to compute the rules.
 
-An illustration on how Redis is used for tracking boosted releases:
+An illustration on how Redis is used for tracking boosted releases (which are used by the [prioritize new releases bias](/dynamic-sampling/fidelity-and-biases/#prioritize-new-releases)):
 
 ![Usage of Redis for Boosted Releases](images/redisBoostedRelease.png)
 
