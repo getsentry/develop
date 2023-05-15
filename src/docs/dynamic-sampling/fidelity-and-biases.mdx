@@ -29,9 +29,33 @@ The effectively applied sample rate, in the end, depends on how much data matche
 
 </Alert>
 
+## Trace and Transaction Sampling
+
+Sentry supports **two fundamentally different types of sampling**. While this is completely opaque to the user, these rule types provide the basic building blocks for every dynamic sampling functionality and bias.
+
+### Trace Sampling
+
+A trace is a **collection of transactions that are related to each other**. For example a trace could contain transactions started from your frontend that are then generating transactions in your backend.
+
+Trace sampling ensures that **either all transactions of a trace are sampled, or none**. That is, these rules **always yield the same sampling decision** for every transaction in the same trace. This requires the cooperation of SDKs and thus allows sampling only by `project`, `release`, `environment`, and `transaction` name.
+
+To achieve trace sampling, SDKs pass all fields that can be sampled by [Dynamic Sampling Context (DSC)](/sdk/performance/dynamic-sampling-context/) (defined [here](https://getsentry.github.io/relay/relay_sampling/struct.DynamicSamplingContext.html)) as they propagate traces. _This ensures that every transaction from the same trace comes with the same DSC._
+
+![Trace Sampling](/images/traceSampling.png)
+
+<Alert title="✨ Note" level="info">
+
+In order to achieve full trace sampling, the random number generator used by Relay is seeded with the trace ID inside of the DSC sent by the SDK. This ensures that traces with the same trace ID will always yield the same sampling decision.
+
+</Alert>
+
+### Transaction Sampling
+
+Transaction Sampling **does not guarantee complete traces** and instead **applies to individual transactions** by looking at the incoming transaction's body. It can be used to remove unwanted transactions from traces, or to individually boost transactions at the expense of incomplete contextual traces.
+
 ## Biases for Sampling
 
-A bias is a set of one or more rules that are evaluated for each event. More specifically, when we define a bias, we want to achieve a specific objective, which **can be expressed as a set of rules**.
+A bias is a set of one or more rules that are evaluated for each event. More specifically, when we define a bias, we want to achieve a specific objective, which **can be expressed as a set of rules**. To learn more about rules, check out the architecture page [here](/dynamic-sampling/architecture/).
 
 Sentry has already defined a set of biases that are available to all customers. These biases have different goals, but they can be combined to express more complex semantics.
 
@@ -56,10 +80,13 @@ HEALTH_CHECK_GLOBS = [
     "*heartbeat*",
     "*/health",
     "*/healthz",
+    # ...
 ]
 ```
 
 The list of health check endpoints is available [here](https://github.com/getsentry/sentry/blob/4cb0d863de1ef8e3440153cb440eaca8025dee0d/src/sentry/dynamic_sampling/rules/biases/ignore_health_checks_bias.py#L14).
+
+For deprioritizing health checks, we compute a new sample rate by dividing the base sample rate of the project by a factor, which is defined [here](https://github.com/getsentry/sentry/blob/master/src/sentry/dynamic_sampling/rules/utils.py#L13-L13).
 
 ### Prioritize Dev Environments
 
@@ -74,18 +101,23 @@ ENVIRONMENT_GLOBS = [
     "*local*",
     "*qa*",
     "*test*",
+    # ...
 ]
 ```
 
 The list of development environments is available [here](https://github.com/getsentry/sentry/blob/4cb0d863de1ef8e3440153cb440eaca8025dee0d/src/sentry/dynamic_sampling/rules/biases/boost_environments_bias.py#L7).
 
+For prioritizing dev environments, we use a sample rate of `1.0` (100%), which results in all traces being sampled.
+
 ### Prioritize New Releases
 
-This bias is used to prioritize transactions that are coming from a new release. The goal is to increase the sample rate in the time window that occurs between the creation of a release and its adoption by users.
+This bias is used to prioritize transactions that are coming from a new release. The goal is to increase the sample rate in the time window that occurs between the creation of a release and its adoption by users. _The identification of a new release is done in the `event_manager` defined [here](https://github.com/getsentry/sentry/blob/master/src/sentry/event_manager.py#L937-L937)._
 
-Since the adoption of a release is not constant, we created a system of *decaying* rules which can interpolate between two sample rates in a given time window with a given function (e.g. `linear`).
+Since the adoption of a release is not constant, we created a system of *decaying* rules which can interpolate between two sample rates in a given time window with a given function (e.g. `linear`). The idea being that we want to reduce the sample rate since the amount of samples will increase as the release gets adopted by users.
 
-The latest release bias uses a decaying rule to interpolate between a starting sample rate and an ending sample rate over a time window that is statically defined for each platform. For example, Android has a bigger time window than Javascript because Android apps take more time to get adopted by users.
+![Sample Rate and Adoption](/images/sampleRateAndAdoption.png)
+
+The latest release bias uses a decaying rule to interpolate between a starting sample rate and an ending sample rate over a time window that is statically defined for each platform (the list of time to adoptions is define [here](https://github.com/getsentry/sentry/blob/master/src/sentry/dynamic_sampling/rules/helpers/time_to_adoptions.py#L26-L26). For example, Android has a bigger time window than Javascript because Android apps take more time to get adopted by users.
 
 ### Prioritize Low Volume Transactions
 
@@ -106,3 +138,5 @@ The algorithm computes a new sample rate with the goal of prioritizing low-volum
 The algorithms for low-volume transactions and uniform bias are run periodically (with cron jobs) with a sliding window to account for changes in the incoming volume.
 
 </Alert>
+
+If you want to learn more about the architecture behind Dynamic Sampling, continue to the [next page](/dynamic-sampling/architecture/).

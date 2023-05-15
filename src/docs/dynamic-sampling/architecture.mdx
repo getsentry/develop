@@ -17,27 +17,7 @@ In order for Relay to perform sampling, it needs to be able to **compute the sam
 
 ### Trace and Transaction Sampling
 
-Sentry supports **two fundamentally different types of sampling**. While this is completely opaque to the user, these rule types provide the basic building blocks for every dynamic sampling functionality and bias.
-
-#### Trace Sampling
-
-A trace is a **collection of transactions that are related to each other**. For example a trace could contain transactions started from your frontend that are then generating transactions in your backend.
-
-Trace sampling ensures that **either all transactions of a trace are sampled, or none**. That is, these rules **always yield the same sampling decision** for every transaction in the same trace. This requires the cooperation of SDKs and thus allows sampling only by `project`, `release`, `environment`, and `transaction` name.
-
-To achieve trace sampling, SDKs pass all fields that can be sampled by [Dynamic Sampling Context (DSC)](/sdk/performance/dynamic-sampling-context/) (defined [here](https://getsentry.github.io/relay/relay_sampling/struct.DynamicSamplingContext.html)) as they propagate traces. _This ensures that every transaction from the same trace comes with the same DSC._
-
-![Trace Sampling](/images/traceSampling.png)
-
-<Alert title="✨ Note" level="info">
-
-In order to achieve full trace sampling, the random number generator used by Relay is seeded with the trace ID inside of the DSC sent by the SDK. This ensures that traces with the same trace ID will always yield the same sampling decision.
-
-</Alert>
-
-#### Transaction Sampling
-
-Transaction Sampling **does not guarantee complete traces** and instead **applies to individual transactions** by looking at the incoming transaction's body. It can be used to remove unwanted transactions from traces, or to individually boost transactions at the expense of incomplete contextual traces.
+Sentry supports **two fundamentally different types of sampling**, that are described in more detail [here](/dynamic-sampling/fidelity-and-biases/#trace-and-transaction-sampling).
 
 ### Sampling Configuration
 
@@ -45,7 +25,9 @@ Inside the project configuration there is a field dedicated to sampling, named `
 
 #### The Rule Definition
 
-A **rule** is the core component of the sampling configuration and is defined in the following JSON format (defined [here](https://getsentry.github.io/relay/relay_sampling/struct.SamplingRule.html)).
+A **rule** is the core component of the sampling configuration and is defined as [SamplingRule](https://getsentry.github.io/relay/relay_sampling/struct.SamplingRule.html) in Relay.
+
+An example of rule encoded in JSON is the following:
 
 ```json
 {
@@ -70,17 +52,6 @@ A **rule** is the core component of the sampling configuration and is defined in
 }
 ```
 
-The top level fields of a rule are:
-- `id`: a rule **must** have a unique `id` that is used by Relay to track outcomes.
-- `type`: a rule can be applied to a `trace` or a `transaction`. In practice this means that during matching a different payload will be inspected, either the Event of the Dynamic Sampling Context.
-- `samplingValue`: used to define the sample rate that will be applied to the incoming event. There are two types of sampling values:
-    - `factor`: when matched the matching will _continue_ to the next rules and the factor will be multiplied by the accumulated factors (1 in case no factor rules matched before).
-    - `sampleRate`: when matched the matching will _stop_ and the sample rate will be computed by multiplying the accumulated factors by the sample rate.
-- `condition`: used to express specific conditions on the incoming payload (the actual definition is available [here](https://getsentry.github.io/relay/relay_sampling/enum.RuleCondition.html)).
-- `timeRange`: used to define the time range in which the rule is active.
-- `decayingFn`: used to define the decaying function that will be applied to interpolate between the `samplingValue` and `decayedValue` (the condition `samplingValue` >= `decayedValue` must hold). There currently two decaying functions supported, namely `constant` and `linear`.
-
-
 #### Fetching the Sampling Configuration
 
 The sampling configuration is fetched by Relay from Sentry in a pull fashion. This is done by sending a request to the `/api/0/relays/projectconfigs/` endpoint periodically (defined [here](https://github.com/getsentry/sentry/blob/master/src/sentry/api/endpoints/relay/project_configs.py#L34-L34)).
@@ -97,7 +68,7 @@ A sampling decision involves:
 
 _In case no match is found, or there are problems during matching, Relay will accept the event under the assumption that we prefer to oversample rather than drop events._
 
-Relay samples with two sampling configurations (defined [here](https://getsentry.github.io/relay/relay_sampling/struct.SamplingConfig.html)), namely **non-root sampling configuration** and **root sampling configuration**. The non-root config is the config of the project to which the incoming event belongs, whereas the root config is the config of the project to which the head transaction of the trace belongs. *In case no root sampling configuration is available, only transaction sampling will be performed.*
+Relay samples with two [SamplingConfig](https://getsentry.github.io/relay/relay_sampling/struct.SamplingConfig.html) instances, namely **non-root sampling configuration** and **root sampling configuration**. The non-root config is the config of the project to which the incoming event belongs, whereas the root config is the config of the project to which the head transaction of the trace belongs. *In case no root sampling configuration is available, only transaction sampling will be performed.*
 
 Once both configurations are fetched, Relay will **compute a merged configuration** (following the algorithm defined [here](https://getsentry.github.io/relay/relay_sampling/fn.merge_rules_from_configs.html)) consisting of all the transaction rules of the non-root project, **concatenated** to all the trace rules of the root project. This will result in a single configuration containing all the rules that Relay is going to try and match (**from top to bottom**). *The order of the rules of the same type is important, as it will influence the sampling decision.*
 
