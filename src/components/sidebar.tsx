@@ -1,7 +1,7 @@
 import React from 'react';
-import {useStaticQuery, graphql} from 'gatsby';
+import { useStaticQuery, graphql } from 'gatsby';
 
-import {Children, toTree} from './dynamicNav';
+import { Children, toTree } from './dynamicNav';
 import SidebarLink from './sidebarLink';
 
 const navQuery = graphql`
@@ -81,6 +81,9 @@ export default () => {
             <SidebarLink to="/pii/selectors/">Selectors</SidebarLink>
           </SidebarLink>
           <SidebarLink to="/transaction-clustering/">Clustering URL Transactions</SidebarLink>
+          <SidebarLink to="/dynamic-sampling/" title="Dynamic Sampling">
+            <Children tree={tree.find(n => n.name === 'dynamic-sampling').children} />
+          </SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
