@@ -13,7 +13,7 @@ A sample rate is a number in the interval `[0.0, 1.0]` that will determine the l
 
 ## The Concept of Fidelity
 
-At the core of Dynamic Sampling there is the concept of **fidelity**, which translates to an overall target sample rate that should be applied across all transactions of an organization. Within this target sample rate, Dynamic Sampling can create a **bias toward more meaningful data**. This is achieved by constantly updating and communicating special rules to Relay, via a project configuration, which then applies targeted sampling to every event.
+At the core of Dynamic Sampling there is the concept of **fidelity**, which translates to an overall **target sample rate** that should be applied across all transactions of an organization. _The determination of the target sample rate is configurable by changing the return value of the `get_blended_sample_rate` function (defined [here](https://github.com/getsentry/sentry/blob/master/src/sentry/quotas/base.py#L466-L466))._ Within this target sample rate, Dynamic Sampling can create a **bias toward more meaningful data**. This is achieved by constantly updating and communicating special rules to Relay, via a project configuration, which then applies targeted sampling to every event.
 
 ![Concept of Fidelity](/images/fidelityAndPriorities.png)
 
