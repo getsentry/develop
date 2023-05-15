@@ -90,9 +90,9 @@ For deprioritizing health checks, we compute a new sample rate by dividing the b
 
 ### Prioritize Dev Environments
 
-This bias is used to prioritize transactions coming from a development environment in order to increase the amount of data retained for such environments, since they are more likely to be useful for debugging.
+This bias is used to prioritize traces coming from a development environment in order to increase the amount of data retained for such environments, since they are more likely to be useful for debugging.
 
-To mark a transaction as a development environment, we leverage a list of known development environments, which is maintained and updated regularly by Sentry.
+To mark a trace's root transaction as belonging to a development environment, we leverage a list of known development environments, which is maintained and updated regularly by Sentry.
 
 ```python
 ENVIRONMENT_GLOBS = [
@@ -111,27 +111,27 @@ For prioritizing dev environments, we use a sample rate of `1.0` (100%), which r
 
 ### Prioritize New Releases
 
-This bias is used to prioritize transactions that are coming from a new release. The goal is to increase the sample rate in the time window that occurs between the creation of a release and its adoption by users. _The identification of a new release is done in the `event_manager` defined [here](https://github.com/getsentry/sentry/blob/master/src/sentry/event_manager.py#L937-L937)._
+This bias is used to prioritize traces that are coming from a new release. The goal is to increase the sample rate in the time window that occurs between the creation of a release and its adoption by users. _The identification of a new release is done in the `event_manager` defined [here](https://github.com/getsentry/sentry/blob/master/src/sentry/event_manager.py#L937-L937)._
 
 Since the adoption of a release is not constant, we created a system of *decaying* rules which can interpolate between two sample rates in a given time window with a given function (e.g. `linear`). The idea being that we want to reduce the sample rate since the amount of samples will increase as the release gets adopted by users.
 
 ![Sample Rate and Adoption](/images/sampleRateAndAdoption.png)
 
-The latest release bias uses a decaying rule to interpolate between a starting sample rate and an ending sample rate over a time window that is statically defined for each platform (the list of time to adoptions is define [here](https://github.com/getsentry/sentry/blob/master/src/sentry/dynamic_sampling/rules/helpers/time_to_adoptions.py#L26-L26). For example, Android has a bigger time window than Javascript because Android apps take more time to get adopted by users.
+The latest release bias uses a decaying rule to interpolate between a starting sample rate and an ending sample rate over a time window that is statically defined for each platform (the list of time to adoptions is define [here](https://github.com/getsentry/sentry/blob/master/src/sentry/dynamic_sampling/rules/helpers/time_to_adoptions.py#L26-L26). For example, Android has a bigger time window than Javascript because on average Android apps take more time to get adopted by users.
 
 ### Prioritize Low Volume Transactions
 
-This bias is used to prioritize low-volume transactions that can be drowned out by high-volume transactions. The goal is to rebalance sample rates of the individual transactions so that low-volume transactions are more likely to have representative samples.
+This bias is used to prioritize low-volume transactions that can be drowned out by high-volume transactions. The goal is to rebalance sample rates of the individual transactions so that low-volume transactions are more likely to have representative samples. The bias is of type trace, which means that the transaction considered for rebalancing will be the root transaction of the trace.
 
 In order to rebalance transactions, the system computes the counts of the transactions for each project and runs an algorithm that, given the sample rate of the organization and the counts of each transaction, computes a new sample rate for each transaction assuming an ideal distribution of the counts.
 
 ### Uniform Bias
 
-This bias is the simplest one that can be defined. It applies to any incoming event and is defined on a per-project basis.
+This bias is the simplest one that can be defined. It applies to any incoming trace and is defined on a per-project basis.
 
-_The sample rate of the uniform bias is computed using an algorithm revolving around the base sample rate, known as the target fidelity rate. This rate is defined at the organizational level and is return by the `quotas.get_blended_sample_rate` function._
+_The sample rate of the uniform bias is computed using an algorithm that is based on the base sample rate, known as the target fidelity rate. This rate is defined at the organization level and is returned by the `quotas.get_blended_sample_rate` function._
 
-The algorithm computes a new sample rate with the goal of prioritizing low-volume projects, which can be drowned out by high-volume projects. The mechanism used for prioritizing is similar to the low-volume transactions bias in which given the sample rate of the organization and the counts of each project, it computes a new sample rate for each project, assuming an ideal distribution of the counts.
+The algorithm used in this bias, computes a new sample rate with the goal of prioritizing low-volume projects, which can be drowned out by high-volume projects. The mechanism used for prioritizing is similar to the low-volume transactions bias in which given the sample rate of the organization and the counts of each project, it computes a new sample rate for each project, assuming an ideal distribution of the counts.
 
 <Alert title="✨ Note" level="info">
 

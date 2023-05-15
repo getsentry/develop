@@ -60,7 +60,7 @@ To collect unsampled information for “total” transactions in Performance, Al
 - A distribution (histogram) for all measurements, most notably the web vitals.
 - The number of unique users (set).
 
-Each of these metrics can be filtered and grouped by a number of predefined tags, [implemented in Relay](https://github.com/getsentry/relay/blob/1a452e526dca3cdc2dbe73ce8b0a087812efb0fb/relay-server/src/metrics_extraction/transactions/types.rs#L142-L157).
+Each of these metrics can be filtered and grouped by a number of predefined tags, [implemented in Relay](https://github.com/getsentry/relay/blob/master/relay-server/src/metrics_extraction/transactions/types.rs#L142-L157).
 
 For more granular queries, **indexed transaction events are needed**. _The purpose of dynamic sampling here is to ensure that enough representatives are always available._
 
