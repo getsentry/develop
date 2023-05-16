@@ -13,6 +13,7 @@ if "csp.middleware.CSPMiddleware" not in MIDDLEWARE:
     MIDDLEWARE = ("csp.middleware.CSPMiddleware",) + MIDDLEWARE
 CSP_REPORT_URI = "https://your-sentry-url-prefix.com/api/{csp-project-id}/security/?sentry_key={sentry-key}"
 CSP_REPORT_ONLY = True
+```
 
 We recommend starting with `CSP_REPORT_ONLY = True`. Once there are no violations under normal use, you can switch it to `CSP_REPORT_ONLY = False`. This will enforce CSP and all unwanted scripts/resources will be blocked.
 
@@ -20,5 +21,6 @@ If you'd like to allow custom sources, extra CSP keywords can be added. We suppo
 
 ```python
 CSP_SCRIPT_SRC += ["example.com"]
+```
 
 Default `CSP_*` settings are defined in [`server.py`](https://github.com/getsentry/sentry/blob/master/src/sentry/conf/server.py).
