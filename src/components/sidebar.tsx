@@ -113,7 +113,6 @@ export default () => {
           <SidebarLink to="/frontend/upgrade-policies/">
             Dependency Upgrade Policies
           </SidebarLink>
-          <SidebarLink to="/frontend/storybook/">Storybook Styleguide</SidebarLink>
           <SidebarLink to="/frontend/development-server/">Development Server</SidebarLink>
           <SidebarLink to="/frontend/defaultprops/">Typing DefaultProps</SidebarLink>
           <SidebarLink to="/frontend/using-hooks/">Using hooks</SidebarLink>
