@@ -1,0 +1,46 @@
+---
+title: "Issue Platform"
+---
+
+The Issue Platform allows developers to create new issue types from data streams.
+
+To use the Issue Platform you need to
+
+1. Write a Detector
+2. Register an issue type
+3. Start Occurrences to the Issue Platform
+
+
+## Writing a Detector
+The first step to introducing a new issue type to Sentry is to determine what type of issue you want to detect. It can be from any data stream, as long as you can produce an 
+Occurrence representing the issue <link to occurrence schema>
+
+## Register an Issue Type
+To register a new issue type you need to subclass `GroupType` https://github.com/getsentry/sentry/blob/ef76b0765f6c057af12b1cd0dc2de6b42a938c02/src/sentry/issues/grouptype.py#L98-L108
+
+When registering the class, set the following required attributes on the class:
+- type_id: A unique integer to identify your issue type.
+- slug: A unique slug to identify your issue type. Used to search by issue type in the issue stream
+- description: A human readable description of your issue type <include where this is used>
+- category: The overall category that your issue type belongs to. <include docs on creating a category>
+
+
+You may also set these optional attributes:
+ - noise_config: Optional[NoiseConfig] = None
+  
+TODO: Include docs about releasing and explain how `- released: bool = False` is used
+
+Here's an example issue type:
+```
+@dataclass(frozen=True)
+class ProfileFileIOGroupType(GroupType):
+    type_id = 2001
+    slug = "profile_file_io_main_thread"
+    description = "File I/O on Main Thread"
+    category = GroupCategory.PROFILE.value
+```
+
+
+
+## Send Occurrences to the Issue Platform
+
