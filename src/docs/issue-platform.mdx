@@ -13,7 +13,7 @@ To use the Issue Platform you need to
 
 ## Writing a Detector
 The first step to introducing a new issue type to Sentry is to determine what type of issue you want to detect. It can be from any data stream, as long as you can produce an 
-Occurrence representing the issue <link to occurrence schema>
+Occurrence representing the issue [link to occurrence schema]
 
 ## Register an Issue Type
 To register a new issue type you need to subclass `GroupType` https://github.com/getsentry/sentry/blob/ef76b0765f6c057af12b1cd0dc2de6b42a938c02/src/sentry/issues/grouptype.py#L98-L108
@@ -21,12 +21,11 @@ To register a new issue type you need to subclass `GroupType` https://github.com
 When registering the class, set the following required attributes on the class:
 - type_id: A unique integer to identify your issue type.
 - slug: A unique slug to identify your issue type. Used to search by issue type in the issue stream
-- description: A human readable description of your issue type <include where this is used>
-- category: The overall category that your issue type belongs to. <include docs on creating a category>
-
+- description: A human readable description of your issue type [include where this is used]
+- category: The overall category that your issue type belongs to. [include docs on creating a category]
 
 You may also set these optional attributes:
- - noise_config: Optional[NoiseConfig] = None
+- noise_config: A `NoiseConfig` that allows you to set policy on how many times a fingerprint must occur in a period of time before an issue is created
   
 TODO: Include docs about releasing and explain how `- released: bool = False` is used
 
@@ -43,4 +42,9 @@ class ProfileFileIOGroupType(GroupType):
 
 
 ## Send Occurrences to the Issue Platform
+If operating within the Sentry codebase, you can call `sentry.issues.produce_occurrence_to_kafka` https://github.com/getsentry/sentry/blob/master/src/sentry/issues/producer.py#L28-L30
+and pass in the Occurrence, and optionally the `Event` data.
+
+If operating from a separate service pass a json payload with this format:
+[format]
 
