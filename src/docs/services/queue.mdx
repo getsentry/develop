@@ -19,7 +19,7 @@ from sentry.tasks.base import instrumented_task, retry
     max_retries=3,
     default_retry_delay=60 * 5,
 )
-@retry(on=(<RetryableError>), exclude=(<reraise>), ignore=(<IgnorableError>))
+@retry(on=(<RetryableError>), exclude=(<ReraiseError>), ignore=(<IgnorableError>))
 def do_work(kind_of_work, **kwargs):
     # ...
 ```
