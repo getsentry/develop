@@ -34,7 +34,7 @@ There are a few important points:
   names which makes the name tied to the location of the code and more
   brittle for future code maintenance.
 
-- Tasks _must_ accept `\*\*kwargs` to handle rolling compatibility.
+- Tasks _must_ accept `kwargs` to handle rolling compatibility.
 
   This ensures tasks will accept any message which happens to be in
   the queue rather than fail for unknown arguments.  It helps with
@@ -53,12 +53,13 @@ There are a few important points:
   Without retries, any exceptions raised while executing the task will stop 
   the task from moving forward. Generally, there are three categories of 
   exceptions that could be raised:
-  - Retryable exceptions: transient errors (e.g. connection timeouts, 
+  
+  1. Retryable exceptions: transient errors (e.g. connection timeouts, 
   DB unavailable, query read timeouts) 
-  - Ignorable exceptions: this is task specific but an example of an 
+  2. Ignorable exceptions: this is task specific but an example of an 
     ignorable exception would be if your task is attempting to delete a row 
     but the row doesn't exist and raises `DoesNotExist` exception. 
-  - Non-ignorable programming errors that should be re-raised and fixed 
+  3. Non-ignorable programming errors that should be re-raised and fixed 
     (AttributeError, TypeError, ValueError, etc) 
   
   Use the `@retry` decorator to specify which exceptions should be retried, 
