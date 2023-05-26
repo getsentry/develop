@@ -11,14 +11,15 @@ Sentry relies on the [Celery](https://docs.celeryproject.org/) library for manag
 Sentry configures tasks with a special decorator that allows us more explicit control over the callable.
 
 ```python
-from sentry.tasks.base import instrumented_task
+from sentry.tasks.base import instrumented_task, retry
 
 @instrumented_task(
     name="sentry.tasks.do_work",
     queue="important_queue",
+    max_retries=3,
     default_retry_delay=60 * 5,
-    max_retries=None,
 )
+@retry(on=(<RetryableError>), exclude=(<reraise>), ignore=(<IgnorableError>))
 def do_work(kind_of_work, **kwargs):
     # ...
 ```
@@ -47,7 +48,24 @@ There are a few important points:
   a migration a little and gives some more operator flexibility, but
   message loss because of unknown arguments is still not acceptable.
 
-- Tasks _should_ automatically retry on failure.
+- Tasks _should_ retry on exception.
+
+  Without retries, any exceptions raised while executing the task will stop 
+  the task from moving forward. Generally, there are three categories of 
+  exceptions that could be raised:
+  - Retryable exceptions: transient errors (e.g. connection timeouts, 
+  DB unavailable, query read timeouts) 
+  - Ignorable exceptions: this is task specific but an example of an 
+    ignorable exception would be if your task is attempting to delete a row 
+    but the row doesn't exist and raises `DoesNotExist` exception. 
+  - Non-ignorable programming errors that should be re-raised and fixed 
+    (AttributeError, TypeError, ValueError, etc) 
+  
+  Use the `@retry` decorator to specify which exceptions should be retried, 
+  re-raised, and ignored. It might not be possible to know ahead of time 
+  all the possible exceptions that could be raised in your task, so starting 
+  with just the `@retry(on=(<RetryableError>))` might make sense and 
+  updating the types of exceptions to handle after encountering them.
 
 - Tasks arguments _should_ be primitive types and small.
 
@@ -69,6 +87,9 @@ There are a few important points:
   because this is what registers the task by name.  Thus every module
   containing a task must be added to the `CELERY_IMPORTS` setting in
   `src/sentry/conf/server.py`.
+
+- Tasks specifying a named `queue` must be added to `CELERY_QUEUES`.
+
 
 ## Running a Worker
 
