@@ -12,8 +12,9 @@ To use the Issue Platform you need to
 
 
 ## Writing a Detector
-The first step to introducing a new issue type to Sentry is to determine what type of issue you want to detect. It can be from any data stream, as long as you can produce an 
-Occurrence representing the issue [link to occurrence schema]
+The first step to introducing a new issue type to Sentry is to determine what type of
+issue you want to detect. It can be from any data stream, as long as you can produce an
+<Link to="#send-occurrences-to-the-issue-platform"Occurrence></Link> representing the issue
 
 ## Register an Issue Type
 To register a new issue type you need to subclass `GroupType` https://github.com/getsentry/sentry/blob/ef76b0765f6c057af12b1cd0dc2de6b42a938c02/src/sentry/issues/grouptype.py#L98-L108
@@ -105,4 +106,5 @@ at the moment, so you'll need to create the flagr yourself. It will be in the fo
 
 Once your issue type is fully released and you want it to go out to self-hosted and single tenant
 you can set `release = True` on your GroupType. This allows it to be released everywhere, and
-removes the feature flags and options
+removes the feature flags and options. Generally we recommend doing this after your issue type
+has been in GA for long enough to verify that it's working as intended.
