@@ -4,26 +4,23 @@ title: "Issue Platform"
 
 The Issue Platform allows developers to create new issue types from arbitrary data sources.
 
-To use the Issue Platform you need to
-
+To use the Issue Platform you need to:
 1. <Link to="#writing-a-detector">Write a Detector</Link> 
 2. <Link to="#register-an-issue-type">Register an Issue Type</Link> 
 3. <Link to="#send-occurrences-to-the-issue-platform">Send Occurrences to the Issue Platform</Link> 
 4. <Link to="#Releasing-your-issue-type">Release</Link>
 
 ## Writing a Detector
-The first step to introducing a new issue type to Sentry is to determine what type of
-issue you want to detect. It can be from any data stream, as long as you can produce an
-<Link to="#issue-occurrence-schema">Occurrence</Link> representing the issue
+The first step to introducing a new issue type to Sentry is to determine what type of issue you want to detect. It can be from any data stream, as long as you can produce an <Link to="#issue-occurrence-schema">Occurrence</Link> representing the issue
 
 ## Register an Issue Type
 To register a new issue type you need to subclass `GroupType` https://github.com/getsentry/sentry/blob/ef76b0765f6c057af12b1cd0dc2de6b42a938c02/src/sentry/issues/grouptype.py#L98-L108
 
 When registering the class, set the following required attributes on the class:
-- type_id: A unique integer to identify your issue type.
-- slug: A unique slug to identify your issue type. Used to search by issue type in the issue stream
-- description: A human readable description of your issue type [include where this is used]
-- category: The overall category that your issue type belongs to. [include docs on creating a category]
+- `type_id`: A unique integer to identify your issue type.
+- `slug`: A unique slug to identify your issue type. Used to search by issue type in the issue stream
+- `description`: A human readable description of your issue type [include where this is used]
+- `category`: The overall category that your issue type belongs to. [include docs on creating a category]
 
 You may also set these optional attributes:
 - noise_config: A `NoiseConfig` that allows you to set policy on how many times a fingerprint must occur in a period of time before an issue is created
@@ -43,49 +40,43 @@ class ProfileFileIOGroupType(GroupType):
 
 
 ## Send Occurrences to the Issue Platform
-If operating within the Sentry codebase, you can call <Link to="https://github.com/getsentry/sentry/blob/master/src/sentry/issues/producer.py#L28-L30">sentry.issues.produce_occurrence_to_kafka</Link>
-and pass in the <Link to="https://github.com/getsentry/sentry/blob/d262bbd9d8d3a2747d5251bee35c016c13ca050a/src/sentry/issues/issue_occurrence.py#L58">IssueOccurrence</Link>, and optionally the `Event` data. The fields in these are described in the schemas below.
+If operating within the Sentry codebase, you can call <Link to="https://github.com/getsentry/sentry/blob/master/src/sentry/issues/producer.py#L28-L30">sentry.issues.produce_occurrence_to_kafka</Link> and pass in the <Link to="https://github.com/getsentry/sentry/blob/d262bbd9d8d3a2747d5251bee35c016c13ca050a/src/sentry/issues/issue_occurrence.py#L58">IssueOccurrence</Link>, and optionally the `Event` data. The fields in these are described in the schemas below.
 
-If operating from an external service then pass a json payload that matches the <Link to="#issue-occurrence-schema">Issue Occurrence Schema</Link>:
+If operating from an external service then pass a json payload that matches the <Link to="#issue-occurrence-schema">Issue Occurrence Schema</Link> to the `ingest-occurrences` topic on the <Link to="https://github.com/getsentry/getsentry/blob/97039335a29517a7e48149148cdd7a30a60971e7/getsentry/conf/settings/prod.py#L567-L571">issue occurrences cluster</Link>
 
 ### Issue Occurrence Schema:
 Required:
-- id: str. A user generated uuid in string format representing a unique id for this occurrence.
+- `id`: str. A user generated uuid in string format representing a unique id for this occurrence.
 Generally it's a good idea to generate this separately to your event id.
-- project_id: int. Id of the project this occurred in
-- fingerprint: Sequence[str].  Unique identifier for the root cause of this problem.
+- `project_id`: int. Id of the project this occurred in
+- `fingerprint`: Sequence[str].  Unique identifier for the root cause of this problem.
 Used for aggregating occurrences together into groups. We only make use of the first
 fingerprint for the moment - if you have a use case for additional fingerprints let the
 issue platform team know.
-- issue_title: str. A short description of the problem. This will be used as the title
+- `issue_title`: str. A short description of the problem. This will be used as the title
 of the issue and also used in notifications.
-- subtitle: str: [todo]
-- evidence_data: Mapping[str, Any]. An arbitrary map of data. The issue platform doesn't
+- `subtitle`: str: [todo]
+- `evidence_data`: Mapping[str, Any]. An arbitrary map of data. The issue platform doesn't
 make use of this data directly, it just make it available for use on the frontend and in
 notifications.  This can be used to customize the issue details ui, notifications and so on.
-- evidence_display: Sequence[IssueEvidenceData]. A sequence of `IssueEvidenceData` entries.
-These are used to display generic information about your issue in the issue details ui and
-in various notifications. Even if you are customizing the ui and email, it's recommended
-to include this so that we can display information correctly on all our other integrations.
-Typically these will be displayed in a table when space allows. For space limited integrations
-we'll display one row that is labelled `important` if available.
-- type: int: The type of issue you are created. Maps to `type_id` in your registered `GroupType`.
-- detection_time: float. A timestamp representing when the issue was detected.
-- level: str
-- culprit: str
+- `evidence_display`: Sequence[<Link to="issue-evidence-schema">IssueEvidence</Link>]. A sequence of `IssueEvidence` entries. These are used to display generic information about your issue in the issue details ui and in various notifications. Even if you are customizing the ui and email, it's recommended to include this so that we can display information correctly on all our other integrations. Typically, these will be displayed in a table when space allows. For space limited integrations we'll display one row that is labelled `important` if available.
+- `type`: int: The type of issue you are created. Maps to `type_id` in your registered `GroupType`.
+- `detection_time`: float. A timestamp representing when the issue was detected.
+- `level`: str
+- `culprit`: str
 
 One of:
-- event_id: str. The event id of an existing event, typically this would be an error or transaction id.
-- event: <Link to="event-schema">Event</Link>
+- `event_id`: str. The event id of an existing event, typically this would be an error or transaction id.
+- `event`: <Link to="event-schema">Event</Link>
 
 Optional:
-- resource_id: str | None. An identifier used to link to an external system to load data.
+- `resource_id`: str | None. An identifier used to link to an external system to load data.
 For example, this could be an id that we use to build a link to a specific product page.
 
 ### Issue Evidence Schema
-- name: str.
-- value: str
-- important: bool. Whether this entry contains important data to display to the user.
+- `name`: str.
+- `value`: str
+- `important`: bool. Whether this entry contains important data to display to the user.
 One entry should be marked as important, and it will be displayed in space constrained
 integrations.
 
@@ -93,13 +84,13 @@ integrations.
 The event schema should match the <Link to="/event-payloads/">Sentry event schema</Link>. Any fields/interfaces defined here can be passed along with your event. It's best to fill in as many of these as makes sense for your issue type.
 
 There's a minimum set of fields which should be included:
-- environment
-- event_id
-- platform
-- project_id
-- received
-- tags - Should be an empty dict if no tags
-- timestamp
+- `environment`
+- `event_id`
+- `platform`
+- `project_id`
+- `received`
+- `tags` - Should be an empty dict if no tags
+- `timestamp`
 
 Caveats
 - Attachments will not work. If you have a need for this please contact the issues team.
