@@ -2,19 +2,19 @@
 title: "Issue Platform"
 ---
 
-The Issue Platform allows developers to create new issue types from data streams.
+The Issue Platform allows developers to create new issue types from arbitrary data sources.
 
 To use the Issue Platform you need to
 
-1. Write a Detector
-2. Register an issue type
-3. Start Occurrences to the Issue Platform
-
+1. <Link to="#writing-a-detector">Write a Detector</Link> 
+2. <Link to="#register-an-issue-type">Register an Issue Type</Link> 
+3. <Link to="#send-occurrences-to-the-issue-platform">Send Occurrences to the Issue Platform</Link> 
+4. <Link to="#Releasing-your-issue-type">Release</Link>
 
 ## Writing a Detector
 The first step to introducing a new issue type to Sentry is to determine what type of
 issue you want to detect. It can be from any data stream, as long as you can produce an
-<Link to="#send-occurrences-to-the-issue-platform"Occurrence></Link> representing the issue
+<Link to="#issue-occurrence-schema">Occurrence</Link> representing the issue
 
 ## Register an Issue Type
 To register a new issue type you need to subclass `GroupType` https://github.com/getsentry/sentry/blob/ef76b0765f6c057af12b1cd0dc2de6b42a938c02/src/sentry/issues/grouptype.py#L98-L108
@@ -43,27 +43,16 @@ class ProfileFileIOGroupType(GroupType):
 
 
 ## Send Occurrences to the Issue Platform
-If operating within the Sentry codebase, you can call `sentry.issues.produce_occurrence_to_kafka` https://github.com/getsentry/sentry/blob/master/src/sentry/issues/producer.py#L28-L30
-and pass in the Occurrence, and optionally the `Event` data.
+If operating within the Sentry codebase, you can call <Link to="https://github.com/getsentry/sentry/blob/master/src/sentry/issues/producer.py#L28-L30">sentry.issues.produce_occurrence_to_kafka</Link>
+and pass in the <Link to="https://github.com/getsentry/sentry/blob/d262bbd9d8d3a2747d5251bee35c016c13ca050a/src/sentry/issues/issue_occurrence.py#L58">IssueOccurrence</Link>, and optionally the `Event` data. The fields in these are described in the schemas below.
 
-If operating from a separate service pass a json payload with this format:
-[format]
+If operating from an external service then pass a json payload that matches the <Link to="#issue-occurrence-schema">Issue Occurrence Schema</Link>:
 
-Issue Evidence
-- name: str.
-- value: str
-- important: bool. Whether this entry contains important data to display to the user.
-One entry should be marked as important, and it will be displayed in space constrained
-integrations.
-
-
-Issue Occurrence:
+### Issue Occurrence Schema:
 Required:
 - id: str. A user generated uuid in string format representing a unique id for this occurrence.
 Generally it's a good idea to generate this separately to your event id.
 - project_id: int. Id of the project this occurred in
-- event_id: str.
-- event: [Event].
 - fingerprint: Sequence[str].  Unique identifier for the root cause of this problem.
 Used for aggregating occurrences together into groups. We only make use of the first
 fingerprint for the moment - if you have a use case for additional fingerprints let the
@@ -85,13 +74,38 @@ we'll display one row that is labelled `important` if available.
 - level: str
 - culprit: str
 
+One of:
+- event_id: str. The event id of an existing event, typically this would be an error or transaction id.
+- event: <Link to="event-schema">Event</Link>
+
 Optional:
 - resource_id: str | None. An identifier used to link to an external system to load data.
 For example, this could be an id that we use to build a link to a specific product page.
 
+### Issue Evidence Schema
+- name: str.
+- value: str
+- important: bool. Whether this entry contains important data to display to the user.
+One entry should be marked as important, and it will be displayed in space constrained
+integrations.
+
+### Event Schema
+The event schema should match the <Link to="/event-payloads/">Sentry event schema</Link>. Any fields/interfaces defined here can be passed along with your event. It's best to fill in as many of these as makes sense for your issue type.
+
+There's a minimum set of fields which should be included:
+- environment
+- event_id
+- platform
+- project_id
+- received
+- tags - Should be an empty dict if no tags
+- timestamp
+
+Caveats
+- Attachments will not work. If you have a need for this please contact the issues team.
 
 ## Releasing your issue type
-The issue platform provides a few things to help with releasing your new issue type in
+The issue platform provides a functionality to help release your new issue type in
 a controlled way. It creates feature flags to control whether the issue types are ingested,
 go through post processing (for sending notifications etc) and whether to display them in the
 ui.
@@ -102,7 +116,7 @@ https://sentry.io/_admin/options/.
 
 The flag for the UI uses flagr. We're unable to register things in flagr automatically
 at the moment, so you'll need to create the flagr yourself. It will be in the format
-`organizations:[GroupType.slug.replace("_", "-")]-visible`.
+`organizations:\<GroupType.slug.replace("_", "-")\>-visible`.
 
 Once your issue type is fully released and you want it to go out to self-hosted and single tenant
 you can set `release = True` on your GroupType. This allows it to be released everywhere, and
