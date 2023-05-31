@@ -24,11 +24,9 @@ When registering the class, set the following required attributes on the class:
 
 You may also set these optional attributes:
 - noise_config: A `NoiseConfig` that allows you to set policy on how many times a fingerprint must occur in a period of time before an issue is created
-  
-TODO: Include docs about releasing and explain how `- released: bool = False` is used
 
 Here's an example issue type:
-```
+```python
 @dataclass(frozen=True)
 class ProfileFileIOGroupType(GroupType):
     type_id = 2001
@@ -36,8 +34,6 @@ class ProfileFileIOGroupType(GroupType):
     description = "File I/O on Main Thread"
     category = GroupCategory.PROFILE.value
 ```
-
-
 
 ## Send Occurrences to the Issue Platform
 If operating within the Sentry codebase, you can call <Link to="https://github.com/getsentry/sentry/blob/master/src/sentry/issues/producer.py#L28-L30">sentry.issues.produce_occurrence_to_kafka</Link> and pass in the <Link to="https://github.com/getsentry/sentry/blob/d262bbd9d8d3a2747d5251bee35c016c13ca050a/src/sentry/issues/issue_occurrence.py#L58">IssueOccurrence</Link>, and optionally the `Event` data. The fields in these are described in the schemas below.
@@ -59,15 +55,15 @@ of the issue and also used in notifications.
 - `evidence_data`: Mapping[str, Any]. An arbitrary map of data. The issue platform doesn't
 make use of this data directly, it just make it available for use on the frontend and in
 notifications.  This can be used to customize the issue details ui, notifications and so on.
-- `evidence_display`: Sequence[<Link to="issue-evidence-schema">IssueEvidence</Link>]. A sequence of `IssueEvidence` entries. These are used to display generic information about your issue in the issue details ui and in various notifications. Even if you are customizing the ui and email, it's recommended to include this so that we can display information correctly on all our other integrations. Typically, these will be displayed in a table when space allows. For space limited integrations we'll display one row that is labelled `important` if available.
-- `type`: int: The type of issue you are created. Maps to `type_id` in your registered `GroupType`.
+- `evidence_display`: Sequence[<Link to="#issue-evidence-schema">IssueEvidence</Link>]. A sequence of `IssueEvidence` entries. These are used to display generic information about your issue in the issue details ui and in various notifications. Even if you are customizing the ui and email, it's recommended to include this so that we can display information correctly on all our other integrations. Typically, these will be displayed in a table when space allows. For space limited integrations we'll display one row that is labelled `important` if available.
+- `type`: int: The type of issue you are creating. Maps to `type_id` in your registered `GroupType`.
 - `detection_time`: float. A timestamp representing when the issue was detected.
 - `level`: str
 - `culprit`: str
 
 One of:
 - `event_id`: str. The event id of an existing event, typically this would be an error or transaction id.
-- `event`: <Link to="event-schema">Event</Link>
+- `event`: <Link to="#event-schema">Event</Link>
 
 Optional:
 - `resource_id`: str | None. An identifier used to link to an external system to load data.
