@@ -68,22 +68,27 @@ Both the `app/components/` and `app/views` folders contain React components.
 - Use a view for UI that will typically not be reused in other parts of the codebase
 - Use a component for UI that is designed to be highly reusable.
 
-### PropTypes
+### Type declarations
 
-Use them, be explicit, use the shared custom proptypes when possible.
+We do not follow any strict "prefer type over interface" rules for type declarations, so using either is at your discretion. That being said, there are [functional differences](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#differences-between-type-aliases-and-interfaces) between the two that you should be aware of so you can use them appropriately. 
+A simple guiding principle is to prefer interfaces when you require declaration merging. The reason for that is that type intersections are poor at detecting conflicts, produce unexpected or unwanted results and when used in combination with large types [perform worse than interfaces](https://github.com/microsoft/TypeScript/wiki/Performance#preferring-interfaces-over-intersections).
 
-Prefer `Proptypes.arrayOf` to `PropTypes.array` and `PropTypes.shape` to `PropTypes.object`
+Example:
+```typescript
+// This is valid and the outcome is a "never" type
+type A =
+{ color: "blue" } & 
+{ color: "red" };
 
-If you’re passing Objects with an important, well defined set of keys (that your component relies on) then define them explicitly with `PropTypes.shape`:
-
-```javascript
-PropTypes.shape({
-  username: PropTypes.string.isRequired,
-  email: PropTypes.string
-})
+interface B {
+  color: "blue";
+}
+// Interface 'C' incorrectly extends interface 'B'.
+//   Types of property 'color' are incompatible.
+interface C extends B {
+  color: "red";
+}
 ```
-
-If you’re re-using a custom prop-type or passing around a common shared shape like an organization, project, or user, then be sure to import a proptype from our useful collection of custom ones! [https://github.com/getsentry/sentry/blob/master/static/app/sentryTypes.tsx](https://github.com/getsentry/sentry/blob/master/static/app/sentryTypes.tsx)
 
 ### Event handlers
 
@@ -139,14 +144,6 @@ const ButtonBar = styled("div")`
 ```
 
 See https://styled-components.com/docs/tooling#interpolation-tagging for other tags and more information.
-
-## State management
-
-We currently use [Reflux](https://github.com/reflux/refluxjs) for managing global state.
-
-Reflux implements the unidirectional data flow pattern outlined by [Flux](https://facebook.github.io/flux/). Stores are registered under `app/stores` and are used to store various pieces of data used by the application. Actions need to be registered under `app/actions`. We use action creator functions (under `app/actionCreators`) to dispatch actions. Reflux stores listen to actions and update themselves accordingly.
-
-We are currently exploring alternatives to the `Reflux` library for future use.
 
 ## Testing
 
