@@ -15,7 +15,7 @@ A sample rate is a number in the interval `[0.0, 1.0]` that will determine the l
 
 At the core of Dynamic Sampling there is the concept of **fidelity**, which translates to an overall **target sample rate** that should be applied across all transactions of an organization.
 
-The **determination** of the target sample rate is done dynamically by analyzing the volume of data received by Sentry in a specific time window (configurable [here](https://github.com/getsentry/sentry/blob/f3a2220ccd3a2118a1255a4c96a9ec2010dab0d8/src/sentry/options/defaults.py#L690)) and then calling the `get_sampling_tier_for_volume` function (defined [here](https://github.com/getsentry/sentry/blob/f3a2220ccd3a2118a1255a4c96a9ec2010dab0d8/src/sentry/quotas/base.py#L481)) which takes as input the volume in the time window and returns a sampling tier (`volume`, `sample_rate`).
+The **determination** of the target sample rate is done dynamically by analyzing the volume of data received by Sentry in a specific time window (configurable [here](https://github.com/getsentry/sentry/blob/f3a2220ccd3a2118a1255a4c96a9ec2010dab0d8/src/sentry/options/defaults.py#L690)) and then calling the `get_sampling_tier_for_volume` function (defined [here](https://github.com/getsentry/sentry/blob/f3a2220ccd3a2118a1255a4c96a9ec2010dab0d8/src/sentry/quotas/base.py#L481)) which takes as input the volume in the time window and returns a sampling tier in the form of (`volume`, `sample_rate`).
 
 _The `get_sampling_tier_for_volume`, like the `get_blend_sample_rate` function (defined [here](https://github.com/getsentry/sentry/blob/f3a2220ccd3a2118a1255a4c96a9ec2010dab0d8/src/sentry/quotas/base.py#L466)), is a function that must be overridden by the user to customize the behavior of Dynamic Sampling._
 
