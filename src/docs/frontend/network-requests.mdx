@@ -147,7 +147,7 @@ const queryClient = useQueryClient();
 
 function handleCreateProject() {
   const newProject = await createProject();
-  setApiQueryData<ProjectsResponse>(queryClient, makeProjectsQueryKey(...), data => {
+  setApiQueryData<ProjectsResponse>(queryClient, makeFetchProjectsQueryKey(...), data => {
     return data ? [...data, newProject] : data;
   });
 }
