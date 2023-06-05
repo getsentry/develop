@@ -24,6 +24,7 @@ When registering the class, set the following required attributes on the class:
 
 You may also set these optional attributes:
 - `noise_config`: A `NoiseConfig` that allows you to set policy on how many times a fingerprint must occur in a period of time before an issue is created
+- `released`: Whether this issue type has been released to all customers. See <Link to="#releasing-your-issue-type">Releasing your issue type</Link>
 
 Here's an example issue type:
 ```python
@@ -55,7 +56,7 @@ issue platform team know.
 of the issue and also used in notifications.
 - `subtitle`: str: Extra detail about the issue, displayed below the `issue_title`
 - `culprit`: str: Where the problem occurred. This could be an api path, a function path, etc.
-![Issue Properties](../img/issueProperties.jpg)
+![issue properties](img/issueProperties.jpg)
 - `evidence_data`: Mapping[str, Any]. An arbitrary map of data. The issue platform doesn't
 make use of this data directly, it just make it available for use on the frontend and in
 notifications.  This can be used to customize the issue details ui, notifications and so on.
