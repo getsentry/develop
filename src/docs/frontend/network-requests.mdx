@@ -122,7 +122,7 @@ function ProjectSubComponent({orgSlug}: EventPaginationProps) {
 }
 ```
 
-Note that we add an `options` argument to our `useFetchEvents` hook so that consumers can pass their own options. Some options that can be helpful to use are:
+Note that we add an `options` argument to our `useFetchProjects` hook so that consumers can pass their own options. Some options that can be helpful to use are:
 
 - `refetchOnMount: false`
   - If you are using a non-infinite value for `staleTime`, subcomponents may cause refetches when mounted. By setting `refetchOnMount: false` on the subcomponent `useApiQuery`, you can prevent this.
