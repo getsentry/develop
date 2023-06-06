@@ -14,13 +14,13 @@ To use the Issue Platform you need to:
 The first step to introducing a new issue type to Sentry is to determine what type of issue you want to detect. It can be from any data stream, as long as you can produce an <Link to="#issue-occurrence-schema">Occurrence</Link> representing the issue
 
 ## Register an Issue Type
-To register a new issue type you need to subclass `GroupType` https://github.com/getsentry/sentry/blob/ef76b0765f6c057af12b1cd0dc2de6b42a938c02/src/sentry/issues/grouptype.py#L98-L108
+To register a new issue type you need to subclass <Link to="https://github.com/getsentry/sentry/blob/ef76b0765f6c057af12b1cd0dc2de6b42a938c02/src/sentry/issues/grouptype.py#L98-L108">`GroupType`</Link>
 
 When registering the class, set the following required attributes on the class:
 - `type_id`: A unique integer to identify your issue type.
 - `slug`: A unique slug to identify your issue type. Used to search by issue type in the issue stream
-- `description`: A human readable description of your issue type [include where this is used]
-- `category`: The overall category that your issue type belongs to. [include docs on creating a category]
+- `description`: A human-readable description of your issue type.
+- `category`: The overall category that your issue type belongs to. You can <Link to="#register-a-category">register a category</Link> if the existing ones don't make sense for your issue type.
 
 You may also set these optional attributes:
 - `noise_config`: A `NoiseConfig` that allows you to set policy on how many times a fingerprint must occur in a period of time before an issue is created
@@ -35,6 +35,9 @@ class ProfileFileIOGroupType(GroupType):
     description = "File I/O on Main Thread"
     category = GroupCategory.PROFILE.value
 ```
+
+### Register a Category
+You might also want to register a new category related to your issue type as well. This allows you to group related issue types together. To do so, add your category to <Link to="https://github.com/getsentry/sentry/blob/97f4174c28041357aa190f27012dc33c1c7bafc7/src/sentry/issues/grouptype.py#L17-L22">this enum</Link>
 
 ## Send Occurrences to the Issue Platform
 If operating within the Sentry codebase, you can call <Link to="https://github.com/getsentry/sentry/blob/master/src/sentry/issues/producer.py#L28-L30">sentry.issues.produce_occurrence_to_kafka</Link> and pass in the <Link to="https://github.com/getsentry/sentry/blob/d262bbd9d8d3a2747d5251bee35c016c13ca050a/src/sentry/issues/issue_occurrence.py#L58">IssueOccurrence</Link>, and optionally the `Event` data. The fields in these are described in the schemas below.
@@ -63,8 +66,7 @@ notifications.  This can be used to customize the issue details ui, notification
 - `evidence_display`: Sequence[<Link to="#issue-evidence-schema">IssueEvidence</Link>]. A sequence of `IssueEvidence` entries. These are used to display generic information about your issue in the issue details ui and in various notifications. Even if you are customizing the ui and email, it's recommended to include this so that we can display information correctly on all our other integrations. Typically, these will be displayed in a table when space allows. For space limited integrations we'll display one row that is labelled `important` if available.
 - `type`: int: The type of issue you are creating. Maps to `type_id` in your registered `GroupType`.
 - `detection_time`: float. A timestamp representing when the issue was detected.
-- `level`: str
-- `culprit`: str
+- `level`: str. Info\Warning\Error
 
 One of:
 - `event_id`: str. The event id of an existing event, typically this would be an error or transaction id.
