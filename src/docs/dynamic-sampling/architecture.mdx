@@ -158,7 +158,7 @@ The invalidation of the configuration can happen under **several circumstances**
 The generation of the rules that will be part of the project configuration recalculation is defined [here](https://github.com/getsentry/sentry/blob/master/src/sentry/dynamic_sampling/rules/base.py#L72-L72) and works by performing the following steps:
 
 1. Fetching the list of active biases, since some of them can be enabled or disabled by the user in the Sentry UI;
-2. Determining the base sample rate which will be used for the low volume projects bias.
+2. Determining the base sample rate specific for each project.
 3. Computing the rules for each bias by using all the information available at the time (e.g., in memory, fetched from Redis);
 4. Packing the rules into the `dynamicSampling.rulesV2` field of the project configuration;
 5. Returning all the set of rules that will be stored in the project configuration.
