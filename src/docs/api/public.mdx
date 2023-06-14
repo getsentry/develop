@@ -1,5 +1,5 @@
 ---
-title: "Making an API Public"
+title: 'Making an API Public'
 ---
 
 ## Introduction
@@ -127,7 +127,7 @@ Specify the parameters using a list, and a serializer if needed.
 Specify the request and response serializers.
 
 - Request serializers, since they use DRF serializers, can generally just be the serializer itself. There is plenty of customization and if needed can be overriden with `inline_serializer`. These will be passed to the `request` parameter in `extend_schema`.
-- For our response serializers, you must type the `serialize` function's return with a `TypedDict` and pass the serializer as a parameter in `extend_schema`. See [here](https://github.com/getsentry/sentry/blob/master/src/sentry/api/serializers/models/organization_member/scim.py) for an example of this.
+- For our response serializers, you must type the `serialize` function's return with a `TypedDict` pass the serializer as a parameter in `extend_schema`. See [here](https://github.com/getsentry/sentry/blob/master/src/sentry/api/serializers/models/organization_member/scim.py) for an example of this.
 - If the response is a wrapper or you need more customization, you can use the `inline_sentry_response_serializer` function.
 
 ```python
@@ -142,11 +142,12 @@ from sentry.apidocs.utils import inline_sentry_response_serializer
   }
 )
 ```
-- Note that you can instead provide OpenAPI JSON, so you can fall back to this if you are running into issues.
 
+- Note that you can instead provide OpenAPI JSON, so you can fall back to this if you are running into issues.
 
 Examples can be directly inserted using `OpenApiExample`, and multiple can be provided. If needed,
 create new examples in `src/sentry/apidocs/examples/**` under the appropriate folder.
+
 ```python
 from drf_spectacular.types import OpenApiExample
 
@@ -154,9 +155,9 @@ class TeamExamples:
   CREATE_TEAM = [
       OpenApiExample(
           "Create a new team", # description of example
-          value={"slug": "my-team", "name": "My Team"}, # response body, can be a dict or list
+          value={"slug": "my-team", "name": "My Team"}, # response body
           status_codes=["201"], # the status code(s) this example applies to
-          response_only=True, # You MUST include this for all examples!!!
+          response_only=True, # You MUST INCLUDE this for all examples!!!
       )
   ]
 ```
@@ -167,9 +168,12 @@ See [here](https://github.com/getsentry/sentry/blob/master/src/sentry/api/endpoi
 delete the old documentation path found in [this
 file](https://github.com/getsentry/sentry/blob/master/api-docs/openapi.json) along with its
 corresponding JSON build in [this
-folder](https://github.com/getsentry/sentry/blob/master/api-docs/paths)**
+folder](https://github.com/getsentry/sentry/blob/master/api-docs/paths).**
 
-Write a test [here](https://github.com/getsentry/sentry/tree/master/tests/apidocs).
+**Additionally if there are multiple request types in the same endpoint using the old documentation
+(eg: both `GET`+`POST`), you must update both of them in the same PR. Updating only one request and
+deleting the documentation path/JSON will cause the other unedited request to disappear from the
+docs.**
 
 **Tips**:
 
