@@ -127,7 +127,10 @@ Specify the parameters using a list, and a serializer if needed.
 Specify the request and response serializers.
 
 - Request serializers, since they use DRF serializers, can generally just be the serializer itself. There is plenty of customization and if needed can be overriden with `inline_serializer`. These will be passed to the `request` parameter in `extend_schema`.
-- For our response serializers, you must type the `serialize` function's return with a `TypedDict` pass the serializer as a parameter in `extend_schema`. See [here](https://github.com/getsentry/sentry/blob/master/src/sentry/api/serializers/models/organization_member/scim.py) for an example of this.
+- For our response serializers, you must type the `serialize` function's return with a `TypedDict`
+  and pass the serializer as a parameter in `extend_schema`. See
+  [here](https://github.com/getsentry/sentry/blob/master/src/sentry/api/serializers/models/organization_member/scim.py)
+  for an example of this.
 - If the response is a wrapper or you need more customization, you can use the `inline_sentry_response_serializer` function.
 
 ```python
@@ -142,7 +145,7 @@ from sentry.apidocs.utils import inline_sentry_response_serializer
   }
 )
 ```
-
+ Updating one request and you must update both of them in the same PR
 - Note that you can instead provide OpenAPI JSON, so you can fall back to this if you are running into issues.
 
 Examples can be directly inserted using `OpenApiExample`, and multiple can be provided. If needed,
