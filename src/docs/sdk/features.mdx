@@ -341,6 +341,7 @@ Instead, the error has to be captured if the GraphQL response contains an `error
 ```kotlin
 val regex = "(?i)\"errors\"\\s*:\\s*\\[".toRegex()
 
+// [body] is the stringified GraphQL response body
 if (regex.containsMatchIn(body)) {
     // captures the error
 }
