@@ -263,7 +263,6 @@ Add a breadcrumb for each outgoing HTTP request after the request finishes:
 - data (all fields are optional but recommended):
   - `url` - The URL used in the HTTP request
   - `method` - uppercase HTTP method, i.e: GET, HEAD
-  - `method` - uppercase HTTP method, i.e: GET, HEAD
   - `http.query` - The URL query
   - `http.fragment` - The URL fragment
   - `request_body_size` Size in bytes
@@ -292,7 +291,7 @@ The HTTP Client integration should have 3 configuration options:
   - If the language has a `Range` type, it should be used instead of `HttpStatusCodeRange`.
 - `failedRequestTargets` defaults to (`.*`), this configuration option accepts a `List` of `String` that may be Regular expressions as well, similar to <Link to="/sdk/performance/#tracepropagationtargets">tracePropagationTargets</Link>.
   - The SDK will only capture HTTP Client errors if the HTTP Request URL is a match for any of the `failedRequestsTargets`.
--  sensitive `headers` should only be set if `senddefaultPii` is enabled, e.g. `Cookie` and `Set-Cookie`.
+-  sensitive `headers` should only be set if `sendDefaultPii` is enabled, e.g. `Cookie` and `Set-Cookie`.
 
 The HTTP Client integration should capture error events with the following properties:
 
@@ -335,8 +334,6 @@ As an example, see the [OkHTTP Client integration](https://github.com/getsentry/
 
 The GraphQL Client integrations match the [HTTP Client Integrations](/sdk/features/#http-client-integrations) with a few differences:
 
-The `fingerprints` field should be set to `["$operationName", "$operationType", "$statusCode"]`.
-
 The `failedRequestStatusCodes` parameter does not exist because GraphQL errors are not HTTP errors, sometimes the request is errored and the response is successful.
 
 Instead, the error has to be captured if the GraphQL response contains an `errors` array, you can do that by Regexing the response body, e.g.:
@@ -358,6 +355,7 @@ Additional fields for breadcrumbs:
 
 Additional fields for the Request interface:
 
+```json
 {
   "request": {
     "api_target": "graphql",
@@ -366,11 +364,13 @@ Additional fields for the Request interface:
     }
   }
 }
+```
 
 The `data` field is a JSON object that contains the GraphQL request payload.
 
 Additional fields for the Response interface:
 
+```json
 {
   "contexts": {
     "response": {
@@ -380,8 +380,19 @@ Additional fields for the Response interface:
     }
   }
 }
+```
 
 The `data` field is a JSON object that contains the GraphQL response payload.
+
+Additional fields for the Event interface:
+
+The `fingerprints` field should be set to `["$operationName", "$operationType", "$statusCode"]`.
+
+```json
+{
+  "fingerprints": ["$operationName", "$operationType", "$statusCode"]
+}
+```
 
 ## Attaching Request Body in Server SDKs
 
