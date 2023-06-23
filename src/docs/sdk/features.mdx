@@ -263,6 +263,7 @@ Add a breadcrumb for each outgoing HTTP request after the request finishes:
 - data (all fields are optional but recommended):
   - `url` - The URL used in the HTTP request
   - `method` - uppercase HTTP method, i.e: GET, HEAD
+  - `status_code` - Numeric status code such as `200` or `404`
   - `http.query` - The query part of the URL
   - `http.fragment` - The fragment part of the URL
   - `request_body_size` Size in bytes
