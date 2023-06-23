@@ -355,7 +355,7 @@ Additional fields for breadcrumbs:
   - `operation_type` - The GraphQL operation type, i.e: `query`, `mutation`, `subscription`
   - `operation_id` - The GraphQL operation ID
 
-Additional fields for the Request interface:
+Required fields for the Request interface:
 
 ```json
 {
@@ -370,7 +370,7 @@ Additional fields for the Request interface:
 
 The `data` field is a JSON object that contains the GraphQL request payload.
 
-Additional fields for the Response interface:
+Required fields for the Response interface:
 
 ```json
 {
@@ -386,7 +386,7 @@ Additional fields for the Response interface:
 
 The `data` field is a JSON object that contains the GraphQL response payload.
 
-Additional fields for the Event interface:
+Required fields for the Event interface:
 
 The `fingerprints` field should be set to `["$operationName", "$operationType", "$statusCode"]`.
 
