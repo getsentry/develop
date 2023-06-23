@@ -335,7 +335,7 @@ As an example, see the [OkHTTP Client integration](https://github.com/getsentry/
 
 The GraphQL Client integrations should match the guidelines for [HTTP Client Integrations](/sdk/features/#http-client-integrations) with a few differences:
 
-The `failedRequestStatusCodes` parameter does not exist because GraphQL errors are not HTTP errors, sometimes the request is errored and the response is successful.
+The `failedRequestStatusCodes` parameter does not exist because GraphQL errors are not HTTP errors, so that the request can be errored even though the HTTP status code of the response is successful.
 
 Instead, the error has to be captured if the GraphQL response contains an `errors` array, you can do that by Regexing the response body, e.g.:
 
