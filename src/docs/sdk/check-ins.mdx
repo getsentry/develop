@@ -69,11 +69,14 @@ The following fields exist:
 
 `monitor_config`
 
-: _Object, optional_. A monitor configuration (defined below) that is stored with the check-in in order to verify the state of the monitor at the time of the check-in.
+: _Object, optional_. A monitor configuration (defined below) that is stored with the
+ check-in in order to verify the state of the monitor at the time of the check-in.
 
 `contexts`
 
-: _Object, optional_. A dictionary of contextual information about the environment running the check-in. Right now we only support the [trace context](https://develop.sentry.dev/sdk/event-payloads/contexts/#trace-context) and use the `trace_id` in order to link check-ins to associated errors.
+: _Object, optional_. A dictionary of contextual information about the environment running
+ the check-in. Right now we only support the [trace context](https://develop.sentry.dev/sdk/event-payloads/contexts/#trace-context)
+  and use the `trace_id` in order to link check-ins to associated errors.
 
 ## Monitor upsert support
 
