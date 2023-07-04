@@ -11,6 +11,7 @@ which can be used to show more accurate information on the time spent in the scr
 Being spans, they don't impact user quota.
 
 The SDK starts them as soon as a new screen is created, as long as there is an active transaction for the screen load.
+Note: When the app is started, the SDK aligns the start timestamp of the Time to Initial Display and Time to Full Display to the app start timestamp.
 
 ## Time to Initial Display
 
@@ -46,6 +47,12 @@ Scenario: Option enabled
     Given the enableTimeToFullDisplay option is enabled
     When the SDK creates a new screen load transaction
     Then the Full Display span is started
+
+Scenario: App started
+    Given the enableTimeToFullDisplay option is enabled
+    When the app starts
+    And the SDK start the span
+    Then the SDK aligns the span start timestamp to the app start timestamp
 
 Scenario: Screen displayed
     Given an ongoing Full Display span
