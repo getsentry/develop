@@ -51,8 +51,7 @@ Scenario: Option enabled
 Scenario: App started
     Given the enableTimeToFullDisplay option is enabled
     When the app starts
-    And the SDK start the span
-    Then the SDK aligns the span start timestamp to the app start timestamp
+    The SDK sets the start timestamp of the Time to Initial Display and Time to Full Display span to the app start timestamp.
 
 Scenario: Screen displayed
     Given an ongoing Full Display span
