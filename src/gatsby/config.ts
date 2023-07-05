@@ -1,19 +1,11 @@
 import queries from '../utils/algolia';
 
-const activeEnv = process.env.GATSBY_ENV || process.env.NODE_ENV || 'development';
-
 const root = `${__dirname}/../..`;
 
 const getPlugins = () => {
   const plugins = [
     {
       resolve: '@sentry/gatsby',
-      options: {
-        dsn:
-          process.env.SENTRY_DSN ||
-          'https://f107f3f0deb544289e4e056922e5e5a4@o1.ingest.sentry.io/5266138',
-        tracesSampleRate: activeEnv === 'development' ? 0 : 1,
-      },
     },
     'gatsby-plugin-sass',
     'gatsby-plugin-sharp',

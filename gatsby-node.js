@@ -1,5 +1,4 @@
 const Sentry = require('@sentry/node');
-require('@sentry/tracing');
 const Profiling = require('@sentry/profiling-node');
 
 const activeEnv = process.env.GATSBY_ENV || process.env.NODE_ENV || 'development';
