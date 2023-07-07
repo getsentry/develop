@@ -20,7 +20,7 @@ Suppose we group all N+1 db query problems based solely on the problem class. Th
 
 ## Risk: Strict grouping strategy
 
-Let’s say we group all N+1 db queries that have exactly the same span db description (we won’t parameterize them either). That way if a query contains any dynamic fields like dates, then too many issues will be created. Although those issues have the same fix, they won’t be grouped together. This also violates the fingerprinting principles.
+Suppose we group all N+1 db queries that have exactly the same span DB description (without parameterization). In this case, if a query contains dynamic fields like dates, it would result in too many separate issues. Although these issues have the same fix, they would not be grouped together. This also goes against the principles of fingerprinting.
 
 ## Risk: Fingerprinting on real users’ events
 
