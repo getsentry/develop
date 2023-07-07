@@ -12,7 +12,7 @@ For new kinds of issues, starting with a simpler one-level grouping strategy is 
     A fingerprint represents a unique problem and its each occurrence has the same root cause and the same fix. For N+1 Db Query Issues, a fingerprint is a hash of parameterized repeated db span description, source span description, parent span description and a problem class (N+1 db query). <Link to="https://github.com/getsentry/sentry/blob/master/src/sentry/utils/performance_issues/detectors/n_plus_one_db_span_detector.py#L253-L258">Code</Link>.
 </aside>
 
-If an Issue has 3 events that means that this particular problem has 3 instances and the same cause. Fixing this one issue should ensure that all of those 3 instances won’t occur again.
+If an issue has 3 events, it means that this specific problem has occurred 3 times with the same cause. Fixing this one issue should prevent all 3 instances from recurring.
 
 ## Risk: Loose grouping strategy
 
