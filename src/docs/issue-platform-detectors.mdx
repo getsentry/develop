@@ -106,7 +106,7 @@ A safe rollout strategy will depend on your team's implementation of detection a
     There are two kinds of options we use at Sentry, options usually refers to “system-wide” `options`, and `projectoptions` refers to options set for specific projects. We are using a combination of these to allow us to opt in the following:
 
     - Detection rates
-        - We have separate detection rates so we can add new detectors or modify thresholds on detectors and report it via metrics (datadog or our own transactions)
+        - We have implemented separate detection rates, allowing us to add new detectors or adjust thresholds on existing detectors. This enables us to track and report these changes through metrics
     - Thresholds
         - This lets us tune detectors and observe effects live in production.
 
