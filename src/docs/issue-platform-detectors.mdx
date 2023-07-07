@@ -27,35 +27,32 @@ Let’s say we group all N+1 db queries that have exactly the same span db descr
 Make sure a fingerprinting strategy stands the test of real data. Test fingerprinting not only on Sentry’s data but also on data of other orgs!
 
 ## Example: N+1 query fingerprinting brainstorm
+Let's brainstorm an example of N+1 database query fingerprinting. Here's the breakdown:
 
-- What problem am I detecting?
-   - N+1 database query
+- Problem: Our objective is to identify N+1 database queries.
+- Contextual information available for analysis:
+    - Problem Class: Identifying the specific problem class of N+1 database queries.
+    - Repeated span operation and description: Analyzing the operation and description of the repeated spans.
+    - Span that initiated repeated spans (preceding span): Examining the span that triggered the occurrence of repeated spans.
+    - Parent span of repeated and preceding spans: Understanding the relationship and hierarchy between the parent span and the repeated/preceding spans.
+    - Transaction name: Considering the transaction name associated with the query, noting that different transactions can exhibit the same N+1 problem.
+    - Tags: Exploring any relevant tags associated with the query.
+    - SDKs: Taking into account the SDKs type or version in the transaction.
+- Unique aspects relevant to the problem:
+    - Problem Class: Capturing the specific problem class of N+1 database queries.
+    - Repeated span operation and description: Identifying the repeated span operation and description that characterizes the issue.
+    - Span that initiated repeated spans (preceding span): Analyzing the span responsible for initiating the occurrence of repeated spans.
+    - Parent span of repeated and preceding spans: Considering the parent span that encompasses both the repeated and preceding spans.
+    - Transaction name: Recognizing that different transactions can manifest the same N+1 problem.
+    - Tags: Taking into account any tags associated with the query.
+    - Any dynamic fields: Considering the presence of dynamic fields within the query.
+- Creation of resulting fingerprint:
+    - Problem Class: Incorporating the problem class of N+1 database queries into the fingerprint.
+    - Parameterized repeated span description: Using parameterized descriptions of the repeated span in the fingerprint.
+    - Parameterized source span description: Including parameterized descriptions of the source span in the fingerprint.
+    - Parameterized parent span description + parent operation: Incorporating parameterized descriptions of the parent span, along with the parent operation, in the fingerprint.
 
-- What contextual information do I have?
-    - Problem Class
-    - Repeated span operation, description
-    - A span that started repeated spans (preceding span)
-    - A parent span of repeated and preceding spans
-    - Transaction name
-    - Tags
-    - SDKs
-
-- Out of that information, what is unique to the problem?
-    - Problem Class
-    - Repeated span operation, description
-    - A span that started repeated spans (preceding span)
-    - A parent span of repeated and preceding spans
-    - ~~Transaction name~~ different transactions can have the same N+1 problem
-    - ~~Tags~~
-
-- Any dynamic fields
-    - Parameterized db queries
-
-- Resulting fingerprint
-    - Problem Class
-    - Parameterized repeated span description
-    - Parameterized source span description
-    - Parameterized parent span description + parent op
+By utilizing this fingerprinting approach, we can effectively identify and classify N+1 database queries based on their unique characteristics and contextual information, ensuring effective grouping.
 
 # Actionability/Usefulness
 
