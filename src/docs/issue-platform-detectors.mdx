@@ -16,7 +16,7 @@ If an issue has 3 events, it means that this specific problem has occurred 3 tim
 
 ## Risk: Loose grouping strategy
 
-Let’s say we group all N+1 db query problems so that a fingerprint would be solely based on a problem class. This violates same problem = same fix principle. N+1 db queries for different queries would have different fixes.
+Suppose we group all N+1 db query problems based solely on the problem class. This violates the principle of "same problem, same fix". Different N+1 db queries would require different fixes.
 
 ## Risk: Strict grouping strategy
 
