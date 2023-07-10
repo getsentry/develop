@@ -52,7 +52,7 @@ Scenario: App started
     Given the enableTimeToFullDisplay option is enabled
     When the app starts
     Then the SDK sets the start timestamp of the Time to Initial Display and Time to Full Display span to the app start timestamp
-    And the SDK will update the `time_to_initial_display` and `time_to_full_display` measurements accordingly
+    And the SDK updates the `time_to_initial_display` and `time_to_full_display` measurements accordingly
 
 Scenario: Screen displayed
     Given an ongoing Full Display span
@@ -67,7 +67,7 @@ Scenario: API not called
     Then the SDK finishes the span
     And sets the status to deadline_exceeded
     And sets the timestamp to the timestamp of the Initial Display span
-    And the SDK will update the `time_to_full_display` measurement accordingly
+    And the SDK updates the `time_to_full_display` measurement accordingly
 
 Scenario: API called
     Given an ongoing Full Display span
@@ -81,7 +81,7 @@ Scenario: API called too early
     When the SDK finishes the Initial Display span
     Then the SDK sets the status to ok
     And the SDK adjusts the Full Display span end timestamp to the Initial Display span end timestamp
-    And the SDK will update the `time_to_full_display` measurement accordingly
+    And the SDK updates the `time_to_full_display` measurement accordingly
 
 Scenario: Another screen load/navigation transaction occurs
     Given an ongoing Full Display span
@@ -89,7 +89,7 @@ Scenario: Another screen load/navigation transaction occurs
     Then the SDK finishes the Full Display span
     And the SDK sets the status to deadline_exceeded
     And the SDK sets the end timestamp to the Initial Display span end timestamp
-    And the SDK will update the `time_to_full_display` measurement accordingly
+    And the SDK updates the `time_to_full_display` measurement accordingly
 
 Scenario: No ongoing screen load transaction
     Given there is no active screen load transaction
