@@ -86,7 +86,11 @@ Performance issues affect many parts of the system, and it’s easy to overlook 
 
 Whenever possible, conduct tests using real data. It's advised to use actual transaction event JSON files to perform unit testing for Performance Detectors.
 
-Another tool that we used for validating and testing detector changes is a CLI script: https://github.com/getsentry/sentry/pull/39727
+Another tool that we used for validating and testing detector changes is a CLI script:
+    ```text
+    # https://github.com/getsentry/sentry/pull/39727
+    sentry performance detect /path/to/event.json
+    ```
 
 # Deployment
 
