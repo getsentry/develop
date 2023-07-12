@@ -9,9 +9,7 @@ Error events are categorized using various strategies such as stack traces. User
 
 For new types of issues, it is recommended to start with a simpler one-level grouping strategy. Fingerprinting strategies should be allowed to evolve gradually, as an incremental approach works best. It is difficult to anticipate all edge cases until actual data can be fingerprinted.
 
-<aside>
-    A fingerprint represents a unique problem. Each occurrence with that fingerprint has the same root cause and the same fix. For N+1 DB Query Issues, a fingerprint is a hash of parameterized repeated `db` span description, source span description, parent span description and a problem class (N+1 DB Query). <Link to="https://github.com/getsentry/sentry/blob/master/src/sentry/utils/performance_issues/detectors/n_plus_one_db_span_detector.py#L253-L258">Code</Link>.
-</aside>
+A fingerprint represents a unique problem. Each occurrence with that fingerprint has the same root cause and the same fix. For N+1 DB Query Issues, a fingerprint is a hash of parameterized repeated `db` span description, source span description, parent span description and a problem class (N+1 DB Query). <Link to="https://github.com/getsentry/sentry/blob/master/src/sentry/utils/performance_issues/detectors/n_plus_one_db_span_detector.py#L253-L258">Code</Link>.
 
 If an issue has 3 events, it means that this specific problem has occurred 3 times with the same cause. Fixing this one issue should prevent all 3 instances from recurring.
 
@@ -23,7 +21,7 @@ Suppose we group all N+1 DB Query problems based solely on the problem class. Th
 
 Suppose we group all N+1 DB Queries that have exactly the same span DB description (without parameterization). In this case, if a query contains dynamic fields like dates, it would result in too many separate issues. Although these issues have the same fix, they would not be grouped together. This also goes against the principles of fingerprinting.
 
-## Risk: Fingerprinting on real users’ events
+## Risk: Fingerprinting only on mock events
 
 Ensure that the fingerprinting strategy is tested with real data, not only from Sentry but also from other organizations!
 
@@ -87,9 +85,10 @@ Performance issues affect many parts of the system, and it’s easy to overlook 
 Whenever possible, conduct tests using real data. It's advised to use actual transaction event JSON files to perform unit testing for Performance Detectors.
 
 Another tool that we used for validating and testing detector changes is a [CLI script](https://github.com/getsentry/sentry/pull/39727):
-    ```shell
-    sentry performance detect /path/to/event.json
-    ```
+
+```shell
+sentry performance detect /path/to/event.json
+```
 
 # Deployment
 
@@ -102,27 +101,25 @@ A safe rollout strategy will depend on your team's implementation of detection a
     - Roll out detection and issue creation separately
 - Options for rates, thresholds
     There are two kinds of options we use at Sentry, options usually refers to “system-wide” `options`, and `projectoptions` refers to options set for specific projects. We are using a combination of these to allow us to opt in the following:
-
     - Detection rates
-        - We have implemented separate detection rates, allowing us to add new detectors or adjust thresholds on existing detectors. This enables us to track and report these changes through metrics
+        - We have implemented separate detection rates, allowing us to add new detectors or adjust thresholds on existing detectors. This enables us to track and report these changes through metrics.
     - Thresholds
-        - This capability allows us to fine-tune our detectors and observe their effects in real-time within the production environment. By adjusting the detection parameters and thresholds, we can monitor how these changes impact the detection accuracy and the number of detected issues
+        - This capability allows us to fine-tune our detectors and observe their effects in real-time within the production environment. By adjusting the detection parameters and thresholds, we can monitor how these changes impact the detection accuracy and the number of detected issues.
 
+```python
+# projectoptions/defaults.py
+key="sentry:performance_issue_creation_rate", default=1.0
 
-    ```python
-    # projectoptions/defaults.py
-    key="sentry:performance_issue_creation_rate", default=1.0
+key="sentry:performance_issue_settings",
+default={
+"n_plus_one_db_count": 5,
+"n_plus_one_db_duration_threshold": 500,
+}
+```
 
-    key="sentry:performance_issue_settings",
-    default={
-    "n_plus_one_db_count": 5,
-    "n_plus_one_db_duration_threshold": 500,
-    }
-    ```
-    ![Project options settings screenshot](img/issuePlatformFingerprinting02.png)
+![Project options settings screenshot](img/issuePlatformFingerprinting02.png)
 
 - Per-project detection settings
-
     [Project settings:](https://sentry.io/settings/sentry/projects/sentry/performance/)
 
     ![Project settings screenshot](img/issuePlatformFingerprinting03.png)
