@@ -3,7 +3,9 @@ title: "Issue Platform - Writing Detectors"
 ---
 
 Issue detectors identify application issues by examining one or more datasets collected by Sentry, and report detected issue occurrences via the <Link to="/issue-platform/">Issue Platform</Link>. Detectors must fingerprint issues accurately and provide actionable information to developers.
-# Fingerprinting
+# Considerations
+
+## Fingerprinting
 
 Error events are categorized using various strategies such as stack traces. Users have the flexibility to customize these strategies. Error fingerprinting is a complex and continuously evolving mechanism that has been in existence for many years.
 
@@ -13,19 +15,19 @@ A fingerprint represents a unique problem. Each occurrence with that fingerprint
 
 If an issue has 3 events, it means that this specific problem has occurred 3 times with the same cause. Fixing this one issue should prevent all 3 instances from recurring.
 
-## Risk: Loose grouping strategy
+### Risk: Loose grouping strategy
 
 Suppose we group all N+1 DB Query problems based solely on the problem class. This violates the principle of "same problem, same fix". Different N+1 DB Queries would require different fixes.
 
-## Risk: Strict grouping strategy
+### Risk: Strict grouping strategy
 
 Suppose we group all N+1 DB Queries that have exactly the same span DB description (without parameterization). In this case, if a query contains dynamic fields like dates, it would result in too many separate issues. Although these issues have the same fix, they would not be grouped together. This also goes against the principles of fingerprinting.
 
-## Risk: Fingerprinting only on mock events
+### Risk: Fingerprinting only on mock events
 
 Ensure that the fingerprinting strategy is tested with real data, not only from Sentry but also from other organizations!
 
-## Example: N+1 DB Query fingerprinting brainstorm
+### Example: N+1 DB Query fingerprinting brainstorm
 Let's brainstorm an example of N+1 database query fingerprinting. Here's the breakdown:
 
 - Problem: Our objective is to identify N+1 database queries.
@@ -53,7 +55,7 @@ Let's brainstorm an example of N+1 database query fingerprinting. Here's the bre
 
 By utilizing this fingerprinting approach, we can effectively identify and classify N+1 database queries based on their unique characteristics and contextual information, ensuring effective grouping.
 
-# Actionability/Usefulness
+## Actionability/Usefulness
 
 Once you have figured out the fingerprinting process and know how to group instances of the same problem with the same fix, the next step is to provide users with all the necessary information to fix the issue. The quality of an issue lies not only in its accurate detection but also in its actionability.
 
@@ -62,13 +64,15 @@ N+1 DB Query detection relies heavily on span analysis to identify problematic s
 Reporting circumstantial data is not useful! This is a crucial distinction between issues and alerts. Issues should pinpoint root problems and help resolve them.
 ![Span tree screenshot](img/issuePlatformFingerprinting01.png)
 
-# Signal vs. Noise
+## Signal vs. Noise
 
 With every new issue type, we could be adding more and more noise to the Issues product. New issues fatigue is real for our customers. This is why it’s important to understand how a new detector you want to ship affects the overall noise of the Issue Stream.
 
 Accurate detection of truly valuable problems and correct grouping can transform "noise" into "signal." Every detector should be evaluated against this standard. There is an option to [define a custom noise config](https://develop.sentry.dev/issue-platform/#register-an-issue-type) when creating a new detector.
 
-# Bits’n’Bobs
+# Development
+
+## Bits’n’Bobs
 
 Performance issues affect many parts of the system, and it’s easy to overlook something. Here are a few places to look to make sure your issues are working well:
 
@@ -80,7 +84,7 @@ Performance issues affect many parts of the system, and it’s easy to overlook 
 - **Alpha and Beta badges**.  Did you add Alpha or Beta badges to the issue details page as appropriate?
 - **Public documentation**. Does your detector have a corresponding page on [docs.sentry.io](https://docs.sentry.io)?
 
-# Testing
+## Testing
 
 Whenever possible, conduct tests using real data. It's advised to use actual transaction event JSON files to perform unit testing for Performance Detectors.
 
@@ -90,7 +94,7 @@ Another tool that we used for validating and testing detector changes is a [CLI 
 sentry performance detect /path/to/event.json
 ```
 
-# Deployment
+## Deployment
 
 A safe rollout strategy will depend on your team's implementation of detection and issue creation. However, there are general considerations to keep in mind:
 
