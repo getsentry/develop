@@ -400,7 +400,7 @@ The `fingerprints` field should be set to `["$operationName", "$operationType", 
 
 The GraphQL Performance integration should match the guidelines for [GraphQL Client Integrations](/sdk/features/#graphql-client-integrations) with a few differences:
 
-The transaction's name should be set with the GraphQL operation name, if possible, otherwise fallback to something unique that makes sense.
+The transaction's name should be set with the GraphQL operation name, if possible, otherwise fallback to something unique that makes sense, e.g. the canonical name of the actual/generated class.
 
 The transaction's description should be set with the GraphQL operation name, operation type and status code, if possible.
 
@@ -418,7 +418,11 @@ The operation type should follow the [Span Data Conventions](/sdk/performance/sp
 
 Instrumenting APM for GraphQL will depend on the instrumented GraphQL library, if there are available hooks for it, the SDK should use them, otherwise, the SDK could try to monkeypatch the library or instrument the transport layer using heuristics, for example, if the URL ends with `graphql`, if there are HTTP Headers, etc.
 
+If there are hooks available and the transport layer is also instrumented (e.g. Apollo Interceptors for GraphQL and Spring), the SDK should give preference to the layer that has more information and void creating duplicate transactions/spans, or merge the information, if possible.
+
 Changes in the product may be necessary, e.g. if `request.api_target` is set to `graphql`, the `request.data` and `contexts.response.data` should do syntax highlighting.
+
+Performance issues can be created for GraphQL transactions and spans, for example, N+1, query complexity, etc.
 
 ### Breadcrumbs
 
@@ -432,6 +436,8 @@ Additional fields for breadcrumbs:
   - `operation_name` - The GraphQL operation name
   - `operation_type` - The GraphQL operation type, i.e: `query`, `mutation`, `subscription`
   - `operation_id` - The GraphQL operation ID
+
+Avoid setting the `query` String as part of the `data` field since the event can be dropped due to size limit.
 
 In case more additional fields are needed, the `data` field can be used to add more context, e.g. `graphql.path`, `graphql.field`, `graphql.type`, etc.
 
