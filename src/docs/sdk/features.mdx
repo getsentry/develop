@@ -420,6 +420,12 @@ Instrumenting APM for GraphQL will depend on the instrumented GraphQL library, i
 
 If there are hooks available and the transport layer is also instrumented (e.g. Apollo Interceptors for GraphQL and Spring), the SDK should give preference to the layer that has more information and void creating duplicate transactions/spans, or merge the information, if possible.
 
+Spring GraphQL has its own [observation package](https://github.com/spring-projects/spring-graphql/tree/main/spring-graphql/src/main/java/org/springframework/graphql/observation).
+
+GraphQL Java has its own [instrumentation package](https://github.com/graphql-java/graphql-java/tree/master/src/main/java/graphql/execution/instrumentation).
+
+Apollo GraphQL has its own [tracing extensions](https://github.com/apollographql/apollo-tracing#response-format), in this case it'd even be possible to create synthethic transactions and spans out of the tracing extension.
+
 Changes in the product may be necessary, e.g. if `request.api_target` is set to `graphql`, the `request.data` and `contexts.response.data` should do syntax highlighting.
 
 Performance issues can be created for GraphQL transactions and spans, for example, N+1, query complexity, etc.
