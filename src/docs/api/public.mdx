@@ -148,8 +148,7 @@ Specify the request and response serializers.
   for an example of this.
 - If the response is a wrapper or you need more customization, you can use the `inline_sentry_response_serializer` function.
 
-Specify the function docstring using markdown. This will be shown as the endpoint description in the
-documentation.
+Specify the endpoint description on the docs by adding a function docstring to the request.
 ```python
 from sentry.apidocs.utils import inline_sentry_response_serializer
 
