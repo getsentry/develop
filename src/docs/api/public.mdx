@@ -89,9 +89,9 @@ class OrganizationSCIMMemberDetails(...):
   public = {"GET"}
 ```
 
-Specify the [sidebar endpoint grouping](https://docs.sentry.io/api/) by using
-`extend_schema(tags=["SIDEBAR_NAME"])` 
-if needed (a parent class may already be tagged). You can see the current list of tags or add tags
+Specify the endpoint's [sidebar tab](https://docs.sentry.io/api/) by using
+`extend_schema(tags=["SIDEBAR_NAME"])` if needed (a parent class may already be tagged). You can see
+the current list of tags or add tags
 [here](https://github.com/getsentry/sentry/blob/master/src/sentry/apidocs/build.py). In the below
 example the [endpoint](https://docs.sentry.io/api/discover/query-discover-events-in-table-format/)
 is tagged in the `Discover` sidebar group
