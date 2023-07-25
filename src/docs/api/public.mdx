@@ -93,7 +93,7 @@ Specify the endpoint's [sidebar tab](https://docs.sentry.io/api/) by using
 `@extend_schema`. You can see the current list of tags or add tags
 [here](https://github.com/getsentry/sentry/blob/master/src/sentry/apidocs/build.py). In the below
 example the [endpoint](https://docs.sentry.io/api/discover/query-discover-events-in-table-format/)
-is tagged in the `Discover` sidebar group
+is tagged in the `Discover` sidebar tab.
 
 ```python
 from drf_spectacular.utils import extend_schema
@@ -204,7 +204,7 @@ docs.**
 In `sentry`:
 
 1. Run `make watch-api-docs`. This command will watch API docs files and continuously build an intermediate asset `tests/apidocs/openapi-derefed.json`.
-2. Copy the full path to `{YOUR_SYSTEM_FOLDER}/tests/apidocs/openapi-derefed.json`, e.g. `/Users/yourname/code/sentry/tests/apidocs/openapi-derefed.json`
+2. Copy the full path to `{YOUR_SYSTEM_FOLDER}/tests/apidocs/openapi-derefed.json`, e.g. `/Users/yourname/code/sentry/tests/apidocs/openapi-derefed.json`.
 
 In `sentry-docs`:
 
