@@ -410,7 +410,7 @@ The `request.data` should be set with the raw GraphQL request payload, if possib
 
 The `contexts.response.data` should be set with the raw GraphQL response payload, only if there were `errors`. This should be guarded by an opt-in flag, e.g. `sendDefaultPii`.
 
-Spans should be created for [resolvers](https://www.apollographql.com/docs/apollo-server/data/resolvers/), if possible.
+Spans should be created for [resolvers](https://www.apollographql.com/docs/apollo-server/data/resolvers/), if possible. These are sometimes also called [data fetchers](https://www.graphql-java.com/documentation/data-fetching/).
 
 Spans should be created for [data loaders](https://graphql.org/learn/best-practices/#server-side-batching-caching/), if possible.
 
