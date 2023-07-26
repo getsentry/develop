@@ -406,7 +406,7 @@ The transaction's description should be set with the GraphQL operation name, ope
 
 The `request.api_target` should be set with `graphql`.
 
-The `request.data` should be set with the raw GraphQL request payload, if possible.
+The `request.data` should be set with the raw GraphQL request payload, if possible. This should be guarded by an opt-in flag, e.g. `sendDefaultPii`.
 
 The `contexts.response.data` should be set with the raw GraphQL response payload, only if there were `errors`.
 
