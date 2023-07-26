@@ -408,7 +408,7 @@ The `request.api_target` should be set with `graphql`.
 
 The `request.data` should be set with the raw GraphQL request payload, if possible. This should be guarded by an opt-in flag, e.g. `sendDefaultPii`.
 
-The `contexts.response.data` should be set with the raw GraphQL response payload, only if there were `errors`.
+The `contexts.response.data` should be set with the raw GraphQL response payload, only if there were `errors`. This should be guarded by an opt-in flag, e.g. `sendDefaultPii`.
 
 Spans should be created for [resolvers](https://www.apollographql.com/docs/apollo-server/data/resolvers/), if possible.
 
