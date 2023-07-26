@@ -449,6 +449,22 @@ In case more additional fields are needed, the `data` field can be used to add m
 
 The `category` can also be adapted to its own type, e.g. `graphql.resolver`, `graphql.data_loader`, etc.
 
+For resolvers or data fetchers a breadcrumb could have the following fields:
+- `type` = `graphql`
+- `category` = `graphql.fetcher`
+- `path` - Path in the query, e.g. `project/status`
+- `field` - Field being fetched, e.g. `status`
+- `type` - Type being fetched, e.g. `String`
+- `object_type` - Object type being fetched, e.g. `Project`
+
+For data loaders a breadcrumb could have the following fields:
+- `type` = `graphql`
+- `category` = `graphql.data_loader`
+- `keys` - Keys that should be loaded by the data loader
+- `key_type` - Type of the key
+- `value_type` - Type of the value
+- `name` - Name of the data loader
+
 ## Attaching Request Body in Server SDKs
 
 Ability for the SDK to attach request body to events and triggered during the execution of request.
