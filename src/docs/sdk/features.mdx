@@ -400,6 +400,8 @@ The `fingerprints` field should be set to `["$operationName", "$operationType", 
 
 Ability for the SDK to attach request body to events and triggered during the execution of request.
 
+Attaching request and response bodies should be guarded by `sendDefaultPii` or another flag  to opt-in (whichever makes more sense for the specific SDK).
+
 User should be able to set a configuration option `maxRequestBodySize` to instruct SDK how big requests bodies should be attached.
 SDK controls what is an actual size in bytes for each option:
 
