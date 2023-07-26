@@ -402,7 +402,7 @@ The GraphQL Performance integration should match the guidelines for [GraphQL Cli
 
 The transaction's name should be set with the GraphQL operation name, if possible, otherwise fallback to something unique that makes sense, e.g. the canonical name of the actual/generated class.
 
-The transaction's description should be set with the GraphQL operation name, operation type and status code, if possible.
+The transaction's description should be set with the GraphQL operation name, operation type (`query`, `mutation` or `subscription`) and status code, if possible.
 
 The `request.api_target` should be set with `graphql`.
 
