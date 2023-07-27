@@ -384,7 +384,7 @@ Required fields for the Response interface:
 }
 ```
 
-The `data` field is a JSON object that contains the GraphQL response payload. Attaching request and response bodies should be guarded by `sendDefaultPii` or another flag  to opt-in (whichever makes more sense for the specific SDK).
+The `data` field is a JSON object that contains the GraphQL response payload. Attaching request and response bodies should be guarded by `sendDefaultPii` and/or another flag to opt-in (e.g. `captureFailedRequests`).
 
 Required fields for the Event interface:
 
