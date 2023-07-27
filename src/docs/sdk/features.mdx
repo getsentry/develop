@@ -420,6 +420,8 @@ Spans should be created for [data loaders](https://graphql.org/learn/best-practi
 
 The operation type should follow the [Span Operation Conventions](/sdk/performance/span-operations/).
 
+Extra (`data`) attributes for transactions and/or spans, there are [Span Data](/sdk/performance/span-data-conventions/) and [OTel GraphQL](https://opentelemetry.io/docs/specs/otel/trace/semantic_conventions/instrumentation/graphql/) conventions.
+
 Instrumenting APM for GraphQL will depend on the instrumented GraphQL library, if there are available hooks for it, the SDK should use them, otherwise, the SDK could try to monkeypatch the library or instrument the transport layer using heuristics, for example, if the URL ends with `graphql`, if there are HTTP Headers, etc.
 
 If there are hooks available and the transport layer is also instrumented (e.g. Apollo Interceptors for GraphQL and Spring), the SDK should give preference to the layer that has more information and avoid creating duplicate transactions/spans, or merge the information, if possible.
