@@ -107,25 +107,22 @@ For the rest of the documentation, we'll use `@extend_schema` on the various end
 
 ```python
 @extend_schema(
-  operation_id="Create a New Team", # What goes in the doc sidebar for the name of the API page
-  parameters=[GlobalParams.ORG_SLUG, SCIMQueryParamSerializer], # use the global params, and/or a DRF Serializer
-  request=TeamPostSerializer, # this will usually be a DRF Serializer if the endpoint takes a body
+  # the title of the API page in the doc sidebar
+  operation_id="Create a New Team",
+  # use the global params, and/or a DRF Serializer
+  parameters=[GlobalParams.ORG_SLUG, SCIMQueryParamSerializer],
+  # this will usually be a DRF Serializer if the endpoint takes a body 
   # but can also be an inline_serializer if you need more customization
-  request=inline_serializer(
-      name="SCIMTeamRequestBody",
-      fields={
-          "schemas": serializers.ListField(serializers.CharField()),
-          "displayName": serializers.CharField(),
-          "members": serializers.ListField(serializers.IntegerField()),
-      },
-  ),
+  request=TeamPostSerializer, 
   responses={
-      201: TeamSerializer, # the Sentry Response Serializer
+      # the Sentry Response Serializer
+      201: TeamSerializer, 
       400: RESPONSE_BAD_REQUEST,
       403: RESPONSE_FORBIDDEN,
       404: OpenApiResponse(description="A team with this slug already exists."),
   },
-  examples=TeamExamples.CREATE_TEAM, # use examples defined in `src/sentry/apidocs/examples`
+  # use examples defined in `src/sentry/apidocs/examples/...`
+  examples=TeamExamples.CREATE_TEAM, 
 )
 def post(self, request: Request, organization, member, team_slug: str,) -> Response:
     """
@@ -133,7 +130,9 @@ def post(self, request: Request, organization, member, team_slug: str,) -> Respo
     """
 ```
 
-Specify an `operation_id` (this is what is shown as the title under the docs site sidebar).
+Specify an `operation_id` that will be shown as the title under the docs site sidebar.
+
+Specify the function docstring that will be shown at the endpoint description on the docs site.
 
 Specify the parameters using a list, and a serializer if needed.
 
@@ -141,12 +140,17 @@ Specify the parameters using a list, and a serializer if needed.
 
 Specify the request and response serializers.
 
-- Request serializers, since they use DRF serializers, can generally just be the serializer itself. There is plenty of customization and if needed can be overriden with `inline_serializer`. These will be passed to the `request` parameter in `extend_schema`.
+- Request serializers, since they use DRF serializers, can generally just be the serializer itself.
+  There is plenty of customization and if needed can be overriden with `inline_serializer`. See
+  [here](https://github.com/getsentry/sentry/blob/b04c1c04f1e86bc040a671ad5b545d3b70132140/src/sentry/scim/endpoints/members.py#L434-L440)
+  for an example of this.
 - For our response serializers, you must type the `serialize` function's return with a `TypedDict`
   and pass the serializer as a parameter in `extend_schema`. See
   [here](https://github.com/getsentry/sentry/blob/master/src/sentry/api/serializers/models/organization_member/scim.py)
   for an example of this.
-- If the response is a wrapper or you need more customization, you can use the `inline_sentry_response_serializer` function.
+- If the response is a wrapper or you need more customization, you can use the
+  `inline_sentry_response_serializer` function.
+
 
 Specify the endpoint description on the docs by adding a function docstring to the request.
 ```python
