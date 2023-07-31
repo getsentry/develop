@@ -146,13 +146,11 @@ Specify the request and response serializers.
   for an example of this.
 - For our response serializers, you must type the `serialize` function's return with a `TypedDict`
   and pass the serializer as a parameter in `extend_schema`. See
-  [here](https://github.com/getsentry/sentry/blob/master/src/sentry/api/serializers/models/organization_member/scim.py)
+  [here](https://github.com/getsentry/sentry/blob/b04c1c04f1e86bc040a671ad5b545d3b70132140/src/sentry/api/serializers/models/organization_member/scim.py#L14-L30)
   for an example of this.
 - If the response is a wrapper or you need more customization, you can use the
   `inline_sentry_response_serializer` function.
 
-
-Specify the endpoint description on the docs by adding a function docstring to the request.
 ```python
 from sentry.apidocs.utils import inline_sentry_response_serializer
 
