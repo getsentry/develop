@@ -124,7 +124,7 @@ For the rest of the documentation, we'll use `@extend_schema` on the various end
   # use examples defined in `src/sentry/apidocs/examples/...`
   examples=TeamExamples.CREATE_TEAM, 
 )
-def post(self, request: Request, organization, member, team_slug: str,) -> Response:
+def post(self, request: Request, organization, member, team_slug: str) -> Response:
     """
     Create a new team bound to an organization.
     """
@@ -184,16 +184,13 @@ class TeamExamples:
 
 See [here](https://github.com/getsentry/sentry/blob/master/src/sentry/api/endpoints/organization_teams.py) for an example of an endpoint documented using drf-spectacular, and the [drf-spectacular docs here](https://drf-spectacular.readthedocs.io/en/latest/) to learn more.
 
-**Note that if the endpoint you're modifying previously had JSON documentation, you will need to
-delete the old documentation path found in [this
-file](https://github.com/getsentry/sentry/blob/master/api-docs/openapi.json) along with its
-corresponding JSON build in [this
-folder](https://github.com/getsentry/sentry/blob/master/api-docs/paths).**
+**Note that if the endpoint you're modifying had previous JSON documentation, you must delete the 
+old documentation path in [this file](https://github.com/getsentry/sentry/blob/master/api-docs/openapi.json) 
+and its corresponding JSON build in [this folder](https://github.com/getsentry/sentry/blob/master/api-docs/paths).**
 
 **Additionally if there are multiple request types in the same endpoint using the old JSON
 documentation, you must update both of them in the same PR. Updating only one request and
-deleting the documentation path/JSON will cause the other unedited request to disappear from the
-docs.**
+deleting the old documentation will cause the other unedited request to disappear from the docs.**
 
 **Tips**:
 
