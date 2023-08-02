@@ -1,7 +1,7 @@
 import React from 'react';
-import { useStaticQuery, graphql } from 'gatsby';
+import {useStaticQuery, graphql} from 'gatsby';
 
-import { Children, toTree } from './dynamicNav';
+import {Children, toTree} from './dynamicNav';
 import SidebarLink from './sidebarLink';
 
 const navQuery = graphql`
@@ -68,7 +68,9 @@ export default () => {
           <SidebarLink to="/sentry-vs-getsentry/">sentry vs getsentry</SidebarLink>
           <SidebarLink to="/config/">Configuration</SidebarLink>
           <SidebarLink to="/issue-platform/">Issue Platform</SidebarLink>
-          <SidebarLink to="/issue-platform-detectors/">Issue Platform - Writing Detectors</SidebarLink>
+          <SidebarLink to="/issue-platform-detectors/">
+            Issue Platform - Writing Detectors
+          </SidebarLink>
           <SidebarLink to="/feature-flags/">Feature Flags</SidebarLink>
           <SidebarLink to="/ab-testing/">A/B Testing</SidebarLink>
           <SidebarLink to="/options/">Options</SidebarLink>
@@ -82,7 +84,9 @@ export default () => {
             <SidebarLink to="/pii/methods/">Redaction Methods</SidebarLink>
             <SidebarLink to="/pii/selectors/">Selectors</SidebarLink>
           </SidebarLink>
-          <SidebarLink to="/transaction-clustering/">Clustering URL Transactions</SidebarLink>
+          <SidebarLink to="/transaction-clustering/">
+            Clustering URL Transactions
+          </SidebarLink>
           <SidebarLink to="/dynamic-sampling/" title="Dynamic Sampling">
             <Children tree={tree.find(n => n.name === 'dynamic-sampling').children} />
           </SidebarLink>
@@ -120,6 +124,9 @@ export default () => {
           <SidebarLink to="/frontend/defaultprops/">Typing DefaultProps</SidebarLink>
           <SidebarLink to="/frontend/using-hooks/">Using hooks</SidebarLink>
           <SidebarLink to="/frontend/using-rtl/">Using React Testing Library</SidebarLink>
+          <SidebarLink to="/frontend/working-on-getting-started-docs/">
+            Working on Getting Started Docs
+          </SidebarLink>
         </ul>
       </li>
 
@@ -183,9 +190,7 @@ export default () => {
             <SidebarLink to="/sdk/performance/span-data-conventions/">
               Span Data Conventions
             </SidebarLink>
-            <SidebarLink to="/sdk/performance/trace-origin/">
-              Trace Origin
-            </SidebarLink>
+            <SidebarLink to="/sdk/performance/trace-origin/">Trace Origin</SidebarLink>
             <SidebarLink to="/sdk/performance/ui-event-transactions/">
               UI Event Transactions
             </SidebarLink>
@@ -216,7 +221,9 @@ export default () => {
             <SidebarLink to="/sdk/event-payloads/exception/">
               Exception Interface
             </SidebarLink>
-            <SidebarLink to="/sdk/event-payloads/lockreason/">Lock Reason Interface</SidebarLink>
+            <SidebarLink to="/sdk/event-payloads/lockreason/">
+              Lock Reason Interface
+            </SidebarLink>
             <SidebarLink to="/sdk/event-payloads/message/">Message Interface</SidebarLink>
             <SidebarLink to="/sdk/event-payloads/request/">Request Interface</SidebarLink>
             <SidebarLink to="/sdk/event-payloads/sdk/">SDK Interface</SidebarLink>
