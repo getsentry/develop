@@ -259,6 +259,7 @@ export default () => {
           <SidebarLink to="/integrations/">Overview</SidebarLink>
           <SidebarLink to="/integrations/azuredevops/">Azure DevOps</SidebarLink>
           <SidebarLink to="/integrations/bitbucket/">Bitbucket</SidebarLink>
+          <SidebarLink to="/integrations/discord/">Discord</SidebarLink>
           <SidebarLink to="/integrations/github/">GitHub</SidebarLink>
           <SidebarLink to="/integrations/gitlab/">GitLab</SidebarLink>
           <SidebarLink to="/integrations/heroku/">Heroku</SidebarLink>
