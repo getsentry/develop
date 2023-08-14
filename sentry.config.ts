@@ -25,6 +25,7 @@ if (!isNodeEnv()) {
         },
       }),
       new Sentry.BrowserProfilingIntegration(),
+      new Sentry.Replay(),
     ],
 
     // @ts-expect-error this is not part of the browser SDK options yet
