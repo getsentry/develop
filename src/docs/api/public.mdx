@@ -82,7 +82,7 @@ We use [Open API Spec 3](https://swagger.io/docs/specification/about/) and the [
     - Sample Response Body
 4. Endpoint Description
 
-The steps below outline each part in detail.
+The sections below outline each step in detail.
 
 ### 1. Declaring Public
 
@@ -150,7 +150,7 @@ Specify an `operation_id` that will be shown as the title of the endpoint's page
 
 #### Path and Query Parameters
 
-Specify the parameters using a list of parameters and a serializers. 
+Specify the parameters using a list of parameters and serializers.
 
 - You can find existing parameters in this 
 [file](https://github.com/getsentry/sentry/blob/master/src/sentry/apidocs/parameters.py). Note that
@@ -193,18 +193,18 @@ validate the sample response body. There are three ways to do this:
 
   Note that in order to have certain fields be optional, you must inherit from a TypedDict with
   `total=False` in it's class header. Optional fields should be grouped together and cannot exist in
-  the same class as required fields
+  the same class as required fields.
   See [here](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/serializers/models/organization_member/response.py#L53)
   for an example of this.
   ```python
   class ExampleResponseOptional(TypedDict, total=False):
-      optionalField: str
+      optionalStringField: str
   ```
 
   For fields that may be null, use `Optional` followed by the field's type.
   ```python
   class ExampleResponse(TypedDict, ExampleResponseOptional):
-      potentiallyNullField: Optional[str]
+      potentiallyNullStringField: Optional[str]
   ```
 
 2. To return a list of objects or for additional customization, use the 
@@ -222,7 +222,7 @@ validate the sample response body. There are three ways to do this:
   )
   ```
 
-  Note that we HIGHLY recommend using the first method over this when your endpoint returns a single
+  Note that we HIGHLY recommend using the first method when your endpoint returns a single
   object and utilizes an existing serializer. The first method ensures the documentation stays 
   up-to-date as the endpoint evolves, and provides a higher quality API experience for our users.
 
@@ -250,9 +250,6 @@ Specify the endpoint's sample response using the `examples` field. We keep all o
 [folder](https://github.com/getsentry/sentry/tree/master/src/sentry/apidocs/examples) sorted by
 sidebar tags. 
 
-- Note that the statment `response_only=True` is required for all examples.
-- We crrently only support showing one response example per endpoint.
-
 ```python
 @extend_schema(
     ...
@@ -264,17 +261,20 @@ from drf_spectacular.types import OpenApiExample
 class TeamExamples:
   CREATE_TEAM = [
       OpenApiExample(
-         # description of example, not used for anything
+          # description of example, not used for anything
           "Create a new team",
           # actual response body
           value={"slug": "my-team", "name": "My Team"},
           # the status code(s) this example applies to
           status_codes=["201"], 
           # You MUST INCLUDE this for all examples
-          response_only=True, 
+          response_only=True,
       )
   ]
 ```
+
+- Note that the statment `response_only=True` is required for all examples.
+- We crrently only support showing one response example per endpoint.
 
 ### 4. Endpoint Description
 
@@ -295,26 +295,34 @@ and its corresponding JSON build in [this folder](https://github.com/getsentry/s
 
 - **Additionally if there are multiple request types in the same endpoint using the old JSON
 documentation, you must update both of them in the same PR. Updating only one request and
-deleting the old documentation will cause the other unedited request to disappear from the docs.**
+deleting the old documentation will cause all other requests to disappear from the docs.**
 
 ### Building and Testing Locally
 
-**Tips**:
+**Commands**:
 
-- `make test-api-docs` builds the OpenAPI JSON and runs all API docs tests.
-- To only build the docs, run `make build-api-docs`. The build will fail if there are any warnings.
-- To see the diff of your newly generated docs with prod, run `make diff-api-docs`. This requires you to have built the OpenAPI JSON already.
+- `make test-api-docs` builds the OpenAPI JSON, validates the schema for all examples, and runs all API docs tests.
+- `make build-api-docs` builds the OpenAPI JSON. The build will fail if there are any warnings.
+- `make diff-api-docs` produces a diff of your local OpenAPI JSON with production.
+- `make watch-api-docs` autmatoically rebuilds the OpenAPI JSON on change.
 
 **To see your changes in the docs locally**:
 
 In `sentry`:
 
-1. Run `make watch-api-docs`. This command will watch API docs files and continuously build an intermediate asset `tests/apidocs/openapi-derefed.json`.
-2. Copy the full path to `{YOUR_SYSTEM_FOLDER}/tests/apidocs/openapi-derefed.json`, e.g. `/Users/yourname/code/sentry/tests/apidocs/openapi-derefed.json`.
+1. Use `make watch-api-docs` to continuously build the intermediate asset
+   `tests/apidocs/openapi-derefed.json` locally.
+2. Copy the full path to `{YOUR_SYSTEM_FOLDER}/tests/apidocs/openapi-derefed.json`, 
+
+  e.g. `/Users/yourname/code/sentry/tests/apidocs/openapi-derefed.json`.
 
 In `sentry-docs`:
 
-1. Run `OPENAPI_LOCAL_PATH=COPIED_FULL_PATH DISABLE_THUMBNAILS=1 yarn start` and substitute `COPIED_FULL_PATH` with the copied path to your local openapi-derefed.json
+1. Run `OPENAPI_LOCAL_PATH=COPIED_FULL_PATH DISABLE_THUMBNAILS=1 yarn start` and substitute
+   `COPIED_FULL_PATH` with the copied path to your local openapi-derefed.json. 
+   
+   Unfortunately changes do not automatically reflect in your local server, so you will need to
+   rerun this commmand on every change. We hope to add this feature in the future.
 
 See [here](https://docs.sentry.io/contributing/environment/) for detailed doc build instructions.
 
@@ -354,4 +362,5 @@ No problem. Send us an [email](mailto:partners@sentry.io) so we can answer your 
 
 ## Can customers use private endpoints?
 
-Yes, if they wish. However, private endpoints can change at any time, without notice. As a result, the customer's code could break.
+Yes, if they wish. However, private endpoints are liable to change without notice at any time,
+breaking the customer's code. Please be careful using private endpoints.
