@@ -68,29 +68,34 @@ If your answers are Yes and No, you're in business - make the endpoint public. H
 ## How to make an endpoint public?
 
 We use [Open API Spec 3](https://swagger.io/docs/specification/about/) and the [drf-spectacular](https://drf-spectacular.readthedocs.io/en/latest/readme.html) library to document our APIs.
-You can find the tests here: [https://github.com/getsentry/sentry/tree/master/tests/apidocs](https://github.com/getsentry/sentry/tree/master/tests/apidocs).
 
-### Local development
+**API Documentation consists of**:
 
-**To add documentation for a new endpoint**:
-API Documentation consists of a few items:
-
-- URL and query parameters
-- Request Schema (None if no body)
-- Response Schema
-- Examples
+1. Declaring Public
+2. Sidebar Tab
+3. Method Decorator
+  - Title
+  - Path and Query Parameters
+  - Request Schema
+  - Response Schema
+  - Example Response
+4. Endpoint Description
 
 Below we'll describe how to document these for an endpoint.
 
-Declare the endpoint public by setting the `public` attribute with the appropriate HTTP verbs.
+### Declaring Public
+
+Declare the endpoint public by setting the `public` attribute with the appropriate HTTP request methods.
 
 ```python
-class OrganizationSCIMMemberDetails(...):
-  public = {"GET"}
+class OrganizationTeamsEndpoint(...):
+  public = {"GET", "POST"}
 ```
 
-Specify the endpoint's [sidebar tab](https://docs.sentry.io/api/) by using
-`@extend_schema`. You can see the current list of tags or add tags
+### Sidebar Tab
+
+Specify the endpoint's [sidebar tab](https://docs.sentry.io/api/) by using the 
+`@extend_schema` decorator on the endpoint class. You can see the current list of tags or add tags
 [here](https://github.com/getsentry/sentry/blob/master/src/sentry/apidocs/build.py). In the below
 example the [endpoint](https://docs.sentry.io/api/discover/query-discover-events-in-table-format/)
 is tagged in the `Discover` sidebar tab.
@@ -103,10 +108,42 @@ class OrganizationEventsEndpoint(...):
   public = {"GET"}
 ```
 
-For the rest of the documentation, we'll use `@extend_schema` on the various endpoint methods, for example:
+### Method Decorator
+
+We utilize the drf-spectacular's [`@extend_schema`](https://drf-spectacular.readthedocs.io/en/latest/drf_spectacular.html#drf_spectacular.utils.extend_schema)
+decorator to document the majority of the endpoint. The example below provides an overview of all
+the necessary fields, and we provide step-by-step instructions to replicate this example.
 
 ```python
 @extend_schema(
+    operation_id="Create a New Team",
+    parameters=[
+        GlobalParams.ORG_SLUG,
+        GlobalParams.name("The name for the team.", required=True),
+        GlobalParams.slug(
+            "Optional slug for the team. If not provided a slug is generated from the name."
+        ),
+    ],
+    request=TeamPostSerializer,
+    responses={
+        201: TeamSerializer,
+        400: RESPONSE_BAD_REQUEST,
+        403: RESPONSE_FORBIDDEN,
+        404: OpenApiResponse(description="A team with this slug already exists."),
+    },
+    examples=TeamExamples.CREATE_TEAM,
+)
+def post(self, request: Request, organization, **kwargs) -> Response:
+    """
+    Create a new team bound to an organization.
+    """
+```
+
+#### Title
+
+blah blah
+
+{/* @extend_schema(
   # the title of the API page in the doc sidebar
   operation_id="Create a New Team",
   # use the global params, and/or a DRF Serializer
@@ -127,8 +164,7 @@ For the rest of the documentation, we'll use `@extend_schema` on the various end
 def post(self, request: Request, organization, member, team_slug: str) -> Response:
     """
     Create a new team bound to an organization.
-    """
-```
+    """ */}
 
 Specify an `operation_id` that will be shown as the title under the docs site sidebar.
 
@@ -198,9 +234,7 @@ deleting the old documentation will cause the other unedited request to disappea
 - To only build the docs, run `make build-api-docs`. The build will fail if there are any warnings.
 - To see the diff of your newly generated docs with prod, run `make diff-api-docs`. This requires you to have built the OpenAPI JSON already.
 
-### Building locally
-
-To see your changes in the docs locally:
+**To see your changes in the docs locally**:
 
 In `sentry`:
 
