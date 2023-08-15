@@ -4,17 +4,21 @@ title: "Discord Integration"
 
 ## Create a Discord bot
 
-To use Sentry's Discord integration you'll need to first create a Discord bot. Go to the [Discord Developer Portal](https://discord.com/developers/applications) and click __New Application__.
+To use Sentry's Discord integration in your Sentry instance, you must first create a Discord bot. Go to the [Discord Developer Portal](https://discord.com/developers/applications) and click __New Application__.
 
 ![Create bot](./create_bot.png)
 
-After creating your Discord bot, you'll need to grab a few credentials here. You can find them on the following pages: 
+After you create the bot, you should be redirected to its settings.
+
+## Update your Sentry configuration
+
+Sentry needs the following Discord credentials, which you can find in the bot's settings:
 
 - *Application ID* and *Public key* are located in __General Information__.
 - *Client secret* is located in __OAuth2__ > __General__.
 - *Bot token* is located in __Bot__.
 
-Copy each of these and paste them into <code>config.yml</code> as follows:
+Add these to your Sentry instance's <code>config.yml</code> as follows:
 
 ```yaml
 discord.application-id: "<application id>"
@@ -23,11 +27,13 @@ discord.client-secret: "<client secret>"
 discord.bot-token: "<bot token>"
 ```
 
-**NOTE**: If you're doing local Sentry development, you should use a tool like Ngrok and add `system.url-prefix: "https://<your_subdomain>.ngrok.io"` to your `~/.sentry/config.yml`, otherwise, installing the Discord bot won't work as it will not be able to communicate with your local Sentry instance.
+**NOTE**: If you're doing local Sentry development, you should use a tool like Ngrok and add `system.url-prefix: "https://<your_subdomain>.ngrok.io"` to your `~/.sentry/config.yml`. Otherwise, installing the Discord bot won't work, as it will not be able to communicate with your local Sentry instance.
 
-After you update the <code>config.yml</code> you'll need to restart you Sentry server to continue the setup process.
+After you update the <code>config.yml</code>, restart you Sentry server to continue the setup process.
 
-Now that Sentry is running and it knows your Discord credentials, we have one more step to take care of on the bot side.
+## Configure your Discord interactions endpoint
+
+Now that Sentry is running and it knows your Discord credentials, we need to set up a way for Discord to interact with Sentry.
 
 Head back to your Discord application setttings, navigate to __General Information__ and look for __Interactions Endpoint URL__.
 
