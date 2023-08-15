@@ -71,14 +71,14 @@ We use [Open API Spec 3](https://swagger.io/docs/specification/about/) and the [
 
 **API Documentation consists of**:
 
-1. Declaring Public
+1. Public Declaration
 2. Sidebar Tab
 3. Method Decorator
-  - Title
-  - Path and Query Parameters
-  - Request Schema
-  - Response Schema
-  - Example Response
+  1. Title
+  2. Path and Query Parameters
+  3. Request Schema
+  4. Response Schema
+  5. Example Response
 4. Endpoint Description
 
 Below we'll describe how to document these for an endpoint.
@@ -133,7 +133,7 @@ the necessary fields, and we provide step-by-step instructions to replicate this
     },
     examples=TeamExamples.CREATE_TEAM,
 )
-def post(self, request: Request, organization, **kwargs) -> Response:
+def post(self, request, organization, **kwargs):
     """
     Create a new team bound to an organization.
     """
@@ -141,45 +141,41 @@ def post(self, request: Request, organization, **kwargs) -> Response:
 
 #### Title
 
-blah blah
-
-{/* @extend_schema(
-  # the title of the API page in the doc sidebar
-  operation_id="Create a New Team",
-  # use the global params, and/or a DRF Serializer
-  parameters=[GlobalParams.ORG_SLUG, SCIMQueryParamSerializer],
-  # this will usually be a DRF Serializer if the endpoint takes a body 
-  # but can also be an inline_serializer if you need more customization
-  request=TeamPostSerializer, 
-  responses={
-      # the Sentry Response Serializer
-      201: TeamSerializer, 
-      400: RESPONSE_BAD_REQUEST,
-      403: RESPONSE_FORBIDDEN,
-      404: OpenApiResponse(description="A team with this slug already exists."),
-  },
-  # use examples defined in `src/sentry/apidocs/examples/...`
-  examples=TeamExamples.CREATE_TEAM, 
+Specify an `operation_id` that will be shown as the title of the endpoint's page in the documentation.
+```python
+@extend_schema(
+    operation_id="Create a New Team",
+    ...
 )
-def post(self, request: Request, organization, member, team_slug: str) -> Response:
-    """
-    Create a new team bound to an organization.
-    """ */}
+```
 
-Specify an `operation_id` that will be shown as the title under the docs site sidebar.
 
-Specify the function docstring that will be shown at the endpoint description on the docs site.
+#### Path and Query Parameters
 
 Specify the parameters using a list, and a serializer if needed.
 
 - DRF serializers work very well for query parameters, try to use them where possible.
 
-Specify the request and response serializers.
+#### Request Schema
+
+Specify the request serializer.
 
 - Request serializers, since they use DRF serializers, can generally just be the serializer itself.
   There is plenty of customization and if needed can be overriden with `inline_serializer`. See
   [here](https://github.com/getsentry/sentry/blob/b04c1c04f1e86bc040a671ad5b545d3b70132140/src/sentry/scim/endpoints/members.py#L434-L440)
   for an example of this.
+
+```python
+...
+request=TeamPostSerializer,
+...
+```
+
+#### Response Schema
+
+Specify the response serializer which is used to generate the response schema and validate the
+repsonse example.
+
 - For our response serializers, you must type the `serialize` function's return with a `TypedDict`
   and pass the serializer as a parameter in `extend_schema`. See
   [here](https://github.com/getsentry/sentry/blob/b04c1c04f1e86bc040a671ad5b545d3b70132140/src/sentry/api/serializers/models/organization_member/scim.py#L14-L30)
@@ -199,10 +195,24 @@ from sentry.apidocs.utils import inline_sentry_response_serializer
   }
 )
 ```
-- Note that you can instead provide OpenAPI JSON, so you can fall back to this if you are running into issues.
+- Note that you can also provide OpenAPI JSON if you are running into issues.
 
-Examples can be directly inserted using `OpenApiExample`, and multiple can be provided. If needed,
-create new examples in `src/sentry/apidocs/examples/*.py` in the appropriate file.
+For error responses, use the existing `OpenApiRespone` constants defined 
+[here](https://github.com/getsentry/sentry/blob/master/src/sentry/apidocs/constants.py). You can
+also define your own if needed for more detailed messages. See below for an example of this.
+
+```python
+...
+responses={
+    201: TeamSerializer,
+    400: RESPONSE_BAD_REQUEST,
+    403: RESPONSE_FORBIDDEN,
+    404: OpenApiResponse(description="A team with this slug already exists."),
+},
+...
+```
+
+#### Example Response
 
 ```python
 from drf_spectacular.types import OpenApiExample
@@ -216,6 +226,16 @@ class TeamExamples:
           response_only=True, # You MUST INCLUDE this for all examples!!!
       )
   ]
+```
+
+### Endpoint Description
+
+The description shown on the documentation page matches the docstring of the endpoint.
+```python
+def post(self, request, organization, **kwargs):
+    """
+    Create a new team bound to an organization.
+    """
 ```
 
 See [here](https://github.com/getsentry/sentry/blob/master/src/sentry/api/endpoints/organization_teams.py) for an example of an endpoint documented using drf-spectacular, and the [drf-spectacular docs here](https://drf-spectacular.readthedocs.io/en/latest/) to learn more.
