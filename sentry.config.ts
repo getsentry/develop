@@ -25,7 +25,14 @@ if (!isNodeEnv()) {
         },
       }),
       new Sentry.BrowserProfilingIntegration(),
-      new Sentry.Replay(),
+      new Replay({
+        // No PII here so lets get the texts
+        maskAllText: false,
+        blockAllMedia: false,
+        networkDetailAllowUrls: [window.location.origin],
+        networkRequestHeaders: ["referrer", "sentry-trace", "baggage"],
+        networkResponseHeaders: ["Server"],
+      }),
     ],
 
     // @ts-expect-error this is not part of the browser SDK options yet
