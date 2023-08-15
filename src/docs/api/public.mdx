@@ -79,7 +79,7 @@ We use [Open API Spec 3](https://swagger.io/docs/specification/about/) and the [
     - Request Schema
     - Success Responses
     - Error Responses
-    - Example Response
+    - Sample Response Body
 4. Endpoint Description
 
 Below we'll describe how to document these for an endpoint.
@@ -97,8 +97,8 @@ class OrganizationTeamsEndpoint(...):
 
 Specify the endpoint's [sidebar tab](https://docs.sentry.io/api/) by using the 
 `@extend_schema` decorator on the endpoint class. You can see the current list of tags or add tags
-[here](https://github.com/getsentry/sentry/blob/master/src/sentry/apidocs/build.py). In the below
-example the [endpoint](https://docs.sentry.io/api/discover/query-discover-events-in-table-format/)
+[here](https://github.com/getsentry/sentry/blob/master/src/sentry/apidocs/build.py). In the example
+below the [endpoint](https://docs.sentry.io/api/discover/query-discover-events-in-table-format/)
 is tagged in the `Discover` sidebar tab.
 
 ```python
@@ -111,8 +111,7 @@ class OrganizationEventsEndpoint(...):
 
 ### 3. Method Decorator
 
-We utilize the drf-spectacular's [`@extend_schema`]
-(https://drf-spectacular.readthedocs.io/en/latest/drf_spectacular.html#drf_spectacular.utils.extend_schema)
+We utilize the drf-spectacular's [`@extend_schema`](https://drf-spectacular.readthedocs.io/en/latest/drf_spectacular.html#drf_spectacular.utils.extend_schema)
 decorator to document the majority of the endpoint. The code below provides an example of a fully
 documented endpoint.
 
@@ -153,12 +152,11 @@ Specify an `operation_id` that will be shown as the title of the endpoint's page
 
 Specify the parameters using a list, and a serializer if needed.
 
-- DRF serializers can be used very conviently for query parameters. See [here]
-(https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/endpoints/organization_stats_v2.py#L145)
+- DRF serializers can be used very conviently for query parameters. See [here](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/endpoints/organization_stats_v2.py#L145)
 for an example of this.
 - You can find existing parameters in this 
 [file](https://github.com/getsentry/sentry/blob/master/src/sentry/apidocs/parameters.py). Note that
-the `description` field populates the parameter's description in the documentation.
+the `description` field in `OpenApiParameter` populates the parameter's description in the documentation.
 
 ```python
 parameters=[
@@ -178,55 +176,66 @@ Specify the request serializer.
   for an example of this.
 
 ```python
-...
 request=TeamPostSerializer,
-...
 ```
 
 #### Success Responses
 
 Specify the return type of the success and error responses, which are used to generate the response
-schema and validate the example response. For success responses, there are two ways to do this:
+schema and validate the sample response body. For success responses, there are three ways to do this:
 
 1. If the success response is a single object instead of a list, you can pass a DRF serializer as
-the response. In order for this serializer to generate a schema, its `serialize` method must be
-typed to return a TypedDict. 
+  the response. In order for this serializer to generate a schema, its `serialize` method must be
+  typed to return a TypedDict. 
 
-  For example, the sample code has the `202` status code returning a
-  [`TeamSerializer`](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/endpoints/organization_teams.py#L168).
-  The `serialize` method is typed to return a 
+  For example, this [sample code](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/scim/endpoints/members.py#L202)
+  has the `200` status code returning an `OrganizationMemberSCIMSerializer`. The [`serialize`](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/serializers/models/organization_member/scim.py#L14-L16)
+  method is typed to return an [`OrganizationMemberSCIMSerializerResponse`](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/serializers/models/organization_member/response.py#L60)
+  TypedDict which specifies the typing of the response body.
 
-
-
-For our response serializers, you must type the `serialize` function's return with a `TypedDict`
-  and pass the serializer as a parameter in `extend_schema`. See
-  [here](https://github.com/getsentry/sentry/blob/b04c1c04f1e86bc040a671ad5b545d3b70132140/src/sentry/api/serializers/models/organization_member/scim.py#L14-L30)
+  Note that in order to have certain fields be optional, you must inherit from a TypedDict with
+  `total=False` in it's class header that specifies all optional fields. See
+  [here](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/serializers/models/organization_member/response.py#L53)
   for an example of this.
-- If the response is a wrapper or you need more customization, you can use the
-  `inline_sentry_response_serializer` function. A common for use case for this is returning a list
-  of serialized items depicted below
+  ```python
+  class ExampleResponseOptional(TypedDict, total=False):
+      optionalField: str
+  ```
 
-```python
-from sentry.apidocs.utils import inline_sentry_response_serializer
+  For fields that may be null, use `Optional` followed by the field's type.
+  ```python
+  class ExampleResponse(TypedDict, ExampleResponseOptional):
+      potentiallyNullField: Optional[str]
+  ```
 
-@extend_schema(
-  responses={
-    200: inline_sentry_response_serializer(
-      "OrganizationList",
-      # return a list of TypedDicts
-      List[OrganizationSerializerResponse])
-  }
-)
-```
-- Note that you can also provide OpenAPI JSON if you are running into issues.
-c
+2. To return a list of objects or for additional customization, use the 
+  `inline_sentry_response_serializer` function.
+
+  ```python
+  from sentry.apidocs.utils import inline_sentry_response_serializer
+
+  @extend_schema(
+      responses={
+          200: inline_sentry_response_serializer(
+              "ListOrgTeamResponse", List[TeamSerializerResponse]
+          ),
+      }
+  )
+  ```
+
+  Note that we HIGHLY recommend using the first method over this when your endpoint returns a single
+  object and utilizes an existing serializer. The first method ensures the documentation stays 
+  up-to-date as the endpoint evolves, and provides a higher quality API experience for our users.
+
+3. You can also provide OpenAPI JSON if you are running into issues, although we recommend avoiding
+   this if possible.
 
 #### Error Responses
 
 
 For error responses, use the existing `OpenApiRespone` constants defined 
 [here](https://github.com/getsentry/sentry/blob/master/src/sentry/apidocs/constants.py). You can
-also define your own for more detailed messages. See below for an example of this.
+also define your own for more detailed messages like the example below.
 
 ```python
 ...
@@ -239,7 +248,11 @@ responses={
 ...
 ```
 
-#### Example Response
+#### Sample Response Body
+
+Specify the endpoint's sample response using the `examples` field. We keep all our examples in this
+[folder](https://github.com/getsentry/sentry/tree/master/src/sentry/apidocs/examples) sorted by
+sidebar tags. Note that the statment `response_only=True` is required for all examples.
 
 ```python
 from drf_spectacular.types import OpenApiExample
@@ -247,10 +260,14 @@ from drf_spectacular.types import OpenApiExample
 class TeamExamples:
   CREATE_TEAM = [
       OpenApiExample(
-          "Create a new team", # description of example
-          value={"slug": "my-team", "name": "My Team"}, # response body
-          status_codes=["201"], # the status code(s) this example applies to
-          response_only=True, # You MUST INCLUDE this for all examples!!!
+         # description of example, not used for anything
+          "Create a new team",
+          # actual response body
+          value={"slug": "my-team", "name": "My Team"},
+          # the status code(s) this example applies to
+          status_codes=["201"], 
+          # You MUST INCLUDE this for all examples
+          response_only=True, 
       )
   ]
 ```
@@ -264,8 +281,6 @@ def post(self, request, organization, **kwargs):
     Create a new team bound to an organization.
     """
 ```
-
-See [here](https://github.com/getsentry/sentry/blob/master/src/sentry/api/endpoints/organization_teams.py) for an example of an endpoint documented using drf-spectacular, and the [drf-spectacular docs here](https://drf-spectacular.readthedocs.io/en/latest/) to learn more.
 
 **Note that if the endpoint you're modifying had previous JSON documentation, you must delete the 
 old documentation path in [this file](https://github.com/getsentry/sentry/blob/master/api-docs/openapi.json) 
