@@ -82,8 +82,6 @@ We use [Open API Spec 3](https://swagger.io/docs/specification/about/) and the [
     - Sample Response Body
 4. Endpoint Description
 
-Below we'll describe how to document these for an endpoint.
-
 ### 1. Declaring Public
 
 Declare the endpoint public by setting the `public` attribute with the appropriate HTTP request methods.
@@ -150,13 +148,14 @@ Specify an `operation_id` that will be shown as the title of the endpoint's page
 
 #### Path and Query Parameters
 
-Specify the parameters using a list, and a serializer if needed.
+Specify the parameters using a list of parameters and a serializers. 
 
-- DRF serializers can be used very conviently for query parameters. See [here](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/endpoints/organization_stats_v2.py#L145)
-for an example of this.
 - You can find existing parameters in this 
 [file](https://github.com/getsentry/sentry/blob/master/src/sentry/apidocs/parameters.py). Note that
-the `description` field in `OpenApiParameter` populates the parameter's description in the documentation.
+the `description` field in `OpenApiParameter` populates the parameter's description in the
+documentation.
+- DRF serializers conveniently translate into query parameters. See [here](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/endpoints/organization_stats_v2.py#L145)
+for an example of this.
 
 ```python
 parameters=[
@@ -174,10 +173,7 @@ Specify the request serializer.
   There is plenty of customization and if needed can be overriden with `inline_serializer`. See
   [here](https://github.com/getsentry/sentry/blob/b04c1c04f1e86bc040a671ad5b545d3b70132140/src/sentry/scim/endpoints/members.py#L434-L440)
   for an example of this.
-
-```python
-request=TeamPostSerializer,
-```
+- If the endpoint has no request body, you can either omit the `request` field or set it to `None`.
 
 #### Success Responses
 
@@ -189,13 +185,14 @@ schema and validate the sample response body. For success responses, there are t
   typed to return a TypedDict. 
 
   For example, this [sample code](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/scim/endpoints/members.py#L202)
-  has the `200` status code returning an `OrganizationMemberSCIMSerializer`. The [`serialize`](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/serializers/models/organization_member/scim.py#L14-L16)
+  has the `200` status code returning an `OrganizationMemberSCIMSerializer`. It's [`serialize`](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/serializers/models/organization_member/scim.py#L14-L16)
   method is typed to return an [`OrganizationMemberSCIMSerializerResponse`](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/serializers/models/organization_member/response.py#L60)
   TypedDict which specifies the typing of the response body.
 
   Note that in order to have certain fields be optional, you must inherit from a TypedDict with
-  `total=False` in it's class header that specifies all optional fields. See
-  [here](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/serializers/models/organization_member/response.py#L53)
+  `total=False` in it's class header. Optional fields should be grouped together and cannot exist in
+  the same class as required fields
+  See [here](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/serializers/models/organization_member/response.py#L53)
   for an example of this.
   ```python
   class ExampleResponseOptional(TypedDict, total=False):
@@ -238,23 +235,25 @@ For error responses, use the existing `OpenApiRespone` constants defined
 also define your own for more detailed messages like the example below.
 
 ```python
-...
 responses={
     201: TeamSerializer,
     400: RESPONSE_BAD_REQUEST,
     403: RESPONSE_FORBIDDEN,
     404: OpenApiResponse(description="A team with this slug already exists."),
 },
-...
 ```
 
 #### Sample Response Body
 
 Specify the endpoint's sample response using the `examples` field. We keep all our examples in this
 [folder](https://github.com/getsentry/sentry/tree/master/src/sentry/apidocs/examples) sorted by
-sidebar tags. Note that the statment `response_only=True` is required for all examples.
+sidebar tags. Note that the statment `response_only=True` is required for all examples and we
+currently only support showing one response example per endpoint.
 
 ```python
+examples=TeamExamples.CREATE_TEAM,
+
+
 from drf_spectacular.types import OpenApiExample
 
 class TeamExamples:
