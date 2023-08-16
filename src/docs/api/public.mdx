@@ -190,14 +190,6 @@ documentation.
 
 Specify the parameters using a list of parameters and serializers.
 
-```python
-parameters=[
-    GlobalParams.ORG_SLUG,
-    GlobalParams.name("The name for the team.", required=True),
-    GlobalParams.slug("Optional slug for the team."),
-],
-```
-
 - You can find existing parameters in this 
   [file](https://github.com/getsentry/sentry/blob/master/src/sentry/apidocs/parameters.py). Note
   that the `description` field in `OpenApiParameter` populates the parameter's description in the
@@ -206,23 +198,30 @@ parameters=[
   [here](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/endpoints/organization_stats_v2.py#L145)
   for an example of this.
 
+```python
+parameters=[
+    GlobalParams.ORG_SLUG,
+    GlobalParams.name("The name for the team.", required=True),
+    GlobalParams.slug("Optional slug for the team."),
+],
+```
+
 #### Request Schema
 
 Specify the request serializer.
 
-```python
-request=TeamPostSerializer,
-```
-
-- Request serializer can generally be the DRF serializer of endpoint itself. If you need more
+- Request serializer can generally just be the DRF serializer of endpoint itself. If you need more
   customization or the endpoint doesn't use a serializer, you can use drf-spectacular's
   [inline_serializer](https://drf-spectacular.readthedocs.io/en/latest/drf_spectacular.html#drf_spectacular.utils.inline_serializer)
-  to create a one-off serializer for your endpoint.
+  to create a one-off serializer.
   See
   [here](https://github.com/getsentry/sentry/blob/b04c1c04f1e86bc040a671ad5b545d3b70132140/src/sentry/scim/endpoints/members.py#L434-L440)
   for an example of this.
 - If the endpoint has no request body, you can either omit the `request` field or set it to `None`.
 
+```python
+request=TeamPostSerializer,
+```
 
 #### Success Responses
 
