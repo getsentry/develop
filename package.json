@@ -1,8 +1,11 @@
 {
-  "name": "dev-docs",
+  "name": "sentry-docs-develop",
   "version": "0.0.0",
   "private": true,
-  "repository": "git://github.com/getsentry/develop.git",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/getsentry/develop.git"
+  },
   "dependencies": {
     "@emotion/core": "^10.0.35",
     "@emotion/styled": "^10.0.27",
@@ -79,7 +82,5 @@
   "volta": {
     "node": "16.16.0",
     "yarn": "1.22.5"
-  },
-  "main": "index.js",
-  "license": "MIT"
+  }
 }
