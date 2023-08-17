@@ -25,7 +25,7 @@ if (!isNodeEnv()) {
         },
       }),
       new Sentry.BrowserProfilingIntegration(),
-      new Replay({
+      new Sentry.Replay({
         // No PII here so lets get the texts
         maskAllText: false,
         blockAllMedia: false,
