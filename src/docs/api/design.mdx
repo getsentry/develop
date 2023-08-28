@@ -1,0 +1,27 @@
+---
+title: "Designing a New API"
+sidebar_order: 2
+---
+Here are some considerations to make when designing new Sentry APIs. 
+
+## URL Patterns
+Your API URL is what developers use to call the endpoint so it’s important to be clear.
+### Don't Exceed 3-level Nesting
+Nested resources format like `api/0/organizations/{org}/projects/` is recommended over `api/0/projects/` for readability because it gives user an understanding of resource hierarchy but they can also make the URLs too long and hard to use. So at Sentry we’re going with 3-level nesting as a hybrid solution. 
+
+Here are some possible urls for values with this resource hierarchy: organization -> project -> tag -> value
+```
+👍 /projects/{organization_slug}/{project_slug}/tags/{tag_id}/values
+👎 /organizations/{organization_slug}/projects/{project_slug}/tags/{tag_id}/values/
+👎 /values/
+```
+
+In the above example we flattened `projects`. The table below shows the existing flattened collections which works out with our existing APIs.
+
+| First collection in URL | When to use | Parent | Identifier | Example |
+| --- | --------- | ----- | --- | --- |
+| organizations | When the resource cannot be attached to any other collection below parent like Project | N/A - always comes as first collection | {organization_slug} | [Creat a New Team](https://docs.sentry.io/api/teams/create-a-new-team/) |
+| teams | Whenever resource is under a specific team in hierarchy | organizations | {organization_slug}/ {team_slug} | [Retreive Team Stats](https://docs.sentry.io/api/teams/retrieve-event-counts-for-a-team/) | 
+| projects | When resource is under a specific project in hierarchy but not under an issue | organizations | {organization_slug}/ {project_slug} | [Create a New Client Key](https://docs.sentry.io/api/projects/create-a-new-client-key/)|
+| issues | When resource is under a specific issue in hierarchy | projects | {issue_id} | [List an Issue's Events](https://docs.sentry.io/api/events/list-an-issues-events/)|
+| sentry-app-installations | When resource is mapped to a specific integration | organizations | {integration_slug} | [Delete an External Issue](https://docs.sentry.io/api/integration/delete-an-external-issue/)|

@@ -1,0 +1,16 @@
+---
+title: "REST API Basics"
+sidebar_order: 1
+---
+This session includes some common terms we will be using as well as resources to learn more about API design. If you're new to API design, this is a good place to start.
+
+## Common Terms
+- **Resource** is the object you’re performing the action on with your endpoint. For example in ProjectEndpoint the resource is Project.
+- **Resource Identifier** can be an ID like event ID or slug like organization slug. Note that it has to be unique for example Sentry project resource identifier is {org_slug}/{project_slug} because projects are only unique within their organization. We will explain more in slug vs. ID section.
+- **Method** is what you do with the resource. Each endpoint can have multiple methods for example in ProjectEndpoint you can have a get method that returns details of a specific project.
+- **Collection** is basically an object type. You can map them to a Django object type like an Organization or a text object like an error.
+
+## Extra Resources
+In this guide we will include the standards that Sentry follows to design high quality APIs but if you want to learn more about API design in general, here are some good recources:
+- **[The Design of Web APIs](https://g.co/kgs/R7rXEk)** is an example-packed guide to designing APIs.
+- **[API Design Patterns](https://g.co/kgs/Vfnpe5)** is comprehensive guide on key API patterns.
