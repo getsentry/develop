@@ -123,7 +123,7 @@ We already built a lot [helpers](https://github.com/getsentry/sentry-wizard/blob
 For example, the entire authentication and project selection flow is [already covered](https://github.com/getsentry/sentry-wizard/blob/master/src/utils/clack-utils.ts#L518).
 
 Waiting for input always gives users the chance to cancel or exit the wizard.
-If youcreate a new prompt, make sure you wrap it with the [`abortIfCancelled`](https://github.com/getsentry/sentry-wizard/blob/c5b7f72f306cde8e6516acc11a5c6b75acee60c6/src/utils/clack-utils.ts#L48) function.
+If you create a new prompt, make sure you wrap it with the [`abortIfCancelled`](https://github.com/getsentry/sentry-wizard/blob/c5b7f72f306cde8e6516acc11a5c6b75acee60c6/src/utils/clack-utils.ts#L48) function.
 This will take care of correctly handling Cmd+C inputs, flushing Sentry events (if using [telemetry](#telemetry)) and exiting the process.
 For example:
 
@@ -159,10 +159,9 @@ Specific cases might require individual solutions but here are some recommendati
 - Use `clack.log.success` and optionally `chalk.green` for (major) success messages.
 - Use `clack.log.warn` and optionally `chalk.yellow` for (major) warnings.
   For example, if Sentry code was already found in a file the wizard was supposed to modify.
-- Use `clack.log.error` and optionally `chalk.red` for errors.
+- Use `clack.log.error` and optionally `chalk.red` for (major) errors.
 - Use `clack.log.info` along the way to print additional information.
-  For example, if the wizard fails to modify a file or install a package.
-- Use `clack.log.step` to print a message regarding completing or entering a new step that require justify a success message.
+- Use `clack.log.step` to print a message regarding completing or entering a new step that doesn't require success message.
 - Use `chalk.cyan` to highlight file names, package names or other important parts of the message.
   Make sure that modified files are highlighted to increase [transparency](#transparency).
 - To print intro and outro messages, use `clack.intro` and `clack.outro`.
