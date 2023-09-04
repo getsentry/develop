@@ -4,7 +4,7 @@ sidebar_order: 21
 ---
 
 Some SDKs support automatic SDK setup with the Sentry Wizard to make setting up the SDK as easy as possible.
-Creating such a wizard for your SDK is completely optional and not required.
+Creating such a wizard for your SDK is completely optional and not required when building an SDK.
 
 This page provides guidelines how we develop wizards for SDKs and what to consider when creating a new wizard.
 
@@ -23,6 +23,7 @@ New wizards should meet the following high-level expectations and requirements:
 
 Setting up an SDK with the wizard should be as easy as possible for users.
 One shell command, along with additional, simple user inputs along the way should be enough to get the SDK up and running.
+Wizards should set up as much as possible automatically and only ask for user input if necessary.
 Think of various CLI tools that set up new projects for you. This is how we want the wizard to work.
 
 Wizard usage Example:
@@ -31,12 +32,22 @@ Wizard usage Example:
 npx @sentry/wizard@latest -i sveltekit
 ```
 
-While the wizard should provide the easiest way to set up the SDK, it does not replace the SDK's documentation how to set it up manually.
-Showing the wizard command in the "Getting Started" docs and providing an additional "Manual Setup" page proved to be a good approach.
+<Alert level="warning">
+  While the wizard should provide the easiest way to set up the SDK, it does not replace
+  the SDK's documentation how to set it up manually. Showing the wizard command in the{' '}
+  <Link to="https://docs.sentry.io/platforms/javascript/guides/nextjs/#install">
+    Getting Started
+  </Link>{' '}
+  docs and providing an additional{' '}
+  <Link to="https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/">
+    Manual Setup
+  </Link>{' '}
+  page proved to be a good approach.
+</Alert>
 
 ### Transparency
 
-Wizards modify our users' projects. They might modify files, install packages or change around configurations.
+Wizards touch our users' projects. They might modify files, install packages or change around configurations.
 It is important that we communicate these changes to our users so that they're aware of the impact.
 
 For instance:
@@ -45,10 +56,14 @@ For instance:
 - If new packages are installed, it should let users know about the specific packages.
 - If something fails along the way, it should notify users and provide some guidance how to fix or what to do next.
 
+Related to this, wizards should [check the git status](#1-check-preconditions) of the project and warn users if they're not in a clean state.
+This ensures that users can revert the changes easily if something goes wrong.
+
 ### Cater to the 80%
 
 Wizards should be opinionated in which SDK options are set and cater to the 80% use case.
-The SDK setup doesn't necessarily have to be minimal, for example, it can include optional but recommended integrations (e.g. session replay or profiling).
+The SDK setup doesn't necessarily have to be minimal.
+For example, it can include optional but recommended integrations (e.g. session replay or profiling) or options (e.g. sample rates).
 
 Given that most wizards will actively modify code or config files, there is a chance that they might fail or break something.
 That's okay and expected as long as we're transparent about it and we tell users upfront that we're touching their files.
@@ -61,11 +76,11 @@ If not already specified via the `--url` param, wizards should ask if users are 
 
 ## Wizard Flow
 
-When creating a new wizard, it the execution flow should roughly adhere to the outlined steps. Additional steps should be added as necessary.
+When creating a new wizard, the execution flow should roughly adhere to the outlined steps. Additional steps can be added as necessary.
 
 <Alert level="info">
   Many of the individual steps and checks are already implemented in{' '}
-  <a href="#building-blocks-and-helper-functions">helper functions</a>.
+  <Link to="#building-blocks-and-helper-functions">helper functions</Link>.
 </Alert>
 
 ### 1. Check Preconditions
@@ -73,9 +88,11 @@ When creating a new wizard, it the execution flow should roughly adhere to the o
 A wizard should check for necessary preconditions so that the SDK can be set up.
 The specific preconditions depend on the SDK but some common ones are:
 
-- Check if the wizard is executed in a git repository. If not, ask if users want if they want to continue anyway.
+- Check if the wizard is executed in a git repository.
+- Check if the git status of the project is clean.
 - Check if the framework (e.g. NextJS) is installed in a version that's supported by the SDK.
-- Check if the SDK is already installed. If so, ask if users want to continue anyway and update to the latest version.
+
+In case preconditions are not met, ask if users want to continue anyway or abort the wizard with a reason if there's no change for a successful setup.
 
 ### 2. Project Selection
 
@@ -85,21 +102,22 @@ Our wizards will use a specific Sentry API endpoint to log in and fetch the list
 ### 3. SDK Configuration
 
 The most important part of the wizard and the one where you probably have to implement the most logic.
-SDK setup is highly specific to the SDK and the framework it's used in. Some common tasks include:
+SDK setup is highly specific to the SDK and the framework it's used in.
+Some common tasks include:
 
 - Add the SDK to the project's dependencies and download it.
 - Add a SDK initialization code to the project.
 - Configure source maps or debug artifact upload.
 
 <Alert level="warning">
-  Whenever you inject code into an existing file, be aware that things can go wrong. Try
-  to detect already existing Sentry code and ask if users want to proceed anyway. If the
+  Whenever you modify code in an existing file, be aware that things can go wrong. Try to
+  detect already existing Sentry code and ask if users want to proceed anyway. If the
   wizard fails, provide a fallback solution to manually set up the failed step.
 </Alert>
 
 ### 4. Verification
 
-Similarly to how we document SDK verification in our docs, the wizard should provide instructions how to verify the new Sentry installation.
+Similarly to how we document SDK setup verification in our docs, the wizard should provide instructions how to verify the new Sentry installation.
 On a minimum, the wizard should print instructions to the console.
 
 If possible, the wizard should also add an example page or component to the project that throws an error.
@@ -107,10 +125,11 @@ The implementation of such an example depends on the framework and is optional.
 
 ## Building Blocks and Helper Functions
 
-When creating new wizards, it's recommended to base the wizard on [`clack`](https://github.com/natemoo-re/clack) which is a CLI library that provides nice abstractions around logging and input prompts.
-Many of the newer wizards, such as [NextJS](https://github.com/getsentry/sentry-wizard/tree/master/src/nextjs), are already using `clack`.
-It's recommended to these wizards as a reference.
-Many of the challenges have already been solved.
+When creating a new wizard, it's recommended to reuse existing building blocks and helper functions from our newer wizards.
+Many of the common challenges have already been solved and extracted to reusable funcitons.
+For example, you can take the [NextJS](https://github.com/getsentry/sentry-wizard/tree/master/src/nextjs) wizard as a reference.
+
+If you come across logic that's not yet reusable but might be applicable in other wizards, feel free to extract it.
 
 <Alert level="warning">
   Our older wizards use a class and step-based approach which is not recommended anymore.
@@ -118,9 +137,6 @@ Many of the challenges have already been solved.
 </Alert>
 
 ### Prompting for user input
-
-We already built a lot [helpers](https://github.com/getsentry/sentry-wizard/blob/master/src/utils/clack-utils.ts) around specific user input questions which we recommend to reuse and adapt as necessary.
-For example, the entire authentication and project selection flow is [already covered](https://github.com/getsentry/sentry-wizard/blob/master/src/utils/clack-utils.ts#L518).
 
 Waiting for input always gives users the chance to cancel or exit the wizard.
 If you create a new prompt, make sure you wrap it with the [`abortIfCancelled`](https://github.com/getsentry/sentry-wizard/blob/c5b7f72f306cde8e6516acc11a5c6b75acee60c6/src/utils/clack-utils.ts#L48) function.
@@ -136,13 +152,28 @@ const continueWithoutGit = await abortIfCancelled(
 );
 ```
 
-### Code modifications
+<Alert level="info">
+  A lot{' '}
+  <Link to="https://github.com/getsentry/sentry-wizard/blob/master/src/utils/clack-utils.ts">
+    helpers
+  </Link>{' '}
+  around specific user input questions can be reused. For example, the entire
+  authentication and project selection flow is{' '}
+  <Link to="https://github.com/getsentry/sentry-wizard/blob/master/src/utils/clack-utils.ts#L518">
+    already covered
+  </Link>
+  .
+</Alert>
+
+### Code Modifications
 
 If you need to modify code, some of these strategies have proven helpful:
 
-- AST modifications with [`magicast`](https://github.com/unjs/magicast) or [`recast`](https://github.com/benjamn/recast)
-- Sometimes, RegEx is enough to find and replace the correct places.
-  Use this with caution and only if you're sure that the regex will not match unintended places.
+- AST modifications with [`magicast`](https://github.com/unjs/magicast) or [`recast`](https://github.com/benjamn/recast).
+  This is the recommended approach as it's the most reliable and flexible one.
+  However, it's also the most complex one and many edge cases have to be covered individually.
+- Sometimes, RegEx is enough to find and replace code in the correct places.
+  Use it with caution and only if you're sure that the regex will not match unintended places.
   For example, it's hard to detect comments with regex, so you might end up detecting or replacing commented code.
 
 ## UI Suggestions
