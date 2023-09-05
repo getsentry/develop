@@ -33,16 +33,10 @@ npx @sentry/wizard@latest -i sveltekit
 ```
 
 <Alert level="warning">
-  While the wizard should provide the easiest way to set up the SDK, it does not replace
-  the SDK's documentation how to set it up manually. Showing the wizard command in the{' '}
-  <Link to="https://docs.sentry.io/platforms/javascript/guides/nextjs/#install">
-    Getting Started
-  </Link>{' '}
-  docs and providing an additional{' '}
-  <Link to="https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/">
-    Manual Setup
-  </Link>{' '}
-  page proved to be a good approach.
+
+While the wizard should provide the easiest way to set up the SDK, it does not replace the SDK's documentation how to set it up manually.
+Showing the wizard command in the <Link to="https://docs.sentry.io/platforms/javascript/guides/nextjs/#install">Getting Started</Link> docs and providing an additional <Link to="https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/">Manual Setup</Link> page proved to be a good approach.
+
 </Alert>
 
 ### Transparency
@@ -79,8 +73,9 @@ If not already specified via the `--url` param, wizards should ask if users are 
 When creating a new wizard, the execution flow should roughly adhere to the outlined steps. Additional steps can be added as necessary.
 
 <Alert level="info">
-  Many of the individual steps and checks are already implemented in{' '}
-  <Link to="#building-blocks-and-helper-functions">helper functions</Link>.
+
+Many of the individual steps and checks are already implemented in <Link to="#building-blocks-and-helper-functions">helper functions</Link>.
+
 </Alert>
 
 ### 1. Check Preconditions
@@ -110,9 +105,11 @@ Some common tasks include:
 - Configure source maps or debug artifact upload.
 
 <Alert level="warning">
-  Whenever you modify code in an existing file, be aware that things can go wrong. Try to
-  detect already existing Sentry code and ask if users want to proceed anyway. If the
-  wizard fails, provide a fallback solution to manually set up the failed step.
+
+Whenever you modify code in an existing file, be aware that things can go wrong.
+Try to detect already existing Sentry code and ask if users want to proceed anyway.
+If the wizard fails, provide a fallback solution to manually set up the failed step.
+
 </Alert>
 
 ### 4. Verification
@@ -132,8 +129,10 @@ For example, you can take the [NextJS](https://github.com/getsentry/sentry-wizar
 If you come across logic that's not yet reusable but might be applicable in other wizards, feel free to extract it.
 
 <Alert level="warning">
-  Our older wizards use a class and step-based approach which is not recommended anymore.
-  We want to keep things simple and avoid unnecessary abstractions going forward.
+
+Our older wizards use a class and step-based approach which is not recommended anymore.
+We want to keep things simple and avoid unnecessary abstractions going forward.
+
 </Alert>
 
 ### Prompting for user input
@@ -153,17 +152,31 @@ const continueWithoutGit = await abortIfCancelled(
 ```
 
 <Alert level="info">
-  A lot{' '}
-  <Link to="https://github.com/getsentry/sentry-wizard/blob/master/src/utils/clack-utils.ts">
-    helpers
-  </Link>{' '}
-  around specific user input questions can be reused. For example, the entire
-  authentication and project selection flow is{' '}
-  <Link to="https://github.com/getsentry/sentry-wizard/blob/master/src/utils/clack-utils.ts#L518">
-    already covered
-  </Link>
-  .
+
+A lot of <Link to="https://github.com/getsentry/sentry-wizard/blob/master/src/utils/clack-utils.ts">helpers</Link> around specific user input questions can be reused.
+For example, the entire authentication and project selection flow is <Link to="https://github.com/getsentry/sentry-wizard/blob/master/src/utils/clack-utils.ts#L518">already covered</Link>.
+
 </Alert>
+
+### Handling User Data
+
+Whenever we upload files (source maps, debugging artifacts, etc.) to Sentry, we need to specify an auth token.
+This token is either fetched or generated when users log in in the browser.
+The wizard needs to store this token in a config file so that it can be accessed later on when users upload files.
+
+<Alert level="warning">
+
+**Important:** Auth tokens **must not** be directly injected into user code. They should be
+kept secret and not be committed to users' repositories.
+
+</Alert>
+
+Therefore:
+
+- Use our helpers to store the token in `.sentryclirc`, `sentry.properties` or `.env.sentry-build-plugins`.
+- Make sure the created file is added to the users' `.gitignore` file (our helpers take care of that).
+- Make sure that other data (e.g. project, org, url) is not stored in the same file as the auth token.
+  We can safely insert everything but the auth token into user code.
 
 ### Code Modifications
 
