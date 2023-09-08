@@ -247,6 +247,7 @@ export default () => {
             Research: Performance Monitoring API
           </SidebarLink>
           <SidebarLink to="/sdk/profiles/">Profiles</SidebarLink>
+          <SidebarLink to="/sdk/setup-wizards/" title="Setup Wizards">Setup Wizards</SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
