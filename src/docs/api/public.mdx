@@ -24,16 +24,20 @@ You **can** add attributes to a public endpoint.
 
 ## When to make an API public?
 
-Should I publish my API? The answer in most of the cases is **Yes**. As a developer facing company it is critical to make Sentry features available for developers to use in their various automations. Do not try to predict if an automation finds the API useful because we can't predict all the automations our clients might want to build. With that being said, there are 3 exceptions where we don't publish APIs:
+Should I publish my API? The answer in most cases is **Yes**. As a developer facing company it is critical to make Sentry features available for developers to use in their various automations. Do not try to predict if an automation finds the API useful because we can't predict all the automations our clients might want to build. With that being said, there are 3 exceptions where we don't publish APIs:
 1. **Experimental APIs:** APIs that are not fully launched or will go through multiple iterations in a short time that could cause breaking changes. These are expected to be published or removed after a while.
 2. **Private APIs:** APIs that are controlling a UI feature in Sentry, for example if a button is visible. 
 3. **APIs in getsentry:** If you're a Sentry engineer and building APIs in getsentry repo, know that they won't be published. This is the expected behavior for all the getsentry APIs, but if you have a case that you think it should be published let [owners-api](https://github.com/orgs/getsentry/teams/owners-api) know and we can help with that.
 
-**Note**: Always keep in mind that your APIs will be used out of Sentry product even if they're `private`. All the APIs in Sentry repo are accessible to public due to the open-source nature.  
+<Alert title="Note" level="info"> 
+
+Always keep in mind that your APIs will be used out of Sentry product even if they're `private`. All the APIs in Sentry repo are accessible to public due to our open-source nature.  
+
+</Alert>
 
 ### Before Publishing
 
-Remember, making an API public means that once an endpoint is public, you can only add to it: You cannot make _any_ breaking
+Remember, making an API public means that you can only add to it: You cannot make _any_ breaking
 changes.
 
 As a guide, use these questions:
@@ -115,7 +119,7 @@ class OrganizationTeamsEndpoint(...):
 ### 4. Endpoint Description
 
 Specify the endpoint description in the documentation using the endpoint's docstring. Please make sure to include a description for the resources involved as well if they are not clear. For example, `team` and `organization` here don't require
-description but other words like `external-issue` or `integration` are vauge and need description. 
+description but other words like `external-issue` or `integration` are vague and need description. 
 
 ```python
 def post(self, request, organization, **kwargs):
@@ -163,7 +167,7 @@ class OrganizationTeamsEndpoint(...):
 Here's description of each field in the method decorator:
 - **operation_id:** will be shown as the title of the endpoint's page in the
 documentation.
-- **parameters:** is a list of path and query parameters and if they're required. 
+- **parameters:** is a list of path and query parameters, and whether or not they are required. 
   - You can find existing parameters in this 
   [file](https://github.com/getsentry/sentry/blob/master/src/sentry/apidocs/parameters.py). Note
   that the `description` field in `OpenApiParameter` populates the parameter's description in the
@@ -171,7 +175,7 @@ documentation.
   - DRF serializers conveniently translate into query parameters. See
   [here](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/endpoints/organization_stats_v2.py#L145)
   for an example of this.
-- **request:** is the request serializer that can generally just be the DRF serializer of endpoint itself. If you need more
+- **request:** is the request serializer that can generally just be the DRF serializer of the endpoint itself. If you need more
   customization or the endpoint doesn't use a serializer, you can use drf-spectacular's
   [inline_serializer](https://drf-spectacular.readthedocs.io/en/latest/drf_spectacular.html#drf_spectacular.utils.inline_serializer)
   to create a one-off serializer.
@@ -183,8 +187,8 @@ documentation.
 - **examples:** specifies the endpoint's sample response. We keep all our examples in this
 [folder](https://github.com/getsentry/sentry/tree/master/src/sentry/apidocs/examples) sorted by
 sidebar tags. 
-  - Note that the statment `response_only=True` is required for all examples.
-  - We currently only support showing one response example per endpoint but support for multiple examples is on the way. So feel free to add multiple examples here.
+  - Note that the statement `response_only=True` is required for all examples.
+  - We currently only support showing one response example per endpoint but support for multiple examples is on the way. So, feel free to add multiple examples here.
 
 ```python
 @extend_schema(
@@ -299,7 +303,7 @@ The response has multiple attributes:
 }
 ```
 
-Let's say we also return a `nickname` for a team. If what is returned is not documented as a
+Let's say we also return a `nickname` for a team. If the data returned is not documented as a
 response in our public documentation, that attribute is a private attribute within a public
 endpoint.
 
@@ -372,7 +376,7 @@ will be triggered to make your changes automatically go live:
 
 ## Requesting an API to be public
 
-Are you a Sentry client who wants an endpoint to be public?
+Are you a Sentry user who wants an endpoint to be public?
 
 Look at the [issues on sentry with the `Component: API`
 label](https://github.com/getsentry/sentry/issues?q=is%3Aopen+is%3Aissue+label%3A%22Component%3A+API%22).
