@@ -76,7 +76,9 @@ decorator to perform the documentation. The sections below outline each step to 
 
 ### 1. Declaring Owner for the Endpoint
 
-Declare an owner for the endpoint. This would be the team at Sentry responsible to maintain and make publishing decisions about the endpoint methods.
+Declare an owner for the endpoint. This would be the team at Sentry responsible
+for maintaining and owning about the endpoint. You can see
+the full list of owners [here](https://github.com/getsentry/sentry/blob/master/src/sentry/api/api_owners.py).
 ```python
 class OrganizationTeamsEndpoint(...):
     owner = ApiOwner.ENTERPRISE
@@ -84,7 +86,7 @@ class OrganizationTeamsEndpoint(...):
 
 ### 2. Setting Publish Status on Endpoint
 
-Declare endpoint methods public by adding them to the publish_status with `PUBLIC` value.
+Declare the appropiate endpoint methods public by setting their publish_status to `PUBLIC`.
 
 ```python
 class OrganizationTeamsEndpoint(...):
