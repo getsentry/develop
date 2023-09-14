@@ -278,8 +278,15 @@ We use `MockApiClient` to mock API responses. This is a globally-available class
 ```tsx
 import {render, screen} from 'sentry-test/reactTestingLibrary';
 
-...
-render(<MyComponentThatFetches />);
+describe('useFetchSomeData', () => {
+  it('should fetch', () => {
+    const request = MockApiClient.addMockResponse(...);
+
+    render(<MyComponentThatFetches />);
+
+    expect(request).toHaveBeenCalled();
+  });
+});
 ```
 
 ### Test setup for hooks
@@ -297,12 +304,14 @@ function wrapper({children}: {children?: ReactNode}) {
 
 describe('useFetchSomeData', () => {
   it('should fetch', () => {
+    const request = MockApiClient.addMockResponse(...);
+
     const {result, waitFor} = reactHooks.renderHook(useFetchSomeData, {
       wrapper,
       initialProps: {organization},
     });
     
-    expect(...);
+    expect(request).toHaveBeenCalled();
   });
 });
 ```
