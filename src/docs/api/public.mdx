@@ -212,7 +212,7 @@ Here's description of each argument in the decorator:
 
 - **responses:** include all possible success and failure HTTP response cases. You can learn more about them in the next section.
 
-- **examples:** specifiy the endpoint's sample response. We keep all our examples in this
+- **examples:** specify the endpoint's sample response. We keep all our examples in this
 [folder](https://github.com/getsentry/sentry/tree/master/src/sentry/apidocs/examples) sorted by
 sidebar tags. 
   - Note that the statement `response_only=True` is required for all examples.
@@ -259,20 +259,18 @@ validate any included example responses. There are three ways to do this:
   [`OrganizationMemberSCIMSerializerResponse`](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/serializers/models/organization_member/response.py#L60)
   TypedDict which specifies the typing of the response body.
 
-  Note that in order indicate optional fields that may or may not be set in the response, you must
-  inherit from a TypedDict with `total=False` in it's class header. Optional fields should be
-  grouped together and cannot exist in the same class as required fields.
-  See
-  [here](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/serializers/models/organization_member/response.py#L53)
+  In order indicate optional fields that may or may not be set in the response, you must use 
+  [totality](https://peps.python.org/pep-0589/#totality) and separate your TypedDict into 
+  two classes. The first class should only contain optional fields and inherit from a TypedDict 
+  with `total=False` in it's class header. The second class should only contain required fields, 
+  and inherit from the first class. See
+  [here](https://github.com/getsentry/sentry/blob/4404deda8376bf1a011b76964b45b58671c2a33b/src/sentry/monitors/serializers.py#L35-L48)
   for an example of this.
-  ```python
-  class ExampleResponseOptional(TypedDict, total=False):
-      optionalStringField: str
-  ```
 
-  For fields that may be null, use `Optional` followed by the field's type. Note that a field can be both optional and null.
+  For fields that may be null, use `Optional` followed by the field's type. Note
+  that a field may be both optional and null.
   ```python
-  class ExampleResponse(ExampleResponseOptional):
+  class ExampleResponse(TypedDict):
       potentiallyNullStringField: Optional[str]
   ```
 
@@ -359,7 +357,7 @@ deleting the old documentation will cause all other requests to disappear from t
   API docs tests.
 - `make build-api-docs` builds the OpenAPI JSON. The build will fail if there are any warnings.
 - `make diff-api-docs` produces a diff of your local OpenAPI JSON with production.
-- `make watch-api-docs` autmatoically rebuilds the OpenAPI JSON on change.
+- `make watch-api-docs` automatically rebuilds the OpenAPI JSON on change.
 
 **To see your changes in the docs locally**:
 
@@ -377,7 +375,7 @@ In `sentry-docs`:
    `<COPIED_FULL_PATH>` with the path to your local openapi-derefed.json. 
    
    Unfortunately changes do not automatically reflect in your local server, so you will need to
-   rerun this commmand on every change. We hope to add this feature in the future.
+   rerun this command on every change. We hope to add this feature in the future.
 
 See [here](https://docs.sentry.io/contributing/environment/) for detailed doc build instructions.
 
