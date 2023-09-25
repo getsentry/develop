@@ -245,7 +245,7 @@ sidebar tags.
 #### Success Responses
 
 Specify the return type of success responses, which are used to generate the response schema and 
-validate any example response bodies. There are three ways to do this:
+validate any included example responses. There are three ways to do this:
 
 1. If the success response is a single object instead of a list, you can pass a DRF serializer as
   the response. In order for this serializer to generate a schema, its `serialize` method must be
