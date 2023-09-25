@@ -259,7 +259,7 @@ validate any included example responses. There are three ways to do this:
   [`OrganizationMemberSCIMSerializerResponse`](https://github.com/getsentry/sentry/blob/0b9b6563bc4e232334cfc71f136a49117171d13f/src/sentry/api/serializers/models/organization_member/response.py#L60)
   TypedDict which specifies the typing of the response body.
 
-  In order indicate optional fields that may or may not be set in the response, you must use 
+  In order to indicate optional fields that may or may not be set in the response, you must use 
   [totality](https://peps.python.org/pep-0589/#totality) and separate your TypedDict into 
   two classes. The first class should only contain optional fields and inherit from a TypedDict 
   with `total=False` in it's class header. The second class should only contain required fields, 
