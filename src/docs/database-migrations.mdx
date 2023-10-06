@@ -299,7 +299,9 @@ When creating new columns they should either be:
 
 Because adding a column to a large table (more than 10M rows) can exceed the 5s
 statement timeout we have during deploys, you need to use two migrations to
-safely ship changes to large tables. The first migration should look similar to:
+safely ship changes to large tables.
+
+First create the column in the database without telling Django about the presence of the column. This is an `is_dangerous` operation. It should look similar to:
 
 ```python
 is_dangerous = True
