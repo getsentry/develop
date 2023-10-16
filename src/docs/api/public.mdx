@@ -192,7 +192,7 @@ Here's description of each argument in the decorator:
   - It can generally just be the DRF serializer of the endpoint itself.
     - The `help_text` argument of each serializer field populates the body
       parameter's description in the documentation.
-      - For nested serializers, use the class docstring instead to populate the description.
+      - For nested serializers, use the class docstring instead to populate the parameter's description.
       See [here](https://github.com/getsentry/sentry/blob/338916947b1a316bf908d048b9feb27dceced351/src/sentry/api/serializers/rest_framework/project_key.py#L9-L24)
       for an example of this.
     - To exclude certain body parameters, you can pass `exclude_fields` to the
