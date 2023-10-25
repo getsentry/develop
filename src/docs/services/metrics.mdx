@@ -92,7 +92,7 @@ server bills heading our way if a high cardinality tag is emitted.  Examples for
 high cardinality tags are:
 
 * `event_id`, `request_id` etc.: these are unique values, absolutely pointless and
-  if one were to emit them at out scale: very, very expensive.
+  if one were to emit them at our scale: very, very expensive.
 * `project_id`, `org_id`: for common operations that happen across the entire user
   base: still a very bad idea.  Maybe they are acceptable for very rare circumstances
   or things that only happen for a small segment of the user base (eg: when you are
