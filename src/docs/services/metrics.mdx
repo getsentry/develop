@@ -83,3 +83,24 @@ LOGGING['handlers']['console:metrics'] = {
     'formatter': 'metrics',
 }
 ```
+
+## Notes on Metrics
+
+When emitting metrics you need to be careful about cardinality.  Particularly for
+metrics that are supposed to be sent to Datadog, at our scale there can be large
+server bills heading our way if a high cardinality tag is emitted.  Examples for
+high cardinality tags are:
+
+* `event_id`, `request_id` etc.: these are unique values, absolutely pointless and
+  if one were to emit them at our scale: very, very expensive.
+* `project_id`, `org_id`: for common operations that happen across the entire user
+  base: still a very bad idea.  Maybe they are acceptable for very rare circumstances
+  or things that only happen for a small segment of the user base (eg: when you are
+  tracking a beta feature with a small user base, but even in that case probably
+  a horrible idea).
+
+Probably acceptable cardinality:
+
+* `platform` as in SDK platform: there is a finite number of them.
+* `status` as in HTTP status code: not great, but we expect a finite number of them.
+* `task_name`, `endpoint` etc.
