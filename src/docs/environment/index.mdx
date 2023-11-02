@@ -212,8 +212,7 @@ pip install --no-cache-dir uwsgi
 
 **Problem:** You see something like `Error: No such container: sentry_postgres`, or you don't see `sentry_snuba`, `sentry_postgres`, `sentry_clickhouse`, and `sentry_redis` listed under `COMMAND NAMES`.
 
-**Solution:** Review the [bootstrap services](/environment/#bootstrap-services)
-section or spin up Docker services with:
+**Solution:**
 
 ```shell
 sentry devservices up
