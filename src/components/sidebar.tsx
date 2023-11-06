@@ -186,6 +186,7 @@ export default () => {
           <SidebarLink to="/sdk/store/">Store Endpoint</SidebarLink>
           <SidebarLink to="/sdk/envelopes/">Envelopes</SidebarLink>
           <SidebarLink to="/sdk/rate-limiting/">Rate Limiting</SidebarLink>
+          <SidebarLink to="/sdk/distributed-tracing/">Distributed Tracing</SidebarLink>
           <SidebarLink to="/sdk/performance/" title="Performance">
             <SidebarLink to="/sdk/performance/span-operations/">
               Span Operations
