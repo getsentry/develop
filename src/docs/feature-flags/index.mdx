@@ -369,7 +369,14 @@ use:
   None.
 * `subscription_plan-tier` This is the plan tier eg. `am1`.
 * `subscription_plan` This property is deprecated and should not be used in new
+* `subscription_plan-trial-plan-tier` Tier for the plan trial, if one exists.
+* `subscription_plan` This property is deprecated and should not be used in new
   feature flags.
+
+_Note:_ Some customers may have both a regular plan _and_ a plan trial. If you
+need to target a plan tier, (e.g., `"am2"` you should create Flagr constraints
+for both the `subscription_plan-tier` property _and_ the
+`subscription_plan-trial-plan-tier` property.)
 
 ![enable plan subset](../img/flagrPlanSubset.png)
 
