@@ -29,6 +29,8 @@ You may also set these optional attributes:
 - `noise_config`: A `NoiseConfig` that allows you to set policy on how many times a fingerprint must occur in a period of time before an issue is created. NoiseConfig has two attributes:
   - `ignore_limit`: How many occurrences need to occur before we create a new issue
   - `expiry_time`: The period of time the occurrences must occur in before we reset the count
+- `enable_auto_resolve`: Whether this issue type should be automatically resolved after a set period of time. By default this attribute is set to true.
+- `enable_escalation_detection`: Whether escalation forecasts and detection should be enabled for this issue type. By default this attribute is set to true.
 
 Here's an example issue type:
 ```python
