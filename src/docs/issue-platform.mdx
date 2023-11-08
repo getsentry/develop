@@ -56,7 +56,7 @@ class ProfileFileIOGroupType(GroupType):
 You might also want to register a new category related to your issue type as well. This allows you to group related issue types together. To do so, add your category to <Link to="https://github.com/getsentry/sentry/blob/97f4174c28041357aa190f27012dc33c1c7bafc7/src/sentry/issues/grouptype.py#L17-L22">this enum</Link>
 
 ## Send Occurrences to the Issue Platform
-If operating within the Sentry codebase, you can call <Link to="https://github.com/getsentry/sentry/blob/master/src/sentry/issues/producer.py#L41-L46">sentry.issues.produce_occurrence_to_kafka</Link> and pass in the <Link to="https://github.com/getsentry/sentry/blob/d262bbd9d8d3a2747d5251bee35c016c13ca050a/src/sentry/issues/issue_occurrence.py#L58">IssueOccurrence</Link> and optionally the `Event` data and `Payload Type`. The fields in these are described in the schemas below.
+If operating within the Sentry codebase, you can call <Link to="https://github.com/getsentry/sentry/blob/master/src/sentry/issues/producer.py#L41-L46">sentry.issues.produce_occurrence_to_kafka</Link> and pass in the <Link to="https://github.com/getsentry/sentry/blob/d262bbd9d8d3a2747d5251bee35c016c13ca050a/src/sentry/issues/issue_occurrence.py#L58">IssueOccurrence</Link> and optionally the `Event` data, <Link to="#payload-type">`Payload Type`</Link>, and <Link to="#status-change">`status_change`</Link>. The fields in these are described in the schemas below.
 
 If operating from an external service then pass a json payload that matches the <Link to="#issue-occurrence-schema">Issue Occurrence Schema</Link> to the `ingest-occurrences` topic on the <Link to="https://github.com/getsentry/getsentry/blob/97039335a29517a7e48149148cdd7a30a60971e7/getsentry/conf/settings/prod.py#L567-L571">issue occurrences Kafka cluster</Link>
 
@@ -127,6 +127,7 @@ Issue platform supports two types of payloads:
 - `OCCURRENCE`
 - `STATUS_CHANGE`
 
+### Staus Change
 The `status_change` message format is as follows:
 - `fingerprint`: unique identifier for the occurrence
 - `new_status`: status string; one of {`resolved` | `archived` | `unresolved`}
