@@ -126,21 +126,23 @@ Caveats
 - Attachments will not work. If you have a need for this please contact the issues team.
 
 ### Payload Type
+Determines the type of payload sent to the issue platform. If `payload_type` is not present in `produce_occurrence_to_kafka`, the type is assumed to be `OCCURRENCE`.
+
 The <Link to="https://github.com/getsentry/sentry/blob/ccfb37212102945df5f35e8f55fe38891b70036b/src/sentry/issues/producer.py#L23">PayloadType</Link> enum has two types:
 - `OCCURRENCE`: for sending an occurrence
 - `STATUS_CHANGE`: for sending a status update
-If `payload_type` is not present in `produce_occurrence_to_kafka`, the type is assumed to be `OCCURRENCE`.
 
-### Staus Change
+### Staus Change Message
 If `payload_type` is set to `STATUS_CHANGE` in `produce_occurrence_to_kafka`, `status_change` will update the status of an issue.
+
 The `StatusChangeMessage` schema is as follows:
 - `fingerprint`: unique identifier for the occurrence
-- `project_id`: (int)
-- `new_status`: (int) from the <Link url="https://github.com/getsentry/sentry/blob/2e5a39ff3dd4afbd33f2ff7d2ba161285107afe4/src/sentry/models/group.py#L148">GroupStatus</Link> enum. We currently support the following:
+- `project_id`: int.
+- `new_status`: int. Uses <Link url="https://github.com/getsentry/sentry/blob/2e5a39ff3dd4afbd33f2ff7d2ba161285107afe4/src/sentry/models/group.py#L148">GroupStatus</Link> enum. We currently support the following:
   - `UNRESOLVED`
   - `RESOLVED`
   - `IGNORED`
-- `new_substatus`: (int | None) from <Link url="https://github.com/getsentry/sentry/blob/2e5a39ff3dd4afbd33f2ff7d2ba161285107afe4/src/sentry/types/group.py#L4">GroupSubStatus</Link> enum. We do not support the `NEW` substatus.
+- `new_substatus`: int | None. Uses <Link url="https://github.com/getsentry/sentry/blob/2e5a39ff3dd4afbd33f2ff7d2ba161285107afe4/src/sentry/types/group.py#L4">GroupSubStatus</Link> enum. We do not support the `NEW` substatus.
 
 ## Releasing your issue type
 The issue platform provides functionality to help release your new issue type in a controlled way. There are 3 feature flags that are used to release an issue type:
