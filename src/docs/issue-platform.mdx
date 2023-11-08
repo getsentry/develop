@@ -55,7 +55,7 @@ class ProfileFileIOGroupType(GroupType):
 ### Register a Category
 You might also want to register a new category related to your issue type as well. This allows you to group related issue types together. To do so, add your category to <Link to="https://github.com/getsentry/sentry/blob/97f4174c28041357aa190f27012dc33c1c7bafc7/src/sentry/issues/grouptype.py#L17-L22">this enum</Link>
 
-## Send Occurrences or Status Changes to the Issue Platform
+## Send Occurrence or Status Change Payloads to the Issue Platform
 If operating within the Sentry codebase, you can call <Link to="https://github.com/getsentry/sentry/blob/master/src/sentry/issues/producer.py#L41-L46">sentry.issues.produce_occurrence_to_kafka</Link> with the following optional parameters:
 - `payload_type`: <Link to="#payload-type">PayloadType</Link>
 - `occurrence`: <Link to="https://github.com/getsentry/sentry/blob/d262bbd9d8d3a2747d5251bee35c016c13ca050a/src/sentry/issues/issue_occurrence.py#L58">IssueOccurrence</Link>
@@ -127,12 +127,12 @@ Caveats
 
 ### Payload Type
 The <Link to="https://github.com/getsentry/sentry/blob/ccfb37212102945df5f35e8f55fe38891b70036b/src/sentry/issues/producer.py#L23">PayloadType</Link> enum has two types:
-- `OCCURRENCE`
-- `STATUS_CHANGE`
+- `OCCURRENCE`: for sending an occurrence
+- `STATUS_CHANGE`: for sending a status update
+If `payload_type` is not present in `produce_occurrence_to_kafka`, the type is assumed to be `OCCURRENCE`.
 
 ### Staus Change
-
-
+If `payload_type` is set to `STATUS_CHANGE` in `produce_occurrence_to_kafka`, `status_change` will update the status of an issue.
 The `StatusChangeMessage` schema is as follows:
 - `fingerprint`: unique identifier for the occurrence
 - `project_id`: (int)
