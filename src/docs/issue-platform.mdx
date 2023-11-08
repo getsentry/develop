@@ -29,7 +29,7 @@ You may also set these optional attributes:
 - `noise_config`: A `NoiseConfig` that allows you to set policy on how many times a fingerprint must occur in a period of time before an issue is created. NoiseConfig has two attributes:
   - `ignore_limit`: How many occurrences need to occur before we create a new issue
   - `expiry_time`: The period of time the occurrences must occur in before we reset the count
-- `enable_auto_resolve`: Whether this issue type should be automatically resolved after a set period of time. By default this attribute is set to true.
+- `enable_auto_resolve`: Whether detector controlled resolution should be enabled for this issue type. By default this attribute is set to true.
 - `enable_escalation_detection`: Whether escalation forecasts and detection should be enabled for this issue type. By default this attribute is set to true.
 
 Here's an example issue type:
@@ -56,7 +56,7 @@ class ProfileFileIOGroupType(GroupType):
 You might also want to register a new category related to your issue type as well. This allows you to group related issue types together. To do so, add your category to <Link to="https://github.com/getsentry/sentry/blob/97f4174c28041357aa190f27012dc33c1c7bafc7/src/sentry/issues/grouptype.py#L17-L22">this enum</Link>
 
 ## Send Occurrences to the Issue Platform
-If operating within the Sentry codebase, you can call <Link to="https://github.com/getsentry/sentry/blob/master/src/sentry/issues/producer.py#L28-L30">sentry.issues.produce_occurrence_to_kafka</Link> and pass in the <Link to="https://github.com/getsentry/sentry/blob/d262bbd9d8d3a2747d5251bee35c016c13ca050a/src/sentry/issues/issue_occurrence.py#L58">IssueOccurrence</Link>, and optionally the `Event` data. The fields in these are described in the schemas below.
+If operating within the Sentry codebase, you can call <Link to="https://github.com/getsentry/sentry/blob/master/src/sentry/issues/producer.py#L41-L46">sentry.issues.produce_occurrence_to_kafka</Link> and pass in the <Link to="https://github.com/getsentry/sentry/blob/d262bbd9d8d3a2747d5251bee35c016c13ca050a/src/sentry/issues/issue_occurrence.py#L58">IssueOccurrence</Link> and optionally the `Event` data and `Payload Type`. The fields in these are described in the schemas below.
 
 If operating from an external service then pass a json payload that matches the <Link to="#issue-occurrence-schema">Issue Occurrence Schema</Link> to the `ingest-occurrences` topic on the <Link to="https://github.com/getsentry/getsentry/blob/97039335a29517a7e48149148cdd7a30a60971e7/getsentry/conf/settings/prod.py#L567-L571">issue occurrences Kafka cluster</Link>
 
@@ -119,6 +119,20 @@ There's a minimum set of fields which should be included:
 
 Caveats
 - Attachments will not work. If you have a need for this please contact the issues team.
+
+### Payload Type
+<Link to="https://github.com/getsentry/sentry/blob/ccfb37212102945df5f35e8f55fe38891b70036b/src/sentry/issues/producer.py#L23">PayloadType</Link>
+
+Issue platform supports two types of payloads:
+- `OCCURRENCE`
+- `STATUS_CHANGE`
+
+The `status_change` message format is as follows:
+- `fingerprint`: unique identifier for the occurrence
+- `new_status`: status string; one of {`resolved` | `archived` | `unresolved`}
+- `new_substatus` [optional]:
+  - One of {`forever`, `until_escalating`, `until_condition_met`} for `archived`
+  - One of {`escalating` `ongoing`} for `unresolved`
 
 ## Releasing your issue type
 The issue platform provides functionality to help release your new issue type in a controlled way. There are 3 feature flags that are used to release an issue type:
