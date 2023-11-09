@@ -29,7 +29,7 @@ You may also set these optional attributes:
 - `noise_config`: A `NoiseConfig` that allows you to set policy on how many times a fingerprint must occur in a period of time before an issue is created. NoiseConfig has two attributes:
   - `ignore_limit`: How many occurrences need to occur before we create a new issue
   - `expiry_time`: The period of time the occurrences must occur in before we reset the count
-- `enable_auto_resolve`: Whether this issue type can be resolved automatically after 14 days of silence. By default this attribute is set to true.
+- `enable_auto_resolve`: Whether this issue type can be resolved automatically after a number of days with no events. The auto_resolve window is configurable in each project's settings. By default this attribute is set to true.
 - `enable_escalation_detection`: Whether this issue type can escalate using the <Link to="https://docs.sentry.io/product/issues/states-triage/escalating-issues/">Escalating Issues Algorithm</Link>. By default this attribute is set to true.
 
 Here's an example issue type:
