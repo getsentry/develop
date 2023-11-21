@@ -76,12 +76,12 @@ If you want to measure how much time a specific piece of code takes, you can use
 from sentry_sdk import metrics
 
 # Emit a distribution metric of the execution time of the function.
-with metrics.timer("..."):
- pass
+with metrics.timer("my_timer"):
+    pass
 
-@metrics.timer("...")
+@metrics.timer("my_timer")
 def my_function():
- ...
+    pass
 ```
 
 <Alert title="Note" level="note">
