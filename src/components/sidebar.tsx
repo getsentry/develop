@@ -220,6 +220,7 @@ export default () => {
           <SidebarLink to="/sdk/check-ins/">Check-Ins</SidebarLink>
           <SidebarLink to="/sdk/sessions/">Sessions</SidebarLink>
           <SidebarLink to="/sdk/client-reports/">Client Reports</SidebarLink>
+          <SidebarLink to="/sdk/distributed-tracing/">Distributed Tracing</SidebarLink>
           <SidebarLink to="/sdk/performance/" title="Performance">
             <SidebarLink to="/sdk/performance/span-operations/">
               Span Operations
