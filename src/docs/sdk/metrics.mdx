@@ -286,6 +286,25 @@ emission time the system shall be collecting which code location emitted a metri
 For that the same format as for the [`frame`](/sdk/event-payloads/stacktrace/) on the stacktrace
 shall be used.  `stacklevel` number of frames shall be ignored.
 
+The meta data is emitted in JSON as envelope item called `metric_meta`:
+
+```json
+{
+  "timestamp": 1701743645,
+  "mapping": {
+    "encoded_mri": [{
+      "type": "location",
+      "filename": "..."
+    }]
+  }
+}
+```
+
+Today only code mappings are supported.  Each key is an encoded MRI (eg: `c:custom/foo@none`), each
+value in the mapping array has a key called `type` which today can only be `"location"`.  All other
+keys are the same format as the [`frame`](/sdk/event-payloads/stacktrace/) on the stacktrace.  Today
+SDKs should send code locations at least once a day, and they can round the timestamp.
+
 ## Reference Implementation
 
 The Python SDK holds a reference implementation in the `metrics.py` module for the full
