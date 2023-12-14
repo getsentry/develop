@@ -90,8 +90,13 @@ export default () => {
           <SidebarLink to="/dynamic-sampling/" title="Dynamic Sampling">
             <Children tree={tree.find(n => n.name === 'dynamic-sampling').children} />
           </SidebarLink>
-          <SidebarLink to="/delightful-developer-metrics/" title="Delightful Developer Metrics">
-            <Children tree={tree.find(n => n.name === 'delightful-developer-metrics').children} />
+          <SidebarLink
+            to="/delightful-developer-metrics/"
+            title="Delightful Developer Metrics"
+          >
+            <Children
+              tree={tree.find(n => n.name === 'delightful-developer-metrics').children}
+            />
           </SidebarLink>
         </ul>
       </li>
@@ -123,6 +128,7 @@ export default () => {
             Dependency Upgrade Policies
           </SidebarLink>
           <SidebarLink to="/frontend/development-server/">Development Server</SidebarLink>
+          <SidebarLink to="/frontend/component-library/">Component Library</SidebarLink>
           <SidebarLink to="/frontend/network-requests/">Network Requests</SidebarLink>
           <SidebarLink to="/frontend/defaultprops/">Typing DefaultProps</SidebarLink>
           <SidebarLink to="/frontend/using-hooks/">Using hooks</SidebarLink>
@@ -246,7 +252,9 @@ export default () => {
           <SidebarLink to="/sdk/research/performance">
             Research: Performance Monitoring API
           </SidebarLink>
-          <SidebarLink to="/sdk/setup-wizards/" title="Setup Wizards">Setup Wizards</SidebarLink>
+          <SidebarLink to="/sdk/setup-wizards/" title="Setup Wizards">
+            Setup Wizards
+          </SidebarLink>
           <SidebarLink to="/sdk/rate-limiting/">Rate Limiting</SidebarLink>
           <SidebarLink to="/sdk/signal-handlers/">Signal Handlers</SidebarLink>
           <SidebarLink to="/sdk/serverless/" title="Serverless SDKs">
