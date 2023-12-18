@@ -28,6 +28,15 @@ We may have some updated configuration, especially for new features, so always c
 
 Before starting the upgrade, we shut down all the services and then run some data migrations, so expect to have some downtime. There is an *experimental* `--minimize-downtime` option to reduce the downtime during upgrades. Use this at your own risk and see [the pull request it was implemented in](https://github.com/getsentry/self-hosted/issues/607) for more information.
 
+For example:
+```
+cd /path/to/your/self-hosted
+git pull
+git checkout VERSION_YOU_WANT
+./install.sh
+docker-compose up -d
+```
+
 <Alert title="Warning" level="warning">
   There are certain hard-stops you need to go through when upgrading from earlier versions. Please read the <Link to="#hard-stops">hard-stops</Link> section below for a list.
 </Alert>
