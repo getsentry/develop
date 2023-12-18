@@ -48,6 +48,10 @@ In some SDKs, this is implemented as the path relative to a certain entry
 point relevant to the language/platform. For example, in Python the `filename`
 is relative to `PYTHONPATH` or `site-packages`.
 
+For some SDKs this is implemented by taking an option called `prefixes` which
+is a list of path prefixes that should be removed from frame paths.  The full
+path is retained in `abs_path`.
+
 `function`
 
 : The name of the function being called.
@@ -74,7 +78,7 @@ Sentry shows the raw function when clicking on the shortened one in the UI.
 
 `abs_path`
 
-: The absolute path to the source file.
+: The absolute path to the source file.  This relates to `filename`.
 
 `context_line`
 
