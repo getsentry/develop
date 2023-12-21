@@ -10,7 +10,7 @@ title: UI Component Library
 
 This component library is a (growing) collection of all the React components and hooks that are available within the getsentry/sentry codebase. 
 
-The library consists of the framework itself, which helps to make stories available & discoverable, as well as the story content. Each story is meant to describe how to use a React Component or hook; what are the properties, behaviors, and common or recommended combinations.
+The library consists of the framework itself, which helps to make stories available & discoverable, as well as the story content. Each story is meant to describe how to use a React Component or hook, as well as the properties, behaviors, and common or recommended combinations.
 
 ## Accessing and Using the Library
 
@@ -44,9 +44,9 @@ export default storyBook(Button, story => {
 This template includes all the basics:
 
 1. The filename is `button.stories.tsx` and sits directly beside `button.tsx` which is the component being described.
-2. The file uses a default export, there is no need to name things when there is only one export.
+2. The file uses a default export; there is no need to name things when there is only one export.
 3. To create the `storyBook()` we're passing in the `Button` component directly as the first argument. This sets the title at the top of the page, and avoids typos.
-4. We've implemented a function that accepts `story` as it's argument. This is inspired by `jest` and the [`describe()`](https://jestjs.io/docs/api#describename-fn) function.
+4. We've implemented a function that accepts `story` as its argument. This is inspired by `jest` and the [`describe()`](https://jestjs.io/docs/api#describename-fn) function.
 5. Each time we call `story()` we can render out a unit onto the page. This includes a title, and the rendered component example. This is similar to `jest` and the [`test()` or `it()`](https://jestjs.io/docs/api#testname-fn-timeout) function, with the exception that `story` is not a global.
     
 Using this framework you get some nice things automatically:
@@ -58,8 +58,7 @@ Some tips to remember:
 
 - Don't be afraid to import anything else you need to help illustrate use cases for your component. It's useful to leverage `<p>` and `<Fragment>` in most cases for example.
 - If you are demonstrating a component that relies on a global hook like `useOrganization()` or `usePageFilters()`, then you should wrap your story with those context providers manually.
-- Named exports, or a mix of named and default exports are all supported. This is more useful with [non-framework stories](#non-framework-stories).
-- If you are testing a hook then you must pass a string as the first argument to `storyBook()` instead of the hook itself because.
+- Named exports, or a mix of named and default exports, are all supported. This is more useful with [non-framework stories](#non-framework-stories).
 
 ### Non-framework stories
 
