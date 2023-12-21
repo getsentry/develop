@@ -92,7 +92,7 @@ export default () => {
           </SidebarLink>
           <SidebarLink
             to="/delightful-developer-metrics/"
-            title="Delightful Developer Metrics"
+            title="Sentry Developer Metrics"
           >
             <Children
               tree={tree.find(n => n.name === 'delightful-developer-metrics').children}
