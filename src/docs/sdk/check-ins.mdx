@@ -88,6 +88,8 @@ check-ins.
     },
     "checkin_margin": 5,
     "max_runtime": 30,
+    "failure_issue_threshold": 2,
+    "recovery_threshold": 2,
     "timezone": "America/Los_Angeles"
   }
 }
@@ -107,6 +109,16 @@ check-in time that the monitor will not be considered missed for.
 
 : _Number, optional_. The allowed duration in minutes that the monitor
 may be `in_progress` for before being considered failed due to timeout.
+
+`failure_issue_threshold`
+
+: _Number, optional_. The number of consecutive failed check-ins it takes
+before an issue is created.
+
+`recovery_threshold`
+
+: _Number, optional_. The number of consecutive OK check-ins it takes
+before an issue is resolved.
 
 `timezone`
 
