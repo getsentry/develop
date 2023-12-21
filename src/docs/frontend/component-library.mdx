@@ -22,6 +22,14 @@ The Component Library is implemented as a webpage inside the main sentry applica
 - **Dev Access**<br />
     Whether you are using `yarn dev-ui` to start a development server, or `sentry devserver` to spin up all the services locally, you can access the Component Library by logging in and changing the path from `/issues/` (the default landing page) to `/stories/`. 
 
+## Ownership 
+
+Stories are explicitly **not owned** by the original author or team that created a given component. **Stories are owned by the reader (you)**.
+
+Therefore if you are reading a story and notice a mistake, omission, or something confusing then be empowered to make a change and improve things!
+
+Similarly if you notice a component is missing from the library be empowered to add it. No one is required to be an expert when adding or editing an entry, but you will make things easier for yourself and your teammates by putting in the effort to be as clear and complete as possible.
+
 ## Creating new Stories
 
 ### Using the `storyBook()` framework
@@ -128,6 +136,46 @@ Helper Components:
       selectedProps={['priority', 'size']}
     />
     ```
+
+### Writing a new story
+
+Now that you are armed and ready with the `storyBook()` template from above, and some helper components, it's time to write your new story. What's it going to say?
+
+A good way to start out is just to do a minimal example that shows your component with all the defaults set. This sets a baseline to build on top of and you create for yourself an example to copy+paste and edit as we go.
+
+For button this is the "Default" case and it fits all on one line:
+```typescript
+story('Default', () => <Button>Default Button</Button>);
+```
+
+The next thing to do is follow it up with common and simple props, and all their possible values. Think about things that affects rendering for example sizes and colors, whether something is open or closed by default, things that don't need a lot of explination. One way to do this is by using the `<Matrix />` component, or just listing them out in their own stories one by one.
+
+With the common and simple props out of the way, now is the time to get into more interesting props, like callbacks or complex example data & fixtures. One way to document a callbacks, like `onClick`, is to include `useState()` in your story, and implement a basic counter to demonstrate that the method is being executed; or if you have an `onChange` callback capture the callback args in state, and print that to the screen.
+
+For example:
+```typescript
+story('onClick Prop', () => {
+  const [clicks, setClicks] = useState(0);
+  return (
+    <Fragment>
+      <p>clicked {clicks} times</p>
+      <Button onClick={() => setClicks(prev => prev +1)}>Clicked Me</Button>
+    </Fragment>
+  );
+});
+
+story('onChange Prop', () => {
+  const [lastSelected, setLastSelected] = useState(undefined);
+  return (
+    <Fragment>
+      <p>{selected} is selected</p>
+      <Tabs onChange={(selected) => setLastSelected(selected)} />
+    </Fragment>
+  );
+}
+```
+
+Finally, if you know some common combinations of components include those as well. For example, it's really helpful to be able to see that `<GridEditable />` and `useQueryBasedColumnResize()` are a good pair.
 
 ## Ownership & Next Steps
 
