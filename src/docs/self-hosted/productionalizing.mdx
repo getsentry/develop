@@ -1,0 +1,48 @@
+---
+title: 'Productionalizing'
+---
+
+This page provides a guide to help users secure their Sentry deployments and make the most out of Sentry. I don't know what else to say here so let's do this (yeah I'm gonna change this sentence later).
+
+## Recommended system resource
+
+Depending on your usage, required system resource to run Sentry may varies.
+
+## Enabling HTTPS
+
+Explain why do we need HTTPS
+
+## Expose Only Ingest Endpoint Publicly
+
+Sometimes, there are self-hosted deployments that requires the dashboard to be accessed via internal network. But, they also need to provide public Sentry ingestion endpoint for client devices. You can expose these endpoints publicly:
+
+- `/api/ingest` 
+- Put some more here...
+
+## Using Dedicated Load Balancer
+
+Put some words here...
+
+### NGINX
+
+Put some NGINX config here... Give link to tune NGINX.
+
+### Caddy
+
+Put some Caddy config here...
+
+### Traefik
+
+Put some Traefik config here...
+
+### HAProxy
+
+Put some HAProxy config here...
+
+## Firewall
+
+It is always good to protect your incoming network to prevent multiple network-level attack.
+
+For Debian/Ubuntu-based, it is recommended to use `ufw`.
+
+For RHEL-based (RedHat, Fedora, CentOS, Rocky Linux, Alma Linux), it is recommended to use `firewalld`.

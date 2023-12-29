@@ -32,6 +32,14 @@ Before starting the upgrade, we shut down all the services and then run some dat
   There are certain hard-stops you need to go through when upgrading from earlier versions. Please read the <Link to="#hard-stops">hard-stops</Link> section below for a list.
 </Alert>
 
+If you downloaded self-hosted repository using Git clone, the upgrade commands should look like this:
+
+```bash
+git fetch
+git checkout 24.3.0
+sudo ./install.sh
+```
+
 ### Hard Stops
 
 We have three hards stops that you need to go through in order to pick up significant database changes:

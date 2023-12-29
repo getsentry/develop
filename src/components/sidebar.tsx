@@ -106,6 +106,7 @@ export default () => {
         </div>
         <ul className="list-unstyled" data-sidebar-tree>
           <SidebarLink to="/self-hosted/">Overview</SidebarLink>
+          <SidebarLink to="/self-hosted/productionalizing">Productionalizing</SidebarLink>
           <SidebarLink to="/self-hosted/releases/">Releases & Upgrading</SidebarLink>
           <SidebarLink to="/self-hosted/backup/">Backup & Restore</SidebarLink>
           <SidebarLink to="/self-hosted/custom-ca-roots/">Custom CA Roots</SidebarLink>
