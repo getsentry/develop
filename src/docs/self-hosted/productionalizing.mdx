@@ -47,6 +47,8 @@ For self-hosted deployment, it is recommended to have a rate limiter on your ded
 
 Having a dedicated load balancer that reverse proxies to `your-sentry-ip:9000` is recommended for one big reason: you can fine tune every configuration to fit your current setup.
 
+Once you have setup a load balancer or reverse proxy to your Sentry instance, you should modify the `system.url-prefix` in the `sentry/config.yml` file to match your new URL and protocol. You should also update the SSL/TLS section in the `sentry/sentry.conf.py` script, otherwise you may get CSRF-related errors when performing certain actions such as configuring integrations.
+
 ### NGINX
 
 Put some NGINX config here... Give link to tune NGINX.
