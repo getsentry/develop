@@ -198,6 +198,21 @@ If you want to delete immediate Docker logs, you can execute this as `root` user
 truncate -s 0 /var/lib/docker/containers/**/*-json.log
 ```
 
+## Docker Image and Builder Cleanup
+
+Executing `./install.sh` will build a new Sentry Docker container, executing it often might cause Docker to consume your disk space. You can safely prune old or unneeded Docker containers, image, or builder to re-acquire used disk space. Executing these will not affect current running containers and volumes.
+
+```shell
+docker container prune
+docker builder prune
+docker image prune --all
+# WARNING: Executing "volume prune" might delete `sentry-vroom` volume as it's not an external volume.
+docker volume prune
+docker network prune
+```
+
+Append `-f` flag for no confirmation on deletions.
+
 ## Other
 
 If you are still stuck, you can always visit our [GitHub issues](https://github.com/getsentry/self-hosted/issues) to search for existing issues or create a new issue and ask for help. You can also visit [Sentry Community Discord server](https://discord.gg/sentry) on #self-hosted channel. Please keep in mind that we expect the community to help itself, but Sentry employees also try to monitor and answer questions when they have time.
