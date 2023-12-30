@@ -1,48 +1,217 @@
 ---
-title: 'Productionalizing'
+title: 'Self-Hosted Productionalizing'
 ---
 
-This page provides a guide to help users secure their Sentry deployments and make the most out of Sentry. I don't know what else to say here so let's do this (yeah I'm gonna change this sentence later).
+This page provides a guide to help users secure their Sentry deployments and make the most out of Sentry. For further guide relating system security and performance, you might want to 
 
 ## Recommended system resource
 
-Depending on your usage, required system resource to run Sentry may varies.
+Depending on your usage, required system resource to run Sentry may varies. Minimum system specification for running Sentry looks like this:
+
+- 2 CPU cores
+- 4 GB RAM
+
+Having a machine that have lower system specification than that will fail the installation script.
+
+Current recommended system specification for running Sentry is:
+
+- 4 CPU cores
+- 16 GB RAM
+- 20 GB free disk storage space
+
+Depending on your load, you might want to increase your system specification to handle higher traffic load better.
 
 ## Enabling HTTPS
 
-Explain why do we need HTTPS
+We recommend TLS termination to be done on your own dedicated load balancer. Although you can set it on the `nginx.conf` file, it is not recommended as newer self-hosted release might alter some configuration on the file. Some example are available on [Using Dedicated Load Balancer](#using-dedicated-load-balancer) section.
 
 ## Expose Only Ingest Endpoint Publicly
 
-Sometimes, there are self-hosted deployments that requires the dashboard to be accessed via internal network. But, they also need to provide public Sentry ingestion endpoint for client devices. You can expose these endpoints publicly:
+Certain self-hosted deployments requires the dashboard to be accessed only via internal network. But, they also need to provide public Sentry ingestion endpoint for client devices such as mobile and desktop apps. You can expose some of these endpoints publicly:
 
-- `/api/ingest` 
-- Put some more here...
+- `/api/[1-9]\d*/envelope/` - Main endpoint for submitting event from SDK
+- `/api/[1-9]\d*/minidump/` - Endpoint for submitting minidump from native SDKs
+- `/api/[1-9]\d*/security/` - Endpoint for submitting security-related such as CSP errors
+- `/api/[1-9]\d*/store/` - Old endpoint for submitting event from SDK, it is deprecated.
+- `/api/[1-9]\d*/unreal/` - Endpoint for submitting crash report from Unreal Engine SDK 
+
+The `[1-9]\d+` is a regular expression string that is acquired from the project DSN.
+
+## Rate Limiting
+
+By default, Sentry does not handle rate limiting for any incoming request. On hosted version of Sentry (SaaS), it has a feature called [spike protection](https://docs.sentry.io/product/accounts/quotas/spike-protection/) which can protect you from event flood. The code for that module is not available on the public [sentry](https://github.com/getsentry/sentry) repository, it lives on the private getsentry repository instead.
+
+For self-hosted deployment, it is recommended to have a rate limiter on your dedicated load balancer to prevent such things to happen. It is highly recommended than ever if you expose your Sentry instance publicly to the internet. Some example are available on [Using Dedicated Load Balancer](#using-dedicated-load-balancer) section. 
 
 ## Using Dedicated Load Balancer
 
-Put some words here...
+Having a dedicated load balancer that reverse proxies to `your-sentry-ip:9000` is recommended for one big reason: you can fine tune every configuration to fit your current setup.
 
 ### NGINX
 
 Put some NGINX config here... Give link to tune NGINX.
 
+It is also recommended to fine tune your NGINX for some performance benefits. You can refer to these blog posts from NGINX:
+
+- [Tuning NGINX for Performance - NGINX](https://www.nginx.com/blog/tuning-nginx/)
+- [Performance Tuning - Tips & Tricks - NGINX](https://www.nginx.com/blog/performance-tuning-tips-tricks/)
+
 ### Caddy
 
-Put some Caddy config here...
+[Caddy](https://caddyserver.com/) is one alternative similar to NGINX that automatically handles TLS certificate management via ACME. After you [install Caddy](https://caddyserver.com/docs/install), modify your Caddy configuration file that reside on `/etc/caddy/Caddyfile`.
+
+```caddyfile
+sentry.yourcompany.com {
+    reverse_proxy your-sentry-ip:9000 {
+        health_uri /_health/
+        health_status 2xx
+        header_up Host {upstream_hostport}
+    }
+
+    # By default, the TLS is acquired from Let's Encrypt
+    tls name@yourcompany.com
+    
+    # If you have self-signed certificate
+    # tls /path/to/server-certificate.crt /path/to/server-certificate.key
+
+    header {
+        # Delete "Server" header
+        -Server
+    }
+
+    # To enable rate limiter, install additional module from
+    # https://github.com/mholt/caddy-ratelimit
+    # rate_limit {
+    #     zone sentry {
+    #         key {remote_host}
+    #         window 1s
+    #         events 100
+    #     }
+    # }
+}
+```
+
+For detailed documentation on Caddyfile configuration, see [Caddy documentation](https://caddyserver.com/docs/caddyfile).
 
 ### Traefik
 
-Put some Traefik config here...
+[Traefik](https://doc.traefik.io/traefik/) is another load balancer that provides a lot of plugin and integrations out of the box. It automatically handles TLS certificate management via ACME, too. After you [install Traefik](https://doc.traefik.io/traefik/getting-started/install-traefik/), add a configuration to Traefik as follows (this example is using the YAML file provider, convert to your prefered configuration provider as needed).
+
+```yaml
+http:
+  routers:
+    sentry:
+      entryPoints:
+        - web       # Assuming this your HTTP entrypoint
+        - websecure # Assuming this is your HTTPS entrypoint
+      service: sentry@file
+      rule: "Host(`sentry.yourcompany.com`)"
+      # If you want to expose only ingest endpoint publicly
+      # rule: "Host(`sentry.yourcompany.com`) && PathPrefix(`/api/{id:[1-9]\d*}/envelope`, `/api/{id:[1-9]\d*}/minidump`, `/api/{id:[1-9]\d*}/security`, `/api/{id:[1-9]\d*}/store`, `/api/{id:[1-9]\d*}/unreal`)"
+      tls:
+        certResolver: letsencrypt # Assuming you have a TLS certificate resolver named "letsencrypt"
+      # Enable middleware as needed
+      middlewares:
+        - https_redirect@file
+        - cors_headers@file # For handling browser clients
+        - rate_limiter@file
+
+  services:
+    sentry:
+      loadBalancer:
+        servers:
+          - url: "http://your-sentry-ip:9000"
+        healthCheck:
+          scheme: http
+          path: /_health/
+          interval: 30s
+          timeout: 10s
+        passHostHeader: true
+
+  middlewares:
+    https_redirect:
+      redirectScheme:
+        scheme: "https"
+        port: "443"
+        permanent: true
+    cors_headers:
+      headers:
+        customResponseHeaders:
+          # We can't remove header on Traefik, but we can put it to some other values
+          server: "Your Company Name"
+          addVaryHeader: true
+          # If you want to set this to true, adjust "accessControlAllowOriginList" to a valid domain and remove the asterisk wildcard
+          accessControlAllowCredentials: false
+          accessControlAllowOriginList:
+            - "*"
+          accessControlAllowHeaders:
+            - "sentry-trace"
+            - "baggage"
+          accessControlAllowMethods:
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+          accessControlExposeHeaders:
+            - "sentry-trace"
+            - "baggage"
+          sslRedirect: true
+    rate_limiter:
+      rateLimit:
+        average: 100
+        period: 1s
+        burst: 150
+```
 
 ### HAProxy
 
-Put some HAProxy config here...
+[HAProxy](https://www.haproxy.org/) is a high performance load balancer. This is the recommended load balancer to go when you have encountered network hiccups by using other load balancer due to its' performance. HAProxy requires external module to handles automatic TLS certificate management.
 
-## Firewall
+To install HAProxy, it is recommended to acquire it from your distribution package manager (apt or yum). See [their official distribution repositories](https://github.com/haproxy/wiki/wiki/Packages#official-distribution-repositories). Then, you should be able to configure your HAProxy configuration file that should be on `/etc/haproxy/haproxy.cfg`.
 
-It is always good to protect your incoming network to prevent multiple network-level attack.
+```haproxy
+global
+	# Your global configuration (may varies between version and Linux distributions)
 
-For Debian/Ubuntu-based, it is recommended to use `ufw`.
+defaults
+	mode	http
+    log     global
+	option	httplog
+	option	dontlognull
+    option  forwardfor
+    option  http-server-close
+    option  http-keep-alive
+    timeout connect 10s         # Connect timeout in 10s
+    timeout client  30s         # Client timeout in 30s
+    timeout server  30s         # Server timeout in 30s
+	timeout http-keep-alive 2m  # HTTP keep alive in 2 minutes
+    # Your remaining defaults configuration
 
-For RHEL-based (RedHat, Fedora, CentOS, Rocky Linux, Alma Linux), it is recommended to use `firewalld`.
+frontend http_bind
+	bind *:80 name http_port
+	mode http
+
+	acl sentry_domain hdr(host) -i sentry.yourcompany.com
+    
+    # HTTPS redirection
+	http-request redirect scheme https code 301 if sentry_domain !{ ssl_fc }
+
+    use_backend sentry
+
+
+frontend https_bind
+	bind *:443 ssl crt /etc/haproxy/certs/ name https_port
+	mode http
+
+	acl sentry_domain hdr(host) -i sentry.yourcompany.com
+	
+	use_backend sentry if sentry_domain
+
+backend sentry
+	mode http
+    option httpchk
+	server server1 your-sentry-ip:9000 check
+```
+
+To use HAProxy with ACME server such as Let's Encrypt, refer to this [blog post by HAProxy](https://www.haproxy.com/blog/haproxy-and-let-s-encrypt).

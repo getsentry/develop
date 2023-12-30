@@ -11,9 +11,10 @@ Our recommendation is to download the [latest release of the self-hosted reposi
 To have easy maintainability for future upgrades, it is recommended to use Git workflow by cloning the self-hosted repository and check out to a specific CalVer tag. More about this on [Releases & Upgrading](/self-hosted/releases/).
 
 ```bash
+VERSION="24.1.0"
 git clone https://github.com/getsentry/self-hosted.git
 cd self-hosted
-git checkout 24.1.0
+git checkout ${VERSION}
 sudo ./install.sh
 ```
 
