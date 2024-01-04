@@ -2,7 +2,7 @@
 title: 'Self-Hosted Productionalizing'
 ---
 
-This page provides a guide to help users secure their Sentry deployments and make the most out of Sentry. For further guide relating system security and performance, you might want to 
+This page provides a guide to help users secure their Sentry deployments and make the most out of Sentry. For further guide relating system security and performance, you might want to consult with a professional sysadmin.
 
 ## Recommended system resource
 
@@ -49,7 +49,7 @@ Having a dedicated load balancer that reverse proxies to `your-sentry-ip:9000` i
 
 Once you have setup a load balancer or reverse proxy to your Sentry instance, you should modify the `system.url-prefix` in the `sentry/config.yml` file to match your new URL and protocol. You should also update the SSL/TLS section in the `sentry/sentry.conf.py` script, otherwise you may get CSRF-related errors when performing certain actions such as configuring integrations.
 
-### NGINX
+<!-- ### NGINX
 
 Put some NGINX config here... Give link to tune NGINX.
 
@@ -57,6 +57,7 @@ It is also recommended to fine tune your NGINX for some performance benefits. Yo
 
 - [Tuning NGINX for Performance - NGINX](https://www.nginx.com/blog/tuning-nginx/)
 - [Performance Tuning - Tips & Tricks - NGINX](https://www.nginx.com/blog/performance-tuning-tips-tricks/)
+-->
 
 ### Caddy
 
@@ -89,6 +90,11 @@ sentry.yourcompany.com {
     #         window 1s
     #         events 100
     #     }
+    # }
+
+    # To expose only ingest endpoint publicly, add the named matcher below before `reverse_proxy` directive
+    # @ingest_endpoint {
+    #     path_regexp /api/[1-9]\d+(envelope|minidump|security|store|unreal)/
     # }
 }
 ```
@@ -177,43 +183,46 @@ global
 	# Your global configuration (may varies between version and Linux distributions)
 
 defaults
-	mode	http
+    mode	http
     log     global
-	option	httplog
-	option	dontlognull
+    option	httplog
+    option	dontlognull
     option  forwardfor
     option  http-server-close
     option  http-keep-alive
     timeout connect 10s         # Connect timeout in 10s
     timeout client  30s         # Client timeout in 30s
     timeout server  30s         # Server timeout in 30s
-	timeout http-keep-alive 2m  # HTTP keep alive in 2 minutes
+    timeout http-keep-alive 2m  # HTTP keep alive in 2 minutes
     # Your remaining defaults configuration
 
 frontend http_bind
-	bind *:80 name http_port
-	mode http
+    bind *:80 name http_port
+    mode http
 
-	acl sentry_domain hdr(host) -i sentry.yourcompany.com
+    acl sentry_domain hdr(host) -i sentry.yourcompany.com
     
     # HTTPS redirection
-	http-request redirect scheme https code 301 if sentry_domain !{ ssl_fc }
+    http-request redirect scheme https code 301 if sentry_domain !{ ssl_fc }
 
     use_backend sentry
 
 
 frontend https_bind
-	bind *:443 ssl crt /etc/haproxy/certs/ name https_port
-	mode http
+    bind *:443 ssl crt /etc/haproxy/certs/ name https_port
+    mode http
 
-	acl sentry_domain hdr(host) -i sentry.yourcompany.com
-	
-	use_backend sentry if sentry_domain
+    acl sentry_domain hdr(host) -i sentry.yourcompany.com
+    use_backend sentry if sentry_domain
+
+    # To expose only ingest endpoints publicly, add the acl below on `use_backend` directive
+    # acl ingest_endpoint path_reg -i /api/[1-9]\d+(envelope|minidump|security|store|unreal)/
+    # use_backend sentry if sentry_domain ingest_endpoint
 
 backend sentry
-	mode http
+    mode http
     option httpchk
-	server server1 your-sentry-ip:9000 check
+    server server1 your-sentry-ip:9000 check
 ```
 
 To use HAProxy with ACME server such as Let's Encrypt, refer to this [blog post by HAProxy](https://www.haproxy.com/blog/haproxy-and-let-s-encrypt).
