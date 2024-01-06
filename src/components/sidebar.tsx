@@ -50,6 +50,9 @@ export default () => {
           <SidebarLink to="/philosophy/">Philosophy</SidebarLink>
           <SidebarLink to="/commit-messages/">Commit Messages</SidebarLink>
           <SidebarLink to="/code-review/">Code Review</SidebarLink>
+          <SidebarLink to="/frontend/pull-request-previews/">
+            Pull Request Previews
+          </SidebarLink>
           <SidebarLink to="/workflow/">Workflow</SidebarLink>
           <SidebarLink to="/continuous-integration/">Continuous Integration</SidebarLink>
           <SidebarLink to="/python-dependencies/">Python Dependencies</SidebarLink>
