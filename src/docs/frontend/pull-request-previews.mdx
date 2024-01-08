@@ -4,7 +4,7 @@ title: Pull Request Previews
 
 ## What are preview builds?
 
-When you open a pull request on GitHub in the sentry repository, Vercel can automatically build and deploy the frontend code in your branch into a preview URL. This allows you to see the feature or fix as it would be in production.
+When you open a pull request on GitHub in the sentry repository, Vercel can automatically build and deploy the frontend code in your branch into a preview URL. This allows you to see the new code as it would be in production.
 
 This is very handy for:
 
@@ -28,7 +28,7 @@ Click the `Show environments` toggle and then click `View deployment` for the `P
 
 There are a few caveats to using the frontend preview builds:
 
-1. Backend changes **will not be deployed in preview builds**. You may have a PR that includes both frontend and backend code changes, but **only frontend changes will be deployed**. It is important to remember this, as if your frontend preview depends on any API backend changes that are not already in production, your preview will inaccurately reflect the feature you've built. Preview builds use **the production API**.
+1. Backend changes **will not be deployed in preview builds**. You may have a PR that includes both frontend and backend code changes, but **only frontend changes will be deployed**. It is important to remember this, because if your frontend preview depends on any API backend changes that are not already in production, your preview will inaccurately reflect the feature you've built. Preview builds use **the production API**.
 
 2. `getsentry`'s (the repo) frontend components are not included in preview builds. Do not be alarmed when SaaS features (usually upsell features) are missing. 
 
@@ -36,7 +36,7 @@ There are a few caveats to using the frontend preview builds:
 
     - SSO Authentication does **NOT** work at the moment. You will need to login to an account that is part of an organization that does not require SSO.
     - 2FA login does not currently work
-    - SSO configuration pages do not have react views.
+    - SSO configuration pages do not have React views.
     - Integration installation will not work as the redirect URLs will be incorrect.
     - Various authentication frontends are missing (reset password, registration).
 
