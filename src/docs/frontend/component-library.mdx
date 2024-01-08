@@ -138,6 +138,16 @@ Helper Components:
     />
     ```
 
+- [`<ThemeToggle />`](https://github.com/getsentry/sentry/blob/master/static/app/components/stories/themeToggle.tsx)<br />
+    A wrapper component to isolate children from the current theme used on the page. Allows quickly toggling an example between <code>light</code>/<code>dark</code> without changing the whole screen (useful at night when you want most things in dark mode).<br/>
+    Use this to emphasize that a component/image has been tested and works well in <code>light</code> or <code>dark</code> mode.
+    ```typescript
+    <ThemeToggle>
+      <LoadingTriangle />
+    </ThemeToggle>
+    ```
+
+
 ### Writing a new story
 
 Now that you are armed and ready with the `storyBook()` template from above, and some helper components, it's time to write your new story. What's it going to say?
