@@ -16,8 +16,8 @@
           "value": "1; mode=block"
         },
         {
-          "key": "Content-Security-Policy-Report-Only",
-          "value": "upgrade-insecure-requests; default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' www.googletagmanager.com www.google-analytics.com; connect-src 'self' sentry.io o1.ingest.sentry.io *.algolia.net *.algolianet.com *.algolia.io *.google-analytics.com stats.g.doubleclick.net; img-src * 'self' data: img.shields.io mermaid.ink user-images.githubusercontent.com www.google.com www.google-analytics.com; style-src 'self' 'unsafe-inline'; font-src 'self'; report-uri https://o1.ingest.sentry.io/api/1297620/security/?sentry_key=b3cfba5788cb4c138f855c8120f70eab"
+          "key": "Content-Security-Policy",
+          "value": "upgrade-insecure-requests; default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' sentry.io o1.ingest.sentry.io *.algolia.net *.algolianet.com *.algolia.io; img-src * 'self' data: img.shields.io mermaid.ink user-images.githubusercontent.com; style-src 'self' 'unsafe-inline'; font-src 'self'; report-uri https://o1.ingest.sentry.io/api/1297620/security/?sentry_key=b3cfba5788cb4c138f855c8120f70eab"
         },
         {
           "key": "Document-Policy",

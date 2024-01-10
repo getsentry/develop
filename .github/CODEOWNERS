@@ -1,0 +1,6 @@
+# https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners#codeowners-syntax
+
+
+##### Security #####
+# require review from security team for content security policy
+/vercel.json @getsentry/security
