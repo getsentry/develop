@@ -55,15 +55,26 @@ class ProfileFileIOGroupType(GroupType):
 ### Register a Category
 You might also want to register a new category related to your issue type as well. This allows you to group related issue types together. To do so, add your category to <Link to="https://github.com/getsentry/sentry/blob/97f4174c28041357aa190f27012dc33c1c7bafc7/src/sentry/issues/grouptype.py#L17-L22">this enum</Link>
 
-## Send Occurrence or Status Change Payloads to the Issue Platform
+## Send Payloads to the Issue Platform
+
 If operating within the Sentry codebase, you can call <Link to="https://github.com/getsentry/sentry/blob/master/src/sentry/issues/producer.py#L41-L46">sentry.issues.produce_occurrence_to_kafka</Link> with the following optional parameters:
 - `payload_type`: <Link to="#payload-type">PayloadType</Link>
-- `occurrence`: <Link to="https://github.com/getsentry/sentry/blob/d262bbd9d8d3a2747d5251bee35c016c13ca050a/src/sentry/issues/issue_occurrence.py#L58">IssueOccurrence</Link>
-- `status_change`: <Link to="#status-change-message">StatusChangeMessage</Link>
+- one of the following, per `payload_type`
+  - `occurrence`: <Link to="https://github.com/getsentry/sentry/blob/d262bbd9d8d3a2747d5251bee35c016c13ca050a/src/sentry/issues/issue_occurrence.py#L58">IssueOccurrence</Link>
+  - `status_change`: <Link to="https://github.com/getsentry/sentry/blob/7fd40bc33607e727ea2fac0183bd04f4ad298ba3/src/sentry/issues/status_change_message.py#L15">StatusChange</Link>
 - `event_data`: Dict[str, Any]
 
 
 If operating from an external service then pass a json payload that matches the <Link to="#issue-occurrence-schema">Issue Occurrence Schema</Link> to the `ingest-occurrences` topic on the <Link to="https://github.com/getsentry/getsentry/blob/97039335a29517a7e48149148cdd7a30a60971e7/getsentry/conf/settings/prod.py#L567-L571">issue occurrences Kafka cluster</Link>
+
+### Payload Type
+
+Determines the type of payload sent to the issue platform. By default, `payload_type` is set to `OCCURRENCE`.
+
+The <Link to="https://github.com/getsentry/sentry/blob/2e5a39ff3dd4afbd33f2ff7d2ba161285107afe4/src/sentry/issues/producer.py#L23">PayloadType</Link> enum has two types:
+
+- `OCCURRENCE`: for sending an occurrence
+- `STATUS_CHANGE`: for sending a status update
 
 ### Issue Occurrence Schema:
 <Link to="https://github.com/getsentry/sentry/blob/ccfb37212102945df5f35e8f55fe38891b70036b/src/sentry/issues/issue_occurrence.py#L23-L36">Schema</Link>
@@ -98,7 +109,10 @@ Optional:
 For example, this could be an id that we use to build a link to a specific product page.
 
 ### Issue Evidence Schema
-<Link to="https://github.com/getsentry/sentry/blob/ccfb37212102945df5f35e8f55fe38891b70036b/src/sentry/issues/issue_occurrence.py#L17-L20">Schema</Link>
+
+<Link to="https://github.com/getsentry/sentry/blob/ccfb37212102945df5f35e8f55fe38891b70036b/src/sentry/issues/issue_occurrence.py#L17-L20">
+  Schema
+</Link>
 
 - `name`: str.
 - `value`: str
@@ -123,19 +137,15 @@ There's a minimum set of fields which should be included:
 - `timestamp`
 
 Caveats
+
 - Attachments will not work. If you have a need for this please contact the issues team.
 
-### Payload Type
-Determines the type of payload sent to the issue platform. By default, `payload_type` is set to `OCCURRENCE`.
+### Status Change Schema
 
-The <Link to="https://github.com/getsentry/sentry/blob/2e5a39ff3dd4afbd33f2ff7d2ba161285107afe4/src/sentry/issues/producer.py#L23">PayloadType</Link> enum has two types:
-- `OCCURRENCE`: for sending an occurrence
-- `STATUS_CHANGE`: for sending a status update
-
-### Status Change Message
-If `payload_type` is set to `STATUS_CHANGE` in `produce_occurrence_to_kafka`, `status_change` will update the status of an issue.
+If `payload_type` is set to `STATUS_CHANGE`, providing a `StatusChangeMessage` will update the status of an issue.
 
 The `StatusChangeMessage` schema is as follows:
+
 - `fingerprint`: unique identifier for the occurrence
 - `project_id`: int.
 - `new_status`: int. Uses <Link url="https://github.com/getsentry/sentry/blob/2e5a39ff3dd4afbd33f2ff7d2ba161285107afe4/src/sentry/models/group.py#L148">GroupStatus</Link> enum. We currently support the following:
