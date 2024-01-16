@@ -46,7 +46,7 @@ docker compose run -v $(pwd)/sentry:/sentry-data/backup  --rm -T -e SENTRY_LOG_L
 ./scripts/backup.sh
 
 # If using self-hosted version >= 24.1.0:
-./scripts/backup.sh [User | Organization | Config | Global]
+./scripts/backup.sh [user | organization | config | global]
 ```
 
 <Alert title="Note" level="info">
@@ -101,7 +101,7 @@ docker compose run --rm -T web import /etc/sentry/backup.json
 ./scripts/restore.sh
 
 # If using self-hosted version >= 24.1.0:
-./scripts/restore.sh [User | Organization | Config | Global]
+./scripts/restore.sh [user | organization | config | global]
 ```
 
 If you don't see any errors and the process exits with code `0`, congratulations, you have just
