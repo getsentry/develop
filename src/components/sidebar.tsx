@@ -106,7 +106,6 @@ export default () => {
         </div>
         <ul className="list-unstyled" data-sidebar-tree>
           <SidebarLink to="/self-hosted/">Overview</SidebarLink>
-          <SidebarLink to="/self-hosted/productionalizing">Productionalizing</SidebarLink>
           <SidebarLink to="/self-hosted/releases/">Releases & Upgrading</SidebarLink>
           <SidebarLink to="/self-hosted/backup/">Backup & Restore</SidebarLink>
           <SidebarLink to="/self-hosted/custom-ca-roots/">Custom CA Roots</SidebarLink>
@@ -114,6 +113,7 @@ export default () => {
           <SidebarLink to="/self-hosted/geolocation/">Geolocation</SidebarLink>
           <SidebarLink to="/self-hosted/sso/">Single Sign-On (SSO)</SidebarLink>
           <SidebarLink to="/self-hosted/csp/">Content Security Policy (CSP)</SidebarLink>
+          <SidebarLink to="/self-hosted/reverse-proxy">Reverse Proxy</SidebarLink>
           <SidebarLink to="/self-hosted/troubleshooting/">Troubleshooting</SidebarLink>
           <SidebarLink to="/self-hosted/support/">Support</SidebarLink>
         </ul>

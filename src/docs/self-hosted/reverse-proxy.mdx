@@ -1,29 +1,16 @@
 ---
-title: 'Self-Hosted Productionalizing'
+title: 'Self-Hosted Reverse Proxy'
 ---
 
-This page provides a guide to help users secure their Sentry deployments and make the most out of Sentry. For further guide relating system security and performance, you might want to consult with a professional sysadmin.
+Adding a reverse proxy in front of your Sentry deployment is strongly recommended for one big reason: you can fine tune every configuration to fit your current setup. A dedicated reverse proxy that does SSL/TLS termination that also forwards the client IP address as Docker Compose internal network (as this is [close to impossible to get otherwise)](https://github.com/getsentry/self-hosted/issues/554) would give you the best Sentry experience.
 
-## Recommended system resource
+Once you have setup a reverse proxy to your Sentry instance, you should modify the `system.url-prefix` in the `config.yml` file to match your new URL and protocol. You should also update the SSL/TLS section in the `sentry/sentry.conf.py` script, otherwise you may get CSRF-related errors when performing certain actions such as configuring integrations.
 
-Depending on your usage, required system resource to run Sentry may varies. Minimum system specification for running Sentry looks like this:
-
-- 2 CPU cores
-- 4 GB RAM
-
-Having a machine that have lower system specification than that will fail the installation script.
-
-Current recommended system specification for running Sentry is:
-
-- 4 CPU cores
-- 16 GB RAM
-- 20 GB free disk storage space
-
-Depending on your load, you might want to increase your system specification to handle higher traffic load better. If increasing the disk storage space isn't possible, you can migrate your storage to use external storage such as AWS S3 or Google Cloud Storage (GCS). Decreasing your `SENTRY_RETENTION_DAYS` environment variable to lower numbers will save some storage space from being full, at the cost of having shorter data retention period.
+Keep in mind that all this setup uses single-nodes for all services, including Kafka. For larger loads, you'd need a beefy machine with lots of RAM and disk storage. To scale up even further, you are very likely to use clusters with a more complex tool, such as Kubernetes. Due to self-hosted installations' very custom nature, we do not offer any recommendations or guidance around scaling up. We do what works for us for our thousands of customers over at [sentry.io](https://sentry.io/) and would love to have you over when you feel your local install's maintenance becomes a burden instead of a joy.
 
 ## Enabling HTTPS
 
-We recommend TLS termination to be done on your own dedicated load balancer. Although you can set it on the `nginx.conf` file, it is not recommended as newer self-hosted releases might alter some configurations on the file. Some examples are available on [Using Dedicated Load Balancer](#using-dedicated-load-balancer) section.
+We recommend TLS termination to be done on your own dedicated load balancer or proxy. Although you can set it on the `nginx.conf` file, it is not recommended as newer self-hosted releases might alter some configurations on the file. Some examples are available on [Reverse Proxy Examples](#reverse-proxy-examples) section.
 
 ## Expose Only Ingest Endpoint Publicly
 
@@ -43,11 +30,11 @@ By default, Sentry does not handle rate limiting for any incoming request. On ho
 
 For self-hosted deployment, it is recommended to have a rate limiter on your dedicated load balancer to prevent such things to happen. It is highly recommended than ever if you expose your Sentry instance publicly to the internet. Some example are available on [Using Dedicated Load Balancer](#using-dedicated-load-balancer) section. 
 
-## Using Dedicated Load Balancer
+## Health Checks
 
-Having a dedicated load balancer that reverse proxies to `your-sentry-ip:9000` is recommended for one big reason: you can fine tune every configuration to fit your current setup.
+Endpoint for health checks is available on `/_health/` endpoint using HTTP protocol. This will return a 200 if Sentry is up or a 500 with the list of problems.
 
-Once you have setup a load balancer or reverse proxy to your Sentry instance, you should modify the `system.url-prefix` in the `sentry/config.yml` file to match your new URL and protocol. You should also update the SSL/TLS section in the `sentry/sentry.conf.py` script, otherwise you may get CSRF-related errors when performing certain actions such as configuring integrations.
+## Reverse Proxy Examples
 
 <!-- ### NGINX
 
@@ -103,7 +90,7 @@ For detailed documentation on Caddyfile configuration, see [Caddy documentation]
 
 ### Traefik
 
-[Traefik](https://doc.traefik.io/traefik/) is another load balancer that provides a lot of plugin and integrations out of the box. It automatically handles TLS certificate management via ACME, too. After you [install Traefik](https://doc.traefik.io/traefik/getting-started/install-traefik/), add a configuration to Traefik as follows (this example is using the YAML file provider, convert to your prefered configuration provider as needed).
+[Traefik](https://doc.traefik.io/traefik/) is another reverse proxy that provides a lot of plugin and integrations out of the box. It automatically handles TLS certificate management via ACME, too. After you [install Traefik](https://doc.traefik.io/traefik/getting-started/install-traefik/), add a configuration to Traefik as follows (this example is using the YAML file provider, convert to your prefered configuration provider as needed).
 
 ```yaml
 http:
@@ -174,7 +161,7 @@ http:
 
 ### HAProxy
 
-[HAProxy](https://www.haproxy.org/) is a high performance load balancer. This is the recommended load balancer to go when you have encountered network hiccups by using other load balancer due to its' performance. HAProxy requires external module to handles automatic TLS certificate management.
+[HAProxy](https://www.haproxy.org/) is a high performance reverse proxy. This is the recommended reverse proxy to go when you have encountered network hiccups by using other reverse proxies due to its' performance. HAProxy requires external module to handles automatic TLS certificate management.
 
 To install HAProxy, it is recommended to acquire it from your distribution package manager (apt or yum). See [their official distribution repositories](https://github.com/haproxy/wiki/wiki/Packages#official-distribution-repositories). Then, you should be able to configure your HAProxy configuration file that should be on `/etc/haproxy/haproxy.cfg`.
 
