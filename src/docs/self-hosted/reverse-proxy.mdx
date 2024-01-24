@@ -28,7 +28,7 @@ The `[1-9]\d+` is a regular expression string that is acquired from the project 
 
 By default, Sentry does not handle rate limiting for any incoming request. On hosted version of Sentry (SaaS), it has a feature called [spike protection](https://docs.sentry.io/product/accounts/quotas/spike-protection/) which can protect you from event flood. The code for that module is not available on the public [sentry](https://github.com/getsentry/sentry) repository, it lives on the private getsentry repository instead.
 
-For self-hosted deployment, it is recommended to have a rate limiter on your dedicated load balancer to prevent such things to happen. It is highly recommended than ever if you expose your Sentry instance publicly to the internet. Some example are available on [Using Dedicated Load Balancer](#using-dedicated-load-balancer) section. 
+For self-hosted deployment, it is recommended to have a rate limiter on your dedicated load balancer to prevent such things to happen. It is highly recommended than ever if you expose your Sentry instance publicly to the internet.
 
 ## Health Checks
 
