@@ -80,10 +80,12 @@ Scenario: Frame rate changes
     When calculating the frames delay
     Then the frames delay is 200 - 16.67 + (500 - 8.33) * 2 = 1166.67 ms
 
-Scenario: Missing delayed frame information
+Scenario: Ongoing delayed frame
     """
     [nf][ ------- ?? ------ ]   |  nf = normal frame,  ?? = No frame information
     [---- time interval ----]
+    When there is an ongoing delayed frame, the logic doesn't know how long it
+    will last and, therefore, has no frame information.
     """
     Given a frame rate of 60 fps
     And 1 frame with 16.67 ms
