@@ -83,7 +83,7 @@ Scenario: Frame rate changes
 Scenario: Ongoing delayed frame
     """
     [nf][ ------- ?? ------ ]   |  nf = normal frame,  ?? = No frame information
-    [---- time interval ----]
+    [---- span duration ----]
     When there is an ongoing delayed frame, the logic doesn't know how long it
     will last and, therefore, has no frame information.
     """
@@ -95,53 +95,53 @@ Scenario: Ongoing delayed frame
     Then the frames delay 200 ms - 16.67 ms = 183.33 ms
 
 
-Scenario: Delayed frame starts before time interval
+Scenario: Delayed frame starts before span
     """
     [----  delayed frame ---- ]
-            [- time interval -]
+            [- span duration -]
     """
     Given a frame rate of 60 fps
     And a recorded delayed frame with a duration of 300 ms
-    When calculating the frames delay for the time interval 100 ms to 300 ms
-    Then the frames delay is the full queried time interval of 200ms
+    When calculating the frames delay for the span 100 ms to 300 ms
+    Then the frames delay is the full duration of the span of 200ms
 
 
-Scenario: Delayed frame starts shortly before time interval
+Scenario: Delayed frame starts shortly before span
     """
     [| e |  delayed frame ---- ]      e = the expected frame duration
-        [--- time interval --- ]
+        [--- span duration --- ]
     """
     Given a frame rate of 60 fps
     And a recorded delayed frame with a duration of 300 ms
-    And the delayed frame started at 0 ms shortly before the time interval
-    When calculating the frames delay for the time interval 10 ms to 300 ms
+    And the delayed frame started at 0 ms shortly before the span
+    When calculating the frames delay for the span 10 ms to 300 ms
     Then the frames delay is 300 ms - 16.67 ms = 283.33 ms, which is only the delayed part
         of the delayed frame
     And the expected frame duration part of the delayed frame is not added as a frame delay
 
-Scenario: Delayed frame starts and ends before time interval
+Scenario: Delayed frame starts and ends before the span
     """
     [| e |  delayed frame ------ ]      e = the expected frame duration
-        [--- time interval --- ]
+        [--- span duration --- ]
     """
     Given a frame rate of 60 fps
     And a recorded delayed frame with a duration of 310 ms
-    And the delayed frame started at 0 ms shortly before the time interval
-    When calculating the frames delay for the time interval 10 ms to 300 ms
+    And the delayed frame started at 0 ms shortly before the span
+    When calculating the frames delay for the span duration of 10 ms to 300 ms
     Then the frames delay is 300 ms - 6.67 ms = 293.33 ms, which is only the delayed part of
-        the delayed frame having an intersection with the time interval
+        the delayed frame having an intersection with the span duration
     And the expected frame duration part of the delayed frame is not added as a frame delay
 
 
-Scenario: One delayed frame starts shortly before end of time interval
+Scenario: One delayed frame starts shortly before the end of a span
     """
     [| e |  delayed frame ][| e |  delayed frame - ]  e = the expected frame duration
-    [---- time interval ---- ]
+    [---- span duration ---- ]
     """
     Given a frame rate of 60 fps
     And a recorded delayed frame with a duration of 290 ms
     And a recorded delayed frame with a duration of 200 ms
-    When calculating the frames delay for the time interval 0 ms to 300 ms
+    When calculating the frames delay for the span duration of 0 ms to 300 ms
     Then the frames delay is 290 ms - 16.67 ms = 273.33 ms
     And the expected frame duration part of the second delayed frame is not added as a frame delay
 ```
