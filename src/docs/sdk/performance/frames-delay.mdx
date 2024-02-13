@@ -145,4 +145,16 @@ Scenario: One delayed frame starts shortly before the end of a span
     When calculating the frames delay for the span duration of 0 ms to 300 ms
     Then the frames delay is 290 ms - 16.67 ms = 273.33 ms
     And the expected frame duration part of the second delayed frame is not added as a frame delay
+
+Scenario: Two concurrent spans
+    """
+    [| e | --- delayed frame--- ]  e = the expected frame duration
+          [----- span 1 -----]
+              [---- span 2 ----]
+    """
+    Given a frame rate of 60 fps
+    And a recorded delayed frame with a duration of 300 ms
+    When calculating the frames delay
+    Then the frames delay for span 1 is it's full duration of 180 ms
+    Then the frames delay for span 2 is it's full duration of 160 ms
 ```
