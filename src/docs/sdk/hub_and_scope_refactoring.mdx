@@ -8,14 +8,14 @@
 
 We will port all our integrations soon and will release them in minor versions of the SDK. **Please make sure you update to the newest SDK versions now and then and the warning messages will go away.** Promised!
 
-If you do custom instrumentation with the SDK or are just curious what we are up to, continue on reading. Otherwise you can stop reading this page and go on with your day.
+If you do custom instrumentation with the SDK or are just curious what we are up to, continue reading, otherwise you can stop reading this page and go on with your day.
 </markdown></Alert>
 
 All of Sentry's SDKs use the so-called <Link to="/sdk/unified-api/">Unified API</Link> under the hood. This API has some limitations and therefore we are refactoring it. This is a massive undertaking.
 
 ## Why are we doing this?
 
-We have different concepts like a `Hub` and `Scope`s in the Unified API and those concepts sometimes leak to the end user of our SDKs. Those concepts are complicated and the users should almost never need to think about what a `Hub` or a `Scope` is and if they should clone them or not. 
+We have different concepts like a `Hub` and `Scope`s in the Unified API and those concepts sometimes leak to the end user of our SDKs. Those concepts are complicated and the users should never need to think about what a `Hub` or a `Scope` is and if they should clone them or not. 
 
 We want to make it easier for the users to do custom performance instrumentation with as little as possible mental overhead. This is why we started this journey with an <Link to="https://github.com/getsentry/rfcs/pull/122">RFC</Link>.
 
@@ -27,7 +27,7 @@ We will merge the functionality of the `Hub` and the `Scope` of the <Link to="/s
 
 ## What does the new API look like?
 
-There will be no `Hub` but we will have three different kinds of `Scope`s (that the end user has not to think about it. Only SDK and SDK integration developers need to understand them. So probably you!)
+There will be no `Hub` but we will have three different kinds of `Scope`s (the end user does not have to think about the differences. Only SDK and SDK integration developers need to understand them. So probably you!)
 
 Have a look at the <Link to="https://github.com/getsentry/rfcs/pull/122">RFC</Link> and at the <Link to="https://gist.github.com/mitsuhiko/1bc78d04ea7d08e5b50d27e42676db80">FAQ</Link> that Armin put together.
 
