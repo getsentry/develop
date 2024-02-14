@@ -702,14 +702,14 @@ Additional information that allows Sentry to connect multiple transactions, span
 | `route`          | `string` or `map` | The current route in the application.                        |
 | `previous_route` | `string` or `map` | The previous route in the application the user was visiting. |
 
-The `route` can also have currently following predefined fields if it set to the map:
+The `route` can also have currently following predefined fields if it is a map:
 
 | Field    | Type     | Description                                    |
 | -------- | -------- | ---------------------------------------------- |
 | `name`   | `string` | The name of the route in the user application. |
 | `params` | `map`    | Params assigned to this route.                 |
 
-If the route set to string it will be normalization and the above created object will be created assiging provided route name to the `route.name` field.
+If the route is set to a string (e.g. `"route": "foo"`), it will be normalized into a map (e.g. `"route": {"name": "foo"}`) server-side.
 
 ### Example Trace Context
 
