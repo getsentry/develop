@@ -265,6 +265,7 @@ export default () => {
             <SidebarLink to="/sdk/serverless/aws-lambda">AWS Lambda</SidebarLink>
           </SidebarLink>
           <SidebarLink to="/sdk/store/">Store Endpoint</SidebarLink>
+          <SidebarLink to="/sdk/hub_and_scope_refactoring/">Hub & Scope refactoring</SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
