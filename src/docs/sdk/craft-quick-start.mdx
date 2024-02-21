@@ -1,5 +1,5 @@
 ---
-title: 'Craft Quick Start'
+title: "Craft Quick Start"
 ---
 
 This guide goes over the minimal setup needed to publish something via
@@ -45,8 +45,8 @@ We're just interested in making a GitHub release and a PyPI release so our
 ```yaml
 minVersion: 0.28.1
 targets:
-  - name: pypi
-  - name: github
+- name: pypi
+- name: github
 ```
 
 ### `scripts/bump-version.sh`
@@ -101,7 +101,7 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    name: 'Release a new version'
+    name: "Release a new version"
     steps:
       - uses: actions/checkout@v3
         with:
@@ -122,7 +122,7 @@ jobs:
 
 Here's [an example PR] and the [follow-up to fix `fetch-depth`].
 
-[an example pr]: https://github.com/getsentry/uwsgi-dogstatsd-plugin/pull/2
+[an example PR]: https://github.com/getsentry/uwsgi-dogstatsd-plugin/pull/2
 [follow-up to fix `fetch-depth`]: https://github.com/getsentry/uwsgi-dogstatsd-plugin/pull/3
 
 ## Setting Up Permissions
