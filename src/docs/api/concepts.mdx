@@ -121,6 +121,7 @@ GET /api/0/projects/{project_slug}/teams
 2. The endpoint can sometimes end in a plural (s), but more importantly, it does __not__ end in an identifier (`*_slug`, or `*_id`).
 
 To paginate a response at Sentry, you can leverage the [`self.paginate`](https://github.com/getsentry/sentry/blob/24.2.0/src/sentry/api/base.py#L463-L476) method as part of your endpoint.
+`self.paginate` is the standardized way we paginate at Sentry, and it helps us with unification of logging and monitoring.
 You can find multiple [examples of this](https://github.com/getsentry/sentry/blob/24.2.0/src/sentry/api/endpoints/api_applications.py#L22-L33) in the code base. They'll look something like:
 ```python
 def get(self, request: Request) -> Response:
