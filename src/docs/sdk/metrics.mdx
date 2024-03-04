@@ -268,8 +268,8 @@ class Set:
 
 ## Serialization
 
-Metrics are emitted in regular flush intervals (every 10 seconds, with a random offset that
-is detemined once per startup) as envelope items.  The item type is `statsd` and the serialization
+Metrics are emitted in regular flush intervals (every 5 seconds, with a random offset that
+is determined once per startup) as envelope items.  The item type is `statsd` and the serialization
 format is statsd compatible.  Unlike normal statsd, more than one value can be emitted separated
 by a colon.  These values are the results of calling `serialize` or similar on the aggregation
 state.
