@@ -279,6 +279,29 @@ The format is documented as part of relay: [relay_metrics](https://getsentry.git
 Additionally metric summaries retained on the spans shall be emitted as `_metrics_summary`
 on the metrics as documented by this RFC: [RFC-0123](https://github.com/getsentry/rfcs/blob/main/text/0123-metrics-correlation.md).
 
+
+## Hooks
+
+SDKs are encouraged to provide a `before_emit_metric` callback allowing developers to discard a metric from
+being emitted and later aggregated. The provided parameters are the metric key and the tags.
+The callback either returns `True` or `False`, indicating if the metric should be emitted or
+not.
+
+```python
+def before_emit_metric(key, tags):
+    if key in ["metric_a", "metric_b"]:
+        return False
+    return True
+
+sentry_sdk.init(
+    _experiments={
+        "enable_metrics": True,
+        "before_emit_metric": before_emit_metric
+    }
+)
+```
+
+
 ## Meta Data
 
 Additionally SDKs are encouraged to capture location information once per metric.  At metric
