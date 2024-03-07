@@ -8,6 +8,38 @@ Development has started in JS and Python, but we are still ironing out the wrink
 
 All of Sentry's SDKs use the so-called <Link to="/sdk/unified-api/">Unified API</Link> under the hood. This API has some limitations and therefore we are refactoring it. This is a massive undertaking.
 
+## Why do we want to get rid of hubs?
+
+Hubs and scopes is a complicated system, that can easily be misused (also see [here](https://develop.sentry.dev/sdk/research/performance/#scope-propagation)). It requires us to create new hubs which in turn breaks breadcrumbs and other features. For the future we want to have one consistent system, that forks off in the same way as OTEL `Context` does.
+
+Regardless of switching our performance over to OTel, we should merge hubs and scopes. So hubs should be removed from SDKs.
+
+### Copy-on-write
+
+Getting rid of hubs also implies a soft copy-on-write.
+
+In our current system with hubs and scopes, `Scope` is always mutable and what makes it somewhat immutable is pushing/popping scopes and creating new hubs. This however has to be done manually.
+
+If an async operation is started halfway in between handling a request, a new hub clone has to be created to achieve copy-on-write. In case we don't create a new hub clone, popping a `Scope` also affects the original execution, leading to lost data or worst case exceptions.
+
+After merging hubs and scopes, scopes can be forked at any time and a user no longer has to take care of it, as it should automatically do the right thing. With this new system, the async execution can manipulate scope without affecting other execution.
+
+While it's still possible to misuse, this is a sort of soft copy-on-write that should protect most users.
+
+### Isolation Scope
+
+Without an isolation scope, writing to the current `Scope` can lead to unexpected results. Writes can go to a scope that's never applied the way a user would expect. While this is already a problem today, it is exaggerated by moving over to OTel, as auto instrumentation can do lots of context forking, leading to deeply nested scopes. Some hooks are automatically wrapped in a new span by OTel, causing it to also have a separate `Scope`, so the outer `Scope` can't be manipulated.
+
+With isolation scope, we have a place where e.g. hooks can write to that should affect e.g. the whole request.
+
+## Migrating from Hubs and Scopes to Scopes Only
+
+There has to be some period of time, where users can keep using the old API. We do not want a big bang change, where we leave behind users who can't easily upgrade. This bears the risk of having to support old versions of the SDK. This means we shouldn't have a major version A of an SDK that has hubs and then the next version that has them merged no longer supports hubs. There has to be a migration phase for our users.
+
+For the migration phase we can have top level static API (like `Sentry.setTag()`) write to both current and isolation scope. In a later major version we can then change this to only write to isolation scope. Hub API should be shimmed and redirect to scopes.
+
+For most use cases writing to isolation scope should be what we want. For other use cases users should mostly be using `withScope()` already where they use the `Scope` passed into the callback instead of static API. We're deprecating `configureScope` to let users know they should reevaluate what scope they want to write to. Users can then get the scope they need and call e.g. `setTag` on that `Scope`. There might be some cases where we change behaviour but the damage should be contained to e.g. an incoming server request.
+
 ## Why Are We Doing This?
 
 There are two reasons we are doing this:
