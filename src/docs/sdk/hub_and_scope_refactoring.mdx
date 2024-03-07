@@ -8,11 +8,39 @@ Development has started in JS and Python, but we are still ironing out the wrink
 
 All of Sentry's SDKs use the so-called <Link to="/sdk/unified-api/">Unified API</Link> under the hood. This API has some limitations and therefore we are refactoring it. This is a massive undertaking.
 
+## Why Are We Doing This?
+
+There are two reasons we are doing this:
+1. Being 100% compatible with OpenTelemetry (OTel) performance data.
+2. Make Sentry concepts easier to understand and match the concepts of OpenTelemetry (OTel).
+
+### Being 100% Compatible to OpenTelemetry
+
+What Sentry calls a `Scope` is called <Link to="https://opentelemetry.io/docs/specs/otel/context/">`Context`</Link> in OTel. Contexts in OTel are immutable and thus whenever a context is mutated in OTel a new context is created (forked from the currently active scope). 
+Whenever a new span is created in Otel a new context is forked. This leads to a lot of nested contexts and the Sentry scopes should be able to reproduce this.
+This is necessary because the Sentry SDKs should be able to capture all spans from OTel with the correct data from the correct context applied to them before sending them to Sentry.
+
+
+### Make Sentry Concepts Easier to Understand
+
+We have different concepts like a `Hub` and `Scope`s in the Unified API and those concepts sometimes leak to the end user of our SDKs. Those concepts are complicated and the users should never need to think about what a `Hub` or a `Scope` is and if they should clone them or not. 
+
+## What Is the Outcome of the Refactoring?
+
+1. We want to make Sentry SDKs 100% compatible with OTel performance data, so users can choose to use OTel tooling for their performance monitoring and still see their data in Sentry. (And Sentry error events are still connected to the spans captured by OTel)
+1. We want to make it easier for the users to do custom performance instrumentation with as little as possible mental overhead. The `Hub` will be gone.
+
+<Alert title="Note" level="info">
+The decision of removing the Hub from all Sentry SDKs was confirmed in a meeting on 2024-05-03 with most of the SDK engineers and Armin present. This decision is final.
+</Alert>
+
+This is why we started this journey with an <Link to="https://github.com/getsentry/rfcs/pull/122">RFC</Link>.
+
 ## Why do we want to get rid of hubs?
 
 Hubs and scopes is a complicated system, that can easily be misused (also see [here](https://develop.sentry.dev/sdk/research/performance/#scope-propagation)). It requires us to create new hubs which in turn breaks breadcrumbs and other features. For the future we want to have one consistent system, that forks off in the same way as OTEL `Context` does.
 
-Regardless of switching our performance over to OTel, we should merge hubs and scopes. So hubs should be removed from SDKs.
+Regardless of switching our performance over to OTel, we should merge hubs and scopes. So hubs should be removed from all Sentry SDKs.
 
 ### Copy-on-write
 
@@ -48,32 +76,6 @@ There has to be some period of time, where users can keep using the old API. We 
 For the migration phase we can have top level static API (like `Sentry.setTag()`) write to both current and isolation scope. In a later major version we can then change this to only write to isolation scope. Hub API should be shimmed and redirect to scopes.
 
 For most use cases writing to isolation scope should be what we want. For other use cases users should mostly be using `withScope()` already where they use the `Scope` passed into the callback instead of static API. We're deprecating `configureScope` to let users know they should reevaluate what scope they want to write to. Users can then get the scope they need and call e.g. `setTag` on that `Scope`. There might be some cases where we change behaviour but the damage should be contained to e.g. an incoming server request.
-
-## Why Are We Doing This?
-
-There are two reasons we are doing this:
-1. Being 100% compatible with OpenTelemetry (OTel) performance data.
-2. Make Sentry concepts easier to understand and match the concepts of OpenTelemetry (OTel).
-
-### Being 100% Compatible to OpenTelemetry
-
-What Sentry calls a `Scope` is called <Link to="https://opentelemetry.io/docs/specs/otel/context/">`Context`</Link> in OTel. Contexts in OTel are immutable and thus whenever a context is mutated in OTel a new context is created (forked from the currently active scope). 
-Whenever a new span is created in Otel a new context is forked. This leads to a lot of nested contexts and the Sentry scopes should be able to reproduce this.
-This is necessary because the Sentry SDKs should be able to capture all spans from OTel with the correct data from the correct context applied to them before sending them to Sentry.
-
-
-### Make Sentry Concepts Easier to Understand
-
-We have different concepts like a `Hub` and `Scope`s in the Unified API and those concepts sometimes leak to the end user of our SDKs. Those concepts are complicated and the users should never need to think about what a `Hub` or a `Scope` is and if they should clone them or not. 
-
-
-## What Is the Outcome of the Refactoring?
-
-1. We want to make Sentry SDKs 100% compatible with OTel performance data, so users can choose to use OTel tooling for their performance monitoring and still see their data in Sentry. (And Sentry error events are still connected to the spans captured by OTel)
-1. We want to make it easier for the users to do custom performance instrumentation with as little as possible mental overhead. The `Hub` will be gone.
-
-This is why we started this journey with an <Link to="https://github.com/getsentry/rfcs/pull/122">RFC</Link>.
-
 
 ## What Is the Plan?
 
