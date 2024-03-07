@@ -79,9 +79,9 @@ Below describes the conventions for the Span interface for the `data` field on t
 | `ai.completion_tоkens.used` | int     | The number of tokens used to respond to the message   | `10`                                     |
 | `ai.prompt_tоkens.used`     | int     | The number of tokens used to process just the prompt  | `20`                                     |
 | `ai.total_tоkens.used`      | int     | The total number of tokens used to process the prompt | `30`                                     |
-| `ai.model_id`               | string  | The vendor-specific ID of the model used              | `"gpt-4"`                                |
+| `ai.model_id`               | list    | The vendor-specific ID of the model used              | `"gpt-4"`                                |
 | `ai.streaming`              | boolean | Whether the request was streamed back                 | `true`                                   |
-| `ai.responses`              | string  | The response messages sent back by the AI model       | `["hello", "world"]`                     |
+| `ai.responses`              | list    | The response messages sent back by the AI model       | `["hello", "world"]`                     |
 
 
 ## Thread
