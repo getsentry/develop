@@ -24,6 +24,15 @@ If an async operation is started halfway in between handling a request, a new hu
 
 After merging hubs and scopes, scopes can be forked at any time and a user no longer has to take care of it, as it should automatically do the right thing. With this new system, the async execution can manipulate scope without affecting other execution.
 
+This soft copy-on-write relies on `Scope` being forked in certain cases:
+- `withScope` and similar API wraps the callback in a forked `Scope` that'll be cleaned up by the SDK after the callback is finished
+- we also have to fork, when OTel does, however there's some grey area here at the moment
+	- it depends on what API is available in the OTel implementation relevant for each SDK
+	- in some cases, we may only be able to intercept `Context` storage, i.e. when an already forked `Context` is being stored, e.g. in a ThreadLocal variable.
+	- in some cases we can intercept `Context` forking, i.e. when a mutated copy of a `Context` is created
+	- in some cases it might be necessary to have a mix of both, since not all auto instrumentation and user instrumentation go through a single place in the same way. e.g. in Java SDK we're sometimes handed a `Context` with some properties already set into our `ContextStorage` where we can then wrap it and intercept future forks of that `Context`
+	- {open question} do we need to fork every time OTel `Context` copied or only when a new OTel span is set
+
 While it's still possible to misuse, this is a sort of soft copy-on-write that should protect most users.
 
 ### Isolation Scope
