@@ -69,6 +69,9 @@ SDKs should permit any string unit, but some of them are known to the system and
 will in the future permit recalculations.  They are documented as part of
 relay: [`MetricUnit`](https://getsentry.github.io/relay/relay_metrics/enum.MetricUnit.html).
 
+When transmitting custom metric units to Sentry, the unit names should be sanitized,
+as statsd only allows the characters `a-z A-Z 0-9 _ .` in metric unit names.
+
 ## Trace Seeking
 
 When a metric is emitted it needs to find the current trace (trace seeking),
