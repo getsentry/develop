@@ -81,7 +81,7 @@ seeking mode.
 In **span creating** mode a new active span is started.
 The `.timing()` API operates in span creating mode.
 
-In this mode the span should be setup the following way:
+In span creating mode the span should be setup the following way:
 * `span.op = "metric.timing"`
 * `span.description = key` (the metric key)
 * the metric tags should be applied to the span as well
