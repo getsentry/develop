@@ -79,8 +79,11 @@ APIs such as `.increment()`, `.distribution()`, `.gauge()` and `.set()` operate 
 seeking mode.
 
 In **span creating** mode a new active span is started and pushed onto the scope.
-The `.timing()` API shall operate in span creating mode, and the span is finished once 
-the timing callback finishes. The provided metric tags should be applied to the span as well.
+The `.timing()` API shall operate in span creating mode with the following 
+* `span.op = "metric.timing"`
+* `span.description = key` (the metric key)
+* the metric tags should be applied to the span as well
+* the span is finished once the timing callback finishes
 
 From there two things shall be happening unless they are disabled:  
 * **Common tag attaching:** the tags `transaction`, `release` and `environment`
