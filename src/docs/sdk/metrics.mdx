@@ -78,8 +78,10 @@ In **span seeking** mode, the span is determined based on the current span on th
 APIs such as `.increment()`, `.distribution()`, `.gauge()` and `.set()` operate in span 
 seeking mode.
 
-In **span creating** mode a new active span is started and pushed onto the scope.
-The `.timing()` API shall operate in span creating mode with the following 
+In **span creating** mode a new active span is started.
+The `.timing()` API operates in span creating mode.
+
+In this mode the span should be setup the following way:
 * `span.op = "metric.timing"`
 * `span.description = key` (the metric key)
 * the metric tags should be applied to the span as well
