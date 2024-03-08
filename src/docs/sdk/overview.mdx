@@ -7,7 +7,7 @@ The following is a guide for implementing a new Sentry SDK. It covers the protoc
 
 ## Writing an SDK
 
-At its core an SDK is a set of utilities for capturing data about an exceptional state in an application. Given this data, it then builds and sends a JSON payload to the Sentry server.
+At its core an SDK is a set of utilities for capturing data about an exceptional state in an application. Given this data, it then builds a JSON (or [Protobuf](https://protobuf.dev/)) payload and sends to the Sentry server.
 
 The following items are expected of production-ready SDKs:
 
