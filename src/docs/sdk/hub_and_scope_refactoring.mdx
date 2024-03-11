@@ -80,11 +80,15 @@ This scope holds data only applicable to the current request (on a server), tab 
 
 The isolation scope is stored in a context variable, thread local, async local, or something similar (depending on the platform). It may also be stored on OTel `Context` so we can rely on OTels `Context` propagation once SDKs implement POTEL.
 
-The isolation scope is forked by our integrations, end users should not need to think about isolation scopes or forking of one. (See diagram below.)
+The isolation scope is forked by our integrations, end users should not need to think about isolation scopes or forking of one (See diagram below.).
+
+SDKs should not fork isolation scope more than necessary as otherwise we'd bring back the problem that isolation scopes are meant to solve.
 
 **Current Scope**
 
 This scope holds data for the currently active span. Whenever a new span is started the current scope of the parent span is forked (read: duplicated) giving the new span all the data from the parent span and making it possible to add/manipulate data that is just applied to the new span (see also "Copy-on-write").
+
+Changing the original scope after forking does not modify the forked scope.
 
 The current scope is stored in a context variable, thread local, async local, or something similar (depending on the platform). It may also be stored on OTel `Context` so we can rely on OTels `Context` propagation once SDKs implement POTEL.
 
@@ -94,7 +98,7 @@ The current scope can be forked by the end user. Either explicitly (e.g. using `
 
 Getting rid of hubs also implies a soft copy-on-write.
 
-In our current system with hubs and scopes, `Scope` is always mutable and what makes it somewhat immutable is pushing/popping scopes and creating new hubs. This however has to be done manually.
+In our current system with hubs and scopes, `Scope` is always mutable and what makes it somewhat immutable is pushing/popping scopes as well as creating new hubs. This however has to be done manually.
 
 If an async operation is started halfway in between handling a request, a new hub clone has to be created to achieve copy-on-write. In case we don't create a new hub clone, popping a `Scope` also affects the original execution, leading to lost data or worst case exceptions.
 
