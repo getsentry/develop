@@ -172,12 +172,6 @@ For more information like the goals (and non-goals) see this GitHub Issue:
 
 https://github.com/getsentry/team-sdks/issues/4
 
-### Implementation Details
-
-TODO: Add some findings we discovered when implementing this in the first two SDKs.
-
-Also add this somewhere: https://miro.com/app/board/uXjVNnI7dsE=/
-
 ### Isolation Scope
 
 Without an isolation scope, writing to the current `Scope` can lead to unexpected results. Writes can go to a scope that's never applied the way a user would expect. While this is already a problem today, it is exaggerated by moving over to OTel, as OTel auto instrumentation can do lots of context forking, leading to deeply nested scopes. Some hooks are automatically wrapped in a new span by OTel, causing it to also have a separate `Scope`, so the outer `Scope` can't be manipulated.
@@ -185,6 +179,8 @@ Without an isolation scope, writing to the current `Scope` can lead to unexpecte
 With isolation scope, we have a place where e.g. hooks can write to that should affect e.g. the whole request.
 
 When isolation scope is forked, the SDK should also fork current scope at the same time. Otherwise users would have to e.g. call both `withScope` and `withIsolationScope` leading to less readable code.
+
+### Implementation Details
 
 #### OTel `Context`
 
