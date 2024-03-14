@@ -191,6 +191,7 @@ export default () => {
           <SidebarLink to="/sdk/overview/">Overview</SidebarLink>
           <SidebarLink to="/sdk/craft-quick-start/">Craft Quick Start</SidebarLink>
           <SidebarLink to="/sdk/unified-api/" title="Unified API"></SidebarLink>
+          <SidebarLink to="/sdk/hub_and_scope_refactoring/">Hub & Scope Refactoring</SidebarLink>
           <SidebarLink to="/sdk/features/">Expected Features</SidebarLink>
           <SidebarLink to="/sdk/data-handling/">Data Handling</SidebarLink>
           <SidebarLink to="/sdk/envelopes/">Envelopes</SidebarLink>
@@ -268,7 +269,6 @@ export default () => {
             <SidebarLink to="/sdk/serverless/aws-lambda">AWS Lambda</SidebarLink>
           </SidebarLink>
           <SidebarLink to="/sdk/store/">Store Endpoint</SidebarLink>
-          <SidebarLink to="/sdk/hub_and_scope_refactoring/">Hub & Scope Refactoring</SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
