@@ -184,10 +184,10 @@ When isolation scope is forked, the SDK should also fork current scope at the sa
 
 #### OTel `Context`
 
-OTel stores spans as well as other information in a `Context` and takes care of propagating this `Context` through libraries and threads. We want to rely on this propagation as it allows us to not worry about propagation, instead we just store our scopes in `Context`and trust OTel to propagate it correctly.
+OTel stores spans as well as other information in a `Context` and takes care of propagating this `Context` through libraries and threads. We want to rely on this propagation as it allows us to not worry about propagation, instead we just store our scopes in `Context` and trust OTel to propagate it correctly.
 
 **Can't we simply propagate our `Scopes` ourselves and ignore OTEL Context?**
-If we didn't want to rely on OTels `Context` propagation, we'd have to provide a counterpart for every OTel propagation mechanism. We would no longer be able to just rely on OTEL for instrumentations but have to mirror some of what they do. This would also have to be kept up to date. Whenever OTEL changes something about how they propagate Context we'd have to adapt as well. Keeping `Context` and `Scopes` in sync would be hard and possibly also hard to detect. Version compatibility between Sentry and OTel could also become difficult.
+If we didn't want to rely on OTels `Context` propagation, we'd have to provide a counterpart for every OTel propagation mechanism. We would no longer be able to just rely on OTel for instrumentations but have to mirror some of what they do. This would also have to be kept up to date. Whenever OTel changes something about how they propagate `Context` we'd have to adapt as well. Keeping `Context` and `Scopes` in sync would be hard and possibly also hard to detect. Version compatibility between Sentry and OTel could also become difficult.
 
 Examples of where we had to provide our own propagation before POTel:
 
@@ -200,14 +200,14 @@ Examples of where we had to provide our own propagation before POTel:
 In order to fork our scopes, when required by OTel, we need some sort of a hook. We're not yet completely sure, when forking is actually required. In theory it should suffice to fork scopes, whenever a new OTel span is created, or maybe even only when the span is saved. What hooks are available in OTel depends on the language, so this will likely differer from SDK to SDK.
 
 - Context Forking: Whenever a modified copy of an OTel `Context` is created using `context.with(...)`.
-- Context Saving: Whenever an OTel `Context` is stored using `context.makeCurrent()`
+- Context Storing: Whenever an OTel `Context` is stored using `context.makeCurrent()`
 - Span Creation: Whenever a new OTel span is created, regardless of it being stored in any `Context` or that `Context` being stored.
 
 For `Context` forking / storing we could filter changes to only fork scopes when the span changes in order to have fewer forked scopes.
 
 If no hook is available, we have to fall back to a more complex variant of global storage. See the middle example in [this miro board](https://miro.com/app/board/uXjVNnI7dsE=/).
 
-A `Context` fork/storage hook alone unfortunately does not allow us to do everything we need. In `SpanProcessor.onEnd` and by extension also `SpanExporter.export`, `Context.current()` returns the parent Context and not the `Context` that was active during span execution. This seems to be by design in OTEL. This means even if we managed to add our Scopes to `Context`, we can't access it in `SpanProcessor.onEnd()`.
+A `Context` fork/storage hook alone unfortunately does not allow us to do everything we need. In `SpanProcessor.onEnd` and by extension also `SpanExporter.export`, `Context.current()` returns the parent `Context` and not the `Context` that was active during span execution. This seems to be by design in OTel. This means even if we managed to add our Scopes to `Context`, we can't access it in `SpanProcessor.onEnd()`.
 
 #### Storing Scopes which Belong to a Certain Span
 
@@ -217,7 +217,7 @@ If modifying the span isn't possible, the only way to retrieve the `Scopes` in `
 
 The hook for OTel span creation / `Context` forking / storing then needs to look up Sentry `Scopes` in either the span (if the language supports this variant) or the global storage.
 
-Scopes forked in `SpanProcessor.onStart` can be found via the OTel span in `Context` (or global storage if span can't be modified). However, there may already be a `Scopes` object on the `Context`. The hook has to figure out which `Scopes` object to fork. An ancestry check can be used to see if the `Scopes` from `Context` is an ancesor of the `Scopes` of the span (or from global storage). If so, we fork the `Scopes` from the span (or global storage), since it's the "youngest". If that's not the case, we fork `Scopes` from `Context` or fall back to forking root scopes, if there's no `Scopes` on the `Context`.
+Scopes forked in `SpanProcessor.onStart` can be found via the OTel span in `Context` (or global storage if span can't be modified). However, there may already be a `Scopes` object on the `Context`. The hook has to figure out which `Scopes` object to fork. An ancestry check can be used to see if the `Scopes` from `Context` is an ancestor of the `Scopes` of the span (or from global storage). If so, we fork the `Scopes` from the span (or global storage), since it's the "youngest". If that's not the case, we fork `Scopes` from `Context` or fall back to forking root scopes, if there's no `Scopes` on the `Context`.
 
 We can't rely on `Context.current()` in `SpanProcessor.onEnd` as it will either return the parent `Context` or an unrelated `Context`. In `SpanExporter.export` we also can't use `Context.current()` because that's usually batched and may run on a different thread where `Context` isn't even propagated to.
 
