@@ -16,38 +16,37 @@ in the same envelope.
 
 The following attributes are specific to the `"replay_event"` Item type.
 
-| Key                                 | Type                      | Description                            |
-| ----------------------------------- | ------------------------- | -------------------------------------- |
-| type                                | string                    | `"replay_event"`                                      |
-| replay_id                           | string                    | A unique ID for the replay. Follows the [same requirements](https://develop.sentry.dev/sdk/event-payloads/#required-attributes) as an `event_id`: Hexadecimal string representing a uuid4 value. The length is exactly 32 characters. Dashes are not allowed. Has to be lowercase. |
-| replay_type                         | `"session"` \| `"buffer"` | Describes the type of replay. `buffer` means the replay is buffered while waiting for an error to occur or until a manual flush. `session` means the replay starts recording immediately and continues through the lifespan of the replay session. |
-| segment_id                          | number                    | The segment id. |
-| replay_start_timestamp              | number                    | UNIX timestamp of the start of the replay (in seconds). This is only required on the first segment. |
-| urls                                | list[string]              | List of URLs in order of visitation. |
-| error_ids                           | list[string]              | List of error event ids that occurred during the replay. |
-| trace_ids                           | list[string]              | List of trace ids that occurred during the replay. |
+| Key                    | Type                      | Description                                                                                                                                                                                                                                                                        |
+| ---------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| type                   | string                    | `"replay_event"`                                                                                                                                                                                                                                                                   |
+| replay_id              | string                    | A unique ID for the replay. Follows the [same requirements](https://develop.sentry.dev/sdk/event-payloads/#required-attributes) as an `event_id`: Hexadecimal string representing a uuid4 value. The length is exactly 32 characters. Dashes are not allowed. Has to be lowercase. |
+| replay_type            | `"session"` \| `"buffer"` | Describes the type of replay. `buffer` means the replay is buffered while waiting for an error to occur or until a manual flush. `session` means the replay starts recording immediately and continues through the lifespan of the replay session.                                 |
+| segment_id             | number                    | The segment id.                                                                                                                                                                                                                                                                    |
+| replay_start_timestamp | number                    | UNIX timestamp of the start of the replay (in seconds). This is only required on the first segment.                                                                                                                                                                                |
+| urls                   | list[string]              | List of URLs in order of visitation.                                                                                                                                                                                                                                               |
+| error_ids              | list[string]              | List of error event ids that occurred during the replay.                                                                                                                                                                                                                           |
+| trace_ids              | list[string]              | List of trace ids that occurred during the replay.                                                                                                                                                                                                                                 |
 
 ### Event Attributes
 
 The following attributes are a subset of the [optional attributes](https://develop.sentry.dev/sdk/event-payloads/#optional-attributes) of an Event.
 
-| Key                                 | Type         | Description                            |
-| ----------------------------------- | ------------ | -------------------------------------- |
-| timestamp                           | number       | UNIX timestamp of the current time (in seconds). |
-| event_id                            | string       | This should be the same as `replay_id` |
-| dist                       | string | -           |
-| platform                   | string | -           |
-| environment                | string | -           |
-| release                    | string | -           |
-| user.id                    | string | -           |
-| user.username              | string | -           |
-| user.email                 | string | -           |
-| user.ip_address            | string | -           |
-| sdk.name                   | string | -           |
-| sdk.version                | string | -           |
-| request.url                | string | -           |
-| request.headers.User-Agent | string | -           |
-
+| Key                        | Type   | Description                                      |
+| -------------------------- | ------ | ------------------------------------------------ |
+| timestamp                  | number | UNIX timestamp of the current time (in seconds). |
+| event_id                   | string | This should be the same as `replay_id`           |
+| dist                       | string | -                                                |
+| platform                   | string | -                                                |
+| environment                | string | -                                                |
+| release                    | string | -                                                |
+| user.id                    | string | -                                                |
+| user.username              | string | -                                                |
+| user.email                 | string | -                                                |
+| user.ip_address            | string | -                                                |
+| sdk.name                   | string | -                                                |
+| sdk.version                | string | -                                                |
+| request.url                | string | -                                                |
+| request.headers.User-Agent | string | -                                                |
 
 ### Example
 
@@ -76,17 +75,12 @@ The following attributes are a subset of the [optional attributes](https://devel
   "environment": "prod",
   "release": "frontend@f00",
   "sdk": {
-    "integrations": [
-      "BrowserTracing",
-      "BrowserProfiling",
-      "Replay",
-      "ReplayCanvas"
-    ],
+    "integrations": ["BrowserTracing", "BrowserProfiling", "Replay", "ReplayCanvas"],
     "name": "sentry.javascript.react",
     "version": "7.105.0"
   },
   "tags": {
-    "sentry_version": "24.4.0.dev0",
+    "sentry_version": "24.4.0.dev0"
   },
   "user": {
     "ip_address": "127.0.0.1",
@@ -94,7 +88,7 @@ The following attributes are a subset of the [optional attributes](https://devel
     "id": 1,
     "name": "Admin"
   },
-  "contexts": { "organization": { "id": "0", "slug": "sentry" } },
+  "contexts": {"organization": {"id": "0", "slug": "sentry"}},
   "platform": "javascript"
 }
 ```
@@ -121,13 +115,12 @@ WIP: Detailed recording event protocol
 ]
 ```
 
-
 ### Example
+
 ```
 {"segment_id": 0}
 \x00\x00\x00\x14ftypqt  \x00\x00\x00\x00qt  \x00\x00\x00\x08wide\x03\xbdd\x11mdat
 ```
-
 
 ## Full Envelope Example
 
