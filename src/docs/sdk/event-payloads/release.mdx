@@ -1,0 +1,45 @@
+---
+title: Detect Release Automatically
+---
+
+<Alert title="Note on --- " level="info">
+  Should we call special attention to something to encourage best practices and prevent and bad DX?
+</Alert>
+
+
+## Release
+
+
+```json
+{
+  "release": "my-project-name@1.0.0"
+}
+```
+
+```json
+{
+  "release": "721e41770371db95eee98ca2707686226b993eda"
+}
+```
+
+## SDK Examples
+
+| Source        | Description                                                                                                                       |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Python SDK    | -`SENTRY_RELEASE` env variable <br /> - Output of git rev-parse HEAD                                                              |
+| Rust SDK      | -`SENTRY_RELEASE` env if nothing was explicitly sent. & example snippets include release: sentry::release_name!()                 |
+| Browser SDK   | 1. the `SENTRY_RELEASE` global var injected by bundlers (like webpack plugin): link <br /> 2. and then falls back to undefined    |
+| Node SDK      | 1. release parameter <br /> 2. SENTRY_RELEASE env var <br /> 3. SENTRY_RELEASE.id global var <br /> - variety of `env variables` <br /> 4. and then falls back to undefined |
+| Dart/Flutter  | - `SENTRY_RELEASE` environment variable- `-dart-define=SENTRY_RELEASE` dart define variable <br /> - SDK init `options.release` <br /> By default, it uses the `appId@appVersion+buildNumber` whenever possible/available. |
+| Java          | - SDK init options<br /> - sentry.properties file<br /> - defaults to git `commit_id` for spring-boot                             |
+| Android(Java) | - SDK init options<br /> - AndroidManifest.xml `io.sentry.release` metadata<br /> - By default, it uses the `appId@appVersion+buildNumber` |
+| Cocoa/Apple   | The SDK sets the default, which is `CFBundleIdentifier@CFBundleShortVersionString+CFBundleVersion`, on the init of the Options. An example is `io.sentry.sample.iOS-Swift@7.31.2+1`|
+| React Native  | - SDK init options (overrides platform defaults)<br /> iOS:<br /> - platform default<br /> Android:<br /> - platform default<br /> - `SENTRY_RELEASE` environment variable only source maps upload |
+| Unity         | SDK defaults to `$"{productName}@{application.Version}"+{application.BuildGUID}"` on initializing `SentryUnityOptions`          |
+| Capacitor     | Same rules as Browser, otherwise fetch from the native SDK<br /> iOS<br /> - id as `CFBundleIdentifier`<br /> - version as `CFBundleShortVersionString`<br /> - build as `CFBundleVersion`<br /> Android: <br /> - id as `packageName`<br /> - version as `versionName`<br /> - build as `versionCode` |
+| Cordova       | gets from `SENTRY_RELEASE`, or it's set by Sentry CLI from the command `sentry-cli releases propose-version` during build (the hash from the last commit) |
+| Xamarin       | `PackageName@VersionString+BuildString`<br /> `PackageName`: the application package name for Android/iOS and the application GUID for UWP.<br /> `VersionString`: `versionName` on Android, `CFBundleVersion` on iOS, Assembly version on UWP.<br /> `BuildString`: `versionCode` on Android, `CFBundleShortVersionString` on iOS. |
+| PHP           | in order of precedence:<br /> PHP/Laravel/Symfony<br /> - `options.release`<br /> - `SENTRY_RELEASE`                            |
+| Ruby          | in order of precedence:<br /> - `config.release`<br /> - `ENV[’SENTRY_RELEASE’]`<br /> - `git rev-parse —short HEAD` if .git present<br /> - capistrano `REVISION` file or from `revisions.log`<br /> - `ENV['HEROKU_SLUG_COMMIT']` if on heroku<br /> - nil otherwise                                                                                                                                |
+| Golang        | in order of precedence:<br /> - `options.Release`<br /> - various env vars<br /> `"SENTRY_RELEASE"`<br /> `"HEROKU_SLUG_COMMIT"`<br /> `"SOURCE_VERSION"`<br /> `"CODEBUILD_RESOLVED_SOURCE_VERSION"`<br /> `"CIRCLE_SHA1"`<br /> `"GAE_DEPLOYMENT_ID"`<br /> `"GITHUB_SHA"`<br /> `"COMMIT_REF"`<br /> `"VERCEL_GIT_COMMIT_SHA"`<br /> `"ZEIT_GITHUB_COMMIT_SHA"`<br /> `"ZEIT_GITLAB_COMMIT_SHA"`<br /> `"ZEIT_BITBUCKET_COMMIT_SHA"`<br /> - `git describe --long --always --dirty` |
+| .NET          | In order of precedence:<br /> - The `release` configuration option if set<br /> - The `SENTRY_RELEASE` env var if set<br /> - `"{AssemblyName}@{AssemblyInformationalVersion}"` based on the entry assembly, when an informational version attribute is present (commonly set by csproj `<Version>` tag in modern .NET)<br /> - `"{AssemblyName}@{AssemblyVersion}"` based on the entry assembly, using the full assembly version (usually in older .NET Framework)<br /> <br /> Varies slightly for mobile.<br /> On .NET Android:<br /> - The `release` configuration option if set<br /> - `"{PackageName}@{PackageVersion}+{PackageVersionCode}"` from the Android package.  (Should matche `appId@appVersion+buildNumber` from the Android SDK.)<br /> <br /> On .NET for iOS/MacCatalyst:<br /> - The Release configuration option if set<br /> - `"{CFBundleIdentifier}@{CFBundleShortVersionString}+{CFBundleVersion}"` which matches the iOS SDK. |
