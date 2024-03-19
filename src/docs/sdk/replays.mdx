@@ -7,14 +7,14 @@ This document defines the format used by Sentry to ingest replays. This
 document is meant for Sentry SDK developers and maintainers of the Session Replay
 ingestion pipeline.
 
-A `"replay"` Item should always be sent with a `"replay_recording"` Item
+A `"replay_event"` Item should always be sent with a `"replay_recording"` Item
 in the same envelope.
 
-## `"replay"` Item
+## `"replay_event"` Item
 
 ### Replay Attributes
 
-The following attributes are specific to the `"replay"` Item type.
+The following attributes are specific to the `"replay_event"` Item type.
 
 | Key                                 | Type         | Description                            |
 | ----------------------------------- | ------------ | -------------------------------------- |
@@ -109,12 +109,16 @@ The `"replay_recording"` item consists of two sub-items that are delimited by ne
 
 The other sub-item is the replay recording's instructions set. This payload should be gzipped, but uncompressed payloads are also accepted.
 
+WIP: Detailed recording event protocol
+
 ```json
-[{
-  "type": 5,
-  "timestamp": 1710861507579,
-  "data": {}
-}]
+[
+  {
+    "type": 5,
+    "timestamp": 1710861507579,
+    "data": {}
+  }
+]
 ```
 
 
