@@ -166,13 +166,40 @@ For a zoomable version visit the <a href="https://miro.com/app/board/uXjVNtPiOfI
 
 Here's how the new APIs roughly map to the old-style APIs. In case of `configure_scope` and `push_scope` it's not clear-cut whether to use the current or the isolation scope. The choice essentially depends on how long/for what context the changed/forked scope should be active.
 
-| Old API                              | New API                                 | Note                                                                                                     |
-| ------------------------------------ | --------------------------------------- | ---------------------------------------------------------------------------------------------------------|
-| `hub = Hub(Hub.current)` (hub clone) | `with isolation_scope() as scope`       |                                                                                                          |
-| `with configure_scope() as scope`    | `scope = Scope.get_isolation_scope()`   | Should affect the whole transaction (one request/response cycle, one execution of a task, etc.).         |
-|                                      | `scope = Scope.get_current_scope()`     | Should affect the whole span or a part of code isolated via a forked current scope with `new_scope`.     |
-| `with push_scope() as scope`         | `with isolation_scope() as scope`       | We're starting a new transaction-worthy unit (request/response cycle, etc.).                             |
-|                                      | `with new_scope() as scope`             | Should affect a localized part of code, e.g. if the user wants to add specific data to a specific event. |
+<table>
+	<thead>
+		<tr>
+			<th>Old API</th>
+			<th>New API</th>
+			<th>Note</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>`hub = Hub(Hub.current)` (hub clone)</td>
+			<td>`with isolation_scope() as scope`</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td rowspan="2">`with configure_scope() as scope`</td>
+			<td>`scope = Scope.get_isolation_scope()`</td>
+			<td>Should affect the whole transaction (one request/response cycle, one execution of a task, etc.).</td>
+		</tr>
+		<tr>
+			<td>`scope = Scope.get_current_scope()`</td>
+			<td>Should affect the whole span or a part of code isolated via a forked current scope with `new_scope`.</td>
+		</tr>
+		<tr>
+			<td rowspan="2">`with push_scope() as scope`</td>
+			<td>`with isolation_scope() as scope`</td>
+			<td>We're starting a new transaction-worthy unit (request/response cycle, etc.).</td>
+		</tr>
+		<tr>
+			<td>`with new_scope() as scope`</td>
+			<td>Should affect a localized part of code, e.g. if the user wants to add specific data to a specific event.</td>
+		</tr>
+	</tbody>
+</table>
 
 ---
 
