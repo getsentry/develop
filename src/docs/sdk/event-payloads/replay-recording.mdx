@@ -147,6 +147,7 @@ Mobile replays are captured as video rather than a series of mutations. In order
 
 | property               | type      | description                                                                                                                          |
 | ---------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| type                   | `5`       | Custom event                                                                                                                         |
 | data.tag               | `"video"` | The string `"video"`                                                                                                                 |
 | data.payload.duration  | integer   | The video duration in milliseconds                                                                                                   |
 | data.payload.segmentId | integer   | The segment id. This should be the same as the replay segment id. This will be used by the UI to fetch the video from the Sentry API |
@@ -164,3 +165,30 @@ Mobile replays are captured as video rather than a series of mutations. In order
   }
 }
 ```
+
+### Additional Events
+
+Mobile replays follow the same rrweb protocol, but because mobile replays are captured by video, a majority of the rrweb events do not apply. Outlined below are the ones that do.
+
+#### Meta Event
+
+This should be emitted at the start of a replay (i.e. on the first segment) and when the user's viewport dimensions change.
+
+| property    | type    | description                        |
+| ----------- | ------- | ---------------------------------- |
+| type        | `4`     | "Meta" event                       |
+| data.href   | string  | The current URI                    |
+| data.width  | integer | The width of the current viewport  |
+| data.height | integer | The height of the current viewport |
+
+#### Touch Interactions
+
+| property         | type    | description                                                                                                                                                                                                             |
+| ---------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| type             | `3`     | "Incremental mutation" event                                                                                                                                                                                            |
+| data.source      | `2`     | "Mouse Interaction"                                                                                                                                                                                                     |
+| data.type        | integer | [MouseInteraction](https://github.com/getsentry/rrweb/blob/0722035e75a9aeedd716107cbcc949eba6da2a6a/packages/types/src/index.ts#L361-L373) enum. TouchStart = 7, TouchMove_Departed = 8, TouchEnd = 9, TouchCancel = 10 |
+| data.id          | integer | Unknown                                                                                                                                                                                                                 |
+| data.x           | integer | The x-coordinate of the touch event                                                                                                                                                                                     |
+| data.y           | integer | The y-coordinate of the touch event                                                                                                                                                                                     |
+| data.pointerType | `2`     | [PointerTypes](https://github.com/getsentry/rrweb/blob/0722035e75a9aeedd716107cbcc949eba6da2a6a/packages/types/src/index.ts#L375-L379) enum. Touch = 2                                                                  |
