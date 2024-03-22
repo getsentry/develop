@@ -44,7 +44,7 @@ Sentry custom events augment the replay with additional context in order to help
 
 In addition to the TypeScript references linked above, the following sections will describe the expected `payload` for custom events.
 
-### `tag="options"`
+### options
 
 This recording event is used to record the SDK configuration options. This should only be sent on the first segment as we do not expect the options to change throughout the lifecycle of a replay. See [this issue](https://github.com/getsentry/sentry-javascript/issues/7140) for more context around the decision to send this as a recording event rather than part of the `"replay_event"`. Note that these options are generally used internally to debug rather than a customer-facing feature (e.g. there is no way to query/filter replays using these options).
 
@@ -74,7 +74,7 @@ The payload for `"options"` is a record of configuration name -> configuration v
 }
 ```
 
-### `tag="breadcrumb"`
+### breadcrumb
 
 Breadcrumbs are named as such because they are intercepted from the web SDK and forwarded as a custom recording event. They have the same structure as describe in <Link to="/sdk/event-payloads/breadcrumbs/">breadcrumbs interface</Link>.
 
@@ -97,11 +97,11 @@ Breadcrumbs are named as such because they are intercepted from the web SDK and 
 }
 ```
 
-### `tag="performanceSpan"`
+### performanceSpan
 
 Similar to breadcrumbs, `"performanceSpan"` has a similar interface to Spans. The following is an example of a network request made in the browser. We have additional instrumentation to capture request and response payloads when configured to do so.
 
-```
+```json
 {
   "type": 5,
   "timestamp": 1710854008431,
@@ -200,7 +200,7 @@ This should be emitted at the start of a replay (i.e. on the first segment) and 
 | type             | `3`     | "Incremental mutation" event                                                                                                                                                                                            |
 | data.source      | `2`     | "Mouse Interaction"                                                                                                                                                                                                     |
 | data.type        | integer | [MouseInteraction](https://github.com/getsentry/rrweb/blob/0722035e75a9aeedd716107cbcc949eba6da2a6a/packages/types/src/index.ts#L361-L373) enum. TouchStart = 7, TouchMove_Departed = 8, TouchEnd = 9, TouchCancel = 10 |
-| data.id          | integer | Unique id of the event                                                                                                                                                                                                                 |
+| data.id          | integer | Unique id of the event                                                                                                                                                                                                  |
 | data.x           | integer | The x-coordinate of the touch event                                                                                                                                                                                     |
 | data.y           | integer | The y-coordinate of the touch event                                                                                                                                                                                     |
 | data.pointerType | `2`     | [PointerTypes](https://github.com/getsentry/rrweb/blob/0722035e75a9aeedd716107cbcc949eba6da2a6a/packages/types/src/index.ts#L375-L379) enum. Touch = 2                                                                  |
