@@ -24,8 +24,8 @@ The following attributes are specific to the `"replay_event"` Item type.
 | segment_id             | number                    | The segment id.                                                                                                                                                                                                                                                                    |
 | replay_start_timestamp | number                    | UNIX timestamp of the start of the replay (in seconds). This is only required on the first segment.                                                                                                                                                                                |
 | urls                   | list[string]              | List of URLs in order of visitation.                                                                                                                                                                                                                                               |
-| error_ids              | list[string]              | List of error event ids that occurred during the replay.                                                                                                                                                                                                                           |
 | trace_ids              | list[string]              | List of trace ids that occurred during the replay.                                                                                                                                                                                                                                 |
+| error_ids              | list[string]              | **DEPRECATED **                                                                                                                                                                                                                                                                    |
 
 ### Event Attributes
 
@@ -53,7 +53,6 @@ The following attributes are a subset of the [optional attributes](https://devel
 ```json
 {
   "type": "replay_event",
-  "error_ids": ["fc6d8c0c43fc4630ad850ee518f1b9d0"],
   "replay_id": "36b75d9fa11f45459412a96c41bdf691",
   "replay_start_timestamp": 1710861499.287,
   "replay_type": "session",
@@ -127,7 +126,6 @@ The other sub-item is the replay recording's instructions set. This payload shou
 {"type":"replay_event"}
 {
   "type": "replay_event",
-  "error_ids": ["fc6d8c0c43fc4630ad850ee518f1b9d0"],
   "replay_id": "36b75d9fa11f45459412a96c41bdf691",
   "replay_start_timestamp": 1710861499.287,
   "replay_type": "session",
