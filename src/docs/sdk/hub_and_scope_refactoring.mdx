@@ -176,26 +176,26 @@ Here's how the new APIs roughly map to the old-style APIs. In case of `configure
 	</thead>
 	<tbody>
 		<tr>
-			<td>`hub = Hub(Hub.current)` (hub clone)</td>
-			<td>`with isolation_scope() as scope`</td>
+			<td><pre>hub = Hub(Hub.current)</pre> (hub clone)</td>
+			<td><pre>with isolation_scope() as scope</pre></td>
 			<td></td>
 		</tr>
 		<tr>
-			<td rowspan="2">`with configure_scope() as scope`</td>
-			<td>`scope = Scope.get_isolation_scope()`</td>
+			<td rowspan="2"><pre>with configure_scope() as scope</pre></td>
+			<td><pre>scope = Scope.get_isolation_scope()</pre></td>
 			<td>Should affect the whole transaction (one request/response cycle, one execution of a task, etc.).</td>
 		</tr>
 		<tr>
-			<td>`scope = Scope.get_current_scope()`</td>
+			<td><pre>scope = Scope.get_current_scope()</pre></td>
 			<td>Should affect the whole span or a part of code isolated via a forked current scope with `new_scope`.</td>
 		</tr>
 		<tr>
-			<td rowspan="2">`with push_scope() as scope`</td>
-			<td>`with isolation_scope() as scope`</td>
+			<td rowspan="2"><pre>with push_scope() as scope</pre></td>
+			<td><pre>with isolation_scope() as scope</pre></td>
 			<td>We're starting a new transaction-worthy unit (request/response cycle, etc.).</td>
 		</tr>
 		<tr>
-			<td>`with new_scope() as scope`</td>
+			<td><pre>with new_scope() as scope</pre></td>
 			<td>Should affect a localized part of code, e.g. if the user wants to add specific data to a specific event.</td>
 		</tr>
 	</tbody>
