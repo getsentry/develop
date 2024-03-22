@@ -181,7 +181,7 @@ Here's how the new APIs roughly map to the old-style APIs. In case of `configure
 			<td></td>
 		</tr>
 		<tr>
-			<td rowspan="2"><pre>with configure_scope() as scope</pre></td>
+			<td rowspan="2" style="vertical-align: middle;"><pre>with configure_scope() as scope</pre></td>
 			<td><pre>scope = Scope.get_isolation_scope()</pre></td>
 			<td>Should affect the whole transaction (one request/response cycle, one execution of a task, etc.).</td>
 		</tr>
@@ -190,7 +190,7 @@ Here's how the new APIs roughly map to the old-style APIs. In case of `configure
 			<td>Should affect the whole span or a part of code isolated via a forked current scope with `new_scope`.</td>
 		</tr>
 		<tr>
-			<td rowspan="2"><pre>with push_scope() as scope</pre></td>
+			<td rowspan="2" style="vertical-align: middle;"><pre>with push_scope() as scope</pre></td>
 			<td><pre>with isolation_scope() as scope</pre></td>
 			<td>We're starting a new transaction-worthy unit (request/response cycle, etc.).</td>
 		</tr>
