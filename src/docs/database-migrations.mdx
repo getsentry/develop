@@ -408,6 +408,15 @@ Post-deploy migrations are ideal for:
   5 seconds in any given region.
 * Doing data backfills or mutations on tables with more than 50,000 rows.
 
+Post-deploy migrations **should not** be used for:
+
+* Column additions, removals or renames.
+* Table creation.
+
+Using post-deploy migrations for these operations will cause an outage.
+
+### Running post-deploy migrations
+
 Post-deploy migrations (both data and schema) are now run through a [GoCD
 pipeline](https://deploy.getsentry.net/go/pipelines?viewName=Default#!/) named
 `post-deploy-migrations`.
