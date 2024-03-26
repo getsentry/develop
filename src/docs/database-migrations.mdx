@@ -423,15 +423,15 @@ pipeline](https://deploy.getsentry.net/go/pipelines?viewName=Default#!/) named
 
 To run a post-deploy migration, first locate the `post-deploy-migrations job`. Click on the play button:
 
-![post-deploy task](/static/post-deploy-pipeline-tile.png)
+![post-deploy task](/post-deploy-pipeline-tile.png)
 
 Under `Materials`, input the getsentry SHA you want to run migrations from. The sha you choose should be one that contains the migration, and has been deployed to all regions.
 
-![post-deploy migration materials](/static/post-deploy-pipeline-materials.png)
+![post-deploy migration materials](/post-deploy-pipeline-materials.png)
 
 Then click `Environment Variables` and fill in a value for `django_app` and `django_migration`. The django_app should match the app name containing the migration. e.g. `sentry`, `getsentry`.  Next, input the name of the migration to run, e.g. `0233_pickle_to_json_admin_auditlogentry`.
 
-![post-deploy migration variables](/static/post-deploy-pipeline-variables.png)
+![post-deploy migration variables](/post-deploy-pipeline-variables.png)
 
 ### Cancelling a post-deploy migration
 
