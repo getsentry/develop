@@ -46,7 +46,7 @@ X-Sentry-Rate-Limits: 60::organization, 2700::organization
 ```python
 HTTP/1.1 429 Too Many Requests
 Retry-After: 2700
-  2700:metric_bucket:organization:quota_exceeded:custom
+X-Sentry-Rate-Limits: 2700:metric_bucket:organization:quota_exceeded:custom
 ```
 
 The `X-Sentry-Rate-Limits` header may appear in any response, regardless of status code, even `200` responses. This is to proactively inform SDKs that certain payload types are disabled before SDKs even try to send them.
