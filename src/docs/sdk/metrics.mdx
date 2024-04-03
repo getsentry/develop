@@ -60,9 +60,9 @@ class Aggregator:
 
 Normalization shall be done for `statsd` envelope items with unicode support if possible.
 
-* **Namespaces and Units:** regex `s/[^\w]+//g` with no replacement character.
-* **Metric Keys/Names:** regex `s/[^\w\-.]+/_/g` with replacement character `_`.
-* **Tag Keys:** regex `s/[^\w\-.\/]+//g` with no replacement character.
+* **Namespaces and Units:** regex `[^\w]+` with no replacement character.
+* **Metric Keys/Names:** regex `[^\w\-.]+` with replacement character `_`.
+* **Tag Keys:** regex `[^\w\-.\/]+` with no replacement character.
 * **Tag Values:** See below
 
 ### Tage Values Replacement Map
