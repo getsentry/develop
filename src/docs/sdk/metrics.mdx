@@ -67,7 +67,8 @@ Normalization shall be done for `statsd` envelope items with unicode support if 
 
 ### Tage Values Replacement Map
 
-Reserved characters for **Tag Values** are `\n`, `\r`, `\t`, `\`, `|`, `,`. Based on the above escaping rules, the replacement map is as follows.
+Tag Values support the full UTF-8 character range, except for control characters.
+Reserved characters for Tag Values are `\n`, `\r`, `\t`, `\`, `|`, `,`. The replacement map is as follows.
 
 | Character | Replacement |
 |:--|:--|
