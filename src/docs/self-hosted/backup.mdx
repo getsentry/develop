@@ -153,7 +153,7 @@ restored your backup.
 <Alert level="warning">
 
 We strongly recommended that you restore your backup on the <strong>same version of Sentry</strong>
-on a fresh install (empty database but migrations are run). Otherwise, you are very likely to hit
+on a fresh install (empty database but migrations are run). You can use the command `./install.sh --skip-user-creation` to migrate a fresh install without creating users, as they are restored from the backup. Otherwise, you are very likely to hit
 errors and may corrupt your database.
 
 </Alert>
