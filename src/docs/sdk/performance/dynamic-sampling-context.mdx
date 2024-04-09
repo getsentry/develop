@@ -197,7 +197,7 @@ def has_sentry_value_in_baggage_header(request):
   # header of `request`, for which the key starts with "sentry-". Otherwise, it returns False.
 
 def on_incoming_request(request):
-  if request.has_header("sentry-trace") or request.has_header("traceparent") and (not request.has_header("baggage") or not has_sentry_value_in_baggage_header(request)):
+  if (request.has_header("sentry-trace") or request.has_header("traceparent")) and (not request.has_header("baggage") or not has_sentry_value_in_baggage_header(request)):
     # Request comes from an old SDK which doesn't support Dynamic Sampling Context yet
     # --> we don't propagate baggage for this trace
     current_transaction.dynamic_sampling_context_frozen = True
