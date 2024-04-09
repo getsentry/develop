@@ -228,6 +228,8 @@ The header is used for trace propagation. SDKs use the header to continue traces
 
 `traceparent = version-traceid-spanid-traceflags`
 
+We can assume a version of `00`, as well as traceflags being either `-00` or `-01`.
+A deferred sampling decision is not part of the specfication.
 See [W3C `traceparent` header](https://www.w3.org/TR/trace-context/#traceparent-header) for more information.
 
 The `traceparent` header should only be attached to an outgoing request if the request's URL matches at least one entry of the [`tracePropagationTargets`](#tracepropagationtargets) SDK option or this option is set to `null` or not set.
