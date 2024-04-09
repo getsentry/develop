@@ -224,13 +224,9 @@ Which in reality is useful for proxies to set it to `0` and opt out of tracing.
 
 ## Header `traceparent`
 
-The header is used for trace propagation. SDKs use the header to continue traces from upstream services (incoming HTTP requests), and to propagate tracing information to downstream services (outgoing HTTP requests).
+The header is used for trace propagation. SDKs use the header to continue traces from upstream services (e.g. incoming HTTP requests), and to propagate tracing information to downstream services (e.g. outgoing HTTP requests).
 
 `traceparent = version-traceid-spanid-traceflags`
-
-`traceflags` are optional. So at a minimum, it's expected:
-
-`traceparent = version-traceid-spanid`
 
 See [W3C `traceparent` header](https://www.w3.org/TR/trace-context/#traceparent-header) for more information.
 
