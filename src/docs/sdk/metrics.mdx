@@ -68,6 +68,10 @@ Normalization shall be done for `statsd` envelope items with unicode support if 
 * **Tag Keys:** regex `[^\w\-.\/]+` with no replacement character.
 * **Tag Values:** See below
 
+**Note:** `\w` should match `a-z`, `A-Z`, `0-9`, and `_` of the ASCII character set. On some Regex
+engines you might have to use `[a-zA-Z0-9_]` instead of `\w`, because `\w` might include chars
+such as `ä`, `ö` or `é`.
+
 ### Tag Values Replacement Map
 
 Tag Values support the full UTF-8 character range, except for control characters.
