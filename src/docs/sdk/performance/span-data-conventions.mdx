@@ -18,6 +18,7 @@ Below describes the conventions for the Span interface for the `data` field on t
 | `code.lineno`    | number | The line number in `code.filepath` best representing the operation. It SHOULD point within the code unit named in `code.function`                                                                              | `42`                                        |
 | `code.function`  | string | The method or function name, or equivalent (usually rightmost part of the code unit's name).                                                                                                                   | `server_request`                            |
 | `code.namespace` | string | The "namespace" within which `code.function` is defined. Usually the qualified class or module name, such that `code.namespace` + some separator + `code.function` form a unique identifier for the code unit. | `http.handler`                              |
+| `sdk.integration` | string | The name of the SDK which sent this span. Can be used to query spans from a particular integration.                                                                                                            | `openai`                                    |
 
 ## HTTP
 
