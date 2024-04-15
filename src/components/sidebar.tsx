@@ -256,6 +256,9 @@ export default () => {
             <SidebarLink to="/sdk/performance/modules/">
               Modules
             </SidebarLink>
+            <SidebarLink to="/sdk/performance/backpressure/">
+              Backpressure Management
+            </SidebarLink>
           </SidebarLink>
           <SidebarLink to="/sdk/research/performance">
             Research: Performance Monitoring API
