@@ -6,271 +6,30 @@ This guide steps you through configuring a local development environment for the
 another operating system (Plan 9, BeOS, Windows, …) the instructions are still roughly the same, but we don't maintain any official documentation
 for anything else for now.
 
-Read about known issues in [the troubleshooting section](#troubleshooting).
+## Setup
 
-# Automatic Bootstrapping
+Begin by installing the `devenv` tool following [these instructions](https://github.com/getsentry/devenv#install).
 
-If you are using macOS you can use the automatic bootstrapping script that can be piped to bash:
+After installation you should be able to run `devenv bootstrap` which will guide you through the rest.
 
-```shell
-bash <(curl -s https://raw.githubusercontent.com/getsentry/bootstrap-sentry/main/bootstrap.sh)
-```
+When you're done with setup, you'll want to also review the <Link to="/workflow/">development workflow</Link>.
 
-This script does more than what's documented on the rest of the page to ensure a somewhat uniform development environment
-for Sentry engineers.
 
-# Manual Setup
+## Keeping your environment up-to-date
 
-This will guide you through manually setting up your development environment.
+Simply run `devenv sync` inside of your sentry or getsentry repo.
 
-## Clone the Repository
-
-To get started, clone the repo at [https://github.com/getsentry/sentry](https://github.com/getsentry/sentry) or your fork.
-
-```shell
-git clone https://github.com/getsentry/sentry.git
-cd sentry
-```
-
-You're going to be working out of this repository for the remainder of the setup.
-
-## System Dependencies
-
-Let's make sure that your system is ready for Sentry.
-
-### Xcode CLI tools (Mac specific)
-
-You'll need to first install Xcode CLI tools. Run this command and follow the instructions:
-
-```shell
-xcode-select --install
-```
-
-### Brew
-
-Install [Homebrew](http://brew.sh), and then run the following command to install
-the various system packages (like Docker, openssl, ...) as listed in Sentry's [Brewfile](https://github.com/getsentry/sentry/blob/master/Brewfile).
-
-```shell
-brew bundle --verbose
-```
-
-### Docker (Mac specific)
-
-Docker was installed by `brew bundle`.
-
-On macOS, `docker` (which brew has already installed for you under `/Applications/Docker.app`) needs some manual
-intervention. You can run this command to set it up automatically for you:
-
-```shell
-open -g -a Docker.app
-```
-
-You should soon see the Docker icon in your macOS menubar. Docker will automatically run on system restarts,
-so this should be the only time you do this.
-
-#### Increasing the memory limit
-
-It's recommended to increase the Docker memory limit to something higher than the default (2048MB).
-
-On Docker Desktop, you can adjust the memory limits by going to:
-
-`[Cog Symbol] > Preferences > Resources > Advanced > Memory`
-
-Or you can change the memory limit via the CLI:
-
-```shell
-# quit Docker if its running
-osascript -e 'quit app "Docker"'
-
-# check what the default is configured currently
-cat /Users/`id -un`/Library/Group\ Containers/group.com.docker/settings.json | grep "memoryMiB"
-
-# increase configured memory to something reasonable
-sed -i .bak 's/"memoryMiB":.*/"memoryMiB": 7168,/g' /Users/`id -un`/Library/Group\ Containers/group.com.docker/settings.json
-
-# check configuration
-cat /Users/`id -un`/Library/Group\ Containers/group.com.docker/settings.json | grep "memoryMiB"
-
-# start up docker with next steps
-```
-
-You can verify that Docker is running by running `docker ps` in your terminal.
-
-## Python
-
-Sentry depends on binary Python packages called [Python Wheels](https://packaging.python.org/en/latest/specifications/binary-distribution-format/#binary-distribution-format), which we distribute for the following platforms:
-
-- Linux (arm64 or x86_64) compatible with [PEP-600](https://peps.python.org/pep-0600/) (``manylinux_2_28)
-- macOS 11 (x86_64) or macOS 12 (arm64) or newer
-
-We utilize [pyenv](https://github.com/pyenv/pyenv) to install and manage Python versions. It got
-installed when you ran `brew bundle`.
-
-To install the required version of Python you'll need to run the following command. This will take a while, since your
-computer is actually compiling Python!
-
-```shell
-make setup-pyenv
-```
-
-After this, if you type `which python`, you should see something like `$HOME/.pyenv/shims/python`
-rather than `/usr/bin/python`. This is because the following has been added to your start up script:
-
-```shell {tabTitle: Bash}
-Given that the bash instructions vary greatly based on the user's
-configuration, it is recommended to visit
-
-https://github.com/pyenv/pyenv#installation
-
-for instructions on how to set up Bash.
-```
-
-```shell {filename: ~/.zprofile} {tabTitle: Zsh}
-
-# It is assumed that pyenv is installed via Brew, so this is all we need to do.
-
-eval "\$(pyenv init --path)"
-
-```
-
-### Virtual Environment
-
-You're now ready to create a Python virtual environment. Run:
-
-```shell
-python -m venv .venv
-```
-
-And activate the virtual environment:
-
-```shell {tabTitle: Bash}
-source .venv/bin/activate
-```
-
-```shell {tabTitle: Zsh}
-source .venv/bin/activate
-```
-
-If everything worked, running `which python` should now result in something like `/Users/you/sentry/.venv/bin/python`.
-
-## JavaScript
-
-We use [volta](https://github.com/volta-cli/volta) to install and manage the version of Node.js that Sentry requires.
-To install Volta run:
-
-```shell
-curl https://get.volta.sh | bash
-```
-
-The volta installer will tell you to "open a new terminal to start using Volta", but you don't have to! You can just
-reload your shell:
-
-```shell
-exec "$SHELL"
-```
-
-This works because the volta installer conveniently made changes to your shell installation files for your shell's
-startup script:
-
-```shell {filename: ~/.bashrc} {tabTitle: Bash}
-export VOLTA_HOME="$HOME/.volta"
-grep --silent "$VOLTA_HOME/bin" <<< $PATH || export PATH="$VOLTA_HOME/bin:\$PATH"
-
-```
-
-```shell {filename: ~/.zshrc} {tabTitle: Zsh}
-export VOLTA_HOME="$HOME/.volta"
-grep --silent "$VOLTA_HOME/bin" <<< $PATH || export PATH="$VOLTA_HOME/bin:$PATH"
-```
-
-Now, if you try and run `volta`, you should see some help text, meaning volta is installed correctly. To install node,
-simply run:
-
-```shell
-node -v
-```
-
-Volta intercepts this and automatically downloads and installs the node and yarn versions in sentry's `package.json`.
-
-## Bootstrap Services
-
-Source your virtual environment again (`source .venv/bin/activate`), then run:
-
-```shell
-make bootstrap
-```
-
-This will take a long time, as it bootstraps Sentry, its dependencies, starts up related services and runs database migrations.
-
-The bootstrap command does a few things you'll want to know about:
-
-- `sentry init` creates the baseline Sentry configuration in `~/.sentry/`.
-- `sentry devservices up` spins up required Docker services (such as Postgres and Clickhouse)
-- `sentry upgrade` runs Postgres migrations, and will also prompt you to create a user. This user will be the **superuser**.
-
-Once this command has finished you'll have Sentry installed in development mode with all its required dependencies.
-
-If the command is done you should see a "Finished bootstrapping!" message.
-
-**Note**: This command is meant to be run only once. If the command fails please remove all existing Docker containers, all Docker volumes, and `~/.sentry/` and try running it again.
-
-### (Optional) Bringing your services up-to-date
-
-To bring your dependencies up-to-date do not run `make bootstrap` again but instead run:
-
-```shell
-make develop
-```
-
-## direnv
-
-[direnv](https://github.com/direnv/direnv) _automatically activates your virtual environment_, sets some helpful environment
-variables for you, and performs some simple checks to make sure your environment is as expected (and tries its best to guide
-you if it isn't). This happens every time you change directories into sentry.
-
-First, you should be done bootstrapping. Then, run:
-
-```shell
-brew install direnv
-```
-
-After direnv is installed add the following snippet to the end of your startup script:
-
-```shell {filename: ~/.bashrc} {tabTitle: Bash}
-eval "\$(direnv hook bash)"
-
-```
-
-```shell {filename: ~/.zshrc} {tabTitle: Zsh}
-eval "$(direnv hook zsh)"
-```
-
-And after doing that, reload your shell:
-
-```shell
-exec "$SHELL"
-```
-
-Any time the `.envrc` configuration changes (including the first load) you will be prompted to run
-
-```shell
-direnv allow
-```
-
-before any of the configuration will run. This is for security purposes and you are encouraged to inspect the changes before running this command.
-
-### Customize your development environment variables
-
-If you want to personalize your environment variables, you can do so by creating a `.env` file. This file is
-ignored by `git`, thus, you will not be able to leak it into one of your PRs.
-
-Running `make direnv-help` will list all of the latest supported environment variables. Using `SENTRY_DEVENV_NO_REPORT` as an example,
-to enable that setting you would insert `SENTRY_DEVENV_NO_REPORT=1` into your `.env` file.
 
 ## Running the Development Server
 
-Now you can run the development server at [http://localhost:8000](http://localhost:8000):
+The `devservices` ensure that you have all the services required for local development running. See the [devservices docs](/services/devservices/) for more information on managing services.
+When setting up `sentry`, execute the following command in the `sentry` folder:
+
+```shell
+sentry devservices up
+```
+
+After that, you can start the development server inside the `sentry` folder:
 
 ```shell
 sentry devserver --workers
@@ -279,25 +38,69 @@ sentry devserver --workers
 If you are developing for aesthetics only and do not rely on the async workers, you can omit the `--workers` flag in order
 to use fewer system resources.
 
-If you would like to be able to run `devserver` outside of your root checkout, you can install `webpack` globally with
-`npm install -g webpack`.
-
-To create a user, run:
-
-```shell
-sentry createuser
-```
+Access it at [http://dev.getsentry.net:8000](http://dev.getsentry.net:8000) (you'll have to wait a bit for webpack to finish).
+A superuser account should have been created for you during bootstrap - `admin@sentry.io` with password `admin`.
+You can create other users with `sentry createuser`.
 
 <Alert title="Note" level="info">
-  When asked for the root address of the server, make sure that you use{" "}
-  <a href="http://localhost:8000">http://localhost:8000</a>, as both protocol{" "}
-  <em>and</em> port are required in order for DNS and some pages' URLs to be
+
+  When asked for the root address of the server, make sure that you use
+  [http://dev.getsentry.net:8000](http://dev.getsentry.net:8000), as both
+  protocol _and_ port are required in order for DNS and some pages' URLs to be
   displayed correctly.
+
 </Alert>
+
+## Running the Getsentry Development Server
+
+<Alert title="Employees Only" level="warning">
+  Only Sentry employees have access to getsentry.
+</Alert>
+
+See also: <Link to="/sentry-vs-getsentry/">Sentry vs Getsentry</Link>
+
+Just like running `sentry` (see above), you can start the `devservices` using the following command in the `getsentry` folder:
+
+```shell
+sentry devservices up
+```
+
+After that, you can start the development server inside the `getsentry` folder:
+
+```shell
+getsentry devserver --workers
+```
+
+**Note**: You **cannot** have both sentry and getsentry devserver running at the same time.
+
+After the server warms up for a little while, you must access it
+at [http://dev.getsentry.net:8000](http://dev.getsentry.net:8000/).
+Using localhost doesn't work.
+
+If you need to overwrite configuration options for your local
+environment, you can create `getsentry/conf/settings/devlocal.py` and put the
+configuration option overrides there. This module will be automatically imported
+by `dev.py` if it exists.
+
 
 ### Frontend Only & Backend Only
 
 Please refer to [Frontend Development Server](/frontend/development-server/) and [Backend Development Server](/backend/development-server/) for alternative ways to bring up the Sentry UI.
+
+### Enabling HTTPS
+
+You may wish to run the development server in HTTPS mode. This can be done by generating and installing local certificates.
+
+We will be using [mkcert](https://github.com/FiloSottile/mkcert) to create and install a locally-trusted, development certificate. The following will install `mkcert` and then create and install the local certificates.
+
+```shell
+brew install mkcert
+brew install nss # if you use Firefox
+yarn mkcert-localhost
+```
+
+Running `sentry devserver` will automatically use HTTPS when the certificates have been installed.
+
 
 ### Ingestion Pipeline (Relay)
 
@@ -313,80 +116,44 @@ sentry devservices up --skip-only-if relay
 sentry devserver --workers --ingest
 ```
 
-If you want to enable the entire metrics ingestion pipeline, you need to add
+If you want to enable the entire metrics ingestion pipeline, you need to add the following to your config at `~/.sentry/sentry.conf.py`:
 
 ```python
-SENTRY_USE_METRICS_DEV=True
+SENTRY_USE_RELAY = True
+SENTRY_USE_METRICS_DEV = True
 SENTRY_EVENTSTREAM = "sentry.eventstream.kafka.KafkaEventStream"
+SENTRY_FEATURES['organizations:metrics-extraction'] = True  # Enables session metrics
+SENTRY_FEATURES['organizations:transaction-metrics-extraction'] = True  # Enables transaction metrics
 ```
 
-to your config `~/.sentry/sentry.conf.py`.
-
-## Setting up Getsentry
-
-<Alert title="Employees Only" level="warning">
-  Only Sentry employees have access to getsentry.
-</Alert>
-
-Now that you have sentry all set up, it's time to set up Getsentry. For information on the distinction between the two,
-refer to <Link to="/sentry-vs-getsentry/">Sentry vs Getsentry</Link>. After setting it up, you'll also want to read about
-the development workflow <Link to="/workflow/">here</Link>.
-
-Let's start off by cloning the `getsentry` repository to be adjacent to your
-`sentry` repository:
+After enabling `KafkaEventStream` the `snuba` service has to be reset to pick up the new configuration:
 
 ```shell
-# Go to where you have sentry and clone getsentry.
-cd /path/to/sentry
-cd ..
-git clone git@github.com:getsentry/getsentry.git
+sentry devservices rm snuba
+sentry devservices up snuba
 ```
 
-It's necessary to keep getsentry in an adjacent directory (it's expected by
-various make targets in the getsentry Makefile). For example, if you
-did a `ls ~/code` you'd see something like:
 
-```shell
-sentry/   getsentry/
-```
+## Troubleshooting
 
-Next, <Link to="#virtual-environment">create a virtual environment</Link> just like how you did with Sentry earlier.
+You might also be interested in <Link to="/continuous-integration/#troubleshooting-ci">troubleshooting CI</Link>.
 
-Then, run `make bootstrap` and follow any additional instructions that come up.
+---
 
-If all went well, then you can start the development server:
+**Problem:** `DoesNotExist: Subscription matching query does not exist` during getsentry devserver
 
-```shell
-getsentry devserver --workers
-```
-
-**Note**: You **cannot** have both sentry and getsentry devserver running at the same time.
-
-After the server warms up for a little while, you should be able to access it
-at [http://dev.getsentry.net:8000](http://dev.getsentry.net:8000/).
-
-If you see `DoesNotExist: Subscription matching query does not exist` in your dev server,
-run the following in getsentry:
+**Solution:**
 
 ```shell
 ./bin/mock-subscription
 ```
 
-You can set your local instance's org to use a business plan by running the
+You can also set your local instance's org to use a business plan by running the
 following in getsentry:
 
 ```shell
 ./bin/mock-subscription <org_slug> --plan mm2_a_500k
 ```
-
-If you need to overwrite configuration options for your local
-environment, you can create `getsentry/conf/settings/devlocal.py` and put the
-configuration option overrides there. This module will be automatically imported
-by `dev.py` if it exists.
-
-## Troubleshooting
-
-You might also be interested in <Link to="/continuous-integration/#troubleshooting-ci">troubleshooting CI</Link>.
 
 ---
 
@@ -437,36 +204,6 @@ brew upgrade --cask chromedriver
 
 ---
 
-**Problem:**
-
-```shell
---- snip ---
-00:51:27 server  | ImportError: cannot import name _remove_dead_weakref
-00:51:27 server  | unable to load app 0 (mountpoint='') (callable not found or import error)
-```
-
-This is caused by uwsgi running the wrong version of Python. When starting up, you'll see something like
-
-```shell
-uwsgi socket 0 bound to TCP address 127.0.0.1:8889 fd 3
-Python version: 2.7.10 (default, Feb 22 2019, 21:17:52)  [GCC 4.2.1 Compatible Apple LLVM 10.0.1 (clang-1001.0.37.14)]
-Set PythonHome to /Users/dfuller/code/sentry/.venv
-```
-
-The Python version here should be 2.7.16, but will be a lower version, likely your system Python. This is because uwsgi was
-compiled against a stale Python and the resultant wheel has been cached by pip.
-
-**Solution:**
-
-In your sentry virtualenv:
-
-```shell
-pip uninstall uwsgi
-pip install --no-cache-dir uwsgi
-```
-
----
-
 **Problem:** You see `DoesNotExist: Subscription matching query does not exist`
 
 **Solution:** In getsentry, run the following to mock a subscription:
@@ -477,10 +214,9 @@ pip install --no-cache-dir uwsgi
 
 ---
 
-**Problem:** You see something like `Error: No such container: sentry_postgres`
+**Problem:** You see something like `Error: No such container: sentry_postgres`, or you don't see `sentry_snuba`, `sentry_postgres`, `sentry_clickhouse`, and `sentry_redis` listed under `COMMAND NAMES`.
 
-**Solution:** Review the [bootstrap services](/environment/#bootstrap-services)
-section or spin up Docker services with:
+**Solution:**
 
 ```shell
 sentry devservices up
@@ -496,8 +232,8 @@ sentry devservices up
 docker ps
 ```
 
-If you don't see `sentry_snuba`, `sentry_postgres`, `sentry_clickhouse`, and `sentry_redis` listed under `COMMAND NAMES`, you need to start up services with:
+---
 
-```shell
-sentry devservices up
-```
+**Problem:** You use an Android emulator with a DSN pointing to localhost, and the events don't show up in your local Sentry instance.
+
+**Solution:** Change `localhost` to `10.0.2.2`. So, for example, change http://d895df97e1cb4a33b4dff8af3e78da09@localhost:8000/2 to http://d895df97e1cb4a33b4dff8af3e78da09@10.0.2.2:8000/2. This is because localhost or `127.0.0.1` refers to the emulator's own loopback interface, not the loopback interface of the host machine. For more information see https://developer.android.com/studio/run/emulator-networking.

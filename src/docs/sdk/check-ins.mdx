@@ -15,7 +15,12 @@ of a JSON payload that looks roughly like this:
   "status": "in_progress",
   "duration": 10.0,
   "release": "1.0.0",
-  "environment": "production"
+  "environment": "production",
+  "contexts": {
+    "trace": {
+      "trace_id": "8f431b7aa08441bbbd5a0100fd91f9fe"
+    }
+  }
 }
 ```
 The following fields exist:
@@ -23,6 +28,11 @@ The following fields exist:
 `check_in_id`
 
 : **String, required**. Check-In ID (unique and client generated).
+
+  This may be provided as a empty UUID (128 bit zero value) to indicate to
+  Sentry that the checkin should update the most recent "in_progress" check-in.
+  If the most recent check-in is not in progress a new one will be created
+  instead.
 
 `monitor_slug`
 
@@ -48,6 +58,17 @@ The following fields exist:
 
 : _String, optional_. The environment.
 
+`monitor_config`
+
+: _Object, optional_. A monitor configuration (defined below) that is stored with the
+ check-in in order to verify the state of the monitor at the time of the check-in.
+
+`contexts`
+
+: _Object, optional_. A dictionary of contextual information about the environment running
+ the check-in. Right now we only support the [trace context](https://develop.sentry.dev/sdk/event-payloads/contexts/#trace-context)
+  and use the `trace_id` in order to link check-ins to associated errors.
+
 ## Monitor upsert support
 
 In addition to sending check-in details, the SDK may also provide monitor
@@ -67,6 +88,8 @@ check-ins.
     },
     "checkin_margin": 5,
     "max_runtime": 30,
+    "failure_issue_threshold": 2,
+    "recovery_threshold": 2,
     "timezone": "America/Los_Angeles"
   }
 }
@@ -79,13 +102,23 @@ The following fields exist under the `monitor_config` key:
 
 `checkin_margin`
 
-: _Number, optional_. The allowed allowed margin of minutes after the expected
+: _Number, optional_. The allowed margin of minutes after the expected
 check-in time that the monitor will not be considered missed for.
 
 `max_runtime`
 
-: _Number, optional_. The allowed allowed duration in minutes that the monitor
+: _Number, optional_. The allowed duration in minutes that the monitor
 may be `in_progress` for before being considered failed due to timeout.
+
+`failure_issue_threshold`
+
+: _Number, optional_. The number of consecutive failed check-ins it takes
+before an issue is created.
+
+`recovery_threshold`
+
+: _Number, optional_. The number of consecutive OK check-ins it takes
+before an issue is resolved.
 
 `timezone`
 

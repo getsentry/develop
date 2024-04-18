@@ -6,13 +6,13 @@ This guide covers how we write frontend code at Sentry, and is specifically focu
 
 ## Directory structure
 
-The frontend codebase is currently located under `src/sentry/static/sentry/app` in sentry and `static/getsentry` in getsentry. (We intend to align to `static/sentry` in future.)
+The frontend codebase is currently located under `static/app` in sentry and `static/getsentry` in getsentry.
 
 ## Folder & File structure
 
 ### File Naming
 
-- Name a file meaningfully, based on the how the module's functions, or classes are used or the application section they are used in.
+- Name a file meaningfully, based on how the module's functions, or classes are used or the application section they are used in.
 - Unless necessary, don't use prefixes or suffixes (ie. `dataScrubbingEditModal`, `dataScrubbingAddModal`) instead favor names like `dataScrubbing/editModal`.
 
 ### Using `index.(j|t)sx?$`
@@ -149,16 +149,14 @@ See https://styled-components.com/docs/tooling#interpolation-tagging for other t
 ## Testing
 
 <Alert level="info">
-  We are moving away from Enzyme in favor of React Testing Library. For RTL tips check out <Link to="/frontend/using-rtl/">this page</Link>.
+  For React Testing Library (RTL) tips check out <Link to="/frontend/using-rtl/">this page</Link>.
 </Alert>
 
-Note: Your filename needs to be .spec.jsx or jest won’t run it!
+Note: Your filename needs to be `.spec.tsx` for jest to run run it!
 
 We have useful fixtures defined in [setup.ts](https://github.com/getsentry/sentry/blob/master/tests/js/setup.ts) Use these! If you are defining mock data in a repetitive way, it’s probably worth adding this this file. routerContext is a particularly useful one for providing the context object that most view are written to rely on.
 
-Client.addMockResponse is the best way to mock API requests. it’s [our code](https://github.com/getsentry/sentry/blob/master/static/app/__mocks__/api.tsx) so if it’s confusing you, just put `console.log()` statements into its logic!
-
-An important gotcha in our testing environment is the way that enzyme modifies many aspects of the react lifecycle to evaluate synchronously (even when they’re usually async). This can lull you into a false sense of security when you trigger some logic and don’t find it reflected immediately afterwards in your assert logic.
+`Client.addMockResponse()` is the best way to mock API requests. it’s [our code](https://github.com/getsentry/sentry/blob/master/static/app/__mocks__/api.tsx) so if it’s confusing you, just put `console.log()` statements into its logic!
 
 Marking your test method `async` and using the `await tick();` utility can let the event loop flush run events and fix this:
 
@@ -171,11 +169,6 @@ expect(wrapper.find('CommitRow')).toHaveLength(2);
 ### Selectors
 
 If you are writing jest tests, you can use a Component (and Styled Component) names as a selector. Additionally, if you need to use a DOM query selector, use `data-test-id` instead of a class name. We currently don’t, but it is something we can use babel to strip out during the build process.
-
-### Undefined `theme` properties in tests
-
-Instead of using `mount()` from `enzyme` ...use this: `import {mountWithTheme} from 'sentry-test/enzyme'` so that the component under test gets wrapped with a [`<ThemeProvider>`](https://emotion.sh/docs/theming).
-
 
 ## Babel Syntax Plugins
 We have decided to only use ECMAScript proposals that are in stage 3 (or later) (See [TC39 Proposals](https://github.com/tc39/proposals)). Additionally, because we are migrating to typescript, we will align with what their compiler supports.

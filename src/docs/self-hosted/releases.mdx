@@ -32,24 +32,37 @@ Before starting the upgrade, we shut down all the services and then run some dat
   There are certain hard-stops you need to go through when upgrading from earlier versions. Please read the <Link to="#hard-stops">hard-stops</Link> section below for a list.
 </Alert>
 
+If you downloaded self-hosted repository using Git clone, the upgrade commands should look like this:
+
+```bash
+VERSION="24.3.0"
+git fetch
+git checkout ${VERSION}
+sudo ./install.sh
+```
+
 ### Hard Stops
 
 We have three hards stops that you need to go through in order to pick up significant database changes:
 
 1. If you are coming from a version prior to `9.1.2`, you first need to upgrade to `9.1.2` and follow the next steps:
    ```
-   <your.sentry.version> -> 9.1.2 -> 21.5.0 -> 21.6.3 -> latest
+   <your.sentry.version> -> 9.1.2 -> 21.5.0 -> 21.6.3 -> 23.6.2 -> latest
    ```
 1. If you are coming from `9.1.2`, you first need to upgrade to `21.5.0` and follow the next steps:
    ```
-   <your.sentry.version> -> 21.5.0 -> 21.6.3 -> latest
+   <your.sentry.version> -> 21.5.0 -> 21.6.3 -> 23.6.2 -> latest
    ```
 1. If you are coming from a version prior to `21.6.3`, you first need to upgrade to `21.6.3`:
    ```
-   <your.sentry.version> -> 21.6.3 -> latest
+   <your.sentry.version> -> 21.6.3 -> 23.6.2 -> latest
+   ```
+1. If you are coming from a version prior to `23.6.2`, you first need to upgrade to `23.6.2`:
+  ```
+   <your.sentry.version> -> 23.6.2 -> latest
    ```
 
-Any other case (`21.6.3+`), you should be able to upgrade to the latest version directly.
+Any other case (`23.6.2+`), you should be able to upgrade to the latest version directly. We'd recommend you skip `23.7.0` to avoid issues around database migrations and the django 3 upgrade.
 
 ## Nightly Builds
 
@@ -58,5 +71,20 @@ We provide nightly builds from the [master branch of the self-hosted repository
 - [Snuba](https://github.com/getsentry/snuba)
 - [Relay](https://github.com/getsentry/relay)
 - [Symbolicator](https://github.com/getsentry/symbolicator)
+- [Vroom](https://github.com/getsentry/vroom)
 
 These builds are usually stable, but you may occasionally hit a broken version as these versions are not guaranteed to be deployed to [sentry.io](http://sentry.io/) first. There is also no guarantee that you will be able to do a clean upgrade to later versions without losing any data. **Use the nightly builds at your own risk.**
+
+## Breaking Changes
+
+- The `23.11.0` release will remove the ``sentry run smtp`` worker process. This
+  worker was not part of the standard self-hosted configuration, but could be
+  used in custom deployments.
+
+- The `24.1.2` release will change the memcached backend from
+  `django.core.cache.backends.memcached.MemcachedCache` to
+  `django.core.cache.backends.memcached.PyMemcacheCache`. This will require changing the `CACHES`
+  setting in your `sentry.conf.py` file in a manner similar to what is seen
+  [here](https://github.com/getsentry/self-hosted/commit/9936376f4e933781feaae85e0071ef72c7f1c03f).
+  In particular, the `OPTIONS` API for `PyMemcacheCache` is different from that of
+  `MemcachedCache`, and may require changes depending on how it has been configured.

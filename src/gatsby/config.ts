@@ -1,38 +1,15 @@
 import queries from '../utils/algolia';
 
-const activeEnv = process.env.GATSBY_ENV || process.env.NODE_ENV || 'development';
-
 const root = `${__dirname}/../..`;
 
 const getPlugins = () => {
   const plugins = [
     {
       resolve: '@sentry/gatsby',
-      options: {
-        dsn:
-          process.env.SENTRY_DSN ||
-          'https://f107f3f0deb544289e4e056922e5e5a4@o1.ingest.sentry.io/5266138',
-        tracesSampleRate: activeEnv === 'development' ? 0 : 1,
-      },
     },
     'gatsby-plugin-sass',
     'gatsby-plugin-sharp',
     'gatsby-plugin-zeit-now',
-    {
-      resolve: 'gatsby-plugin-google-gtag',
-      options: {
-        // You can add multiple tracking ids and a pageview event will be fired for all of them.
-        trackingIds: [
-          'UA-30327640-1', // Sentry
-        ],
-        // This object gets passed directly to the gtag config command
-        // This config will be shared across all trackingIds
-        gtagConfig: {
-          anonymize_ip: true,
-          cookie_expires: 0,
-        },
-      },
-    },
     {
       resolve: 'gatsby-plugin-mdx',
       options: {

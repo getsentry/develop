@@ -1,4 +1,4 @@
-# develop
+# Sentry Developer Documentation
 
 Welcome to [Sentry's Developer documentation](https://develop.sentry.dev)!
 

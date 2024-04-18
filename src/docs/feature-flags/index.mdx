@@ -7,14 +7,18 @@ Feature flags are declared in Sentry's codebase (look for `SENTRY_FEATURES` in
 For self-hosted users, those flags are then configured via `sentry.conf.py`.
 For Sentry's SaaS deployment, Flagr is used to configure flags in production.
 
-You can find a list of features available by looking at
-`sentry/features/__init__.py`. They're declared on the `FeatureManager` like so:
+You can find a list of features available by looking at two files:
+
+ - `sentry/features/permanent.py` - Features typically managed by subscriptions for sentry.io
+ - `sentry/features/temporary.py` - Features used during development intended to be removed
+
+They're declared on the `FeatureManager` like so:
 
 ```python
 # pass FeatureHandlerStrategy.REMOTE to use flagr:
-default_manager.add("organizations:onboarding", OrganizationFeature, FeatureHandlerStrategy.REMOTE)
+manager.add("organizations:onboarding", OrganizationFeature, FeatureHandlerStrategy.REMOTE)
 # pass FeatureHandlerStrategy.INTERNAL if you don't plan to use flagr:
-default_manager.add("organizations:onboarding", OrganizationFeature, FeatureHandlerStrategy.INTERNAL)
+manager.add("organizations:onboarding", OrganizationFeature, FeatureHandlerStrategy.INTERNAL)
 ```
 
 The feature can be enabled with the following in your `sentry.conf.py`, usually located at `~/.sentry/`:
@@ -39,6 +43,15 @@ Features can be scoped by organization, and projects. If you're not confident
 you want a project feature, create an organization level one. In this example
 we'll build a feature called `test-feature` scoped at the _organization_ level.
 
+### Determine the permanency of your feature
+
+Typically we use feature flags for development. They are usually [intended to
+be graduated](#after-launch-graduation). Feature flag that controls a
+subscription-based feature for sentry.io are permanent.
+
+Most feature flags are placed in `temporary.py`, permanent flags live in
+`permanent.py`.
+
 ### Add your feature to server.py
 
 [`conf/server.py`](https://github.com/getsentry/sentry/blob/master/src/sentry/conf/server.py)
@@ -59,10 +72,6 @@ SENTRY_FEATURES = {
 ```
 
 ### Add your feature to the FeatureManager
-
-The `FeatureManager` handles the application features. We add all the features
-to the `FeatureManager`, including the type of feature we want to add to the
-file `/src/sentry/features/__init__.py`.
 
 If you plan to use [flagr in production](#enabling-your-feature-in-production)
 add the feature to the `FeatureManager` like so using the `REMOTE` enum.:
@@ -141,7 +150,7 @@ component that we use to hide components based on the feature flags available to
 a organization/project
 
 ```jsx
-import Feature from 'app/components/acl/feature';
+import Feature from 'sentry/components/acl/feature';
 
 const toRender = (
   <Feature features={['test-feature']}>
@@ -168,7 +177,7 @@ organization.features.includes('test-feature'); // evals to True/False
 
 In Sentry you can run `sentry devserver` to view your changes in development
 mode. If you would like to view a change behind a feature flag, you will need to
-open the file `~/.sentry/sentry.config.py` on your local machine. This file
+open the file `~/.sentry/sentry.conf.py` on your local machine. This file
 contains your local settings for the sentry application, and can be viewed and
 edited. If you would like to toggle a flag on or off, add this to your
 configuration file:
@@ -362,14 +371,22 @@ Enabling a feature for customers on specific plans can be done by creating a
 segment using plan properties. There are a few plan related properties you can
 use:
 
-* `subscription_is-free` Whether or not the account is on a free plan.
+* `subscription_is-free` Whether or not the main account subscription is on a
+  free plan.
 * `subscription_channel` Which billing channel an organization is on. The values
   of this can be found on the `Subscription` model.
-* `subscription_plan-family` This is one of `free`, `team` or `business` or
-  None.
-* `subscription_plan-tier` This is the plan tier eg. `am1`.
+* `subscription_plan-family` This is the plan family of the main subscription.
+  One of `free`, `team` or `business` or None.
+* `subscription_plan-tier` This is the plan tier of the main subscription eg. `am1`.
+* `subscription_plan-trial-plan-family` Family for the plan trial, if one exists.
+* `subscription_plan-trial-plan-tier` Tier for the plan trial, if one exists.
 * `subscription_plan` This property is deprecated and should not be used in new
   feature flags.
+
+_Note:_ Some customers may have both a regular plan for their main subscription
+_and_ a plan trial. If you need to target a plan tier, (e.g., `"am2"` you
+should create Flagr constraints for both the `subscription_plan-tier` property
+_and_ the `subscription_plan-trial-plan-tier` property.)
 
 ![enable plan subset](../img/flagrPlanSubset.png)
 
