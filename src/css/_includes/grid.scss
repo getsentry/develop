@@ -22,11 +22,17 @@ body {
 
 .document-wrapper {
   display: flex;
-  min-height: 100%;
   flex-direction: column;
+  min-height: 100%;
+  
   overflow: hidden;
 
+  > .global-header {
+    grid-area: header;
+  }
+
   > main {
+    grid-area: main;
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
@@ -36,13 +42,21 @@ body {
 
 @include media-breakpoint-up(md) {
   .document-wrapper {
-    flex-direction: row;
-    max-height: 100%;
+    display: grid;
+    grid-template-areas:
+      'header main'
+      'sidebar main';
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 270px 1fr;
+    max-height: 100vh;
+    overflow: scroll;
   }
 
-  .sidebar {
-    flex-basis: 270px;
-    flex-shrink: 0;
+  #sidebar {
+    grid-area: sidebar;
+    position: sticky;
+    top: 0em;
+    max-height: 100%;
   }
 }
 
