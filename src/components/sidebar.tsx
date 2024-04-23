@@ -252,6 +252,9 @@ export default () => {
             <SidebarLink to="/sdk/performance/opentelemetry/">
               OpenTelemetry Support
             </SidebarLink>
+            <SidebarLink to="/sdk/performance/modules/">
+              Modules
+            </SidebarLink>
           </SidebarLink>
           <SidebarLink to="/sdk/research/performance">
             Research: Performance Monitoring API
