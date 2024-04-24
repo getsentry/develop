@@ -2,7 +2,7 @@
 title: Using Styled Components
 ---
 
-To apply styles to HTML we use a css-in-js library called [Emotion](https://emotion.sh/). This allows us to define styles in the same file where the component is defined and used. Styles are scoped to avoid global selectors and having to manually specify classnames at strings. You can also leverage the theme object to reference common values and utilities.
+To apply styles to HTML, we use a CSS-in-JS library called [Emotion](https://emotion.sh/). This allows us to define styles in the same file where the component is defined and used. Styles are scoped to avoid global selectors and having to manually specify classnames as strings. You can also leverage the `theme` object to reference common values and utilities.
 
 The best styles are the ones you don’t write - whenever possible use existing components.
 
@@ -83,7 +83,7 @@ Choose one of the strategies below instead.
 
 ### Use Data Selectors
 
-Data selectors can be an easy way to set styles based on simple/pre-defined state. When defining these attributes don't forget that browser have built-in selectors like `:disabled`, `:focus`, `:first-child` and so on.
+Data selectors can be an easy way to set styles based on simple/pre-defined state. When defining these attributes, don't forget that browsers have built-in selectors like `:disabled`, `:focus`, `:first-child` and so on.
 
 ```tsx
 import styled from '@emotion/styled';
@@ -103,37 +103,13 @@ const Label = styled('label')`
 return <Label disabled={false} data-is-error={true}>There is an error</Label>;
 ```
 
-### Use CSS Variables
+### Use Style & CSS Attributes
 
-For more flexible values, you can use CSS variables instead of pre-defined data-attributes for some value types.
-
-```tsx
-import styled from '@emotion/styled';
-
-// ✅ Define css variables for overridable properties:
-const Label = styled('label')`
-  color: var(--color, ${p => p.theme.textColor});
-`;
-
-const Error = styled('div')`
-  --color: ${p => p.theme.red400};
-`;
-const Info = styled('div')`
-  --color: ${p => p.theme.blue400};
-`;
-
-const label = <Label>There is an error</Label>;
-return isError
-  ? <Error>{label}</Error>
-  : <Info>{label}</Info>;
-```
-
-### Use Style Attributes
-
-The `style` attribute is possible to use, but the values are not linted. Avoid setting too many values at a time for readability.
+The `style` and `css` attributes can be used, but the values of `style` are not linted. Avoid setting too many values at a time for readability.
 
 ```tsx
 import styled from '@emotion/styled';
+import {css} from '@emotion/react';
 
 // ✅ Don't be afraid of inline styles for one-off values
 const Grid = styled('div')`
@@ -141,7 +117,9 @@ const Grid = styled('div')`
   grid-template-areas:
     'logo search'
     'sidebar main';
-  
+
+  gap: var(--grid-gap, 0px);
+
   @media (max-width: ${p => p.theme.breakpoints.small}) {
     grid-template:
         'logo' auto
@@ -154,7 +132,7 @@ const Grid = styled('div')`
 `;
 
 return (
-  <Grid>
+  <Grid css={css`--grid-gap: ${space(1)};`}>
     <HomeLink style={{gridArea: 'logo'}} />
     <SearchForm style={{gridArea: 'search'}} />
     <Navigation style={{gridArea: 'sidebar'}} />
@@ -166,6 +144,8 @@ return (
 ### Imperatively Set Styles
 
 For values that change frequently it's beneficial to use a component ref and set the values imperatively. This can be done without triggering react which can result in much more efficient updates.
+
+Note that you can set CSS values directly, or if the component is reading a css variable call `elem.style.setProperty('--foo', 'value')` instead.
 
 ```tsx
 import styled from '@emotion/styled';
@@ -201,9 +181,6 @@ return (
   </Area>
 );
 ```
-
-
-
 
 ## `stylelint` Errors
 
