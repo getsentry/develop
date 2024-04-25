@@ -134,7 +134,6 @@ export default () => {
           <SidebarLink to="/frontend/development-server/">Development Server</SidebarLink>
           <SidebarLink to="/frontend/component-library/">Component Library</SidebarLink>
           <SidebarLink to="/frontend/network-requests/">Network Requests</SidebarLink>
-          <SidebarLink to="/frontend/defaultprops/">Typing DefaultProps</SidebarLink>
           <SidebarLink to="/frontend/using-hooks/">Using hooks</SidebarLink>
           <SidebarLink to="/frontend/using-rtl/">Using React Testing Library</SidebarLink>
           <SidebarLink to="/frontend/working-on-getting-started-docs/">
@@ -212,9 +211,6 @@ export default () => {
             <SidebarLink to="/sdk/event-payloads/exception/">
               Exception Interface
             </SidebarLink>
-            <SidebarLink to="/sdk/event-payloads/lockreason/">
-              Lock Reason Interface
-            </SidebarLink>
             <SidebarLink to="/sdk/event-payloads/message/">Message Interface</SidebarLink>
             <SidebarLink to="/sdk/event-payloads/request/">Request Interface</SidebarLink>
             <SidebarLink to="/sdk/event-payloads/sdk/">SDK Interface</SidebarLink>
@@ -255,6 +251,9 @@ export default () => {
             </SidebarLink>
             <SidebarLink to="/sdk/performance/opentelemetry/">
               OpenTelemetry Support
+            </SidebarLink>
+            <SidebarLink to="/sdk/performance/modules/">
+              Modules
             </SidebarLink>
           </SidebarLink>
           <SidebarLink to="/sdk/research/performance">
