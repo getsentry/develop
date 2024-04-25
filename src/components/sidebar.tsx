@@ -134,6 +134,7 @@ export default () => {
           <SidebarLink to="/frontend/development-server/">Development Server</SidebarLink>
           <SidebarLink to="/frontend/component-library/">Component Library</SidebarLink>
           <SidebarLink to="/frontend/network-requests/">Network Requests</SidebarLink>
+          <SidebarLink to="/frontend/using-styled-components/">Using Styled Components</SidebarLink>
           <SidebarLink to="/frontend/using-hooks/">Using hooks</SidebarLink>
           <SidebarLink to="/frontend/using-rtl/">Using React Testing Library</SidebarLink>
           <SidebarLink to="/frontend/working-on-getting-started-docs/">
