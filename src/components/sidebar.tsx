@@ -133,6 +133,7 @@ export default () => {
           </SidebarLink>
           <SidebarLink to="/frontend/development-server/">Development Server</SidebarLink>
           <SidebarLink to="/frontend/component-library/">Component Library</SidebarLink>
+          <SidebarLink to="/frontend/design-tenets/">Design Tenets</SidebarLink>
           <SidebarLink to="/frontend/network-requests/">Network Requests</SidebarLink>
           <SidebarLink to="/frontend/using-styled-components/">Using Styled Components</SidebarLink>
           <SidebarLink to="/frontend/using-hooks/">Using hooks</SidebarLink>
