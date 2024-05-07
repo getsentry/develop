@@ -204,7 +204,7 @@ sentry/features/permanent.py like so:
 manager.add("organizations:your-new-flag", OrganizationFeature, FeatureHandlerStrategy.OPTIONS)
 ```
 
-This automagically registers an feature handler for you in getsentry, and also
+This automatically registers a feature handler for you in getsentry, and also
 auto registers the relevant options.
 
 To roll out your feature, you'll want to set the rollout options via options 
