@@ -15,7 +15,7 @@ You can find a list of features available by looking at two files:
 They're declared on the `FeatureManager` like so:
 
 ```python
-# pass FeatureHandlerStrategy.REMOTE to use options automator:
+# pass FeatureHandlerStrategy.OPTIONS to use options automator:
 manager.add("organizations:onboarding", OrganizationFeature, FeatureHandlerStrategy.OPTIONS)
 # pass FeatureHandlerStrategy.INTERNAL if you don't plan to use options automator:
 manager.add("organizations:onboarding", OrganizationFeature, FeatureHandlerStrategy.INTERNAL)
