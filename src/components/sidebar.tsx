@@ -116,7 +116,8 @@ export default () => {
           <SidebarLink to="/self-hosted/geolocation/">Geolocation</SidebarLink>
           <SidebarLink to="/self-hosted/sso/">Single Sign-On (SSO)</SidebarLink>
           <SidebarLink to="/self-hosted/csp/">Content Security Policy (CSP)</SidebarLink>
-          <SidebarLink to="/self-hosted/reverse-proxy">Reverse Proxy</SidebarLink>
+          <SidebarLink to="/self-hosted/reverse-proxy/">Reverse Proxy</SidebarLink>
+          <SidebarLink to="/self-hosted/external-storage/">External Storage</SidebarLink>
           <SidebarLink to="/self-hosted/troubleshooting/">Troubleshooting</SidebarLink>
           <SidebarLink to="/self-hosted/support/">Support</SidebarLink>
         </ul>
