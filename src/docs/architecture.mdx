@@ -46,7 +46,7 @@ In addition to the goals we had several constraints:
 
 - Saas Customers will continue to login and signup at `sentry.io`. They will not need to log into each organization individually.
 - Existing Saas Customers should not be required to update their DSN values. If a customer migrates to a new region, it is ok if they also need to update their DSNs.
-- Generally API URLs should not be required to change. Existing customers can use `[region.sentry.io](http://region.sentry.io)` style URLs to improve latency and ensure data residency requirements are met, but they don’t need to. Customers in new regions may be required to use `region.sentry.io` style URLs.
+- Generally API URLs should not be required to change. Existing customers can use `region.sentry.io` style URLs to improve latency and ensure data residency requirements are met, but they don’t need to. Customers in new regions may be required to use `region.sentry.io` style URLs.
 - A single Sentry Organization has all of their data located within a single Storage Region. This requirement comes from the need to do cross-project operations in Business plans.
 - The solution should support ~1000 regions. While these values are larger than we are likely to use it serves as a useful stress test for the solution.
 
