@@ -119,6 +119,8 @@ Cross-Region RPC uses pydantic and openapi to provide typehinted parameter and r
 
 #### In siloed mode
 
+- If a service is in the local silo mode, no serialization or network requests
+  are made.
 - Request bodies and response are serialized as JSON
 - Requests are made using `requests` and the region configuration.
 
