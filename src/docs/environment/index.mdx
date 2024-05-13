@@ -51,7 +51,7 @@ You can create other users with `sentry createuser`.
 
 ## Running siloed instances
 
-By default `sentry devserver` will run a monolith mode application server. You can also run ``devserver`` with siloed application instances. Before you do, you need to [create split silo databases](/database-migrations#cloning-a-monolith-database).
+By default `sentry devserver` will run a monolith mode application server. You can also run ``devserver`` with siloed application instances. Before you do, you need to <Link to="/database-migrations/#cloning-a-monolith-database">create split silo databases</Link>.
 
 The devserver command supports  `--silo` option that lets you create siloed instances. Any workers, consumers, or celery-beat processes will be started with the same silo mode.
 
