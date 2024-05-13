@@ -16,7 +16,7 @@ Prior to our multi-region offering, all API traffic from customers would be sent
 
 <Alert level="info">
 💡 Requests going to [sentry.io](http://sentry.io) do not meet data residency requirements. Customers will need to use region domains in order to not have requests go to the US.
-</aside>
+</Alert>
 
 The API Gateway is implemented as a middleware that only takes action when Sentry is running as Control Silo. After matching URLs, the middleware checks the silo mode of the matched endpoint. If the matched endpoint is a **region** endpoint, the API Gateway attempts to route the request to a region based on a few heuristics.
 
