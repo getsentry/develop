@@ -74,7 +74,7 @@ In the above setup your local environment will use org slug domains, and send re
 
 To combine ngrok and local development servers you’ll need to reserve two domains in ngrok, and create a configuration file for ngrok:
 
-```bash
+```yaml
 version: '2'
 authtoken: <YOUR-NGROK-AUTHTOKEN>
 tunnels:
@@ -92,7 +92,7 @@ tunnels:
 
 Then run all the required servers
 
-```bash
+```shell
 # Run a control silo with ngrok
 sentry devserver --silo=control --ngrok $yourname.ngrok.dev
 
@@ -109,7 +109,7 @@ This setup will result in both the region and control servers responding to diff
 
 If you want to use a repl with silo modes active:
 
-```bash
+```shell
 # Start a control silo shell
 SENTRY_SILO_DEVSERVER=1 SENTRY_SILO_MODE=CONTROL getsentry django shell
 
