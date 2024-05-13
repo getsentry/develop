@@ -6,7 +6,7 @@ Within the Control Silo are features that allow us to provide backwards compatib
 
 # API Gateway
 
-Prior to our multi-region offering, all API traffic from customers would be sent to [sentry.io](http://sentry.io) . We need to continue supporting these URLs despite some customers residing in the `us` region and others in the `de`region. The API Gateway functionality of control silo will introspect requests and proxy requests to the appropriate region based on path parameters in the request. Requests can be routed via:
+Prior to our multi-region offering, all API traffic from customers would be sent to [sentry.io](http://sentry.io) . We need to continue supporting these URLs despite some customers residing in the `us` region and others in the `de` region. The API Gateway functionality of control silo will introspect requests and proxy requests to the appropriate region based on path parameters in the request. Requests can be routed via:
 
 - Organization slug or id
 - Sentry App Installation UUID
@@ -15,7 +15,7 @@ Prior to our multi-region offering, all API traffic from customers would be sent
 - A static list of URL names (region pin list)
 
 <Alert level="info">
-💡 Requests going to [sentry.io](http://sentry.io) do not meet data residency requirements. Customers will need to use region domains in order to not have requests go to the US.
+💡 Requests going to sentry.io do not meet data residency requirements. Customers will need to use region domains in order to not have requests go to the US.
 </Alert>
 
 The API Gateway is implemented as a middleware that only takes action when Sentry is running as Control Silo. After matching URLs, the middleware checks the silo mode of the matched endpoint. If the matched endpoint is a **region** endpoint, the API Gateway attempts to route the request to a region based on a few heuristics.
@@ -64,24 +64,24 @@ ControlSilo -->> RegionSilo : response
 
 The integration proxy is implemented as a class that integrations requiring refresh tokens can sub-class. Currently the following integrations use the integration credential proxy:
 
+- GitHub
 - GitLab
 - MSTeams
-- GitHub
-- Vsts (Azure Devops)
+- Azure DevOps Services (Visual Studio Team Services)
 
 ### Integration Credential Proxy Headers
 
 The integration credential proxy leverages several specialized headers to perform its role:
 
 - `X-Sentry-Subnet-Organization-Integration` The id of the `OrganizationIntegration` that credentials should be added from.
-- `X-Sentry-Subnet-Base-URL` defines the integration host and base URL that the request should be forwarded to.
+- `X-Sentry-Subnet-Base-Url` defines the integration host and base URL that the request should be forwarded to.
 - `X-Sentry-Subnet-Signature` An HMAC based request signature that is verified in control silo.
 - `X-Sentry-Subnet-Path` The path that should be used in the forwarded request.
 - `X-Sentry-Subnet-Keyid` For integrations that use a keyring, the id of the key to use.
 
 # Integration Webhook Forwarding
 
-Many of the 3rd-party services we integrate with only offer a single endpoint that they will submit webhooks to. Because all of our existing webhook traffic is being sent to `[sentry.io](http://sentry.io)` we need to receive webhook requests there. For webhooks that need to be handled in a region silo, we store the webhooks in postgres and then asynchronously deliver captured webhooks to the relevant regions.
+Many of the 3rd-party services we integrate with only offer a single endpoint that they will submit webhooks to. Because all of our existing webhook traffic is being sent to `sentry.io` we need to receive webhook requests there. For webhooks that need to be handled in a region silo, we store the webhooks in postgres and then asynchronously deliver captured webhooks to the relevant regions.
 
 Capturing and replaying webhooks lets us solve a few availability issues:
 
@@ -119,7 +119,7 @@ create table hybridcloud_webhookpayload (
 
 ### High-volume integration mailboxes
 
-For integration providers that have multiple high-volume customers we partition messages into more finely grained mailboxes. The partitioning strategy varies by integration, but the objective is to partition messages by remote resources such that operations to a single resource all resolve to the same mailbox. Some examples of good partitioning keys are, gitlab projectids, or jira issue ids.
+For integration providers that have multiple high-volume customers we partition messages into more finely grained mailboxes. The partitioning strategy varies by integration, but the objective is to partition messages by remote resources such that operations to a single resource all resolve to the same mailbox. Some examples of good partitioning keys are, GitLab projectids, or Jira issue ids.
 
 ### Webhook Scheduling
 
