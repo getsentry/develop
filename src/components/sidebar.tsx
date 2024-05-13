@@ -150,6 +150,7 @@ export default () => {
 
         <ul className="list-unstyled" data-frontend-tree>
           <SidebarLink to="/backend/development-server/">Development Server</SidebarLink>
+          <SidebarLink to="/backend/control-silo/">Control Silo</SidebarLink>
         </ul>
       </li>
 
