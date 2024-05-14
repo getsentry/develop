@@ -152,6 +152,7 @@ export default () => {
           <SidebarLink to="/backend/development-server/">Development Server</SidebarLink>
           <SidebarLink to="/backend/control-silo/">Control Silo</SidebarLink>
           <SidebarLink to="/backend/cross-region-rpc/">Cross Region RPC</SidebarLink>
+          <SidebarLink to="/backend/outboxes/">Outboxes</SidebarLink>
         </ul>
       </li>
 
