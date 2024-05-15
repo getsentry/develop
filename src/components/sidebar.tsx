@@ -153,6 +153,7 @@ export default () => {
           <SidebarLink to="/backend/control-silo/">Control Silo</SidebarLink>
           <SidebarLink to="/backend/cross-region-rpc/">Cross Region RPC</SidebarLink>
           <SidebarLink to="/backend/outboxes/">Outboxes</SidebarLink>
+          <SidebarLink to="/backend/cross-region-replication/">Cross Region Replication</SidebarLink>
         </ul>
       </li>
 
