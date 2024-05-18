@@ -76,7 +76,8 @@ azblob://my-container?protocol=https&domain=yourcompany.blob.core.windows.net&lo
 ```
 
 Additional environment variables that should be provided (pick what's compatible with your configuration):
-- `AZURE_STORAGE_ACCOUNT=foobar` - The service account name. Required if used along with `AZURE_STORAGE_KEY`, because it defines authentication mechanism to be [azblob.NewSharedKeyCredential](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/storage/azblob#NewSharedKeyCredential), which creates immutable shared key credentials. Otherwise, "storage_account" in the URL query string parameter can be used.
+- `AZURE_STORAGE_ACCOUNT=foobar`: The service account name. Required if used along with `AZURE_STORAGE_KEY`, because it defines authentication mechanism to be [azblob.NewSharedKeyCredential](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/storage/azblob#NewSharedKeyCredential), which creates immutable shared key credentials. Otherwise, "storage_account" in the URL query string parameter can be used.
+
 - `AZURE_STORAGE_KEY=foobar` - To use a shared key credential alongside with `AZURE_STORAGE_ACCOUNT`.
 - `AZURE_STORAGE_SAS_TOKEN=foobar` - To use a SAS token
 
