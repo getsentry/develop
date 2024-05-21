@@ -84,6 +84,12 @@ Reserved characters for Tag Values are `\n`, `\r`, `\t`, `\`, `|`, `,`. The repl
 | Pipe (`\|`) | `\u{7c}` |
 | Comma (`,`) | `\u{2c}` |
 
+### Maximum Lengths
+
+The lengths of the following components of the `statsd` envelope items are limited:
+- **Metric Keys/Names**: 150 characters.
+- **Units**: 15 characters.
+
 ## Units
 
 SDKs should permit any string unit, but some of them are known to the system and
