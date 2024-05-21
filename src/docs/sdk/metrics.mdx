@@ -62,10 +62,10 @@ class Aggregator:
 ## Normalization
 
 Normalization shall be done for `statsd` envelope items with unicode support if possible:
-* **Metric Name:** regex `[^a-zA-Z0-9_\-.]+` with replacement character `_`.
-* **Metric Namespaces and Unit:** regex `[^a-zA-Z0-9_]+` with no replacement character.
-* **Metric Tag Keys:** regex `[^a-zA-Z0-9_\-.\/]+` with no replacement character.
-* **Metric Tag Values:** See below
+* **Metric Name**: regex `[^a-zA-Z0-9_\-.]+` with replacement character `_`.
+* **Metric Namespaces and Unit**: regex `[^a-zA-Z0-9_]+` with no replacement character.
+* **Metric Tag Keys**: regex `[^a-zA-Z0-9_\-.\/]+` with no replacement character.
+* **Metric Tag Values**: see below.
 
 {/* Internal note: We can't use `\w` instead of `a-zA-Z0-9` because on some Regex engines `\w` includes chars such as `ä`, `ö` or `é`. */}
 
