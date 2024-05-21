@@ -12,19 +12,23 @@ Sentry auto-generates LLM Monitoring data for common providers in Python, but yo
 |:----------------|:-------------------------------------------------------------------------------------|
 | `ai.pipeline.*` | The top-level span which corresponds to one or more AI operations & helper functions |
 | `ai.run.*`      | A unit of work - a tool call, LLM execution, or helper method.                       |
+| `ai.chat_completions.*`      | A LLM chat operation                      |
+| `ai.embeddings.*`      | An LLM embedding creation operation                      |
+
+
 
 ### Span Data
 
-| Attribute                   | Type    | Description                                           | Examples                                 |
-|-----------------------------|---------|-------------------------------------------------------|------------------------------------------|
-| `ai.input_messages`         | string  | The input messages sent to the model                  | `[{"role": "user", "message": "hello"}]` |
-| `ai.completion_tоkens.used` | int     | The number of tokens used to respond to the message   | `10`                                     |
-| `ai.prompt_tоkens.used`     | int     | The number of tokens used to process just the prompt  | `20`                                     |
-| `ai.total_tоkens.used`      | int     | The total number of tokens used to process the prompt | `30`                                     |
-| `ai.model_id`               | list    | The vendor-specific ID of the model used              | `"gpt-4"`                                |
-| `ai.streaming`              | boolean | Whether the request was streamed back                 | `true`                                   |
-| `ai.responses`              | list    | The response messages sent back by the AI model       | `["hello", "world"]`                     |
-| `ai.pipeline.name`          | string  | The description of the parent ai.pipeline span        | `My AI pipeline`                         |
+| Attribute                   | Type    | Description                                           | Examples                                 | Notes                                    |
+|-----------------------------|---------|-------------------------------------------------------|------------------------------------------|------------------------------------------|
+| `ai.input_messages`         | string  | The input messages sent to the model                  | `[{"role": "user", "message": "hello"}]` |                                          |
+| `ai.completion_tоkens.used` | int     | The number of tokens used to respond to the message   | `10`                                     | required for cost calculation            |
+| `ai.prompt_tоkens.used`     | int     | The number of tokens used to process just the prompt  | `20`                                     | required for cost calculation            |
+| `ai.total_tоkens.used`      | int     | The total number of tokens used to process the prompt | `30`                                     | required for charts and cost calculation |
+| `ai.model_id`               | list    | The vendor-specific ID of the model used              | `"gpt-4"`                                | required for cost calculation            |
+| `ai.streaming`              | boolean | Whether the request was streamed back                 | `true`                                   |                                          |
+| `ai.responses`              | list    | The response messages sent back by the AI model       | `["hello", "world"]`                     |                                          |
+| `ai.pipeline.name`          | string  | The description of the parent ai.pipeline span        | `My AI pipeline`                         | required for charts                      |
 
 ## Instrumentation
 
@@ -58,8 +62,8 @@ This should result in the following spans.
 
 ```
 <span op:"ai.pipeline" description:"My AI pipeline">
-	<span op:"ai.run.openai" description:"OpenAI Chat Completion" data[ai.total_tokens.used]:15 data[ai.pipeline.name]:"My AI pipeline" />
-	<span op:"ai.run.openai" description:"OpenAI Chat Completion" data[ai.total_tokens.used]:20 data[ai.pipeline.name]:"My AI pipeline" />
+	<span op:"ai.chat_completions.openai" description:"OpenAI Chat Completion" data[ai.total_tokens.used]:15 data[ai.pipeline.name]:"My AI pipeline" />
+	<span op:"ai.chat_completions.openai" description:"OpenAI Chat Completion" data[ai.total_tokens.used]:20 data[ai.pipeline.name]:"My AI pipeline" />
 </span>
 ```
 
