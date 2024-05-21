@@ -4,6 +4,14 @@ title: 'Screen Loads Module'
 
 The Screen Loads module records metrics from spans in `ui.load` transactions using specific span operations.
 
+# Transaction Conventions
+
+## Transaction Measurements
+| Key | Unit | Description | Conditions |
+|:--|:--|:--|:--|
+| `time_to_initial_display` | milliseconds | The time it took to load the first frame | required |
+| `time_to_full_display` | milliseconds | The time it took to fully load the screen | optional, requires manual instrumentation |
+
 # Span Conventions
 
 ## Span Operations
@@ -20,8 +28,3 @@ The Screen Loads module records metrics from spans in `ui.load` transactions usi
 | `ui.load.full_display` | When the screen has fully completed loading |
 | `ui.load.initial_display` | When the screen has rendered its first frame |
 
-## Span Measurements
-| Key | Unit | Description |
-|:--|:--|:--|
-| `time_to_initial_display` | milliseconds | The time it took to load the first frame |
-| `time_to_full_display` | milliseconds | The time it took to fully load the screen |
