@@ -8,7 +8,7 @@ If you're self-hosting Sentry and want to know how to switch to Sentry SaaS, che
 
 ## Getting Started
 
-Our recommendation is to download the [latest release of the self-hosted repository](https://github.com/getsentry/self-hosted/releases/latest), and then run `./install.sh` inside this directory. This script will take care of all the things you need to get started, including a base-line configuration, and then will tell you to run `docker compose up -d` to start Sentry. Sentry binds to port `9000` by default. You should be able to reach the login page at [http://127.0.0.1:9000](http://127.0.0.1:9000/).
+Our recommendation is to download the [latest release of the self-hosted repository](https://github.com/getsentry/self-hosted/releases/latest), and then run `sudo ./install.sh` inside this directory. This script will take care of all the things you need to get started, including a base-line configuration, and then will tell you to run `docker compose up -d` to start Sentry. Sentry binds to port `9000` by default. You should be able to reach the login page at [http://127.0.0.1:9000](http://127.0.0.1:9000/).
 
 To have easy maintainability for future upgrades, it is recommended to use Git workflow by cloning the self-hosted repository and check out to a specific CalVer tag. More about this on [Releases & Upgrading](/self-hosted/releases/).
 
