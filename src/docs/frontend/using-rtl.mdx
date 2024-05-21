@@ -160,9 +160,9 @@ userEvent.type(screen.getByLabelText("Search by name"), "sentry");
 ```
 
 ## Use the built-in contexts
-The default Organization context can be overriden by passing the organization as a proptery to the 2nd argument of the `render()` function.
+By default, `render()` has some default contexts setup for you. The organization context is set to `OrganizationFixture()` and the router context has some default params like orgId and projectId. These can be overriden by passing a proptery to the 2nd argument of the `render()` function.
 
-Example of overriding the default organization.features and organization.access:
+Example of overriding the default organization features and access:
 ```tsx
 import {OrganizationFixture} from 'sentry-fixture/organization';
 import {render, screen} from "sentry-test/reactTestingLibrary";
