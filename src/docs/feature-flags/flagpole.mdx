@@ -1,5 +1,5 @@
 # Flagpole
-Flagpole is our internal, options-backed feature flagging library. 
+Flagpole is Sentry's internal, options-backed feature flagging library. 
 
 Features are defined in the [`sentry-options-automator`](https://github.com/getsentry/sentry-options-automator) repository as yaml objects within the [`options/defaults/flagpole.yml`](https://github.com/getsentry/sentry-options-automator/blob/main/options/default/flagpole.yml) file.
 These yaml options are pushed to each of our deployments and stored in a database table, where they are later queried and parsed during feature flag evaluation.
@@ -25,7 +25,7 @@ options:
 
 `created_at`
 
-: The ISO datetime of when the feature was added to the config yaml.
+: The ISO 8601 datetime of when the feature was added to the config yaml.
 
 `owner`
 
