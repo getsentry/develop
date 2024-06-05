@@ -74,7 +74,7 @@ to `False` if no default is provided.
 
 ```python
 # Example of a feature set with a default value of True
-default_manager.add('organizations:test-feature', OrganizationFeature, FeatureHandlerStrategy.FLAGPOLE, True)
+default_manager.add('organizations:test-feature', OrganizationFeature, FeatureHandlerStrategy.FLAGPOLE, default=True)
 ```
 
 If you don't plan to use Flagpole, use `FeatureHandlerStrategy.INTERNAL` with a custom feature handler instead, for example:
@@ -88,7 +88,7 @@ default_manager.add('organizations:test-feature', OrganizationFeature, FeatureHa
 The Organization model serializer
 (`src/sentry/api/serializers/models/organization.py`) builds a list
 called `feature_list` that is given to the front-end to use. By default, all
-organiation features are checked and those that are present are added into the list. If
+organization features are checked and those that are present are added into the list. If
 your feature requires additional custom logic, you will have to update the
 organization serializer to check and include it manually.
 
