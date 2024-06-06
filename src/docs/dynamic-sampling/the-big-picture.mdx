@@ -50,7 +50,7 @@ Despite dynamic sampling providing trace completeness, transactions may still be
 
 <Alert title="💡 Example" level="info">
 
-For example, if there is a trace from `Project A` to `Project B` and `Project B` is subject to rate limiting, transactions of `Project B` from the trace initiated by `Project A` are likely to be lost.
+For example, if there is a trace from `Project A` to `Project B` and `Project B` is subject to rate limiting or quota enforcement, transactions of `Project B` from the trace initiated by `Project A` are lost.
 
 </Alert>
 
