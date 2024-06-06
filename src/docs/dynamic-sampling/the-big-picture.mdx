@@ -46,7 +46,7 @@ There is a dedicated rate limit for stored transactions after inbound filters an
 
 Dynamic sampling ensures complete traces by retaining all transactions associated with a trace if the head transaction is preserved.
 
-Despite dynamic sampling providing trace completeness, transactions may still be missing from a trace when rate limiting drops one or more transactions. Rate limiting drops transactions without regard for the trace, making each decision independently and potentially resulting in broken traces.
+Despite dynamic sampling providing trace completeness, transactions or other items (errors, replays, ...) may still be missing from a trace when rate limiting drops one or more transactions. Rate limiting drops items without regard for the trace, making each decision independently and potentially resulting in broken traces.
 
 <Alert title="💡 Example" level="info">
 
