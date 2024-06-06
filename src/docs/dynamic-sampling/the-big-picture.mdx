@@ -48,7 +48,11 @@ Dynamic sampling ensures complete traces by retaining all transactions associate
 
 Despite dynamic sampling providing trace completeness, transactions may still be missing from a trace when rate limiting drops one or more transactions. Rate limiting drops transactions without regard for the trace, making each decision independently and potentially resulting in broken traces.
 
-For example, if there is a transaction from `Project A` to `Project B` and `Project B` is subject to rate limiting, transactions of `Project B` from the trace initiated by `Project A` are likely to be lost.
+<Alert title="💡 Example" level="info">
+
+For example, if there is a trace from `Project A` to `Project B` and `Project B` is subject to rate limiting, transactions of `Project B` from the trace initiated by `Project A` are likely to be lost.
+
+</Alert>
 
 ## Client Side Sampling and Dynamic Sampling
 
