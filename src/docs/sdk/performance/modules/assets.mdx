@@ -1,0 +1,58 @@
+---
+title: 'Assets Module'
+---
+
+The javascript SDK should automatically instrument most assets fetched by the application. This includes images, stylesheets, scripts, and other assets. But if you may wish to instrument assets manually.
+
+## Span conventions
+
+### Span Operations
+
+| Span OP           | Description                             |
+| :---------------- | :-------------------------------------- |
+| `resource.script` | Javscript was fetched by the browser    |
+| `resource.css`    | A Stylesheet was fetched by the browser |
+| `resource.img`    | An Image was fetched by the browser     |
+
+### Span Description
+
+The description of an asset span should be the full URL which is was fetched from, e.g. `https://cdn.com/main.hash123.js`.
+
+### Span Data
+
+| Data Key                               | Type   | Description                                                                      | Conditions                          |
+| :------------------------------------- | :----- | :------------------------------------------------------------------------------- | :---------------------------------- |
+| `http.response_content_length`         | int    | encoded size of the asset in `bytes` (what is sent over the network)             | required on all asset operations    |
+| `http.decoded_response_content_length` | int    | the decoded size of the asset in `bytes`                                         | recommended on all asset operations |
+| `http.response_transfer_size`          | int    | the size of the encoded asset plus the response headers in `bytes`               | recommended on all asset operations |
+| `resource.render_blocking_status`      | string | wether the resource blocks UI rendering, values are 'non-blocking' or 'blocking' | recommended on all asset operations |
+
+## Instrumentation
+
+Once an application fetches an asset, the SDK creates a new span based on the operation.
+
+**Example**
+
+Consider a basic HTML file that fetches a single script:
+
+```html
+<head>
+  <script src="https://cdn.com/main.hash123.js"></script>
+</head>
+```
+
+Should result in the following span, assuming the request was successful:
+
+```json
+{
+  "description": "https://cdn.com/main.hash123.js",
+  "op": "resource.script",
+  "data": {
+    "http.decoded_response_content_length": 123,
+    "http.response_content_length": 123,
+    "http.response_transfer_size": 123,
+    "server.address": "cdn.com",
+    ... other span properties
+  }
+}
+```
