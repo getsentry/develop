@@ -75,6 +75,7 @@ export default () => {
             Issue Platform - Writing Detectors
           </SidebarLink>
           <SidebarLink to="/feature-flags/">Feature Flags</SidebarLink>
+          <SidebarLink to="/feature-flags/flagpole/">Flagpole</SidebarLink>
           <SidebarLink to="/ab-testing/">A/B Testing</SidebarLink>
           <SidebarLink to="/options/">Options</SidebarLink>
           <SidebarLink to="/serializers/">Serializers</SidebarLink>
