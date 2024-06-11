@@ -8,7 +8,7 @@ Browser SDKs should auto-instrument javascript, stylesheet and image assets with
 
 ### Span Description
 
-The description of an asset span should be the full URL which is was fetched from, e.g. `https://cdn.com/main.hash123.js`.
+The description of an asset span should be the full URL of the asset, e.g., `https://cdn.com/main.hash123.js?q=11274713`.
 
 ### Span Data
 
@@ -19,11 +19,9 @@ The description of an asset span should be the full URL which is was fetched fro
 | `http.response_transfer_size`          | int    | the size of the encoded asset plus the response headers in `bytes`               | recommended on all asset operations |
 | `resource.render_blocking_status`      | string | wether the resource blocks UI rendering, values are 'non-blocking' or 'blocking' | recommended on all asset operations |
 
-## Instrumentation
+## Instrumentation Example
 
-Once an application fetches an asset, the SDK creates a new span based on the operation.
-
-**Example**
+The SDK should create a span per asset fetched by the browser.
 
 Consider a basic HTML file that fetches a single script:
 
