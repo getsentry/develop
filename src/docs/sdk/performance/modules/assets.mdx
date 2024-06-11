@@ -2,17 +2,9 @@
 title: 'Assets Module'
 ---
 
-The javascript SDK should automatically instrument most assets fetched by the application. This includes images, stylesheets, scripts, and other assets. But if you may wish to instrument assets manually.
+Browser SDKs should auto-instrument javascript, stylesheet and image assets with the ops `resource.script`, `resource.css` and `resource.img` respectively. The Asset module is technology agnostic, it only cares about span data properties.
 
 ## Span conventions
-
-### Span Operations
-
-| Span OP           | Description                             |
-| :---------------- | :-------------------------------------- |
-| `resource.script` | Javscript was fetched by the browser    |
-| `resource.css`    | A Stylesheet was fetched by the browser |
-| `resource.img`    | An Image was fetched by the browser     |
 
 ### Span Description
 
