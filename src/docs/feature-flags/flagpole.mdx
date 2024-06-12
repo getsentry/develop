@@ -138,6 +138,10 @@ Here are some common properties we surface via our Sentry and GetSentry context 
 
 : The active user's ID
 
+`user_email` [str]
+
+: The active user's email address. This should only contain Sentry employee email addresses.
+
 
 To see the latest context properties available, check out the repo-specific context builders:
 - [Sentry Context Builder](https://github.com/getsentry/sentry/blob/master/src/sentry/features/flagpole_context.py)
