@@ -153,7 +153,7 @@ To see the latest context properties available, check out the repo-specific cont
 ## Rolling out a new Flagpole feature
 
 Creating a new Flagpole Feature is currently a 3 step process:
-1. Register a new feature in GetSentry's `features.py` file with the Flagpole strategy:
+1. Register a new feature in Sentry's `temporary.py` file or GetSentry's `features.py` file with the Flagpole strategy:
 ```python
 features.add(
     "<feature_scope>:<feature_name>",
@@ -178,8 +178,8 @@ If this happens, make sure to rerun the options deployment once all environments
 
 ## Testing a Flagpole feature locally
 You can test a flagpole feature flag locally using the GetSentry devserver.
-Because the feature handler for Flagpole only exists in GetSentry, it's not
- currently possible to test Sentry-only flagpole features.
+Because the feature handler for Flagpole only exists in GetSentry, it's not possible
+to test flagpole features using the Sentry devserver at this time.
 
 Start by creating a new yaml file containing your feature config. The config 
 file should contain a top-level `options` object containing your feature object,
