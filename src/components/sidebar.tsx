@@ -192,92 +192,90 @@ export default () => {
         </div>
 
         <ul className="list-unstyled" data-sidebar-tree>
-          <SidebarLink to="/sdk/philosophy/">Philosophy</SidebarLink>
-          <SidebarLink to="/sdk/basics/">Basics</SidebarLink>
-          <SidebarLink to="/sdk/overview/">Overview</SidebarLink>
-          <SidebarLink to="/sdk/craft-quick-start/">Craft Quick Start</SidebarLink>
-          <SidebarLink to="/sdk/unified-api/" title="Unified API"></SidebarLink>
-          <SidebarLink to="/sdk/hub_and_scope_refactoring/">Hub & Scope Refactoring</SidebarLink>
+          <SidebarLink to="/sdk/">Overview</SidebarLink>
           <SidebarLink to="/sdk/features/">Expected Features</SidebarLink>
-          <SidebarLink to="/sdk/data-handling/">Data Handling</SidebarLink>
-          <SidebarLink to="/sdk/envelopes/">Envelopes</SidebarLink>
-          <SidebarLink to="/sdk/event-payloads/" title="Event Payloads">
-            <SidebarLink to="/sdk/event-payloads/transaction/">
-              Transaction Type
+
+          <SidebarLink to="/sdk/fundamentals/" title="Fundamentals">
+            <SidebarLink to="/sdk/fundamentals/philosophy/">Philosophy</SidebarLink>
+            <SidebarLink to="/sdk/fundamentals/unified-api/">Unified API</SidebarLink>
+            <SidebarLink to="/sdk/fundamentals/data-handling/" title="Data Handling">
+              <SidebarLink to="/sdk/fundamentals/data-handling/context-management/" title="Context Management">
+                <SidebarLink to="/sdk/fundamentals/data-handling/context-management/hub_and_scope_refactoring/">Hub & Scope Refactoring</SidebarLink>
+              </SidebarLink>
             </SidebarLink>
-            <SidebarLink to="/sdk/event-payloads/span/">Span Interface</SidebarLink>
-            <SidebarLink to="/sdk/event-payloads/breadcrumbs/">
-              Breadcrumbs Interface
-            </SidebarLink>
-            <SidebarLink to="/sdk/event-payloads/contexts/">
-              Contexts Interface
-            </SidebarLink>
-            <SidebarLink to="/sdk/event-payloads/debugmeta">
-              Debug Meta Interface
-            </SidebarLink>
-            <SidebarLink to="/sdk/event-payloads/exception/">
-              Exception Interface
-            </SidebarLink>
-            <SidebarLink to="/sdk/event-payloads/message/">Message Interface</SidebarLink>
-            <SidebarLink to="/sdk/event-payloads/request/">Request Interface</SidebarLink>
-            <SidebarLink to="/sdk/event-payloads/sdk/">SDK Interface</SidebarLink>
-            <SidebarLink to="/sdk/event-payloads/stacktrace/">
-              Stack Trace Interface
-            </SidebarLink>
-            <SidebarLink to="/sdk/event-payloads/template/">
-              Template Interface
-            </SidebarLink>
-            <SidebarLink to="/sdk/event-payloads/threads/">Threads Interface</SidebarLink>
-            <SidebarLink to="/sdk/event-payloads/user/">User Interface</SidebarLink>
-          </SidebarLink>
-          <SidebarLink to="/sdk/profiles/">Profiles</SidebarLink>
-          <SidebarLink to="/sdk/metrics/">Metrics</SidebarLink>
-          <SidebarLink to="/sdk/check-ins/">Check-Ins</SidebarLink>
-          <SidebarLink to="/sdk/sessions/">Sessions</SidebarLink>
-          <SidebarLink to="/sdk/client-reports/">Client Reports</SidebarLink>
-          <SidebarLink to="/sdk/distributed-tracing/">Distributed Tracing</SidebarLink>
-          <SidebarLink to="/sdk/performance/" title="Performance">
-            <SidebarLink to="/sdk/performance/span-operations/">
-              Span Operations
-            </SidebarLink>
-            <SidebarLink to="/sdk/performance/span-data-conventions/">
-              Span Data Conventions
-            </SidebarLink>
-            <SidebarLink to="/sdk/performance/trace-origin/">Trace Origin</SidebarLink>
-            <SidebarLink to="/sdk/performance/ui-event-transactions/">
-              UI Event Transactions
-            </SidebarLink>
-            <SidebarLink to="/sdk/performance/time-to-initial-full-display/">
-              Time to Initial/Full Display
-            </SidebarLink>
-            <SidebarLink to="/sdk/performance/frames-delay/">
-              Frames Delay
-            </SidebarLink>
-            <SidebarLink to="/sdk/performance/dynamic-sampling-context/">
-              Dynamic Sampling Context
-            </SidebarLink>
-            <SidebarLink to="/sdk/performance/opentelemetry/">
-              OpenTelemetry Support
-            </SidebarLink>
-            <SidebarLink to="/sdk/performance/modules/">
-              Modules
-            </SidebarLink>
-            <SidebarLink to="/sdk/performance/backpressure/">
-              Backpressure Management
+            <SidebarLink to="/sdk/fundamentals/reliability/" title="Reliability">
+              <SidebarLink to="/sdk/fundamentals/reliability/resiliency/" title="Resiliency">
+                <SidebarLink to="/sdk/fundamentals/reliability/resiliency/signal-handlers/">Signal Handlers</SidebarLink>
+              </SidebarLink>
             </SidebarLink>
           </SidebarLink>
-          <SidebarLink to="/sdk/research/performance">
-            Research: Performance Monitoring API
+
+
+          <SidebarLink to="/sdk/telemetry/" title="Telemetry">
+            <SidebarLink to="/sdk/telemetry/tracing/" title="Tracing">
+              <SidebarLink to="/sdk/telemetry/tracing/trace-propagation/">Trace Propagation</SidebarLink>
+              <SidebarLink to="/sdk/telemetry/tracing/span-operations/">Span Operations</SidebarLink>
+              <SidebarLink to="/sdk/telemetry/tracing/span-data-conventions/">Span Data Conventions</SidebarLink>
+              <SidebarLink to="/sdk/telemetry/tracing/trace-origin/">Trace Origin</SidebarLink>
+              <SidebarLink to="/sdk/telemetry/tracing/ui-event-transactions/">UI Event Transactions</SidebarLink>
+              <SidebarLink to="/sdk/telemetry/tracing/time-to-initial-full-display/">
+                Time to Initial/Full Display
+              </SidebarLink>
+              <SidebarLink to="/sdk/telemetry/tracing/frames-delay/">Frames Delay</SidebarLink>
+              <SidebarLink to="/sdk/telemetry/tracing/dynamic-sampling-context/">Dynamic Sampling Context</SidebarLink>
+              <SidebarLink to="/sdk/telemetry/tracing/opentelemetry/">OpenTelemetry Support</SidebarLink>
+              <SidebarLink to="/sdk/telemetry/tracing/modules/">Modules</SidebarLink>
+              <SidebarLink to="/sdk/telemetry/tracing/backpressure/">Backpressure Management</SidebarLink>
+              <SidebarLink to="/sdk/telemetry/tracing/research-performance-api/">Research: Performance Monitoring API</SidebarLink>
+            </SidebarLink>
+            <SidebarLink to="/sdk/telemetry/profiles/">Profiles</SidebarLink>
+            <SidebarLink to="/sdk/telemetry/metrics/">Metrics</SidebarLink>
+            <SidebarLink to="/sdk/telemetry/check-ins/">Check-Ins</SidebarLink>
           </SidebarLink>
-          <SidebarLink to="/sdk/setup-wizards/" title="Setup Wizards">
-            Setup Wizards
+
+          <SidebarLink to="/sdk/protocol/" title="Protocol">
+            <SidebarLink to="/sdk/protocol/envelopes/">Envelopes</SidebarLink>
+            <SidebarLink to="/sdk/protocol/event-payloads/" title="Event Payloads">
+              <SidebarLink to="/sdk/protocol/event-payloads/transaction/">Transaction Type</SidebarLink>
+              <SidebarLink to="/sdk/protocol/event-payloads/span/">Span Interface</SidebarLink>
+              <SidebarLink to="/sdk/protocol/event-payloads/breadcrumbs/">Breadcrumbs Interface</SidebarLink>
+              <SidebarLink to="/sdk/protocol/event-payloads/contexts/">Contexts Interface</SidebarLink>
+              <SidebarLink to="/sdk/protocol/event-payloads/debugmeta">Debug Meta Interface</SidebarLink>
+              <SidebarLink to="/sdk/protocol/event-payloads/exception/">Exception Interface</SidebarLink>
+              <SidebarLink to="/sdk/protocol/event-payloads/message/">Message Interface</SidebarLink>
+              <SidebarLink to="/sdk/protocol/event-payloads/request/">Request Interface</SidebarLink>
+              <SidebarLink to="/sdk/protocol/event-payloads/sdk/">SDK Interface</SidebarLink>
+              <SidebarLink to="/sdk/protocol/event-payloads/stacktrace/">Stack Trace Interface</SidebarLink>
+              <SidebarLink to="/sdk/protocol/event-payloads/template/">Template Interface</SidebarLink>
+              <SidebarLink to="/sdk/protocol/event-payloads/threads/">Threads Interface</SidebarLink>
+              <SidebarLink to="/sdk/protocol/event-payloads/user/">User Interface</SidebarLink>
+            </SidebarLink>
+            <SidebarLink to="/sdk/protocol/client-reports/">Client Reports</SidebarLink>
+            <SidebarLink to="/sdk/protocol/sessions/">Sessions</SidebarLink>
           </SidebarLink>
-          <SidebarLink to="/sdk/rate-limiting/">Rate Limiting</SidebarLink>
-          <SidebarLink to="/sdk/signal-handlers/">Signal Handlers</SidebarLink>
-          <SidebarLink to="/sdk/serverless/" title="Serverless SDKs">
-            <SidebarLink to="/sdk/serverless/aws-lambda">AWS Lambda</SidebarLink>
+
+          <SidebarLink to="/sdk/endpoints/" title="Endpoints">
+            <SidebarLink to="/sdk/endpoints/rate-limiting/">Rate Limiting</SidebarLink>
+            <SidebarLink to="/sdk/endpoints/envelope/">Envelope Endpoint</SidebarLink>
+            <SidebarLink to="/sdk/endpoints/store/">Store Endpoint</SidebarLink>
           </SidebarLink>
-          <SidebarLink to="/sdk/store/">Store Endpoint</SidebarLink>
+
+          <SidebarLink to="/sdk/tooling/" title="Tooling">
+            <SidebarLink to="/sdk/tooling/setup-wizards/">Setup Wizards</SidebarLink>
+            <SidebarLink to="/sdk/tooling/spotlight/">Spotlight</SidebarLink>
+          </SidebarLink>
+
+          <SidebarLink to="/sdk/processes/" title="Processes">
+            <SidebarLink to="/sdk/processes/onboarding/">Onboarding</SidebarLink>
+            <SidebarLink to="/sdk/processes/development/" title="Development">
+              <SidebarLink to="/sdk/processes/development/overview/">Overview</SidebarLink>
+              <SidebarLink to="/sdk/processes/development/serverless/" title="Serverless SDKs">
+                <SidebarLink to="/sdk/processes/development/serverless/aws-lambda/">AWS Lambda</SidebarLink>
+              </SidebarLink>
+            </SidebarLink>
+            <SidebarLink to="/sdk/processes/testing/">Testing</SidebarLink>
+            <SidebarLink to="/sdk/processes/releasing/">Releasing</SidebarLink>
+          </SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>

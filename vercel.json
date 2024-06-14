@@ -29,9 +29,12 @@
   "redirects": [
     {
       "source": "/sdk/unified-api/tracing/(.*)",
-      "destination": "/sdk/performance/$1"
+      "destination": "/sdk/telemetry/tracing/$1"
     },
-    { "source": "/onpremise/(.*)", "destination": "/self-hosted/$1" },
+    {
+      "source": "/onpremise/(.*)",
+      "destination": "/self-hosted/$1"
+    },
     {
       "source": "/self-hosted/mail(.*)",
       "destination": "/self-hosted/email$1"
@@ -39,6 +42,86 @@
     {
       "source": "/processing-tickets(/?)",
       "destination": "https://open.sentry.io/triage/"
+    },
+    {
+      "source": "/sdk/store/(.*)",
+      "destination": "/sdk/endpoints/store/$1"
+    },
+    {
+      "source": "/sdk/rate-limiting/(.*)",
+      "destination": "/sdk/endpoints/rate-limiting/$1"
+    },
+    {
+      "source": "/sdk/setup-wizards/(.*)",
+      "destination": "/sdk/tooling/setup-wizards/$1"
+    },
+    {
+      "source": "/sdk/profiles/(.*)",
+      "destination": "/sdk/telemetry/profiles/$1"
+    },
+    {
+      "source": "/sdk/check-ins/(.*)",
+      "destination": "/sdk/telemetry/check-ins/$1"
+    },
+    {
+      "source": "/sdk/metrics/(.*)",
+      "destination": "/sdk/telemetry/metrics/$1"
+    },
+    {
+      "source": "/sdk/performance/(.*)",
+      "destination": "/sdk/telemetry/tracing/$1"
+    },
+    {
+      "source": "/sdk/distributed-tracing/(.*)",
+      "destination": "/sdk/telemetry/tracing/trace-propagation/$1"
+    },
+    {
+      "source": "/sdk/telemetry/tracing/research-performance-api/(.*)",
+      "destination": "/sdk/telemetry/tracing/research-performance-api/$1"
+    },
+    {
+      "source": "/sdk/client-reports/(.*)",
+      "destination": "/sdk/protocol/client-reports/$1"
+    },
+    {
+      "source": "/sdk/envelopes/(.*)",
+      "destination": "/sdk/protocol/envelopes/$1"
+    },
+    {
+      "source": "/sdk/event-payloads/(.*)",
+      "destination": "/sdk/protocol/event-payloads/$1"
+    },
+    {
+      "source": "/sdk/sessions/(.*)",
+      "destination": "/sdk/protocol/sessions/$1"
+    },
+    {
+      "source": "/sdk/craft-quick-start/(.*)",
+      "destination": "/sdk/processes/releasing/$1"
+    },
+    {
+      "source": "/sdk/overview/(.*)",
+      "destination": "/sdk/processes/development/overview/$1"
+    },
+    {
+      "source": "/sdk/philosophy/(.*)",
+      "destination": "/sdk/fundamentals/philosophy/$1"
+    },
+    {
+      "source": "/sdk/signal-handlers/(.*)",
+      "destination": "/sdk/fundamentals/reliability/resiliency/signal-handlers/$1"
+    },
+    {
+      "source": "/sdk/unified-api/(.*)",
+      "destination": "/sdk/fundamentals/unified-api/$1"
+    },
+    {
+      "source": "/sdk/serverless/(.*)",
+      "destination": "/sdk/processes/development/serverless/$1"
+    },
+    {
+      "source": "/sdk/context-management/(.*)",
+      "destination": "/sdk/fundamentals/data-handling/context-management/$1"
     }
   ]
 }
