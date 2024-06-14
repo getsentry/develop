@@ -125,7 +125,7 @@ To see a more complete example, please see [a sample solution on our community f
 
 ## Postgres
 
-Postgres is used for the primary datastore, as well as the [nodestore](https://develop.sentry.dev/services/nodestore/) which is used to store key/value data. The `nodestore_node` table can grow rapidly, especially when heavily utilising the Performance Monitoring feature as trace data is stored in this table.
+Postgres is used for the primary datastore, as well as the [nodestore](/services/nodestore/) which is used to store key/value data. The `nodestore_node` table can grow rapidly, especially when heavily utilising the Performance Monitoring feature as trace data is stored in this table.
 
 The `nodestore_node` table is cleaned up as part of the `cleanup` task, however Postgres may not get a chance to vacuum the table (especially under heavy load), so even the rows may be deleted, they're still taking up space on disk.
 

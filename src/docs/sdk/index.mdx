@@ -1,22 +1,76 @@
 ---
-title: "SDK Development"
+title: SDK Development
 ---
 
 The following is a guide for implementing a new Sentry SDK based on the new <Link to="/sdk/unified-api">Unified API</Link>.<br/>
 It covers the protocol for event submission as well as guidelines for how clients should
 typically look and behave.
 
-- <Link to="/sdk/overview/">Overview</Link>
-- <Link to="/sdk/philosophy/">Philosophy and Design Principles</Link>
-- <Link to="/sdk/basics/">Development Basics</Link>
-- <Link to="/sdk/data-handling/">Data Handling</Link>
-- <Link to="/sdk/unified-api/">Unified API</Link>
-- <Link to="/sdk/hub_and_scope_refactoring/">Hub & Scope Refactoring/</Link>
 - <Link to="/sdk/features/">Expected Features</Link>
-- <Link to="/sdk/event-payloads/">Event Payloads</Link>
-- <Link to="/sdk/store/">Store Endpoint</Link>
-- <Link to="/sdk/envelopes/">Envelopes</Link>
-- <Link to="/sdk/sessions/">Sessions</Link>
-- <Link to="/sdk/client-reports/">Client Reports</Link>
-- <Link to="/sdk/profiles/">Profiles</Link>
-- <Link to="/sdk/setup-wizards/">Setup Wizards</Link>
+
+<ul>
+    <li><Link to="/sdk/fundamentals/">Fundamentals</Link>
+        <ul>
+            <li><Link to="/sdk/fundamentals/philosophy/">Philosophy</Link></li>
+            <li><Link to="/sdk/fundamentals/unified-api/">Unified API</Link></li>
+            <li>
+                <Link to="/sdk/fundamentals/data-handling/">Data Handling</Link>
+                <ul>
+                    <li><Link to="/sdk/fundamentals/data-handling/context-management/">Context Management</Link>
+                        <ul>
+                            <li><Link to="/sdk/fundamentals/data-handling/context-management/hub_and_scope_refactoring/">Hubs & Scopes Refactoring</Link></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <Link to="/sdk/fundamentals/reliability/">Reliability</Link>
+                <ul>
+                    <li>
+                        <Link to="/sdk/fundamentals/reliability/resiliency/">Resiliency</Link>
+                        <ul>
+                            <li><Link to="/sdk/fundamentals/reliability/resiliency/signal-handlers/">Signal Handlers</Link></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li><Link to="/sdk/telemetry/">Telemetry</Link>
+        <ul>
+            <li><Link to="/sdk/telemetry/tracing/">Tracing</Link></li>
+            <li><Link to="/sdk/telemetry/profiles/">Profiles</Link></li>
+            <li><Link to="/sdk/telemetry/metrics/">Metrics</Link></li>
+            <li><Link to="/sdk/telemetry/check-ins/">Check-Ins</Link></li>
+        </ul>
+    </li>
+    <li><Link to="/sdk/protocol/">Protocol</Link>
+        <ul>
+            <li><Link to="/sdk/protocol/envelopes/">Envelopes</Link></li>
+            <li><Link to="/sdk/protocol/event-payloads/">Event Payloads</Link></li>
+            <li><Link to="/sdk/protocol/client-reports/">Client Reports</Link></li>
+            <li><Link to="/sdk/protocol/sessions/">Sessions</Link></li>
+        </ul>
+    </li>
+    <li><Link to="/sdk/endpoints/">Endpoints</Link>
+        <ul>
+            <li><Link to="/sdk/endpoints/rate-limiting/">Rate Limiting</Link></li>
+            <li><Link to="/sdk/endpoints/envelope/">Envelope Endpoint</Link></li>
+            <li><Link to="/sdk/endpoints/store/">Store Endpoint</Link></li>
+        </ul>
+    </li>
+    <li><Link to="/sdk/tooling/">Tooling</Link>
+        <ul>
+            <li><Link to="/sdk/tooling/setup-wizards/">Setup Wizards</Link></li>
+            <li><Link to="/sdk/tooling/spotlight/">Spotlight</Link></li>
+        </ul>
+    </li>
+    <li><Link to="/sdk/processes/">Processes</Link>
+        <ul>
+            <li><Link to="/sdk/processes/onboarding/">Onboarding</Link></li>
+            <li><Link to="/sdk/processes/development/">Development</Link></li>
+            <li><Link to="/sdk/processes/testing/">Testing</Link></li>
+            <li><Link to="/sdk/processes/releasing/">Releasing</Link></li>
+        </ul>
+    </li>
+</ul>
