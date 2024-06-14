@@ -65,7 +65,7 @@ meant that certain integrations (such as breadcrumbs) were often not possible.
 
 - **tags**: Tags can be arbitrary string→string pairs by which events can be searched. Contexts are converted into tags.
 
-- **extra**: Truly arbitrary data attached by client users. In most cases, this should not be used, and instead structured `context` or `tags` should be used instead.
+- **extra**: Truly arbitrary data attached by client users. Extra should be avoided where possible, and instead structured `context` or `tags` should be used - as these can be queried and visualized in a better way.
 
 - **transport**: The transport is an internal construct of the client that abstracts away the event sending. Typically the transport runs in a separate thread and gets events to send via a queue. The transport is responsible for sending, retrying and handling rate limits. The transport might also persist unsent events across restarts if needed.
 
