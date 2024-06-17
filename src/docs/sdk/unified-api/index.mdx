@@ -8,12 +8,10 @@ Everything written here sounds real nice. However, we live in a practical world,
 
 The top priority when building SDKs is a high quality API and developer experience, don’t let unified API be an excuse to build things which don't make sense for a given language.
 
-*Types Example:* Typed languages might have very different developer experience than dynamic.
+* *Types Example:* Typed languages might have very different developer experience than dynamic.
+* *Platform Example:* Does Rust have exceptions? Nope, don't name APIs for rust like `captureException`.
 
-*Platform Example:* Does Rust have exceptions? Nope, don't name APIs for rust like `captureException`.
-
-*Unified API Example:* We don't like Hubs and Scopes anymore, and we are redefining that, <Link to="/sdk/hub_and_scope_refactoring/">Hub & Scope Refactoring</Link>
-
+Until recently, the unified API was centered around the concept of a `Hub`. Some SDKs are still using this concept, but it is being phased out in favor of the new scope-based approach lined out in this document. <Link to='/sdk/hub-based-api'>Read about the Hub based API.</Link>
 </Alert>
 
 New Sentry SDKs should follow the unified API, use consistent terms to refer to concepts.  This
@@ -45,25 +43,19 @@ meant that certain integrations (such as breadcrumbs) were often not possible.
 
 ## Simplified Visualization
 
-![Unified API Visualized](./unified-api.png)
+TODO: Graphic of the SDK pieces interacting
 
 ## Terminology
 
-- **minimal**: A separate "facade" package that re-exports a subset of the SDK's functionality through interfaces or proxies. That package does not directly depend on the SDK, instead it should make every operation a noop if the SDK is not installed.
+- **scope**: A scope holds data that should implicitly be sent with Sentry events. It can hold context data, extra parameters, level overrides, fingerprints etc. You should read the user-facing [documentation on Scopes](https://docs.sentry.io/platforms/javascript/enriching-events/scopes/) before continuing.
 
-  The purpose of such a package is to allow random libraries to record breadcrumbs and set context data while not having a hard dependency on the SDK.
-
-- **hub**: An object that manages the state. An implied global thread local or similar hub exists that can be used by default. Hubs can be created manually.
-
-- **scope**: A scope holds data that should implicitly be sent with Sentry events. It can hold context data, extra parameters, level overrides, fingerprints etc.
-
-- **client**: A client is an object that is configured once and can be bound to the hub. The user can then auto discover the client and dispatch calls to it.  Users typically do not need to work with the client directly. They either do it via the hub or static convenience functions. The client is mostly responsible for building Sentry events and dispatching those to the transport.
+- **client**: A client is an object that is configured once and is bound to a scope. The user can then auto discover the client and dispatch calls to it. Users typically do not need to work with the client directly, they should generally use top-level methods that may call the client under the hood. The client is mostly responsible for building Sentry events and dispatching those to the transport.
 
 - **client options**: Are parameters that are language and runtime specific and used to configure the client. This can be release and environment but also things like which integrations to configure, how in-app works etc.
 
-- **context**: Contexts give extra data to Sentry. There are the special contexts (user and similar) and the generic ones (`runtime`, `os`, `device`), etc.  Check out <Link to="/sdk/event-payloads/contexts">Contexts</Link> for some predefined keys - users can also add arbitrary context keys. *Note: In older SDKs, you might encounter an unrelated concept of context, which is now deprecated by scopes*
+- **context**: Contexts give extra data to Sentry. There are the custom contexts (set by the user) and predefined ones (e.g. `runtime`, `os`, `device`).  Check out <Link to="/sdk/event-payloads/contexts">Contexts</Link> for some predefined keys.
 
-- **tags**: Tags can be arbitrary string→string pairs by which events can be searched. Contexts are converted into tags.
+- **tags**: Tags can be arbitrary string→string pairs by which events can be searched.
 
 - **extra**: Truly arbitrary data attached by client users. Extra should be avoided where possible, and instead structured `context` should be used - as these can be queried and visualized in a better way.
 
@@ -73,7 +65,7 @@ meant that certain integrations (such as breadcrumbs) were often not possible.
 
 - **event processors**: Callbacks that run for every event.  
   They can either modify and return the event, or `null`.
-  Returning `null` will discard the event and not process further.
+  When `null` is returned, the SDK MUST discard the event and not process it further.
 
   See [Event Pipeline](#event-pipeline) for more information.
 
@@ -81,128 +73,211 @@ meant that certain integrations (such as breadcrumbs) were often not possible.
   configured and active client.
   Sentry considers the client active when it has a *transport*.
   Otherwise, the client is inactive, and the SDK is considered "disabled".
-  In this case, certain callbacks, such as `configure_scope` or
-  *event processors*, may not be invoked.
-  As a result, breadcrumbs are not recorded.
+  In this case, the SDK MUST NOT send any events, and SHOULD NOT register any (global) handlers.
 
-
-## "Static API"
+## Static API (or Top-Level API)
 
 The static API functions is the most common user facing API.  A user just imports these functions and can start
 emitting events to Sentry or configuring scopes.  These shortcut functions should be exported in the top-level
-namespace of your package.  Behind the scenes they use hubs and scopes (see [Concurrency](#concurrency) for more information) if available on that platform.
-Note that all listed functions below are mostly aliases for `Hub::get_current().function`.
+namespace of your package. Behind the scenes they use scopes and clients (see [Concurrency](#concurrency) for more information).
 
-- `init(options)`: This is the entry point for every SDK.  
+The static APIs should cover the 95% use case for a common user. They should be easy to use and understand, and should be considered the primary way users interact with the Sentry SDK.
 
-This typically creates / reinitializes the global hub which is propagated to all new threads/execution contexts, or a hub is created per thread/execution context.  
+### `init(options)`
 
-Takes options (dsn etc.), configures a client and binds it to the current hub or initializes it. Should return a stand-in that can be used to drain events (a disposable).  
+This is the entry point for every SDK. Every SDK MUST have an `init` method. Calling `init` will create & setup a new client, and bind it to the current scope. 
 
-This might return a handle or guard for disposing. How this is implemented is entirely up to the SDK. This might even be a client if that’s something that makes sense for the SDK. In Rust it’s a ClientInitGuard, in JavaScript it could be a helper object with a close method that is awaitable.  
+The options passed in are SDK specific, but typically include a DSN, release, environment, etc.
 
-You should be able to call this multiple times where calling it a second time either tears down the previous client or decrements a refcount for the previous client etc.  
+This method SHOULD return a stand-in that can be used to drain events (a disposable), or the created client.
 
+It SHOULD be possible to call `init` multiple times, where calling it a second time either tears down the previous client or decrements a refcount for the previous client etc.
 Calling this multiple times should be used for testing only.  
 It’s undefined what happens if you call `init` on anything but application startup.  
 
-A user has to call `init` once but it’s permissible to call this with a disabled DSN of sorts. Might for instance be no parameter passed etc.
+A user has to call `init` once but it’s permissible to call this with a disabled DSN of sorts. In this case, the SDK will be *disabled*.
 
-Additionally it also sets up all default integrations.
+Calling `init` MUST set up all default & defined integrations, UNLESS the SDK is disabled. When the SDK is disabled, it SHOULD NOT set up any integrations.
 
-- `capture_event(event)`: Takes an already assembled event and dispatches it to the currently active hub.  The event object can be a plain dictionary or a typed object whatever makes more sense in the SDK.  It should follow the native protocol as close as possible ignoring platform specific renames (case styles etc.).
+### `get_client()`
 
-- `capture_exception(error)`: Report an error or exception object.  Depending on the platform different parameters are possible.  The most obvious version accepts just an error object but also variations are possible where no error is passed and the current exception is used.
+Returns the currently active client. This MAY return `null` if `init` was never called. If `init` was called but the SDK is disabled, this SHOULD return the disabled client.
 
-- `capture_message(message, level)`: Reports a message. The level can be optional in language with default parameters in which case it should default to `info`.
+Instead of retuning `null` if the SDK was never initialized, this method MAY return a disabled (or a no-op) client.
 
-- `add_breadcrumb(crumb)`: Adds a new breadcrumb to the scope. If the total
-  number of breadcrumbs exceeds the `max_breadcrumbs` setting, the SDK should
-  remove the oldest breadcrumb. This works like the Hub API with regards to what
-  `crumb` can be. If the SDK is disabled, it should ignore the breadcrumb.
+### `capture_event(event)`
 
-- `configure_scope(callback)`: Calls a callback with a scope object that can be reconfigured. This is used to attach contextual data for future events in the same scope.
+Takes an already assembled event and dispatches it to the current scope.
 
-- `last_event_id()`: Should return the last event ID emitted by the current scope. This is for instance used to implement user feedback dialogs.
+This SHOULD be equivalent to calling `get_current_scope().capture_event(event)`.
 
-- `start_session()`: Stores a session on the current scope and starts tracking it. This normally attaches a brand new session to the scope, and implicitly ends any already existing session.
+The event object can be a plain dictionary or a typed object whatever makes more sense in the SDK. 
+It should follow the native protocol as close as possible ignoring platform specific renames (case styles etc.).
 
-- `end_session()`: Ends the session, setting an appropriate `status` and `duration`, and enqueues it for sending to Sentry.
+### `capture_exception(error)`
+
+Report an error or exception object and dispatches it to the current scope.
+
+This SHOULD be equivalent to calling `get_current_scope().capture_exception(error)`.
+
+Depending on the platform different parameters are possible.
+The most obvious version accepts just an error object but also variations are possible where no error is passed and the current exception is used.
+
+### `capture_message(message, level)`
+
+Reports a message and dispatches it to the current scope. 
+
+This SHOULD be equivalent to calling `get_current_scope().capture_message(message)`.
+
+The level can be optional in language with default parameters in which case it should default to `info`.
+
+### `add_breadcrumb(crumb)`
+
+Adds a new breadcrumb to the isolation scope. If the totalnumber of breadcrumbs exceeds the `max_breadcrumbs` setting, the SDK should remove the oldest breadcrumb. 
+
+This SHOULD be equivalent to calling `get_isolation_scope().add_breadcrumb(crumb)`.
+
+If the SDK is disabled, it SHOULD ignore the breadcrumb.
+
+### `set_tag(key, value)`
+
+Set a tag on the isolation scope.
+
+This SHOULD be equivalent to calling `get_isolation_scope().set_tag(key, value)`.
+
+### `set_context(name, context)`
+
+Set a context on the isolation scope.
+
+This SHOULD be equivalent to calling `get_isolation_scope().set_context(name, context)`.
+
+### `set_extra(key, value)`
+
+Set extra data on the isolation scope.
+
+This SHOULD be equivalent to calling `get_isolation_scope().set_extra(key, value)`.
+
+### `set_user(user)`
+
+Set the user on the isolation scope.
+
+This SHOULD be equivalent to calling `get_isolation_scope().set_user(user)`.
+
+If `null` is passed in, the user SHOULD be reset.
+
+### `with_scope(callback)`
+
+Creates a new current scope that is active for the duration of the callback. 
+This is useful for attaching contextual data to a subset of events that is dispatched inside of the provided callback.
+
+The callback MUST receive the new scope as an argument. The new scope MUST be forked from the current scope, and the current scope MUST be restored after the callback is executed.
+
+Mutating the new scope MUST NOT affect the previous current scope.
+
+### `with_isolation_scope(callback)`
+
+Creates a new isolation scope that is active for the duration of the callback. 
+This is useful for attaching contextual data to a subset of events that is dispatched inside of the provided callback.
+
+The callback MUST receive the new isolation scope as an argument. The new isolation scope MUST be forked from the current isolation scope, and the current isolation scope MUST be restored after the callback is executed.
+
+Mutating the new isolation scope MUST NOT affect the previous isolation scope.
+
+This method MAY also fork the current scope (similar to `with_scope`) in addition to forking the isolation scope.
+
+### `get_current_scope()`
+
+Returns the currently active scope. This is the scope that is used for all events that are dispatched.
+
+### `get_isolation_scope()`
+
+Returns the currently active isolation scope. This is the scope that is used to store breadcrumbs and contextual data that should be attached to events.
+
+### `get_global_scope()`
+
+Returns the global scope, which is applied to all events dispatched by the SDK. This scope MUST be a singleton and shared across all instances of the SDK.
+
+### `last_event_id()`
+
+Returns the last event ID that was emitted. The last event ID SHOULD be kept on the isolation scope, and thus SHOULD be kept per isolated process. This is for instance used to implement user feedback dialogs.
+
+### `start_session()`
+
+Stores a session on the current scope and starts tracking it. This SHOULD attach a brand new session to the isolation scope, and implicitly ends any already existing session.
+
+### `end_session()`
+
+Ends the session, setting an appropriate `status` and `duration`, and enqueues it for sending to Sentry.
 
 ## Concurrency
 
-All SDKs should have the concept of concurrency safe context storage. What this means depends on the language. The basic idea is that a user of the SDK can call a method to safely provide additional context information for all events that are about to be recorded.
+All SDKs SHOULD have the concept of concurrency safe context storage, if the language permits it. What this means depends on the language. 
 
-This is implemented as a thread local stack in most languages, but in some (such as JavaScript) it might be global under the assumption that this is something that makes sense in the environment.
+The goal is that, wherever possible, concurrent operations can be automatically isolated from each other, in order to prevent data to leak between different operations.
+A classic example for this is to isolate requests in a HTTP server - if a user sets a user in this request, it should be applied to any event captured in this request, but not to events captured in other requests (because they may have a different user).
 
-Here are some common concurrency patterns:
+The SDK SHOULD automatically manage this isolation, so that the user does not have to worry about it. For cases where the SDK cannot do that automatically, the SDK MUST provide a way for the user to manually manage the isolation (for example via `with_isolation_scope()`).
 
-* **Thread bound hub**: In that pattern each thread gets its own "hub" which internally manages a stack of scopes.  If that pattern is followed one thread (the one that calls `init()`) becomes the "main" hub which is used as the base for newly spawned threads which will get a hub that is based on the main hub (but otherwise independent).
+In client-side applications (Browser JS or mobile), there MAY not be a way to isolate code from each other. In this case, the SDK MAY fall back to handling state globally.
 
-* **Internally scoped hub**: On some platforms such as .NET ambient data is available in which case the Hub can internally manage the scopes.
+This is implemented as a thread local stack in most languages, or as a different construct (e.g. async local storage in Node.js) in others.
 
-* **Dummy hub**: On some platforms concurrency just doesn't inherently exist.  In that case the hub might be entirely absent or just be a singleton without concurrency management.
+### How to store concurrency data
 
-## Hub
+Each thread local SHOULD hold a reference to the current scope & isolation scope that is active for the current thread. 
+Newly spawned threads SHOULD inherit the reference to the isolation scope from the parent thread, and SHOULD create a new scope that is a child of the parent current scope, and make this the current scope for the child thread.
 
-Under normal circumstances the hub consists of a stack of clients and scopes.
+The isolation scope MAY be forked (instead of using the same reference) for a new thread if the SDK identifies that the new thread is a new logical operation that should not share data with the parent thread. 
+For example, if the new thread is a new HTTP request in a server, it SHOULD have a new isolation scope. 
 
-The SDK maintains two variables: The *main hub* (a global variable) and the *current hub* (a variable local to the current thread or execution context, also sometimes known as async local or context local)
+In some environments it MAY be necessary to retrospectively change the isolation scope - for example, when it is not possible to know at the time of thread spawning if the new thread should be isolated.
+In this case, the SDK MAY retrospectively update the isolation scope on the thread local.
 
-- `Hub::new(client, scope)`: Creates a new hub with the given client and scope.  The client can be reused between hubs. The scope should be owned by the hub (make a clone if necessary)
+```javascript
+const initialCurrentScope = getCurrentScope();
+const initialIsolationScope = getIsolationScope();
 
-- `Hub::new_from_top(hub)` / alternatively native constructor overloads: Creates a new hub by cloning the top stack of another hub.
+myApp.get('/my-route', function() {
+  // current scope is a fork of initialCurrentScope
+  assert(getCurrentScope() !== initialCurrentScope);
+  // This is a HTTP route handler, which we want to isolate from other routes
+  // So the isolation scope is a fork of the initialIsolationScope
+  assert(getIsolationScope() !== initialIsolationScope);
+});
+```
 
-- `get_current_hub()` / `Hub::current()` / `Hub::get_current()`: Global function or static function to return the current (thread's) hub
+Calling `with_scope` or `with_isolation_scope` SHOULD spawn a new thread local that is active for the duration of the callback, and SHOULD restore the previous thread local after the callback is executed.
 
-- `get_main_hub()` / `Hub::main()` / `Hub::get_main()`: In languages where the main thread is special ("Thread bound hub" model) this returns the main thread’s hub instead of the current thread’s hub. This might not exist in all languages.
+### Environments without process isolation
 
-- `Hub::capture_event` / `Hub::capture_message` / `Hub::capture_exception` Capture message / exception call into capture event. `capture_event` merges the event passed with the scope data and dispatches to the client. As an additional argument it also takes a Hint.
+In environments that do not support process isolation (e.g. Browser JS), the isolation scope should be considered a singleton, similar to the global scope. 
+In this case, `with_isolation_scope` SHOULD NOT fork the isolation scope, but instead just keep the current isolation scope.
 
-  For the hint parameter see [hints](#hints).
+The current scope MAY be kept as a simple stack that is pushed and popped as needed. This stack MAY not be async safe, and may leak between different parts of the code. This should be avoided, if possible.
 
-- `Hub::push_scope()`: Pushes a new scope layer that inherits the previous data. This should return a disposable or stack guard for languages where it makes sense.  When the "internally scoped hub" concurrency model is used calls to this are often necessary as otherwise a scope might be accidentally incorrectly shared.
+```javascript
+const initialCurrentScope = getCurrentScope();
+const initialIsolationScope = getIsolationScope();
 
-- `Hub::with_scope(callback)` (optional): In Python this could be a context manager, in Ruby a block function. Pushes and pops a scope for integration work.
+document.querySelector('#my-button').addEventListener('click', function() {
+  Sentry.withScope(scope => {
+    assert(getCurrentScope() !== initialCurrentScope);
+    assert(getIsolationScope() === initialIsolationScope);
+    // scope is valid until the end of this callback
+    // there are no guarantees that scope may not bleed outside of this callback
+  });
+});
+```
 
-- `Hub::pop_scope()` (optional): Only exists in languages without better resource management. Better to have this function on a return value of `push_scope` or to use `with_scope`.  This is also sometimes called `pop_scope_unsafe` to indicate that this method should not be used directly.
-
-- `Hub::configure_scope(callback)`: Invokes the callback with a mutable reference to the scope for modifications. This can also be a `with` statement in languages that have it (Python). If no active client is bound to this hub, the SDK should not invoke the callback.
-
-- `Hub::add_breadcrumb(crumb, hint)`: Adds a breadcrumb to the current scope.
-
-  - The argument supported should be:
-    - function that creates a breadcrumb
-    - an already created breadcrumb object
-    - a list of breadcrumbs (optional)
-  - In languages where we do not have a basic form of overloading only a raw breadcrumb object should be accepted.
-
-  The SDK should ignore the breadcrumb if no active client is bound to this hub.
-
-  For the hint parameter see [hints](#hints).
-
-- `Hub::client()` / `Hub::get_client()` (optional): Accessor or getter that returns the current client or `None`.
-
-- `Hub::bind_client(new_client)`: Binds a different client to the hub. If the hub is also the owner of the client that was created by `init` it needs to keep a reference to it still if the hub is the object responsible for disposing it.
-
-- `Hub::unbind_client()` (optional): Optional way to unbind for languages where `bind_client` does not accept nullables.  
-
-- `Hub::last_event_id()`: Should return the last event ID emitted by the current scope.  This is for instance used to implement user feedback dialogs.
-
-- `Hub::run(hub, callback)`  `hub.run(callback)`, `run_in_hub(hub, callback)` (optional): Runs a callback with the hub bound as the current hub.
-
-### Scope
+## Scope
 
 A scope holds data that should implicitly be sent with Sentry events. It can hold context data, extra parameters, level overrides, fingerprints etc.
 
-The user can modify the current scope (to set extra, tags, current user) through the global function `configure_scope`.  `configure_scope` takes a callback function to which it passes the current scope.
-
-The reason for this callback-based API is efficiency. If the SDK is disabled,
-it should not invoke the callback, thus avoiding unnecessary work.
+The user can modify the current scope (to set extra, tags, current user) directly, but the main way for users to interact with the scope is through the [Static API](#static-api-or-top-level-api).
 
 ```javascript
-Sentry.configureScope(scope =>
-  scope.setExtra("character_name", "Mighty Fighter"));
+const scope = Sentry.getCurrentScope();
+scope.setExtra("character_name", "Mighty Fighter"));
 ```
 
 - `scope.set_user(user)`: Shallow merges user configuration (`email`, `username`, …).  Removing user data is SDK-defined, either with a `remove_user` function or by passing nothing as data.
@@ -232,9 +307,20 @@ Sentry.configureScope(scope =>
 
 - `scope.add_breadcrumb(breadcrumb)`: Adds a breadcrumb to the current scope.
 
-- `scope.clear_breadcrumbs()`: Deletes current breadcrumbs from the scope.
+- `scope.clear_breadcrumbs()` (optional): Deletes current breadcrumbs from the scope.
 
-- `scope.apply_to_event(event[, max_breadcrumbs])`: Applies the scope data to the given event object. This also applies the event processors stored in the scope internally.  Some implementations might want to set a max breadcrumbs count here.
+- `scope.capture_exception(exception)`: Capture an exception, ensuring the scope's data is added to the event.
+
+- `scope.capture_message(message)`: Capture a message, ensuring the scope's data is added to the event.
+
+- `scope.capture_event(event)`: Capture an event, ensuring the scope's data is added to the event.
+
+A client MAY have a scope attached to it. Generally, the global & isolation scopes SHOULD NOT have a client attached, but only the current scope.
+The client is inherited by child scopes. This way, each current scope (which is used to capture events) knows which client it should route events to.
+
+## Applying Scope Data to Events
+
+See [user-facing Scope Docs](https://docs.sentry.io/platforms/javascript/enriching-events/scopes/) on details about how scopes should be applied.
 
 ## Client
 
@@ -247,6 +333,17 @@ A Client is the part of the SDK that is responsible for event creation. To give 
 - `Client::close(timeout)`: Flushes out the queue for up to timeout seconds. If the client can guarantee delivery of events only up to the current point in time this is preferred. This might block for timeout seconds. The client should be disabled or disposed after close is called
 
 - `Client::flush(timeout)`: Same as `close` difference is that the client is NOT disposed after calling flush
+
+When `get_client` is called, it SHOULD return the client that is currently bound to the current scope. 
+If no client is bound to the current scope, it SHOULD either return `null`, or a Non-Recording (disabled) client.
+
+## `get_current_hub()` (Legacy)
+
+Previously, users interacted with the SDK through a `Hub` object. This object was responsible for managing the current scope, client, and other SDK state.
+
+While we do not have a hub anymore, we want to keep providing a `get_current_hub()` API for backwards compatibility.
+This method SHOULD return a shim or similar that allows to keep using old hub methods. This SHOULD NOT exist in new SDKs, but only in SDKs that are transitioning from the old hub-based API to the new scope-based API.
+All methods that can be shimmed SHOULD continue to be available. Methods (like `push_scope` or `pop_scope`) that cannot be shimmed MAY be removed or MAY no-op.
 
 ## Hints
 
