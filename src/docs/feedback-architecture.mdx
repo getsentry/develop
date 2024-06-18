@@ -163,7 +163,7 @@ graph TD
 
 ### [`save_userreport()`](https://github.com/getsentry/sentry/blob/2b642e149c79b251e1c2f4339fc73d656347d74e/src/sentry/ingest/userreport.py#L28-L28)
 
-Before it was extended to generic feedback, the [`user_report` model](https://github.com/getsentry/sentry/blob/2b642e149c79b251e1c2f4339fc73d656347d74e/src/sentry/models/userreport.py#L9-L9) 
+Before it was extended to generic feedback, the [`UserReport` model](https://github.com/getsentry/sentry/blob/2b642e149c79b251e1c2f4339fc73d656347d74e/src/sentry/models/userreport.py#L9-L9) 
 was first used for crash reports. Therefore an associated event id is required, and 
 we use it to set environment and group before saving the model to **Postgres**. 
 Then we shim the report to a **feedback event** and pass it to `create_feedback_issue()`.
