@@ -1,0 +1,219 @@
+---
+title: User Feedback - Backend Architecture
+---
+
+**The goal of this doc is to give engineers an in-depth, systems-level understanding of User Feedback.**
+It will
+1. describe the relevant ingestion pipelines, data models, and functions.
+2. explain the difference between “feedback”, “user reports”, and “crash reports”, and why we built and need to support each.
+
+## Creation sources
+When broken down, there are **5** ways to create feedback 😵‍💫 in our system.
+(But if it helps, 4 are very similar!) A good reference is the
+`FeedbackCreationSource(Enum)` in [create_feedback.py](https://github.com/getsentry/sentry/blob/2b642e149c79b251e1c2f4339fc73d656347d74e/src/sentry/feedback/usecases/create_feedback.py#L33-L33).
+The 4 ways _clients_ can create feedback are:
+
+`NEW_FEEDBACK_ENVELOPE`: The new format created by the Replay team when adding 
+the [User Feedback Widget](https://docs.sentry.io/product/user-feedback/#user-feedback-widget) 
+to the JavaScript SDK. It allows adding more information, for example tags, 
+release, url, etc.
+
+`USER_REPORT_ENVELOPE`: The older format with name/email/comments, that requires 
+`event_id` to link a Sentry error event.
+
+`USER_REPORT_DJANGO_ENDPOINT`: [The Web API](https://docs.sentry.io/api/projects/submit-user-feedback/)
+
+`CRASH_REPORT_EMBED_FORM`: The [crash report modal](https://docs.sentry.io/product/user-feedback/#crash-report-modal)
+
+## How it's stored
+On the backend, each feedback submission in Sentry's UI is **an un-grouped issue occurrence**, 
+saved via the [issues platform](https://develop.sentry.dev/issue-platform/).
+The entrypoint is [**`create_feedback_issue()`**](https://github.com/getsentry/sentry/blob/2b642e149c79b251e1c2f4339fc73d656347d74e/src/sentry/feedback/usecases/create_feedback.py#L184-L184),
+which
+1. filters feedback with empty or spam messages. Note **anonymous feedbacks are not filtered** (missing name and/or email).
+2. sends to issues pipeline in a standardized format. To make sure it is never grouped, we use a random UUID for the fingerprint.
+
+---
+
+## Feedback events
+
+The new and preferred way to send feedback from the SDK is as an [event item](https://develop.sentry.dev/sdk/envelopes/#full-examples), 
+in a MessagePack'ed envelope. The item type is the same as errors, but event 
+type = `"feedback"`. While user reports have an associated event, 
+**new feedback _is_ an event**. This offers 2 improvements:
+
+1. Users can submit generic feedback without an error occurring. The point of this feature is to catch things Sentry can’t!
+2. Rather than waiting for the associated error to be ingested asynchronously, we immediately get access to context like the environment, platform, replay, user, tags...
+
+The user's submission is wrapped in a context object:
+
+```Python/Javascript
+event[”contexts”][”feedback”] = {
+	"name": <user-provided>,
+	"contact_email": <user-provided>,
+	"message": <user-provided>,
+	"url": <referring web page>,
+	"source": <developer-provided, ex: "widget">
+}
+
+// all fields are technically optional, but recommended
+// the widget can be configured to require a non-empty email and/or name
+```
+
+- This doc refers to the payload format (`event` in the pseudo-code above) as a “**feedback event”**.
+- The feedback [widget](https://docs.sentry.io/platforms/javascript/user-feedback/#user-feedback-widget), which is installed by default, sends these envelopes.
+- API: for SDK v8.0.0+, we use the `sendFeedback` function.
+
+### Architecture diagram
+
+```mermaid
+graph TD
+	subgraph Sentry
+		issues_endpoint["/issues"]
+		issues_endpoint <--> |"requests"| ui["Feedback UI"]
+	end
+
+	subgraph app[Your Application]
+		widget
+		API
+	end
+
+	app --> |"envelopes"| Relay
+	Relay --> f_consumer([ingest-feedback-events])
+	f_consumer --> |"queues as celery task"| create_feedback_issue
+	create_feedback_issue --> o_consumer(["ingest-occurrences"])
+	o_consumer --> nodestore[(Nodestore)]
+	o_consumer --> |"EventStream"| snuba[("Snuba/Clickhouse")]
+	issues_endpoint <--> |"queries"| snuba
+
+
+```
+
+In Relay v24.5.1, we migrated feedback to its own kafka topic + consumer, 
+`ingest-feedback-events`. This decouples risk and ownership from errors 
+(`ingest-events`).
+
+### Attachments
+
+We only use attachments for the widget’s screenshot feature, which allows users 
+to submit **at most 1 screenshot per feedback**. Attachments are another [item type](https://develop.sentry.dev/sdk/envelopes/#attachment) 
+in an envelope.
+- SDK v8.0.0+, Relay v24.5.1+: Sends the feedback and attachment items in the same envelope.
+- SDK < v8, all Relay versions: Send a separate envelope for each item.
+
+**The feedback pipeline does not process attachments**. Relay routes them to
+a separate topic and storage, and the UI makes a separate request for them.
+
+---
+
+## User Reports
+
+The deprecated way of sending feedback is as a **user report**. This is a simple typed dict:
+
+```Python/Javascript
+user_report = {
+	"event_id": <required UUID str>,
+	"email": <optional str>,
+	"name": <optional str>,
+	"comments": <optional str>,
+}
+```
+
+### Architecture diagram
+
+```mermaid
+graph TD
+	subgraph Sentry
+		issues_endpoint["/issues"]
+		issues_endpoint <--> |"GET"| ui["Feedback UI"]
+		report_endpoint["/user-feedback"]
+		crash_report_modal["Crash Report Modal"]
+	end
+
+	subgraph functions[Functions - run in referrer]
+		save_userreport
+	  shim_to_feedback
+		create_feedback_issue
+		save_userreport --> |"IF event processed"| shim_to_feedback
+		shim_to_feedback --> create_feedback_issue
+	end
+
+	%% envelope pipeline
+	app[Your Application] --> |"envelopes"| Relay
+	Relay --> a_topic([ingest-attachments])
+	a_topic --> save_userreport
+
+	%% endpoint and crash reports
+	app --> |"POST"| report_endpoint --> save_userreport
+	app --> |"POST"| crash_report_modal --> save_userreport
+
+	%% issues platform
+	create_feedback_issue --> o_consumer(["ingest-occurrences"])
+	o_consumer --> nodestore[(Nodestore)]
+	o_consumer --> |"EventStream"| snuba[(Snuba/Clickhouse)]
+	snuba <--> |"queries"| issues_endpoint
+
+	%% user report saves/updates
+	save_userreport --> postgres[(Postgres)]
+	snuba <--> |"queries eventstore"| save_userreport
+	pp_job["errors post process task"] <--> |"queries/updates"| postgres
+	pp_job --> shim_to_feedback
+	snuba <--> |"queries eventstore"| pp_job
+```
+
+### [`save_userreport()`](https://github.com/getsentry/sentry/blob/2b642e149c79b251e1c2f4339fc73d656347d74e/src/sentry/ingest/userreport.py#L28-L28)
+
+Before it was extended to generic feedback, the [`user_report` model](https://github.com/getsentry/sentry/blob/2b642e149c79b251e1c2f4339fc73d656347d74e/src/sentry/models/userreport.py#L9-L9) 
+was first used for crash reports. Therefore an associated event id is required, and 
+we use it to set environment and group before saving the model to **Postgres**. 
+Then we shim the report to a **feedback event** and pass it to `create_feedback_issue()`.
+
+If the event hasn’t reached eventstore (Snuba) by the time of ingest, we still 
+save the report, but leave the environment + group empty and skip feedback creation.
+
+To ensure the skipped reports eventually get fixed and shimmed to feedback, we 
+added a post process job to the errors pipeline: [`link_event_to_user_report()`](https://github.com/getsentry/sentry/blob/2b642e149c79b251e1c2f4339fc73d656347d74e/src/sentry/tasks/post_process.py#L1387-L1387).
+This is the 5th, automated way of creating feedback.
+
+### Envelopes
+
+User reports are also sent to Relay in [envelopes](https://develop.sentry.dev/sdk/envelopes/#user-feedback). 
+This item type is mistakenly called “user feedback” in some of our docs, but the 
+item header will read "user_report".
+
+The SDK function that sends these is `captureUserFeedback`.
+
+### Django endpoint
+
+Before our envelope ingest service existed, older SDKs directly POST the report 
+to Sentry, with
+`/api/0/projects/{organization_id_or_slug}/{project_id_or_slug}/user-feedback/`
+
+See [https://docs.sentry.io/api/projects/submit-user-feedback/](https://docs.sentry.io/api/projects/submit-user-feedback/)
+
+### Crash reports
+
+The crash report modal is a Django view -- an HTML form your app can render when 
+a page crashes. This was the earliest way of collecting feedback, and is for 
+error-specific feedback. You can install it as an [SDK integration](https://docs.sentry.io/platforms/javascript/user-feedback/#crash-report-modal).
+
+URL: `/api/embed/error-page/`
+
+Python Class: `error_page_embed.ErrorPageEmbedView`
+
+Crash reports are also shimmed to feedback. The pipeline is very similar to the 
+user report endpoint.
+
+---
+
+## Email Alerts
+
+Email alerts are triggered in feedback issue’s post process pipeline. (Unrelated 
+to the task in the user report diagram.) It’s the same alerts as generic, 
+non-error issues, but we apply some feedback-specific filters. **We skip emails if:**
+
+1. The feedback is [marked as spam](https://docs.sentry.io/product/user-feedback/#spam-detection-for-user-feedback) AND the `organizations.user-feedback-spam-filter-actions` feature flag is enabled.
+2. The source is NOT a new feedback envelope / the widget, AND the “Crash Report Notifications” setting is disabled.
+   - in UI: Settings > Projects > (project slug) > User Feedback > “Enable Crash Report Notifications”
+   - project option in code: `sentry:feedback_user_report_notifications`
+   - default = true/enabled
