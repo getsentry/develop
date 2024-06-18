@@ -66,28 +66,8 @@ event[”contexts”][”feedback”] = {
 
 ### Architecture diagram
 
-```mermaid
-graph TD
-	subgraph Sentry
-		issues_endpoint["/issues"]
-		issues_endpoint <--> |"requests"| ui["Feedback UI"]
-	end
-
-	subgraph app[Your Application]
-		widget
-		API
-	end
-
-	app --> |"envelopes"| Relay
-	Relay --> f_consumer([ingest-feedback-events])
-	f_consumer --> |"queues as celery task"| create_feedback_issue
-	create_feedback_issue --> o_consumer(["ingest-occurrences"])
-	o_consumer --> nodestore[(Nodestore)]
-	o_consumer --> |"EventStream"| snuba[("Snuba/Clickhouse")]
-	issues_endpoint <--> |"queries"| snuba
-
-
-```
+![](https://mermaid.ink/svg/pako:eNp1Uk1vwjAM_StRTiBRca-mSWiwicOmaWWHqUFVSA1EtEmWDyYE_Pc5adFAYqe6zvPze7aPVOgaaE43lpstWUyZYt6FVfdbgPL2EFPMS-cCuApUbbRUvmR03KUYXd5FkIcseyQnRl9mC0ZPJEiseQaoV1zsyOe8r0M4fq67cmPKLx0smRjTSMG91Kpv8SPrDfgunrzPb-qxjPQdQe2h0SZqO5EPaHjykIIEWVdCKxdasINSqg04n617YRns0bRbDmPFH-7C_B0APRLuiIAG7IF47naxi7DAPVQXmioNI3LcfUh0-koFo70OLUSwFpRIg00q9K0KhQtzXlsoB2-XcLi8A0S5s2im8CihjSKdCiteDhgtYjB-wunutjo4YLRj-G-FaNvKbpyJg44odmm5rPF0jkwRwqjfQotEOYY1tzgUps6I48Hr4qAEzb0NMKLB1DiPqeS47Jbma944zEIt0cdrd4vpJM-_bUbyRw)
+[diagram source](https://mermaid.live/edit#pako:eNp1Uk1vwjAM_StRTiBRca-mSWiwicOmaWWHqUFVSA1EtEmWDyYE_Pc5adFAYqe6zvPze7aPVOgaaE43lpstWUyZYt6FVfdbgPL2EFPMS-cCuApUbbRUvmR03KUYXd5FkIcseyQnRl9mC0ZPJEiseQaoV1zsyOe8r0M4fq67cmPKLx0smRjTSMG91Kpv8SPrDfgunrzPb-qxjPQdQe2h0SZqO5EPaHjykIIEWVdCKxdasINSqg04n617YRns0bRbDmPFH-7C_B0APRLuiIAG7IF47naxi7DAPVQXmioNI3LcfUh0-koFo70OLUSwFpRIg00q9K0KhQtzXlsoB2-XcLi8A0S5s2im8CihjSKdCiteDhgtYjB-wunutjo4YLRj-G-FaNvKbpyJg44odmm5rPF0jkwRwqjfQotEOYY1tzgUps6I48Hr4qAEzb0NMKLB1DiPqeS47Jbma944zEIt0cdrd4vpJM-_bUbyRw)
 
 In Relay v24.5.1, we migrated feedback to its own kafka topic + consumer, 
 `ingest-feedback-events`. This decouples risk and ownership from errors 
@@ -121,45 +101,8 @@ user_report = {
 
 ### Architecture diagram
 
-```mermaid
-graph TD
-	subgraph Sentry
-		issues_endpoint["/issues"]
-		issues_endpoint <--> |"GET"| ui["Feedback UI"]
-		report_endpoint["/user-feedback"]
-		crash_report_modal["Crash Report Modal"]
-	end
-
-	subgraph functions[Functions - run in referrer]
-		save_userreport
-	  shim_to_feedback
-		create_feedback_issue
-		save_userreport --> |"IF event processed"| shim_to_feedback
-		shim_to_feedback --> create_feedback_issue
-	end
-
-	%% envelope pipeline
-	app[Your Application] --> |"envelopes"| Relay
-	Relay --> a_topic([ingest-attachments])
-	a_topic --> save_userreport
-
-	%% endpoint and crash reports
-	app --> |"POST"| report_endpoint --> save_userreport
-	app --> |"POST"| crash_report_modal --> save_userreport
-
-	%% issues platform
-	create_feedback_issue --> o_consumer(["ingest-occurrences"])
-	o_consumer --> nodestore[(Nodestore)]
-	o_consumer --> |"EventStream"| snuba[(Snuba/Clickhouse)]
-	snuba <--> |"queries"| issues_endpoint
-
-	%% user report saves/updates
-	save_userreport --> postgres[(Postgres)]
-	snuba <--> |"queries eventstore"| save_userreport
-	pp_job["errors post process task"] <--> |"queries/updates"| postgres
-	pp_job --> shim_to_feedback
-	snuba <--> |"queries eventstore"| pp_job
-```
+![](https://mermaid.ink/svg/pako:eNqNVO9r2zAQ_VcOQSGFhnwPYzDaZvRDt9J0H4YdjCJfYq22pOlHoLT933eSbHdL3LJPVi7vnt69u9MzE7pGtmR7y00DD1elKr0L2_xzjcrbpxgqvXQuoKtQ1UZL5YuSLXKoZJtJBHyazz_DS8m-Xj-U7AWCpJwVYr3l4hF-3Ix5Fo22_h_m4NDOdz12BArLXVP18E7XvCXsZQzCfQrCbQz2eOKjz9_l7IISXmrlitVwgjnYoEAqsLhDa9H2dzl-wCrKyNfFIIBrZFd5XY3KelnIPY7BKvkwyQK9IzcrwAN5C8Zqgc5hHQ2aZj-OJo53rxyLPjsDVAdstUEw0mArVQJwY4qfOlj4YkwrBY8ubAZdQ4aLcu6x5an36ZAgnIQYKWaFVHt0fs6956LpqBK3OU_sGZDApw4Osvr54KqG1FLICNfrG9TcfV-nwTmaj3fIpzJPB-ZDZXmAwbTc77TtYnTS6ESiK0HzEzq0M5rC3hAtRCBWJdJaJEvecClN0bo5ry0Ws2_D8XwzAaQyruOMrGk_eJfmQ4UtL2br-FlcUvMeG01V5Oz057hyvwNamdt4tJVjsbH-3tpkiFsEU1OtqQtTc2u083uLrpjd9acPbs7znapL0k_bZUz1S2_JOgpq6xL9sA_guYtrf8w6SiTKQc4bV-7txBL9j8JMwS4Y-d9xWdOT-FwqgJL5BjuCLOlYc0uySvVKOB68Xj8pwZbeBrxgWdqV5PTWdGy5462jKNaSbrjNb2x6al__AGUzAsk)
+[diagram source](https://mermaid.live/edit#pako:eNqNVO9r2zAQ_VcOQSGFhnwPYzDaZvRDt9J0H4YdjCJfYq22pOlHoLT933eSbHdL3LJPVi7vnt69u9MzE7pGtmR7y00DD1elKr0L2_xzjcrbpxgqvXQuoKtQ1UZL5YuSLXKoZJtJBHyazz_DS8m-Xj-U7AWCpJwVYr3l4hF-3Ix5Fo22_h_m4NDOdz12BArLXVP18E7XvCXsZQzCfQrCbQz2eOKjz9_l7IISXmrlitVwgjnYoEAqsLhDa9H2dzl-wCrKyNfFIIBrZFd5XY3KelnIPY7BKvkwyQK9IzcrwAN5C8Zqgc5hHQ2aZj-OJo53rxyLPjsDVAdstUEw0mArVQJwY4qfOlj4YkwrBY8ubAZdQ4aLcu6x5an36ZAgnIQYKWaFVHt0fs6956LpqBK3OU_sGZDApw4Osvr54KqG1FLICNfrG9TcfV-nwTmaj3fIpzJPB-ZDZXmAwbTc77TtYnTS6ESiK0HzEzq0M5rC3hAtRCBWJdJaJEvecClN0bo5ry0Ws2_D8XwzAaQyruOMrGk_eJfmQ4UtL2br-FlcUvMeG01V5Oz057hyvwNamdt4tJVjsbH-3tpkiFsEU1OtqQtTc2u083uLrpjd9acPbs7znapL0k_bZUz1S2_JOgpq6xL9sA_guYtrf8w6SiTKQc4bV-7txBL9j8JMwS4Y-d9xWdOT-FwqgJL5BjuCLOlYc0uySvVKOB68Xj8pwZbeBrxgWdqV5PTWdGy5462jKNaSbrjNb2x6al__AGUzAsk)
 
 ### [`save_userreport()`](https://github.com/getsentry/sentry/blob/2b642e149c79b251e1c2f4339fc73d656347d74e/src/sentry/ingest/userreport.py#L28-L28)
 
