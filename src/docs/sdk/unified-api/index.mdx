@@ -47,7 +47,7 @@ TODO: Graphic of the SDK pieces interacting
 
 ## Terminology
 
-- **scope**: A scope holds data that should implicitly be sent with Sentry events. It can hold context data, extra parameters, level overrides, fingerprints etc. You should read the user-facing [documentation on Scopes](https://docs.sentry.io/platforms/javascript/enriching-events/scopes/) before continuing.
+- **scope**: A scope holds data that should implicitly be sent with Sentry events. It can hold context data, extra parameters, level overrides, fingerprints etc. There are three different scopes (global, isolation and current). To understand scopes and the differences between those you should read the user-facing [documentation on Scopes](https://docs.sentry.io/platforms/javascript/enriching-events/scopes/) before continuing.
 
 - **client**: A client is an object that is configured once and is bound to a scope. The user can then auto discover the client and dispatch calls to it. Users typically do not need to work with the client directly, they should generally use top-level methods that may call the client under the hood. The client is mostly responsible for building Sentry events and dispatching those to the transport.
 
@@ -78,7 +78,7 @@ TODO: Graphic of the SDK pieces interacting
 ## Static API (or Top-Level API)
 
 The static API functions is the most common user facing API.  A user just imports these functions and can start
-emitting events to Sentry or configuring scopes.  These shortcut functions should be exported in the top-level
+emitting events to Sentry or configuring scopes. These shortcut functions should be exported in the top-level
 namespace of your package. Behind the scenes they use scopes and clients (see [Concurrency](#concurrency) for more information).
 
 The static APIs should cover the 95% use case for a common user. They should be easy to use and understand, and should be considered the primary way users interact with the Sentry SDK.
@@ -129,7 +129,7 @@ Reports a message and dispatches it to the current scope.
 
 This SHOULD be equivalent to calling `get_current_scope().capture_message(message)`.
 
-The level can be optional in language with default parameters in which case it should default to `info`.
+The level can be optional in languages with default parameters in which case it should default to `info`.
 
 ### `add_breadcrumb(crumb)`
 
