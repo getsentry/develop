@@ -94,14 +94,6 @@ export default () => {
           <SidebarLink to="/dynamic-sampling/" title="Dynamic Sampling">
             <Children tree={tree.find(n => n.name === 'dynamic-sampling').children} />
           </SidebarLink>
-          <SidebarLink
-            to="/delightful-developer-metrics/"
-            title="Sentry Developer Metrics"
-          >
-            <Children
-              tree={tree.find(n => n.name === 'delightful-developer-metrics').children}
-            />
-          </SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
