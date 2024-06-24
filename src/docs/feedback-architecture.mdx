@@ -38,11 +38,11 @@ which
 ## Feedback events
 
 The new and preferred way to send feedback from the SDK is as an [event item](https://develop.sentry.dev/sdk/envelopes/#full-examples), 
-in a MessagePack'ed envelope. The item type is the same as errors, but event 
+in a MessagePack'ed envelope. The item type is the same as errors, except the event 
 type = `"feedback"`. While user reports have an associated event, 
 **new feedback _is_ an event**. This offers 2 improvements:
 
-1. Users can submit generic feedback without an error occurring. The point of this feature is to catch things Sentry can’t!
+1. Users can submit generic feedback without an error occurring. The point of this feature is to allow users to catch things that Sentry can’t!
 2. Rather than waiting for the associated error to be ingested asynchronously, we immediately get access to context like the environment, platform, replay, user, tags...
 
 The user's submission is wrapped in a context object:
