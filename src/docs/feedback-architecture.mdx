@@ -81,7 +81,7 @@ We only use attachments for the widget’s screenshot feature, which allows user
 to submit **at most 1 screenshot per feedback**. Attachments are another [item type](https://develop.sentry.dev/sdk/envelopes/#attachment) 
 in an envelope.
 - SDK v8.0.0+, Relay v24.5.1+: Sends the feedback and attachment items in the same envelope.
-- SDK < v8, all Relay versions: Send a separate envelope for each item.
+- SDK < v8, all Relay versions: Sends a separate envelope for each item.
 
 **The feedback pipeline does not process attachments**. Relay routes them to
 a separate topic and storage, and the UI makes a separate request for them.
