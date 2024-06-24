@@ -25,7 +25,7 @@ release, url, etc.
 
 `CRASH_REPORT_EMBED_FORM`: The [crash report modal](https://docs.sentry.io/product/user-feedback/#crash-report-modal)
 
-## How it's stored
+## How feedback is stored
 On the backend, each feedback submission in Sentry's UI is **an un-grouped issue occurrence**, 
 saved via the [issues platform](https://develop.sentry.dev/issue-platform/).
 The entrypoint is [**`create_feedback_issue()`**](https://github.com/getsentry/sentry/blob/2b642e149c79b251e1c2f4339fc73d656347d74e/src/sentry/feedback/usecases/create_feedback.py#L184-L184),
