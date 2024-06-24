@@ -13,12 +13,12 @@ When broken down, there are **5** ways to create feedback in our system 😵‍�
 `FeedbackCreationSource(Enum)` in [create_feedback.py](https://github.com/getsentry/sentry/blob/2b642e149c79b251e1c2f4339fc73d656347d74e/src/sentry/feedback/usecases/create_feedback.py#L33-L33).
 The 4 ways _clients_ can create feedback are:
 
-`NEW_FEEDBACK_ENVELOPE`: The new format created by the Replay team when adding 
+`NEW_FEEDBACK_ENVELOPE`: [The new format](https://develop.sentry.dev/sdk/envelopes/#full-examples) created by the Replay team when adding 
 the [User Feedback Widget](https://docs.sentry.io/product/user-feedback/#user-feedback-widget) 
 to the JavaScript SDK. It allows adding more information, for example tags, 
 release, url, etc.
 
-`USER_REPORT_ENVELOPE`: The older format with name/email/comments, that requires 
+`USER_REPORT_ENVELOPE`: [The older format](https://develop.sentry.dev/sdk/envelopes/#user-feedback) with name/email/comments, that requires 
 `event_id` to link a Sentry error event.
 
 `USER_REPORT_DJANGO_ENDPOINT`: [The Web API](https://docs.sentry.io/api/projects/submit-user-feedback/)
@@ -37,12 +37,12 @@ which
 
 ## Feedback events
 
-The new and preferred way to send feedback from the SDK is as an [event item](https://develop.sentry.dev/sdk/envelopes/#full-examples), 
-in a MessagePack'ed envelope. The item type is the same as errors, except the event 
-type = `"feedback"`. While user reports have an associated event, 
-**new feedback _is_ an event**. This offers 2 improvements:
+The new and preferred way to send feedback from the SDK is as an [event envelope](https://develop.sentry.dev/sdk/envelopes/#full-examples). 
+The item type is the same as errors, except the event type = `"feedback"`. While 
+user reports have an associated event, **new feedback _is_ an event**. This 
+offers 2 improvements:
 
-1. Users can submit generic feedback without an error occurring. The point of this feature is to allow users to catch things that Sentry can’t!
+1. Users can submit generic feedback without an error occurring. We're allowing users to catch things that Sentry can’t!
 2. Rather than waiting for the associated error to be ingested asynchronously, we immediately get access to context like the environment, platform, replay, user, tags...
 
 The user's submission is wrapped in a context object:
@@ -124,9 +124,9 @@ This is the 5th, automated way of creating feedback.
 
 ### Envelopes
 
-User reports are also sent to Relay in [envelopes](https://develop.sentry.dev/sdk/envelopes/#user-feedback). 
-This item type is mistakenly called “user feedback” in some of our docs, but the 
-item header will read "user_report".
+User reports are also sent to Relay in [envelope format](https://develop.sentry.dev/sdk/envelopes/#user-feedback). 
+**This item type is mistakenly called “user feedback” in some of our docs, but the 
+item header will read "user_report".**
 
 The SDK function that sends these is `captureUserFeedback`.
 <br/>
