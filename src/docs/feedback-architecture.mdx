@@ -138,20 +138,30 @@ to Sentry, with
 `/api/0/projects/{organization_id_or_slug}/{project_id_or_slug}/user-feedback/`.
 
 See [https://docs.sentry.io/api/projects/submit-user-feedback/](https://docs.sentry.io/api/projects/submit-user-feedback/).
+
+---
+
+## Crash reports
+
+The **crash report modal** pops up when Sentry detects an error on the current 
+page, prompting users to describe what happened. On the backend, crash report 
+data is the same as user reports.
+
+You can install it as an [SDK integration](https://docs.sentry.io/platforms/javascript/user-feedback/#crash-report-modal).
+
+We implement it as a Django view:
+* URL: `/api/embed/error-page/`
+* Python Class: `error_page_embed.ErrorPageEmbedView`
+
+Crash reports are also shimmed to feedback. The pipeline is the same as the
+`/user-feedback` endpoint.
 <br/>
 
-### Crash reports
+### Sentry UI
 
-The crash report modal is a Django view -- an HTML form your app can render when 
-a page crashes. This was the earliest way of collecting feedback, and is for 
-submitting feedback when Sentry detects an error. You can install it as an [SDK integration](https://docs.sentry.io/platforms/javascript/user-feedback/#crash-report-modal).
-
-URL: `/api/embed/error-page/`
-
-Python Class: `error_page_embed.ErrorPageEmbedView`
-
-Crash reports are also shimmed to feedback. The pipeline is very similar to the 
-Django endpoint.
+You can view the crash reports tied to an issue at the "User Feedback" tab of 
+the Issue Details page. This also includes user reports submitted with the 
+old feedback API.
 
 ---
 
