@@ -102,6 +102,9 @@ export default () => {
               tree={tree.find(n => n.name === 'delightful-developer-metrics').children}
             />
           </SidebarLink>
+          <SidebarLink to="/feedback-architecture/">
+            User Feedback Architecture
+          </SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
