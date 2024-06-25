@@ -39,7 +39,7 @@ authtoken: <YOUR-NGROK-AUTHTOKEN>
 tunnels:
   acme-org
     proto: http
-    hostname: $yourname.ngrok.dev
+    hostname: <yourname>.ngrok.dev
     addr: 8010
     host_header: 'rewrite'
 ```
@@ -53,5 +53,5 @@ ngrok start --all --config ngrok.yml`
 When starting devserver provide your ngrok domain
 
 ```shell
-sentry devserver --ngrok=$yourname.ngrok.dev
+sentry devserver --ngrok=<yourname>.ngrok.dev
 ```

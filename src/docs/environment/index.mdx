@@ -80,16 +80,16 @@ authtoken: <YOUR-NGROK-AUTHTOKEN>
 tunnels:
   acme-org:
     proto: http
-    hostname: acme.$yourname.ngrok.dev
+    hostname: acme.<yourname>.ngrok.dev
     addr: 8000
   control-silo:
     proto: http
-    hostname: $yourname.ngrok.dev
+    hostname: <yourname>.ngrok.dev
     host_header: 'rewrite'
     addr: 8000
   region-silo:
     proto: http
-    hostname: us.$yourname.ngrok.dev
+    hostname: us.<yourname>.ngrok.dev
     addr: 8010
     host_header: 'rewrite'
 ```
@@ -98,10 +98,10 @@ Then run all the required servers
 
 ```shell
 # Run a control silo with ngrok
-sentry devserver --silo=control --ngrok $yourname.ngrok.dev
+sentry devserver --silo=control --ngrok <yourname>.ngrok.dev
 
 # Run a region silo without ngrok
-sentry devserver --silo=region --ngrok $yourname.ngrok.dev
+sentry devserver --silo=region --ngrok <yourname>.ngrok.dev
 
 # Run ngrok
 ngrok start --all --config regions.yml
