@@ -37,8 +37,8 @@ which
 
 ## Feedback events
 
-The new and preferred way to send feedback from the SDK is as an [event envelope](https://develop.sentry.dev/sdk/envelopes/#full-examples). 
-The item type is the same as errors, except the event type = `"feedback"`. While 
+The new and preferred way to send feedback from the SDK is in an [event envelope](https://develop.sentry.dev/sdk/envelopes/#full-examples). 
+The format is the same as error events, except the `type` header = `"feedback"`. While 
 user reports have an associated event, **new feedback _is_ an event**. This 
 offers 2 improvements:
 
