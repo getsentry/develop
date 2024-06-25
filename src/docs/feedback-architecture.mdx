@@ -65,10 +65,10 @@ event[”contexts”][”feedback”] = {
 - API: for SDK v8.0.0+, we use the `sendFeedback` function.
 <br/><br/>
 
-### Architecture diagram
+### Ingest diagram
 
-![](https://mermaid.ink/svg/pako:eNp1Uk1rwzAM_StGpxYaeg9jMNZu7LAdlu4w4hBcR21ME9vzR6G0_e-T05Rt0J0sy09P78k6gjQNQg5bJ2zLVguuefBxfbkWqIM7pBQPyvuIvkbdWKN0KDnMLykO1U0Eu8uye3bi8LxccTixqKjmCbFZC7ljHy9jHcHpoEBYW36a6NiDtZ2SIiijKzZyoN5jZywmonfsxCBqCAbEppZG-9ijm5RKb9GHbDN2ynBPLnw1TRU_uCvxV0QSzYRnEjt0BxaE36Uu0qEIWF9p6sFd4rj5MNCZXyo4jDqMlNE51HKY1KDC_FWh6Qd8MA7Lyds1nFY3gCR3mcwUgST0SaTXcS3KCYciBfNHmtuuNdHTnC4M__0J2XYqKRo5YAbUpReqoV04cs0Yh9BiT0Q5hZ3atoED12cCihhMcdAS8uAiziDahgayUIKWpod8IzpPWWwUGXm9bNewZOdvXfTgJg)
-[diagram source](https://mermaid.live/edit#pako:eNp1Uk1rwzAM_StGpxYaeg9jMNZu7LAdlu4w4hBcR21ME9vzR6G0_e-T05Rt0J0sy09P78k6gjQNQg5bJ2zLVguuefBxfbkWqIM7pBQPyvuIvkbdWKN0KDnMLykO1U0Eu8uye3bi8LxccTixqKjmCbFZC7ljHy9jHcHpoEBYW36a6NiDtZ2SIiijKzZyoN5jZywmonfsxCBqCAbEppZG-9ijm5RKb9GHbDN2ynBPLnw1TRU_uCvxV0QSzYRnEjt0BxaE36Uu0qEIWF9p6sFd4rj5MNCZXyo4jDqMlNE51HKY1KDC_FWh6Qd8MA7Lyds1nFY3gCR3mcwUgST0SaTXcS3KCYciBfNHmtuuNdHTnC4M__0J2XYqKRo5YAbUpReqoV04cs0Yh9BiT0Q5hZ3atoED12cCihhMcdAS8uAiziDahgayUIKWpod8IzpPWWwUGXm9bNewZOdvXfTgJg)
+![](https://mermaid.ink/svg/pako:eNptkc1qwzAQhF9F7MmGmN59KJSmx_ZQ91IsYxR5YwvbkqqfgEny7l05NW0hOg3a0erb2TNI0yGU0DthB_ax55rREdbWnyY69mTtpKQIyuiGFcUju3BAfcLJWORwYe84iYVrHlaxOo6tNNrHGV1WK92jD8URsTsIORZ4Qh18k6cXv76t8VfEiJ4JzyRO6BYWhB_TL9KhCNhubVrlfcTU425hbWf-UHD44TBSRudQS_QcbhTmP4WmNHwwDuvsbZN5c8dIuC9pmCoQwpwgvY4HUWccqiQenim3cTDRU055Azugl7NQHWV9TiFzCAPOVCxJTqofAgeur2QUMZhq0RLK4CLuINqOhtwrQTuat0vsFLG93pa37vD6DRJvo7g)
+[diagram source](https://mermaid.live/edit#pako:eNptkc1qwzAQhF9F7MmGmN59KJSmx_ZQ91IsYxR5YwvbkqqfgEny7l05NW0hOg3a0erb2TNI0yGU0DthB_ax55rREdbWnyY69mTtpKQIyuiGFcUju3BAfcLJWORwYe84iYVrHlaxOo6tNNrHGV1WK92jD8URsTsIORZ4Qh18k6cXv76t8VfEiJ4JzyRO6BYWhB_TL9KhCNhubVrlfcTU425hbWf-UHD44TBSRudQS_QcbhTmP4WmNHwwDuvsbZN5c8dIuC9pmCoQwpwgvY4HUWccqiQenim3cTDRU055Azugl7NQHWV9TiFzCAPOVCxJTqofAgeur2QUMZhq0RLK4CLuINqOhtwrQTuat0vsFLG93pa37vD6DRJvo7g)
 
 In Relay v24.5.1, we migrated feedback to its own kafka topic + consumer, 
 `ingest-feedback-events`. This decouples risk and ownership from errors 
@@ -102,24 +102,29 @@ user_report = {
 ```
 <br/>
 
-### Architecture diagram
+### Ingest diagram
+![](https://mermaid.ink/svg/pako:eNp9VE1v2zAM_SuEgAIu0CD3HAYM7Qrs0LVoehmswFBkJhZqS5o-AhRt__so2s62Npkvpomnx8dHyq9CuxbFSuyD8h083UgrU8zb8XONNoWXkpIpoHchNWhb74xNtRTLHDEsdojtVulnKTYjUAcVu2aCD65VPWGvSxIeOQl3JTnhiY9efxfdZauTcTbWt3MECwjZgrEQcIchYJhqRXXApsgYy5Uk0BM7MzTJNUdtkzBUCY_JxsSY8SQPLBZf4E2K77eAB_IAfHAaY8RWircz7B-zzHG25LHtiwtAe8DeeQRvPPbGMkB5X_90OcBX73ujVfFhM-uaTxQ1j9grHhEHjFCkwxtd1cbuMaaFSknpbqBG4uaSyUcAgz9bOKsaBw3KtsAzhRERJ3mzmIf79VMR8mFBzpCfOvl5Y_6rjE2M4HuVdi4MJXvSZyZxjaYFygOGitZwMsRpnYnV0kxpDdmSPzg-ZulWxOQC1tWPObzcnABSG9_KiqzpgqiB18PmraqrdXktr2l2z52jLvj02EDpabKLm4zL7FvSz86eWkXvYtoHjHVFpk2xFKMeLjdL-ZUxGPKGt5ZFs6J_KcWVIPWDMi3d-1dpAaRIHQ6EXVHYm32XpJD2nYAqJ7d-sVqsUsh4JUahN0bRXR3mJLaGSt2NPxL-n7z_BpMRmrE)
+[diagram source](https://mermaid.live/edit#pako:eNp9VE1v2zAM_SuEgAIu0CD3HAYM7Qrs0LVoehmswFBkJhZqS5o-AhRt__so2s62Npkvpomnx8dHyq9CuxbFSuyD8h083UgrU8zb8XONNoWXkpIpoHchNWhb74xNtRTLHDEsdojtVulnKTYjUAcVu2aCD65VPWGvSxIeOQl3JTnhiY9efxfdZauTcTbWt3MECwjZgrEQcIchYJhqRXXApsgYy5Uk0BM7MzTJNUdtkzBUCY_JxsSY8SQPLBZf4E2K77eAB_IAfHAaY8RWircz7B-zzHG25LHtiwtAe8DeeQRvPPbGMkB5X_90OcBX73ujVfFhM-uaTxQ1j9grHhEHjFCkwxtd1cbuMaaFSknpbqBG4uaSyUcAgz9bOKsaBw3KtsAzhRERJ3mzmIf79VMR8mFBzpCfOvl5Y_6rjE2M4HuVdi4MJXvSZyZxjaYFygOGitZwMsRpnYnV0kxpDdmSPzg-ZulWxOQC1tWPObzcnABSG9_KiqzpgqiB18PmraqrdXktr2l2z52jLvj02EDpabKLm4zL7FvSz86eWkXvYtoHjHVFpk2xFKMeLjdL-ZUxGPKGt5ZFs6J_KcWVIPWDMi3d-1dpAaRIHQ6EXVHYm32XpJD2nYAqJ7d-sVqsUsh4JUahN0bRXR3mJLaGSt2NPxL-n7z_BpMRmrE)
+<br/>
 
-![](https://mermaid.ink/svg/pako:eNqNVO9r2zAQ_VcOQSGFhnwPYzDaZvRDt9J0H4YdjCJfYq22pOlHoLT933eSbHdL3LJPVi7vnt69u9MzE7pGtmR7y00DD1elKr0L2_xzjcrbpxgqvXQuoKtQ1UZL5YuSLXKoZJtJBHyazz_DS8m-Xj-U7AWCpJwVYr3l4hF-3Ix5Fo22_h_m4NDOdz12BArLXVP18E7XvCXsZQzCfQrCbQz2eOKjz9_l7IISXmrlitVwgjnYoEAqsLhDa9H2dzl-wCrKyNfFIIBrZFd5XY3KelnIPY7BKvkwyQK9IzcrwAN5C8Zqgc5hHQ2aZj-OJo53rxyLPjsDVAdstUEw0mArVQJwY4qfOlj4YkwrBY8ubAZdQ0ZUc48tT61Ph4TgpMNIMSuk2qPzc-49F01HhbjNeSLPgAQ-NXBQ1Y8HVzWkjkJGuF7eIObu-zrNzdF4vEM-lXk6Lx8qy_MLpuV-p20Xo5M-JxJdCRqf0KGd0RD2hmghArEqkbYiWfKGS2mKts15bbGYfRuO55sJIJVxHUdkTevBuzQeKmx5MVvHz-KSevfYaKoiZ6c_x437HdDKqOEFjpZyLDbW31ubDHGLYGqqNXVhamyNdn5v0RWzu_70wc15vFN1Sfppu4ypfuktWUdBbV2iH9YBPHdx649ZR4lEOch548q9ndih_1GYKdgFI_87Lmt6EZ9LBVAy32BHkCUdW7lvfMlK9UpAHrxePynBlt4GvGBZ25Xk9NZ0QxBrSTfc5ic2vbSvfwAhyQKB)
-[diagram source](https://mermaid.live/edit#pako:eNqNVO9r2zAQ_VcOQSGFhnwPYzDaZvRDt9J0H4YdjCJfYq22pOlHoLT933eSbHdL3LJPVi7vnt69u9MzE7pGtmR7y00DD1elKr0L2_xzjcrbpxgqvXQuoKtQ1UZL5YuSLXKoZJtJBHyazz_DS8m-Xj-U7AWCpJwVYr3l4hF-3Ix5Fo22_h_m4NDOdz12BArLXVP18E7XvCXsZQzCfQrCbQz2eOKjz9_l7IISXmrlitVwgjnYoEAqsLhDa9H2dzl-wCrKyNfFIIBrZFd5XY3KelnIPY7BKvkwyQK9IzcrwAN5C8Zqgc5hHQ2aZj-OJo53rxyLPjsDVAdstUEw0mArVQJwY4qfOlj4YkwrBY8ubAZdQ0ZUc48tT61Ph4TgpMNIMSuk2qPzc-49F01HhbjNeSLPgAQ-NXBQ1Y8HVzWkjkJGuF7eIObu-zrNzdF4vEM-lXk6Lx8qy_MLpuV-p20Xo5M-JxJdCRqf0KGd0RD2hmghArEqkbYiWfKGS2mKts15bbGYfRuO55sJIJVxHUdkTevBuzQeKmx5MVvHz-KSevfYaKoiZ6c_x437HdDKqOEFjpZyLDbW31ubDHGLYGqqNXVhamyNdn5v0RWzu_70wc15vFN1Sfppu4ypfuktWUdBbV2iH9YBPHdx649ZR4lEOch548q9ndih_1GYKdgFI_87Lmt6EZ9LBVAy32BHkCUdW7lvfMlK9UpAHrxePynBlt4GvGBZ25Xk9NZ0QxBrSTfc5ic2vbSvfwAhyQKB)
-
-### [`save_userreport()`](https://github.com/getsentry/sentry/blob/2b642e149c79b251e1c2f4339fc73d656347d74e/src/sentry/ingest/userreport.py#L28-L28)
+### Shimming to feedback
 
 Before it was extended to generic feedback, the [`UserReport` model](https://github.com/getsentry/sentry/blob/2b642e149c79b251e1c2f4339fc73d656347d74e/src/sentry/models/userreport.py#L9-L9) 
 was first used for crash reports. Therefore an associated event ID is required, and 
 we use it to set environment and group before saving the model to **Postgres**. 
-Then we shim the report to a **feedback event** and pass it to `create_feedback_issue()`.
+Only then can we shim the report to a **feedback event** and pass it to `create_feedback_issue()`.
 
 If the event hasn’t reached eventstore (Snuba) by the time of ingest, we still 
 save the report, but leave the environment + group empty and skip feedback creation.
 
-To ensure the skipped reports eventually get fixed and shimmed to feedback, we 
+To ensure the skipped reports eventually get fixed and shimmed, we 
 added a post process job to the errors pipeline: [`link_event_to_user_report()`](https://github.com/getsentry/sentry/blob/2b642e149c79b251e1c2f4339fc73d656347d74e/src/sentry/tasks/post_process.py#L1387-L1387).
 This is the 5th, automated way of creating feedback.
+
+Simplified diagram:
+![](https://mermaid.ink/svg/pako:eNpdULtuwzAM_BWBUwIkzm4UXZq1QIF0MwNDlllLTfSoKAUokvx7ZasZWi06kMfj8a6g_EjQwhRl0OJ9j06Ux9rYPvn-g2gcpDqJ7fZZ3BCapkG4CXZ5kN3qMH-7l7NRJ-0z0_qIDtPSfAx8ZYqGWNCFXOLkI83zIfSffqirKu4QKEYfWQTPSYToFTGLmQVH8fRXbZfDKBPxIlXoUyTuVghvvxihOqnSi5X_B9XdsAFL0UozlgSucw0habLFZFvg2Uw6IaC7F6LMyR--nYI2xUwbqB72Rpbk7KNIoyk3vtZIl2TvP_9DeX4)
+[diagram source](https://mermaid.live/edit#pako:eNpdULtuwzAM_BWBUwIkzm4UXZq1QIF0MwNDlllLTfSoKAUokvx7ZasZWi06kMfj8a6g_EjQwhRl0OJ9j06Ux9rYPvn-g2gcpDqJ7fZZ3BCapkG4CXZ5kN3qMH-7l7NRJ-0z0_qIDtPSfAx8ZYqGWNCFXOLkI83zIfSffqirKu4QKEYfWQTPSYToFTGLmQVH8fRXbZfDKBPxIlXoUyTuVghvvxihOqnSi5X_B9XdsAFL0UozlgSucw0habLFZFvg2Uw6IaC7F6LMyR--nYI2xUwbqB72Rpbk7KNIoyk3vtZIl2TvP_9DeX4)
+
 <br/>
 
 ### Envelopes
@@ -138,10 +143,9 @@ to Sentry, with
 `/api/0/projects/{organization_id_or_slug}/{project_id_or_slug}/user-feedback/`.
 
 See [https://docs.sentry.io/api/projects/submit-user-feedback/](https://docs.sentry.io/api/projects/submit-user-feedback/).
+<br/>
 
----
-
-## Crash reports
+### Crash reports
 
 The **crash report modal** pops up when Sentry detects an error on the current 
 page, prompting users to describe what happened. On the backend, crash report 
@@ -155,21 +159,25 @@ We implement it as a Django view:
 
 Crash reports are also shimmed to feedback. The pipeline is the same as the
 `/user-feedback` endpoint.
-<br/>
 
-### Sentry UI
+---
 
-You can view the crash reports tied to an issue at the "User Feedback" tab of 
-the Issue Details page. This also includes user reports submitted with the 
-old feedback API.
+## Sentry UI
+
+![](https://mermaid.ink/svg/pako:eNp9Uj1vwjAQ_SvWTUECsWdgKaViqFQVmDhUmeRILBI7tc8DAv577YRAG6F68fn53b37OkNmcoIUCiubUqznqEU4zu87YMXGyoJcB8fTGMeFJbdNED5utkg2juwnNcayGyGMdg--034vt8kqXtOXSmXH0nhHPYV03hmokR-ypNmeIoSsnPPkvgKxMUrzFmHaQQi7pwwxmczEBeHtdY1wEV4FlwVRvpfZUWyWIpkebq_RPYRtc_8jEpK0k57ZEvuSBuSB3u23lV3GzMScWKrKRe2ZiJ0Si2dh_y_jHvZX3zqzn0jv8O3JqtieyzDTtsdxEE-oA3UYQ022lioPy3GOQghcUk0IaTArVZSMgPoaiNKzWZ10BilbT2PwTS6Z5kqGYdaQHmTlAkq5Csv03q1bu3XXH4El2dU)
+[diagram source](https://mermaid.live/edit#pako:eNp9Uj1vwjAQ_SvWTUECsWdgKaViqFQVmDhUmeRILBI7tc8DAv577YRAG6F68fn53b37OkNmcoIUCiubUqznqEU4zu87YMXGyoJcB8fTGMeFJbdNED5utkg2juwnNcayGyGMdg--034vt8kqXtOXSmXH0nhHPYV03hmokR-ypNmeIoSsnPPkvgKxMUrzFmHaQQi7pwwxmczEBeHtdY1wEV4FlwVRvpfZUWyWIpkebq_RPYRtc_8jEpK0k57ZEvuSBuSB3u23lV3GzMScWKrKRe2ZiJ0Si2dh_y_jHvZX3zqzn0jv8O3JqtieyzDTtsdxEE-oA3UYQ022lioPy3GOQghcUk0IaTArVZSMgPoaiNKzWZ10BilbT2PwTS6Z5kqGYdaQHmTlAkq5Csv03q1bu3XXH4El2dU)
+
+You can view the user reports related to an issue at the "User Feedback" tab of 
+the Issue Details page. This includes crash reports AND feedback submitted 
+through the old API.
 
 ---
 
 ## Email alerts
 
-Email alerts are triggered in feedback issue’s post process pipeline. (Unrelated 
-to the task in the user report diagram.) It’s the same alerts as generic, 
-non-error issues, but we apply some feedback-specific filters. **We skip emails if:**
+Email alerts are triggered in feedback’s post process pipeline. (Unrelated to  
+the post process diagram above.) We apply some feedback-specific 
+filters, **skipping emails if:**
 
 1. The feedback is [marked as spam](https://docs.sentry.io/product/user-feedback/#spam-detection-for-user-feedback) AND the `organizations.user-feedback-spam-filter-actions` feature flag is enabled.
 2. The source is NOT a new feedback envelope / the widget, AND the “Crash Report Notifications” setting is disabled.
