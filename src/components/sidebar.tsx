@@ -94,6 +94,9 @@ export default () => {
           <SidebarLink to="/dynamic-sampling/" title="Dynamic Sampling">
             <Children tree={tree.find(n => n.name === 'dynamic-sampling').children} />
           </SidebarLink>
+          <SidebarLink to="/feedback-architecture/">
+            User Feedback Architecture
+          </SidebarLink>
         </ul>
       </li>
       <li className="mb-3" data-sidebar-branch>
