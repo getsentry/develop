@@ -2,7 +2,7 @@
 title: User Feedback Architecture
 ---
 
-**The goal of this doc is to give engineers an in-depth, systems-level understanding of User Feedback.**
+**The goal of this doc is to give engineers an in-depth understanding of User Feedback's backend.**
 It will:
 1. describe the relevant ingestion pipelines, data models, and functions.
 2. explain the difference between “feedback”, “user reports”, and “crash reports”, and why we built and need to support each.
@@ -167,9 +167,8 @@ Crash reports are also shimmed to feedback. The pipeline is the same as the
 ![](https://mermaid.ink/svg/pako:eNp9Uj1vwjAQ_SvWTUECsWdgKaViqFQVmDhUmeRILBI7tc8DAv577YRAG6F68fn53b37OkNmcoIUCiubUqznqEU4zu87YMXGyoJcB8fTGMeFJbdNED5utkg2juwnNcayGyGMdg--034vt8kqXtOXSmXH0nhHPYV03hmokR-ypNmeIoSsnPPkvgKxMUrzFmHaQQi7pwwxmczEBeHtdY1wEV4FlwVRvpfZUWyWIpkebq_RPYRtc_8jEpK0k57ZEvuSBuSB3u23lV3GzMScWKrKRe2ZiJ0Si2dh_y_jHvZX3zqzn0jv8O3JqtieyzDTtsdxEE-oA3UYQ022lioPy3GOQghcUk0IaTArVZSMgPoaiNKzWZ10BilbT2PwTS6Z5kqGYdaQHmTlAkq5Csv03q1bu3XXH4El2dU)
 [diagram source](https://mermaid.live/edit#pako:eNp9Uj1vwjAQ_SvWTUECsWdgKaViqFQVmDhUmeRILBI7tc8DAv577YRAG6F68fn53b37OkNmcoIUCiubUqznqEU4zu87YMXGyoJcB8fTGMeFJbdNED5utkg2juwnNcayGyGMdg--034vt8kqXtOXSmXH0nhHPYV03hmokR-ypNmeIoSsnPPkvgKxMUrzFmHaQQi7pwwxmczEBeHtdY1wEV4FlwVRvpfZUWyWIpkebq_RPYRtc_8jEpK0k57ZEvuSBuSB3u23lV3GzMScWKrKRe2ZiJ0Si2dh_y_jHvZX3zqzn0jv8O3JqtieyzDTtsdxEE-oA3UYQ022lioPy3GOQghcUk0IaTArVZSMgPoaiNKzWZ10BilbT2PwTS6Z5kqGYdaQHmTlAkq5Csv03q1bu3XXH4El2dU)
 
-You can view the user reports related to an issue at the "User Feedback" tab of 
-the Issue Details page. This includes crash reports AND feedback submitted 
-through the old API.
+You can view the user reports related to a specific issue at the "User Feedback" 
+tab of Issue Details. This excludes "new" feedback (anything sent from the widget).
 
 ---
 
@@ -193,6 +192,6 @@ To disable all UI features and/or ingestion, set these to false:
 * `organizations:feedback-visible`
 * `organizations:user-feedback-ingest`
 
-To disable LLM spam filters, set these to false:
+To disable auto spam filters, set these to false:
 * `organizations:user-feedback-spam-filter-ingest`
 * `organizations:user-feedback-spam-filter-actions`
