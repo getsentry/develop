@@ -214,6 +214,7 @@ export default () => {
               Exception Interface
             </SidebarLink>
             <SidebarLink to="/sdk/event-payloads/message/">Message Interface</SidebarLink>
+            <SidebarLink to="/sdk/event-payloads/release/">Release Detection</SidebarLink>
             <SidebarLink to="/sdk/event-payloads/request/">Request Interface</SidebarLink>
             <SidebarLink to="/sdk/event-payloads/sdk/">SDK Interface</SidebarLink>
             <SidebarLink to="/sdk/event-payloads/stacktrace/">
