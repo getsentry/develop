@@ -91,7 +91,7 @@ To run the test locally, run `pytest` with `--migrations` flag. For example, `py
 ### Backup Testing
 When you add or change a model, an error message in CI may appear explaining that one or multiple tests "produced an `export.json` backup file that was missing the above models".
 In order to resolve this, there are two steps:
-1. Add the new or modified model to the exhaustive organization in [testutils/helpers/backups.py](https://github.com/getsentry/sentry/blob/master/src/sentry/testutils/helpers/backups.py) by creating an instance of your model, for example MyModel.objects.create(). This ensures the presence of the new model when creating the snapshot and during testing.
+1. Add the new or modified model to the exhaustive organization in [testutils/helpers/backups.py](https://github.com/getsentry/sentry/blob/master/src/sentry/testutils/helpers/backups.py#L366) by creating an instance of your model, for example by invoking MyModel.objects.create(). This ensures the presence of the new model when creating the snapshot and during testing.
 2. The snapshot files can be regenerated using the following command:
 ```
 SENTRY_SNAPSHOTS_WRITEBACK=1 pytest tests/sentry/backup/test_sanitize.py
