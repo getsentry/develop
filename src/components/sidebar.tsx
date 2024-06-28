@@ -226,6 +226,7 @@ export default () => {
             <SidebarLink to="/sdk/event-payloads/user/">User Interface</SidebarLink>
           </SidebarLink>
           <SidebarLink to="/sdk/profiles/">Profiles</SidebarLink>
+          <SidebarLink to="/sdk/replays/">Replays</SidebarLink>
           <SidebarLink to="/sdk/metrics/">Metrics</SidebarLink>
           <SidebarLink to="/sdk/check-ins/">Check-Ins</SidebarLink>
           <SidebarLink to="/sdk/sessions/">Sessions</SidebarLink>
