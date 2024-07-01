@@ -241,6 +241,10 @@ Examples of where we had to provide our own propagation before POTel:
 - Reactive libraries ([current Sentry implementation](https://github.com/getsentry/sentry-java/blob/8c08ad9170b5549ddbc469a5c9ee6804aa6577a5/sentry-spring-jakarta/src/main/java/io/sentry/spring/jakarta/webflux/ReactorUtils.java) vs [OTEL](https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/instrumentation/reactor/reactor-3.1/library/src/main/java/io/opentelemetry/instrumentation/reactor/v3_1/TracingSubscriber.java?rgh-link-date=2024-02-28T11%3A58%3A57Z))
 - Executor libraries where you can schedule a task to be run on another thread ([current Sentry implementation](https://github.com/getsentry/sentry-java/blob/39e3ed71814ad6ec3406a344aa341c68ed1b98d4/sentry/src/main/java/io/sentry/SentryWrapper.java))
 
+##### Restoring `Context`
+
+OTel has a lifecycle token called `Scope` which they hand back from `context.makeCurrent()` and `span.makeCurrent()`. The user is expected to call `.close()` on this token. However if any of the inner `Scope` objects is not closed, parent `Scope` objects do not restore the previous `Context`.
+This is problematic since we fork `Scopes` and make them the current one (which implies forking `Context` and `context.makeCurrent()`) the first time a customer calls static API on a thread (or when there's no valid `Scopes` available on that thread yet). For the Java SDK we opted to customize `ContextStorage` to hand back a customized OTel `Scope` that restores the previous `Context` regardless of inner `Scope` instances not being cleaned up properly. You can find more details in [the Java PR](https://github.com/getsentry/sentry-java/pull/3517).
 
 #### Hook
 
@@ -285,13 +289,25 @@ We can use `Propagator.extract` to fork isolation scope. We try to read the `Sco
 [If forking in `Propagator.extract` doesn't work out, we can try and check if a span has a parent in the current process (`span.isRemote`) and create an isolation scope if not.]
 
 
-#### Tracing Without Performance
+#### Tracing
+
+See this [Miro Board](https://miro.com/app/board/uXjVKEYoyF4=/) to learn how auto instrumentation, OpenTelemetry API and Sentry API play together in terms of incoming and outgoing tracing.
+
+##### IDs
+
+- We couldn't find a way to force certain span IDs to be used by OpenTelemetry, only trace ID was possible.
+- When sending spans to Sentry we should keep the same span and trace ID used by OpenTelemetry and not accidentally create new ones which could render the trace useless.
+
+##### Tracing Without Performance
 
 Untested: 
 In `Propagator.extract` we can create `PropagationContext` from incoming headers (or similar metadata) or fall back to creating a new `PropagationContext` with random IDs. We then store this `PropagationContet` on the isolation scope. In `Propagator.inject` and when sending events to Sentry, we can use that `PropagationContext` from isolation scope and generate headers (or similar).
 
 - tbd: how does freezing DSC/baggage work? Can we simply freeze whenever the first request (or similar) goes out?
 - tbd: should Sentry.continueTrace write to isolation scope? Would it then also need to always fork an isolation scope at the same time? Should it create a new span (in case performance is enabled)?
+
+Problems with this approach:
+- Not all requests go through Propagator `extract` and `inject`. See [Miro Board](https://miro.com/app/board/uXjVKEYoyF4=/). It's usually only those that are coming from OpenTelemetry auto instrumentation and it's not easily possible to use the OpenTelemetry SDK in a way where `extract` and `inject` are used for manual instrumentation.
 
 #### Where to Store Sentry Span
 
@@ -300,3 +316,39 @@ Until we can completely remove Sentry `Span` and solely rely on OTel spans, we c
 #### What to Move Along When Execution moves e.g. to Another Thread
 
 When execution moves e.g. to another thread, we should bring along isolation scope and current scope. It may also make sense to have current scope forked in this case. If we're able to rely on OTels `Context` propagation, this should automatically be taken care of. See the right side of [this miro board](https://miro.com/app/board/uXjVNtPiOfI=/) for examples.
+
+#### What does Sentry Performance API look like?
+
+tbd. There's no final decision on this matter yet. See [DACI](https://www.notion.so/sentry/DACI-Span-API-for-SDKs-using-OpenTelemetry-for-Performance-POTel-9d1c38b4f0a04ce6be87148370194edc#00449b639772432989a83a5e67cd72bc)
+
+#### Span status
+
+Span status can be set on the OpenTelemetry span by serializing it into the `description` String of `setStatus(StatusCode statusCode, String description)` and then deserializing it when sending to Sentry or when Sentry span API is invoked.
+
+#### Usage of OpenTelemetry span attributes
+
+Since we're storing some internal information in OpenTelemetry span attributes (e.g. sampling decision, baggage, remote flag, ...), we should remove these internal attributes before sending the span to Sentry.
+
+#### Sampling
+
+We should try to configure a sampler in the OpenTelemetry SDK and use Sentry configuration for sampling in there. This sampling decision can then be copied when sending the spans to Sentry. We should not sample again when sending but just rely on the previous decision. The sampling decision can also be copied onto the span wrapper in case the Sentry SDKs implementation makes use of such a wrapper instead of handing back OpenTelemetry spans from Sentry API directly.
+
+The OpenTelemetry sampler should also be used to filter out OpenTelemetry spans created for internal Sentry requests. This avoids spamming when customers are also using OTLP for exporting (which are not affected by what we send to Sentry in `SpanExporter`).
+
+There are three kinds of OpenTelemetry sampling decision:
+- RECORD_AND_SAMPLE: Goes through `SpanProcessor` and `SpanExporter`
+- RECORD_ONLY: Only goes through `SpanProcessor` but not into `SpanExporter`
+- DROP: Does NOT go into `SpanProcessor` or `SpanExporter`
+
+To support Sentry API like custom sampling context, we still make the sampling decision for `startTransaction` in `Scopes` (used to be `Hub`) and then serialize it into separate OpenTelemetry span attributes (sampled, sample_rate, ...) when creating the OpenTelemetry span. The sampler we condigured for the OpenTelemetry SDK then makes use of these serialized attributes and reconstructs the sampling decision. We did it this way because we couldn't find a way to transfer the custom sampling context into the OpenTelemetry sampler without some kind of global storage.
+
+#### Supporting the Sentry SDK with and without OpenTelemetry
+
+In case it makes sense for an SDK to keep supporting previous instrumentation or an SDK cannot fully migrate to OpenTelemetry (yet), here's some things we did in those SDKs you might want to consider:
+
+- Storage of `Scopes` (used to be `Hub`) should be made configurable to use OpenTelemetry if available or use the previous way of storing otherwise (e.g. `ThreadLocal`).
+- Performance API should be configurable as to whether it creates Sentry or OpenTelemetry spans under the hood.
+	- NOTE: Be careful, when using Sentry API in `SpanExporter` to not create a loop and instead force usage of Sentry spans for this.
+- To avoid duplicate spans when using both OpenTelemetry and previous Sentry instrumentation, we've added an `ignoredSpanOrigins` option which we pre-configure in OpenTelemetry mode to ignore spans coming from certain integrations we know would be duplicates.
+	- Since Performance instrumentation and other Sentry feaures, like Errors, CRONS etc. are sometimes closely tied together into a single integration, this was the easiest way to allow opt-out of certain spans without creating tons of opt-out flags.
+- Sentry `Transaction` in OpenTelemetry mode is like a proxy that forwards to the root span which is only there to keep supporting previous API
