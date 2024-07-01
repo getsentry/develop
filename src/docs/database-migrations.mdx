@@ -97,7 +97,7 @@ In order to resolve this, there are two steps:
 SENTRY_SNAPSHOTS_WRITEBACK=1 pytest tests/sentry/backup/test_sanitize.py
 ```
 
-There are also tests for model dependencies that make use of automatically generated fixtures in tests/sentry/backup/test_dependencies.py. These tests will fail if they are not updated when a new model with dependencies on other models is added, or dependencies are modified. In order to re-generate the model dependency graphs, you can run bin/generate-model-dependency-fixtures.
+There are also tests for model dependencies that make use of automatically generated fixtures in tests/sentry/backup/test_dependencies.py. These tests will fail if they are not updated when a new model with dependencies on other models is added, or dependencies are modified. In order to re-generate the model dependency graphs, you can run [bin/generate-model-dependency-fixtures](https://github.com/getsentry/sentry/blob/f9e6aa610340fd41cc13490aeda71b06bbc933c2/bin/generate-model-dependency-fixtures).
 
 #### Notes
 
