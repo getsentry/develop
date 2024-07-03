@@ -351,4 +351,5 @@ In case it makes sense for an SDK to keep supporting previous instrumentation or
 	- NOTE: Be careful, when using Sentry API in `SpanExporter` to not create a loop and instead force usage of Sentry spans for this.
 - To avoid duplicate spans when using both OpenTelemetry and previous Sentry instrumentation, we've added an `ignoredSpanOrigins` option which we pre-configure in OpenTelemetry mode to ignore spans coming from certain integrations we know would be duplicates.
 	- Since Performance instrumentation and other Sentry feaures, like Errors, CRONS etc. are sometimes closely tied together into a single integration, this was the easiest way to allow opt-out of certain spans without creating tons of opt-out flags.
+	- This implies that we're disabling Sentry performance for those spans where there would be duplicates. We should compare Sentry spans and OpenTelemetry spans and then make a decision on which to keep.
 - Sentry `Transaction` in OpenTelemetry mode is like a proxy that forwards to the root span which is only there to keep supporting previous API
