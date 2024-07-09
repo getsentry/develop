@@ -71,7 +71,7 @@ Running `sentry devserver` will automatically use HTTPS when the certificates ha
 
 Some services are not run in all situations. Among those are <Link to="/services/relay/">Relay</Link> and the ingest workers. 
 
-<b>If you need to ingest errors, but don't require metrics ingestion: </b> Set `SENTRY_USE_RELAY=True` in `~/.sentry/sentry.conf.py`. If `sentry devservices` 
+**If you need to ingest errors, but don't require metrics ingestion:** Set `SENTRY_USE_RELAY=True` in `~/.sentry/sentry.conf.py`. If `sentry devservices` 
 is currently up, make sure to restart it after you make the change. This will launch Relay as part of the `devserver` workflow.
 
 Additionally, you can explicitly control this during `devserver` usage with the `--ingest` and `--no-ingest` flags. The `sentry devservices`
@@ -82,7 +82,7 @@ sentry devservices up --skip-only-if relay
 sentry devserver --workers --ingest
 ```
 
-<b>If you want to enable the entire metrics ingestion pipeline:</b> You need to add the following to your config at `~/.sentry/sentry.conf.py`:
+**If you want to enable the entire metrics ingestion pipeline:** You need to add the following to your config at `~/.sentry/sentry.conf.py`:
 
 ```python
 SENTRY_USE_RELAY = True
