@@ -99,6 +99,42 @@ sentry devservices rm snuba
 sentry devservices up snuba
 ```
 
+## Running the Getsentry Development Server
+
+<Alert title="Employees Only" level="warning">
+  Only Sentry employees have access to getsentry.
+</Alert>
+
+See also: <Link to="/sentry-vs-getsentry/">Sentry vs Getsentry</Link>
+
+Just like running `sentry` (see above), you can start the `devservices` using the following command in the `getsentry` folder:
+
+```shell
+sentry devservices up
+```
+
+After that, you can start the development server inside the `getsentry` folder:
+
+```shell
+getsentry devserver --workers
+```
+
+**Note**: You **cannot** have both sentry and getsentry devserver running at the same time.
+
+After the server warms up for a little while, you must access it
+at [http://dev.getsentry.net:8000](http://dev.getsentry.net:8000/).
+Using localhost doesn't work.
+
+If you need to overwrite configuration options for your local
+environment, you can create `getsentry/conf/settings/devlocal.py` and put the
+configuration option overrides there. This module will be automatically imported
+by `dev.py` if it exists.
+
+To enable the ingest workers, follow the steps described <Link to="#ingestion-pipeline-relay">here</Link> and run 
+```shell
+getsentry devserver --workers --ingest```
+
+
 ## Running siloed instances
 
 By default `sentry devserver` will run a monolith mode application server. You can also run ``devserver`` with siloed application instances. Before you do, you need to <Link to="/database-migrations/#cloning-a-monolith-database">create split silo databases</Link>.
@@ -170,41 +206,6 @@ SENTRY_SILO_DEVSERVER=1 SENTRY_SILO_MODE=CONTROL getsentry django shell
 # Start a region silo shell
 SENTRY_SILO_DEVSERVER=1 SENTRY_SILO_MODE=REGION SENTRY_REGION=us getsentry django shell
 ```
-
-## Running the Getsentry Development Server
-
-<Alert title="Employees Only" level="warning">
-  Only Sentry employees have access to getsentry.
-</Alert>
-
-See also: <Link to="/sentry-vs-getsentry/">Sentry vs Getsentry</Link>
-
-Just like running `sentry` (see above), you can start the `devservices` using the following command in the `getsentry` folder:
-
-```shell
-sentry devservices up
-```
-
-After that, you can start the development server inside the `getsentry` folder:
-
-```shell
-getsentry devserver --workers
-```
-
-**Note**: You **cannot** have both sentry and getsentry devserver running at the same time.
-
-After the server warms up for a little while, you must access it
-at [http://dev.getsentry.net:8000](http://dev.getsentry.net:8000/).
-Using localhost doesn't work.
-
-If you need to overwrite configuration options for your local
-environment, you can create `getsentry/conf/settings/devlocal.py` and put the
-configuration option overrides there. This module will be automatically imported
-by `dev.py` if it exists.
-
-To enable the ingest workers, follow the steps described <Link to="#ingestion-pipeline-relay">here</Link> and run 
-```shell
-getsentry devserver --workers --ingest```
 
 ## Troubleshooting
 
