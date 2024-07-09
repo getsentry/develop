@@ -67,14 +67,15 @@ yarn mkcert-localhost
 
 Running `sentry devserver` will automatically use HTTPS when the certificates have been installed.
 
-
 ### Ingestion Pipeline (Relay)
 
-Some services are not run in all situations. Among those are <Link to="/services/relay/">Relay</Link> and the ingest workers.
+Some services are not run in all situations. Among those are <Link to="/services/relay/">Relay</Link> and the ingest workers. 
 
-<b>If you need to ingest errors, but don't require metrics ingestion: </b> Set `SENTRY_USE_RELAY=True` in `~/.sentry/sentry.conf.py`. If `sentry devservices` is currently up, make sure to restart it after you make the change. This will launch Relay as part of the `devserver` workflow.
+<b>If you need to ingest errors, but don't require metrics ingestion: </b> Set `SENTRY_USE_RELAY=True` in `~/.sentry/sentry.conf.py`. If `sentry devservices` 
+is currently up, make sure to restart it after you make the change. This will launch Relay as part of the `devserver` workflow.
 
-Additionally, you can explicitly control this during `devserver` usage with the `--ingest` and `--no-ingest` flags. The `sentry devservices` command will not update Relay automatically in that case, to do this manually run:
+Additionally, you can explicitly control this during `devserver` usage with the `--ingest` and `--no-ingest` flags. The `sentry devservices`
+command will not update Relay automatically in that case, to do this manually run:
 
 ```shell
 sentry devservices up --skip-only-if relay
@@ -121,20 +122,24 @@ In the above setup your local environment will use org slug domains, and send re
 
 ### Ngrok and siloed servers
 
-To combine ngrok and local development servers you’ll need to reserve two domains in ngrok, and create a configuration file for ngrok:
+To combine ngrok and local development servers you’ll need to reserve multiple domains in ngrok, and create a configuration file for ngrok:
 
 ```yaml
 version: '2'
 authtoken: <YOUR-NGROK-AUTHTOKEN>
 tunnels:
+  acme-org:
+    proto: http
+    hostname: acme.<yourname>.ngrok.dev
+    addr: 8000
   control-silo:
     proto: http
-    hostname: $yourname.ngrok.dev
+    hostname: <yourname>.ngrok.dev
     host_header: 'rewrite'
     addr: 8000
   region-silo:
     proto: http
-    hostname: us.$yourname.ngrok.dev
+    hostname: us.<yourname>.ngrok.dev
     addr: 8010
     host_header: 'rewrite'
 ```
@@ -143,16 +148,16 @@ Then run all the required servers
 
 ```shell
 # Run a control silo with ngrok
-sentry devserver --silo=control --ngrok $yourname.ngrok.dev
+sentry devserver --silo=control --ngrok <yourname>.ngrok.dev
 
 # Run a region silo without ngrok
-sentry devserver --silo=region --ngrok $yourname.ngrok.dev
+sentry devserver --silo=region --ngrok <yourname>.ngrok.dev
 
 # Run ngrok
 ngrok start --all --config regions.yml
 ```
 
-This setup will result in both the region and control servers responding to different domains, and CORS will work similar to production.
+This setup will result in both the region and control servers responding to different domains. The multi-region setup with ngrok also enables customer-domains and you'll need ngrok domains for each organization you plan on using. In this configuration, CORS will work similar to production. For ngrok setup with non-siloed development server see <Link to="/backend/development-server/">developement server</Link>.
 
 ### Siloed Django Shell
 
@@ -199,7 +204,8 @@ by `dev.py` if it exists.
 
 To enable the ingest workers, follow the steps described <Link to="###Ingestion Pipeline (Relay)">here</Link> and run ```shell
 getsentry devserver --workers --ingest
-```
+
+## Troubleshooting
 
 You might also be interested in <Link to="/continuous-integration/#troubleshooting-ci">troubleshooting CI</Link>.
 
