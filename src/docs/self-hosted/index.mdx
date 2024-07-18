@@ -107,6 +107,31 @@ By default Sentry sends anonymous usage statistics to the Sentry team. It helps 
 
 You can disable this feature by adding `SENTRY_BEACON = False` into `sentry.conf.py` file.
 
+### Errors-only Self-hosted Sentry
+
+This feature is experimental and now in beta. Starting from 24.8.0+ onwards, users will have the option to choose between two types of self-hosted Sentry deployments.
+
+**Errors Only**
+This is an opt in version of self-hosted Sentry that is much more lightweight than the feature complete version. This includes features around Sentry's bread and butter, issues.
+1. Issues
+2. Alerts
+3. Integrations
+4. Dashboards
+5. Releases
+6. Discover
+
+**Feature Complete**
+This is the default version of self-hosted Sentry that includes many of the features that we offer on SaaS. This includes everything offered in the errors only version but also additional main features listed below!
+1. Traces
+2. Profiles
+3. Replays
+4. Insights (Requests, Queries, Assets, etc)
+5. User Feedback
+6. Performance
+7. Crons
+
+In order to enable errors only self-hosted, you'll need to update your [.env file](https://github.com/getsentry/self-hosted/blob/master/.env) to include `COMPOSE_PROFILES=errors-only`.
+
 ## Configuration
 
 You very likely will want to adjust the default configuration for your Sentry installation as well. These facilities are available for that purpose:
