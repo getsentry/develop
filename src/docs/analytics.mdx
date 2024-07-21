@@ -101,18 +101,8 @@ analytics.record(
 
 Run the tests that touch the endpoint to ensure everything is Gucci.
 
-### Step 3: Add it to ETL
-
-To also send the analytics event in Amplitude, add the event to this file: [https://github.com/getsentry/etl/blob/master/etl/operators/analytics_events_schema.py](https://github.com/getsentry/etl/blob/master/etl/operators/analytics_events_schema.py)
-
-```jsx
-'my_backend_event.sent': { // Needs to match the `type` field in the class you created in step 1
-    'name': 'My Backend Event', // The event name in Amplitude
-    'uid_field': 'target_user_id' // Optional. Field name that represents the user id of the event.
-},
-```
-
-Note that in the future this will change so that by default, all events will go to Amplitude.
+### Step 3: 
+By default, a new event type is aggregated and sent to Amplitude as long as there is a user_id sent along with the event. If you would like to send events unaggregated, refer to [our Amplitude aggregation docs](https://github.com/getsentry/etl/blob/master/documentation/amplitude_analytics.md)
 
 ## Route-Based Frontend Analytics
 
@@ -248,6 +238,10 @@ All events should be typed which specifies what the payload should be. We also d
 ### Naming Convention
 
 Our current naming convention for Reload events is `descriptor.action` e.g. what we have above with `example_tutorial.created` and `example_tutorial.deleted` . You want these to be specific enough to capture the action of interest but not too specific that you have a million distinctly named events with information that could be captured in the data object. For example, if you can create your example tutorial from multiple places, fight the urge to have the source as part of your descriptor i.e. `example_tutorial_onboarding.created` and `example_tutorial_settings.created`. Your future self running analytics will thank you. Amplitude event names should be similar to the Reload event name except you should capitalize the words and use spaces instead of underscores.
+
+### Testing your Analytics Event 
+
+When developing locally, analytics events will not be sent to Reload or Amplitude. To test to see if your event is sending as expected and with the correct data, you can set "DEBUG_ANALYTICS" to "1" in local storage on your browser. Then it will log the analytics event data to your console, whenever it would've sent an analytics event, allowing to check your analytics locally. 
 
 **getsentry**
 

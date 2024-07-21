@@ -43,13 +43,61 @@ A superuser account should have been created for you during bootstrap - `admin@s
 You can create other users with `sentry createuser`.
 
 <Alert title="Note" level="info">
-
   When asked for the root address of the server, make sure that you use
   [http://dev.getsentry.net:8000](http://dev.getsentry.net:8000), as both
   protocol _and_ port are required in order for DNS and some pages' URLs to be
   displayed correctly.
-
 </Alert>
+
+### Frontend Only & Backend Only
+
+Please refer to [Frontend Development Server](/frontend/development-server/) and [Backend Development Server](/backend/development-server/) for alternative ways to bring up the Sentry UI.
+
+### Enabling HTTPS
+
+You may wish to run the development server in HTTPS mode. This can be done by generating and installing local certificates.
+
+We will be using [mkcert](https://github.com/FiloSottile/mkcert) to create and install a locally-trusted, development certificate. The following will install `mkcert` and then create and install the local certificates.
+
+```shell
+brew install mkcert
+brew install nss # if you use Firefox
+yarn mkcert-localhost
+```
+
+Running `sentry devserver` will automatically use HTTPS when the certificates have been installed.
+
+### Ingestion Pipeline (Relay)
+
+Some services are not run in all situations. Among those are <Link to="/services/relay/">Relay</Link> and the ingest workers. 
+
+**If you need to ingest errors, but don't require metrics ingestion:** Set `SENTRY_USE_RELAY=True` in `~/.sentry/sentry.conf.py`. If `sentry devservices` 
+is currently up, make sure to restart it after you make the change. This will launch Relay as part of the `devserver` workflow.
+
+Additionally, you can explicitly control this during `devserver` usage with the `--ingest` and `--no-ingest` flags. The `sentry devservices`
+command will not update Relay automatically in that case, to do this manually run:
+
+```shell
+sentry devservices up --skip-only-if relay
+sentry devserver --workers --ingest
+```
+
+**If you want to enable the entire metrics ingestion pipeline:** You need to add the following to your config at `~/.sentry/sentry.conf.py`:
+
+```python
+SENTRY_USE_RELAY = True
+SENTRY_USE_METRICS_DEV = True
+SENTRY_EVENTSTREAM = "sentry.eventstream.kafka.KafkaEventStream"
+SENTRY_FEATURES['organizations:metrics-extraction'] = True  # Enables session metrics
+SENTRY_FEATURES['organizations:transaction-metrics-extraction'] = True  # Enables transaction metrics
+```
+
+After enabling `KafkaEventStream` the `snuba` service has to be reset to pick up the new configuration:
+
+```shell
+sentry devservices rm snuba
+sentry devservices up snuba
+```
 
 ## Running the Getsentry Development Server
 
@@ -82,57 +130,83 @@ environment, you can create `getsentry/conf/settings/devlocal.py` and put the
 configuration option overrides there. This module will be automatically imported
 by `dev.py` if it exists.
 
+To enable the ingest workers, follow the steps described <Link to="#ingestion-pipeline-relay">here</Link> and run 
+```shell
+getsentry devserver --workers --ingest
+```
 
-### Frontend Only & Backend Only
 
-Please refer to [Frontend Development Server](/frontend/development-server/) and [Backend Development Server](/backend/development-server/) for alternative ways to bring up the Sentry UI.
+## Running siloed instances
 
-### Enabling HTTPS
+By default `sentry devserver` will run a monolith mode application server. You can also run ``devserver`` with siloed application instances. Before you do, you need to <Link to="/database-migrations/#cloning-a-monolith-database">create split silo databases</Link>.
 
-You may wish to run the development server in HTTPS mode. This can be done by generating and installing local certificates.
-
-We will be using [mkcert](https://github.com/FiloSottile/mkcert) to create and install a locally-trusted, development certificate. The following will install `mkcert` and then create and install the local certificates.
+The devserver command supports  `--silo` option that lets you create siloed instances. Any workers, consumers, or celery-beat processes will be started with the same silo mode.
 
 ```shell
-brew install mkcert
-brew install nss # if you use Firefox
-yarn mkcert-localhost
+# Start control silo servers
+sentry devserver --silo=control --celery-beat --workers
+
+# Start region silo servers
+sentry devserver --silo=region --celery-beat --workers --ingest
+```
+Siloed servers have the following port assignments:
+
+- 8000 - Webpack
+- 8010 - Region silo webserver
+- 8001 - Control silo webserver
+
+In the above setup your local environment will use org slug domains, and send requests to `us.dev.getsentry.net` (region silo) and `dev.getsentry.net` (control silo). All requests will be proxied by webpack and forwarded to the appropriate server based on hostname.
+
+### Ngrok and siloed servers
+
+To combine ngrok and local development servers you’ll need to reserve multiple domains in ngrok, and create a configuration file for ngrok:
+
+```yaml
+version: '2'
+authtoken: <YOUR-NGROK-AUTHTOKEN>
+tunnels:
+  acme-org:
+    proto: http
+    hostname: acme.<yourname>.ngrok.dev
+    addr: 8000
+  control-silo:
+    proto: http
+    hostname: <yourname>.ngrok.dev
+    host_header: 'rewrite'
+    addr: 8000
+  region-silo:
+    proto: http
+    hostname: us.<yourname>.ngrok.dev
+    addr: 8010
+    host_header: 'rewrite'
 ```
 
-Running `sentry devserver` will automatically use HTTPS when the certificates have been installed.
-
-
-### Ingestion Pipeline (Relay)
-
-Some services are not run in all situations. Among those are <Link to="/services/relay/">Relay</Link> and the ingest workers. If you need
-a more production-like environment in development, you can set `SENTRY_USE_RELAY=True` in `~/.sentry/sentry.conf.py`. If `sentry devservices` is currently up ,make sure to restart it after you make the change. This will launch Relay
-as part of the `devserver` workflow.
-
-Additionally, you can explicitly control this during `devserver` usage with the `--ingest` and `--no-ingest` flags. The `sentry devservices`
-command will not update Relay automatically in that case, to do this manually run:
+Then run all the required servers
 
 ```shell
-sentry devservices up --skip-only-if relay
-sentry devserver --workers --ingest
+# Run a control silo with ngrok
+sentry devserver --silo=control --ngrok <yourname>.ngrok.dev
+
+# Run a region silo without ngrok
+sentry devserver --silo=region --ngrok <yourname>.ngrok.dev
+
+# Run ngrok
+ngrok start --all --config regions.yml
 ```
 
-If you want to enable the entire metrics ingestion pipeline, you need to add the following to your config at `~/.sentry/sentry.conf.py`:
+This setup will result in both the region and control servers responding to different domains. The multi-region setup with ngrok also enables customer-domains and you'll need ngrok domains for each organization you plan on using. In this configuration, CORS will work similar to production. For ngrok setup with non-siloed development server see <Link to="/backend/development-server/">developement server</Link>.
 
-```python
-SENTRY_USE_RELAY = True
-SENTRY_USE_METRICS_DEV = True
-SENTRY_EVENTSTREAM = "sentry.eventstream.kafka.KafkaEventStream"
-SENTRY_FEATURES['organizations:metrics-extraction'] = True  # Enables session metrics
-SENTRY_FEATURES['organizations:transaction-metrics-extraction'] = True  # Enables transaction metrics
-```
+### Siloed Django Shell
 
-After enabling `KafkaEventStream` the `snuba` service has to be reset to pick up the new configuration:
+If you want to use a repl with silo modes active:
 
 ```shell
-sentry devservices rm snuba
-sentry devservices up snuba
-```
+# Start a control silo shell
+SENTRY_SILO_DEVSERVER=1 SENTRY_SILO_MODE=CONTROL getsentry django shell
 
+# Start a region silo shell
+SENTRY_SILO_DEVSERVER=1 SENTRY_SILO_MODE=REGION SENTRY_REGION=us getsentry django shell
+```
 
 ## Troubleshooting
 

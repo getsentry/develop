@@ -36,7 +36,7 @@ auth-google.client-secret: '<client secret>'
 ```
 
 <Alert title="Note" level="info">
-    Remember that you'd need to restart all Sentry services once you change your settings. See the <Link to="/self-hosted/#configuration">configuration section</Link> for more information.
+    After changing configuration files, re-run the <code>./install.sh</code> script, to rebuild and restart the containers. See the <Link to="/self-hosted/#configuration">configuration section</Link> for more information.
 </Alert>
 
 ### GitHub Auth
@@ -54,12 +54,14 @@ As of [Sentry 10](https://github.com/getsentry/self-hosted/releases/tag/10.0.1),
 
 If the form above does not work for you, you need the following settings for your GitHub Application:
 
-| Setting                         | Value                                     |
-| ------------------------------- | ----------------------------------------- |
-| Homepage URL                    | `${urlPrefix}`                            |
-| User authorization callback URL | `${urlPrefix}/auth/sso/`                  |
-| Setup URL (optional)            | `${urlPrefix}/extensions/github/setup/`   |
-| Webhook URL                     | `${urlPrefix}/extensions/github/webhook/` |
+
+| Setting                         | Value                                                                   |
+| ------------------------------- | ----------------------------------------------------------------------- |
+| Homepage URL                    | `${url-prefix}`                                                         |
+| Callback URLs                   | `${url-prefix}/auth/sso/` and  `${url-prefix}/extensions/github/setup/` |
+| Setup URL (optional)            | `${url-prefix}/extensions/github/setup/`                                |
+| Webhook URL                     | `${url-prefix}/extensions/github/webhook/`                              |
+| Webhook secret                  | "my-super-secret-example-secret"                                        |
 
 <Alert level="warning">
   Don't forget to replace all occurances of <code>{'${urlPrefix}'}</code> with your own url prefix.
@@ -118,7 +120,7 @@ github-login.client-secret: '<Client secret>'
 This will also enable the [GitHub Integration](/integrations/github/) for your instance.
 
 <Alert title="Note" level="info">
-    Remember that you'd need to restart all Sentry services once you change your settings. See the <Link to="/self-hosted/#configuration">configuration section</Link> for more information.
+    After changing configuration files, re-run the <code>./install.sh</code> script, to rebuild and restart the containers. See the <Link to="/self-hosted/#configuration">configuration section</Link> for more information.
 </Alert>
 
 ### Custom Providers

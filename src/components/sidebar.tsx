@@ -75,6 +75,7 @@ export default () => {
             Issue Platform - Writing Detectors
           </SidebarLink>
           <SidebarLink to="/feature-flags/">Feature Flags</SidebarLink>
+          <SidebarLink to="/feature-flags/flagpole/">Flagpole</SidebarLink>
           <SidebarLink to="/ab-testing/">A/B Testing</SidebarLink>
           <SidebarLink to="/options/">Options</SidebarLink>
           <SidebarLink to="/serializers/">Serializers</SidebarLink>
@@ -93,13 +94,8 @@ export default () => {
           <SidebarLink to="/dynamic-sampling/" title="Dynamic Sampling">
             <Children tree={tree.find(n => n.name === 'dynamic-sampling').children} />
           </SidebarLink>
-          <SidebarLink
-            to="/delightful-developer-metrics/"
-            title="Sentry Developer Metrics"
-          >
-            <Children
-              tree={tree.find(n => n.name === 'delightful-developer-metrics').children}
-            />
+          <SidebarLink to="/feedback-architecture/">
+            User Feedback Architecture
           </SidebarLink>
         </ul>
       </li>
@@ -134,6 +130,7 @@ export default () => {
           </SidebarLink>
           <SidebarLink to="/frontend/development-server/">Development Server</SidebarLink>
           <SidebarLink to="/frontend/component-library/">Component Library</SidebarLink>
+          <SidebarLink to="/frontend/design-tenets/">Design Tenets</SidebarLink>
           <SidebarLink to="/frontend/network-requests/">Network Requests</SidebarLink>
           <SidebarLink to="/frontend/using-styled-components/">Using Styled Components</SidebarLink>
           <SidebarLink to="/frontend/using-hooks/">Using hooks</SidebarLink>
@@ -151,6 +148,10 @@ export default () => {
 
         <ul className="list-unstyled" data-frontend-tree>
           <SidebarLink to="/backend/development-server/">Development Server</SidebarLink>
+          <SidebarLink to="/backend/control-silo/">Control Silo</SidebarLink>
+          <SidebarLink to="/backend/cross-region-rpc/">Cross Region RPC</SidebarLink>
+          <SidebarLink to="/backend/outboxes/">Outboxes</SidebarLink>
+          <SidebarLink to="/backend/cross-region-replication/">Cross Region Replication</SidebarLink>
         </ul>
       </li>
 
@@ -226,6 +227,7 @@ export default () => {
             <SidebarLink to="/sdk/event-payloads/user/">User Interface</SidebarLink>
           </SidebarLink>
           <SidebarLink to="/sdk/profiles/">Profiles</SidebarLink>
+          <SidebarLink to="/sdk/replays/">Replays</SidebarLink>
           <SidebarLink to="/sdk/metrics/">Metrics</SidebarLink>
           <SidebarLink to="/sdk/check-ins/">Check-Ins</SidebarLink>
           <SidebarLink to="/sdk/sessions/">Sessions</SidebarLink>
