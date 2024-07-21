@@ -2,23 +2,31 @@
 title: External Storage
 ---
 
-<!-- Hello! If you're reading this, you're in luck because I can't decide whether to make.. wait let me copy the text from Discord.
-  
-  I got some time before Monday to write up some docs about setting up an S3 storage for selfhosted instance, but I can't decide whether I should put it under a big "External Services" page, in which people can include external postgres, external redis, and that kind of things; or should I put it under a page called "External Storage"?
-
-  There. Please help me decide this. I'll delete this comment afterwards -->
+In some cases, storing Sentry data on-disk is not really something people can do. Sometimes, it's better if they can offload it into some bucket storage (like AWS S3 or Google Cloud Storage).
 
 <Alert title="Note" level="info">
     After changing configuration files, re-run the <code>./install.sh</code> script, to rebuild and restart the containers. See the <Link to="/self-hosted/#configuration">configuration section</Link> for more information.
 </Alert>
 
-<!-- Should we add a description about what "external storage" is? -->
+## Sentry
 
-## Filestore
+The Sentry service has a abstraction called "filestore" that handles storing attachment, sourcemap (release artifacts), and replays. Filestore configuration for Sentry should be configured on the `sentry/config.yml` file.
 
-Filestore handles storing attachment, sourcemap, and replays. Filestore configuration for Sentry should be configured on the `sentry/config.yml` file.
+### Google Cloud Storage backend
+
+The configuration for GCS backend is pointed to `sentry.filestore.gcs.GoogleCloudStorage`. You will need to set `GOOGLE_APPLICATION_CREDENTIALS` environment variable. For more information, refer to the [Google Cloud documentation for setting up authentication](https://cloud.google.com/storage/docs/reference/libraries#setting_up_authentication).
+
+```yaml
+filestore.backend: "gcs"
+filestore.options:
+  bucket_name: "..."
+```
 
 ### S3 backend
+
+<Alert title="Note" level="warning">
+  Although S3 support is available, it is not thoroughly tested and being used by Sentry SaaS internally. Therefore, it is not something that Sentry folks will offer very good support for it.
+</Alert>
 
 The configuration for S3-compatible backend is pointed to `sentry.filestore.s3.S3Boto3Storage`.
 
@@ -31,31 +39,37 @@ filestore.options:
   secret_key: '<REDACTED>'
   bucket_name: 'my-bucket'
   region_name: 'auto'
-  endpoint_url: 'https://<REDACTED>'
+  endpoint_url: 'https://<REDACTED>' # If you're not using AWS.
   addressing_style: 'path' # For regular AWS S3, use "auto" or "virtual". For other S3-compatible API like MinIO or Ceph, use "path".
   signature_version: 's3v4'
 ```
 
 Refer to [botocore configuration](https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html) for valid configuration values.
 
-<!-- ### Google Cloud Storage backend
-
-I don't know how this works. The source code that points to this configurations: 
-- https://github.com/getsentry/sentry/blob/751ef4a029dda5802311fc424a5f63d72b7efd3d/src/sentry/conf/server.py#L2149
-- https://github.com/getsentry/sentry/blob/751ef4a029dda5802311fc424a5f63d72b7efd3d/src/sentry/filestore/gcs.py#L226-L245 -->
-
 ## Vroom
 
 Vroom is the service that handles profiling. By default the data for profiling is saved on local filesystem. On self-hosted deployment, this should be done by overriding the `SENTRY_BUCKET_PROFILES` environment variable. It's also possible that additional environment variables should be added, depending on the backend of choice.
 
+### Google Cloud Storage backend
+
+You will need to set `GOOGLE_APPLICATION_CREDENTIALS` environment variable. For more information, refer to the [Google Cloud documentation for setting up authentication](https://cloud.google.com/storage/docs/reference/libraries#setting_up_authentication).
+
+```bash
+gs://my-bucket
+```
+
 ### S3 backend
+
+<Alert title="Note" level="warning">
+  Although S3 support is available, it is not thoroughly tested and being used by Sentry SaaS internally. Therefore, it is not something that Sentry folks will offer very good support for it.
+</Alert>
 
 ```bash
 # For regular AWS S3
 s3://my-bucket?awssdk=v1&region=us-west-1&endpoint=amazonaws.com
 
 # For other S3-compatible APIs
-s3://my-bucket?awssdk=v1&region=any-region&endpoint=minio.yourcompany.com&s3ForcePathStyle=true&disableSSL=false
+s3://my-bucket?awssdk=v1&region=any-region&endpoint=minio.yourcompany.com&s3ForcePathStyle=true&disableSSL
 ```
 
 Additional environment variables should be provided:
@@ -68,23 +82,3 @@ Further explanation on the query string options:
 - `endpoint`: The endpoint URL (hostname only or fully qualified URI).
 - `disableSSL`: A value of "true" disables SSL when sending requests.
 - `s3ForcePathStyle`: A value of "true" forces the request to use path-style addressing.
-
-### Azure Blob Storage backend
-
-```bash
-azblob://my-container?protocol=https&domain=yourcompany.blob.core.windows.net&localemu=false&cdn=false
-```
-
-Additional environment variables that should be provided (pick what's compatible with your configuration):
-- `AZURE_STORAGE_ACCOUNT=foobar`: The service account name. Required if used along with `AZURE_STORAGE_KEY`, because it defines authentication mechanism to be [azblob.NewSharedKeyCredential](https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/storage/azblob#NewSharedKeyCredential), which creates immutable shared key credentials. Otherwise, "storage_account" in the URL query string parameter can be used.
-
-- `AZURE_STORAGE_KEY=foobar` - To use a shared key credential alongside with `AZURE_STORAGE_ACCOUNT`.
-- `AZURE_STORAGE_SAS_TOKEN=foobar` - To use a SAS token
-
-Other authentication options and details can be found on the [gocloud.dev/blob/azblob's documentation](https://pkg.go.dev/gocloud.dev@v0.37.0/blob/azureblob#hdr-URLs)
-
-Further explanation on the query string options:
-- `domain`: Your storage domain.
-- `protocol`: Network protocol (`http` or `https`).
-- `cdn`: A value of "true" specifies that the blob server is a CDN.
-- `localemu`: A value of "true" specifies that the blob server is a local emulator.
