@@ -36,7 +36,8 @@ This should be a callback, called when a transaction is started, which will be g
 
 Optionally, the `tracesSampler` callback can also return a boolean to force a sampling decision (with `false` equivalent to `0.0` and `true` equivalent to `1.0`). If returning two different datatypes isn't an option in the implementing language, this possibility can safely be omitted.
 
-See more about how sampling should be performed below.
+## Separation of Sampling Transcations and Trace Propagation
+Important to note, while the above options can be used to turn on tracing and performance, tracing is not exclusive to the Performance product. It should be possible that users want to turn off Performance, meaning that no transactions shoudl be sent to the Sentry server which count against a quota. In any specific SDK, this should be possible by setting the `tracesSampleRate` to `0.0`. Traces should continue to propagate. Issues across services would be connected, and/or session replays, or other products and features associated with traceable interfaces. The control of the propagation of traces then will be handled with other options, as defined below.
 
 ### `tracePropagationTargets`
 
