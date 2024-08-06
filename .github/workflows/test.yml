@@ -11,9 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           submodules: true
-      - uses: getsentry/action-setup-volta@v1.1.0
+      - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4
+        id: setup-node
+        with:
+          node-version-file: 'package.json'
       - run: yarn install
       - run: yarn test
