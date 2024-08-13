@@ -14,7 +14,7 @@
     "@sentry-internal/global-search": "0.0.43",
     "@sentry/gatsby": "7.64.0-alpha.0",
     "@sentry/node": "7.64.0-alpha.0",
-    "@sentry/profiling-node": "^1.1.2",
+    "@sentry/profiling-node": "^1.2.0",
     "@types/dompurify": "^2.0.3",
     "@types/node": "^14",
     "@types/react": "^16.9.46",
