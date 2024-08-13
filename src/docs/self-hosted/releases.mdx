@@ -18,26 +18,24 @@ Sentry cuts regular releases for self-hosting to keep it as close to [sentry.io]
 
 We encourage everyone to regularly update their Sentry installations to get the best and the most recent Sentry experience.
 
+Before starting the upgrade, we shut down all the services and then run some data migrations, so expect to have some downtime. There is an *experimental* `--minimize-downtime` option to reduce the downtime during upgrades. Use this at your own risk and see [the pull request it was implemented in](https://github.com/getsentry/self-hosted/issues/607) for more information.
+
+We assume you've cloned the self-hosted repository, so checkout the version you want to upgrade to (23.11.0 as an example).
+
+```bash
+git fetch
+git checkout 23.11.0
+```
+
 <Alert title="Warning" level="warning">
-  If you upgrade infrequently, it's less likely that upgrading to latest will work.
+  If you upgrade infrequently, it's less likely that upgrading to the latest version will work.
   Please refer to <Link to="#hard-stops">Hard Stops</Link> for how to incrementally upgrade to more recent versions.
 </Alert>
 
-<Alert title="Configuration Updates" level="info">
 We may have some updated configuration, especially for new features, so always check the example config files under the <Link to="https://github.com/getsentry/self-hosted/blob/master/sentry/">sentry directory</Link> and see if you need to update your existing configuration. We do our best to automate critical configuration updates, but you should always check your configs during upgrades.
-</Alert>
 
-Before starting the upgrade, we shut down all the services and then run some data migrations, so expect to have some downtime. There is an *experimental* `--minimize-downtime` option to reduce the downtime during upgrades. Use this at your own risk and see [the pull request it was implemented in](https://github.com/getsentry/self-hosted/issues/607) for more information.
+Finally, to upgrade, just run `./install.sh`.
 
-To upgrade, all you need to do is download or check out the version of self-hosted repository you want, replace your existing folder's contents with that, and then run `./install.sh`. If you downloaded self-hosted repository using Git clone, the upgrade commands should look like this:
-
-```bash
-# Assuming your destination upgrade version is 24.3.0
-VERSION="24.3.0"
-git fetch
-git checkout ${VERSION}
-sudo ./install.sh
-```
 
 ### Hard Stops
 
@@ -47,7 +45,7 @@ These are the hard stops that you need to go through in order to pick up signifi
 <your.sentry.version> -> 9.1.2 -> 21.5.0 -> 21.6.3 -> 23.6.2 -> 23.11.0 -> latest
 ```
 
-Versions to avoid:
+Versions to avoid upgrading to:
 - `23.7.0` (issues around database migrations and the Django 3 upgrade)
 
 
