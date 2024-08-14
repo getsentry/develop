@@ -1,5 +1,8 @@
 # Sentry Developer Documentation
 
+> [!WARNING]  
+> The contents of this repository have been migrated to [getsentry/sentry-docs](https://github.com/getsentry/sentry-docs/)
+
 Welcome to [Sentry's Developer documentation](https://develop.sentry.dev)!
 
 ## Quickstart
